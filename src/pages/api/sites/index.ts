@@ -5,7 +5,7 @@ import type { APIContext } from 'astro';
 import { type Site, siteFrom } from 'src/schemas/SiteSchema';
 
 export async function GET({ request }: APIContext) {
-  const publicSites = new Array<Site>();
+  const publicSites: Site[] = [];
 
   const searchParams = getAstroQueryParams(request);
 
@@ -16,7 +16,7 @@ export async function GET({ request }: APIContext) {
       ? serverDB
           .collection('sites')
           .where('hidden', '==', false)
-          .limit(Number.parseInt(searchParams.limit))
+          .limit(Number.parseInt(searchParams.limit, 10))
           .orderBy('flowTime', 'desc')
       : serverDB.collection('sites').where('hidden', '==', false);
 

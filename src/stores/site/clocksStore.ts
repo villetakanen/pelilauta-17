@@ -33,7 +33,7 @@ async function subscribe(key: string) {
         loading.set(false);
         return;
       }
-      const newClocks = new Array<Clock>();
+      const newClocks: Clock[] = [];
 
       for (const change of snapshot.docChanges()) {
         if (change.type === 'removed') {

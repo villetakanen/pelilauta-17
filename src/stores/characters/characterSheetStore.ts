@@ -4,7 +4,7 @@ import {
   CharacterSheetSchema,
 } from '@schemas/CharacterSheetSchema';
 import { logDebug, logError } from '@utils/logHelpers';
-import { type WritableAtom, atom, onMount } from 'nanostores';
+import { atom, onMount, type WritableAtom } from 'nanostores';
 
 export const sheet: WritableAtom<CharacterSheet | null> = atom(null);
 export const loading: WritableAtom<boolean> = atom(false);

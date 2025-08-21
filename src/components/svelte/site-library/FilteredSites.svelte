@@ -1,7 +1,8 @@
 <script lang="ts">
 import { userSites } from '@stores/userSites';
-import SiteCard from './SiteCard.svelte';
 import { filters } from './filters.svelte';
+import SiteCard from './SiteCard.svelte';
+
 const filtered = $derived.by(() => {
   const sites = [...$userSites];
   const direction = filters.orderDirection === 'asc' ? 1 : -1;

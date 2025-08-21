@@ -1,13 +1,13 @@
 import { persistentAtom } from '@nanostores/persistent';
 import {
+  createSubscription,
   SUBSCRIPTIONS_FIRESTORE_PATH,
   type Subscription,
   SubscriptionSchema,
-  createSubscription,
 } from '@schemas/SubscriberSchema';
 import { uid } from '@stores/session';
 import { logDebug, logError, logWarn } from '@utils/logHelpers';
-import { type WritableAtom, computed } from 'nanostores';
+import { computed, type WritableAtom } from 'nanostores';
 
 /**
  * # Subscription Store

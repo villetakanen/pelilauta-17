@@ -2,8 +2,8 @@
 import { uid } from '@stores/session';
 import { site } from '@stores/site';
 import {
-  importStore,
   importedPages,
+  importStore,
   isImporting,
 } from '@stores/site/importsStore';
 import { pushSnack } from '@utils/client/snackUtils';

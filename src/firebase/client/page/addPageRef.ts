@@ -1,7 +1,7 @@
 import {
   type PageRef,
-  SITES_COLLECTION_NAME,
   parseSite,
+  SITES_COLLECTION_NAME,
 } from '@schemas/SiteSchema';
 import { toClientEntry } from '@utils/client/entryUtils';
 import { db } from '..';

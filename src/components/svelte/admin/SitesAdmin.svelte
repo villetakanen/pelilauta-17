@@ -1,21 +1,20 @@
 <script lang="ts">
-import { appMeta } from '@stores/metaStore/metaStore';
-import { uid } from '@stores/session';
-import WithAuth from '@svelte/app/WithAuth.svelte';
-import AddSiteReactions from './AddSiteReactions.svelte';
-
 import {
+  parseSite,
   SITES_COLLECTION_NAME,
   type Site,
-  parseSite,
 } from '@schemas/SiteSchema';
+import { appMeta } from '@stores/metaStore/metaStore';
+import { uid } from '@stores/session';
 import ProfileLink from '@svelte/app/ProfileLink.svelte';
+import WithAuth from '@svelte/app/WithAuth.svelte';
 import { toClientEntry } from '@utils/client/entryUtils';
 import { toDisplayString } from '@utils/contentHelpers';
 import { onMount } from 'svelte';
+import AddSiteReactions from './AddSiteReactions.svelte';
 
 const visible = $derived.by(() => $appMeta.admins.includes($uid));
-const sites = $state(new Array<Site>());
+const sites = $state([] as Site[]);
 
 onMount(async () => {
   if (!visible) return;

@@ -1,9 +1,9 @@
 import { persistentAtom } from '@nanostores/persistent';
 import {
+  parseSite,
   SITES_COLLECTION_NAME,
   type Site,
   SiteSchema,
-  parseSite,
 } from '@schemas/SiteSchema';
 import { uid } from '@stores/session';
 import { toClientEntry } from '@utils/client/entryUtils';

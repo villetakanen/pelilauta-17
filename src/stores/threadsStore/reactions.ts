@@ -1,8 +1,8 @@
 import {
-  type Transaction,
   doc,
   increment,
   runTransaction,
+  type Transaction,
 } from 'firebase/firestore';
 import { db } from 'src/firebase/client';
 
@@ -30,7 +30,7 @@ export async function loveThread(uid: string, threadid: string): Promise<void> {
         `threadStore/loveThread, trying to love by a non existing user (${uid})`,
       );
     }
-    const lovesArr = new Array<string>();
+    const lovesArr: string[] = [];
     const dataArr = profile.data()?.lovedThreads;
     if (dataArr) {
       if ((dataArr as Array<string>).includes(threadid)) {
@@ -68,7 +68,7 @@ export async function unloveThread(
         `threadStore/loveThread, trying to unlove by a non existing user (${uid})`,
       );
     }
-    const lovesArr = new Array<string>();
+    const lovesArr: string[] = [];
     const dataArr = profile.data()?.lovedThreads;
     if (dataArr) {
       if (!(dataArr as Array<string>).includes(threadid)) {

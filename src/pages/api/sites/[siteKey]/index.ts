@@ -1,5 +1,5 @@
 import { serverDB } from '@firebase/server';
-import { SITES_COLLECTION_NAME, parseSite } from '@schemas/SiteSchema';
+import { parseSite, SITES_COLLECTION_NAME } from '@schemas/SiteSchema';
 import { toClientEntry } from '@utils/client/entryUtils';
 import type { APIContext } from 'astro';
 
@@ -30,7 +30,7 @@ export async function GET({ params }: APIContext): Promise<Response> {
         // 'Cache-Control': 's-maxage=5, stale-while-revalidate',
       },
     });
-  } catch (err: unknown) {
+  } catch (_err: unknown) {
     return new Response('Invalid site data', { status: 500 });
   }
 }

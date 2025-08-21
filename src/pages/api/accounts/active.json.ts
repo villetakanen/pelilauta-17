@@ -11,7 +11,7 @@ export async function GET() {
     .orderBy('lastLogin', 'desc')
     .limit(11);
 
-  const uids = new Array<string>();
+  const uids: string[] = [];
 
   const accounts = await query.get();
 

@@ -1,5 +1,5 @@
 import { PAGES_COLLECTION_NAME } from '@schemas/PageSchema';
-import { SITES_COLLECTION_NAME, parseSite } from '@schemas/SiteSchema';
+import { parseSite, SITES_COLLECTION_NAME } from '@schemas/SiteSchema';
 import { deleteDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '..';
 

@@ -3,7 +3,7 @@ import { type Channel, parseChannel } from '@schemas/ChannelSchema';
 import { toClientEntry } from '@utils/client/entryUtils';
 
 export async function GET(): Promise<Response> {
-  const channels = new Array<Channel>();
+  const channels: Channel[] = [];
 
   const channelsRef = serverDB.collection('meta').doc('threads');
   const doc = await channelsRef.get();

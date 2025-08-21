@@ -106,7 +106,7 @@ function createWikilinkExtension(
         level: 'inline',
         start: (src: string) => src.indexOf('['),
         tokenizer(src: string): WikilinkShortcutToken | undefined {
-          const rule = /^\[([^\]]+)\](?![\(:(])/; // Does not match [text]() or [ref]:
+          const rule = /^\[([^\]]+)\](?![(:(])/; // Does not match [text]() or [ref]:
           const match = rule.exec(src);
           if (match) {
             return {

@@ -3,7 +3,6 @@ import { site } from '@stores/site';
 import { importStore } from '@stores/site/importsStore';
 import { logDebug, logError, logWarn } from '@utils/logHelpers';
 
-// biome-ignore lint/style/useConst: needed for Svelte binding
 let fileInput = $state<HTMLInputElement | undefined>();
 let isUploading = $state(false);
 const uploadedFiles = $state<

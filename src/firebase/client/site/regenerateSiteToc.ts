@@ -26,7 +26,7 @@ export async function regenerateSiteToc(siteKey: string): Promise<number> {
     );
   }
 
-  const refs = new Array<PageRef>();
+  const refs: PageRef[] = [];
 
   const pages = await getDocs(
     collection(db, SITES_COLLECTION_NAME, siteKey, PAGES_COLLECTION_NAME),

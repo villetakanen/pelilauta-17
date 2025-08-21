@@ -1,7 +1,7 @@
 import {
+  parseSite,
   SITES_COLLECTION_NAME,
   type Site,
-  parseSite,
 } from '@schemas/SiteSchema';
 import { uid } from '@stores/session';
 import { logDebug } from '@utils/logHelpers';

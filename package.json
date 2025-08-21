@@ -53,7 +53,7 @@
     "zod": "^3.25.57"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
+    "@biomejs/biome": "2.2.0",
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
     "@playwright/test": "^1.50.0",
@@ -70,7 +70,9 @@
     "workbox-cli": "^7.3.0"
   },
   "pnpm": {
-    "ignoredBuiltDependencies": ["@firebase/util"],
+    "ignoredBuiltDependencies": [
+      "@firebase/util"
+    ],
     "onlyBuiltDependencies": [
       "@biomejs/biome",
       "@firebase/util",

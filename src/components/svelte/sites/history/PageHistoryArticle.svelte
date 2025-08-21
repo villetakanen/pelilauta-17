@@ -7,7 +7,7 @@ import ProfileLink from '@svelte/app/ProfileLink.svelte';
 import { toDisplayString, toTimeString } from '@utils/contentHelpers';
 import { t } from '@utils/i18n';
 import { logDebug } from '@utils/logHelpers';
-import { type Change, applyPatch, diffLines } from 'diff';
+import { applyPatch, type Change, diffLines } from 'diff';
 
 interface Props {
   page: Page;

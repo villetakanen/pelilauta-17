@@ -4,10 +4,10 @@ import {
   type Reactions,
 } from '@schemas/ReactionsSchema';
 import {
-  THREADS_COLLECTION_NAME,
-  type Thread,
   createThread,
   parseThread,
+  THREADS_COLLECTION_NAME,
+  type Thread,
 } from '@schemas/ThreadSchema';
 import { markEntrySeen } from '@stores/session';
 import { toClientEntry } from '@utils/client/entryUtils';
@@ -27,7 +27,7 @@ async function increaseThreadCount(channel: string) {
     return;
   }
 
-  const channels = new Array<Channel>();
+  const channels: Channel[] = [];
   const channelsArray = channelsDoc.data()?.topics;
 
   for (const channel of channelsArray) {
@@ -99,7 +99,7 @@ export async function addThread(
     entry,
   );
 
-  const images = new Array<{ url: string; alt: string }>();
+  const images: { url: string; alt: string }[] = [];
   // Check if there are any files to upload
   if (files.length > 0) {
     // Upload the files to the storage

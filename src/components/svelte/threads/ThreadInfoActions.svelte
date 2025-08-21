@@ -1,7 +1,6 @@
 <script lang="ts">
 import type { Thread } from '@schemas/ThreadSchema';
-import { showAdminTools } from '@stores/session';
-import { uid } from '@stores/session';
+import { showAdminTools, uid } from '@stores/session';
 import { syndicateToBsky } from '@svelte/thread-editor/submitThreadUpdate';
 import { pushSnack } from '@utils/client/snackUtils';
 import { t } from '@utils/i18n';

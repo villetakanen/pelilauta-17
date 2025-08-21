@@ -1,5 +1,5 @@
 import { serverDB } from '@firebase/server';
-import { REPLIES_COLLECTION, parseReply } from '@schemas/ReplySchema';
+import { parseReply, REPLIES_COLLECTION } from '@schemas/ReplySchema';
 import { THREADS_COLLECTION_NAME } from '@schemas/ThreadSchema';
 import { toClientEntry } from '@utils/client/entryUtils';
 import type { APIContext } from 'astro';
@@ -33,7 +33,7 @@ export async function GET({ params }: APIContext): Promise<Response> {
         'Cache-Control': 's-maxage=60, stale-while-revalidate',
       },
     });
-  } catch (err: unknown) {
+  } catch (_err: unknown) {
     return new Response('Invalid thread data', { status: 500 });
   }
 }

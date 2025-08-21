@@ -11,7 +11,7 @@ export async function verifySession(astro: APIContext) {
     const decodedToken = await serverAuth.verifySessionCookie(cookie, true);
     logDebug('auth', 'verifySession', 'Session cookie verified successfully');
     return decodedToken;
-  } catch (error) {
+  } catch (_error) {
     // Session cookie is invalid.
     return null;
   }

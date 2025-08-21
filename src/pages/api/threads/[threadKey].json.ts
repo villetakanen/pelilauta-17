@@ -1,6 +1,6 @@
 import { serverDB } from '@firebase/server';
 import { CHANNEL_DEFAULT_SLUG } from '@schemas/ChannelSchema';
-import { THREADS_COLLECTION_NAME, parseThread } from '@schemas/ThreadSchema';
+import { parseThread, THREADS_COLLECTION_NAME } from '@schemas/ThreadSchema';
 import { toClientEntry } from '@utils/client/entryUtils';
 import { fixImageData } from '@utils/fixImageData';
 import type { APIContext } from 'astro';
@@ -49,7 +49,7 @@ export async function GET({ params }: APIContext): Promise<Response> {
         'Cache-Control': 's-maxage=60, stale-while-revalidate',
       },
     });
-  } catch (err: unknown) {
+  } catch (_err: unknown) {
     return new Response('Invalid thread data', { status: 500 });
   }
 }

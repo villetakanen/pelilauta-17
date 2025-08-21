@@ -86,7 +86,7 @@ export function createThread(
     lovedCount: 0,
     createdAt: new Date(),
     updatedAt: new Date(),
-    flowTime: new Date().getTime(),
+    flowTime: Date.now(),
     markdownContent: source?.markdownContent || '',
     quoteRef: source?.quoteRef || undefined,
     public: source?.public || true,

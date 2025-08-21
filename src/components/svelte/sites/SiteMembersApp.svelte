@@ -5,6 +5,7 @@ import WithAuth from '@svelte/app/WithAuth.svelte';
 import { site } from '../../../stores/site';
 import SiteOwnersTool from './SiteOwnersTool.svelte';
 import SitePlayersTool from './SitePlayersTool.svelte';
+
 /**
  * A Wrapper for the SiteMembersApp component,
  * Inits the site-store and subscribes to the Site Entry in the Firestore

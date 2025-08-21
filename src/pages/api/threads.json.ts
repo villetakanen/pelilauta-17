@@ -1,8 +1,8 @@
 import { CHANNEL_DEFAULT_SLUG } from '@schemas/ChannelSchema';
 import {
+  parseThread,
   THREADS_COLLECTION_NAME,
   type Thread,
-  parseThread,
 } from '@schemas/ThreadSchema';
 import { toClientEntry } from '@utils/client/entryUtils';
 import { getAstroQueryParams } from '@utils/server/astroApiHelpers';
@@ -11,7 +11,7 @@ import { Timestamp } from 'firebase-admin/firestore';
 import { serverDB } from 'src/firebase/server';
 
 export async function GET({ request }: APIContext) {
-  const publicThreads = new Array<Thread>();
+  const publicThreads: Thread[] = [];
 
   const { startAt, channel, limit, uid, sort } = getAstroQueryParams(request);
 

@@ -13,7 +13,7 @@ import { where } from 'firebase/firestore';
 import { atom, onMount } from 'nanostores';
 import { site } from '.';
 
-export const handouts = atom(new Array<Handout>());
+export const handouts = atom([] as Handout[]);
 
 // This is a simple store that holds a list of a site's clocks.
 
@@ -34,7 +34,7 @@ async function subscribe(key: string) {
     onSnapshot(
       collection(db, SITES_COLLECTION_NAME, key, HANDOUTS_COLLECTION_NAME),
       (snapshot) => {
-        const newHandouts = new Array<Handout>();
+        const newHandouts: Handout[] = [];
 
         for (const change of snapshot.docChanges()) {
           if (change.type === 'removed') {
@@ -60,7 +60,7 @@ async function subscribe(key: string) {
       where('readers', 'array-contains', uid.get()),
     );
     onSnapshot(q, (snapshot) => {
-      const newHandouts = new Array<Handout>();
+      const newHandouts: Handout[] = [];
 
       for (const change of snapshot.docChanges()) {
         if (change.type === 'removed') {
@@ -85,7 +85,7 @@ function mergeHandouts(
   oldHandouts: Handout[],
   newHandouts: Handout[],
 ): Handout[] {
-  const merged = new Array<Handout>();
+  const merged: Handout[] = [];
 
   for (const handout of oldHandouts) {
     const newHandout = newHandouts.find((h) => h.key === handout.key);

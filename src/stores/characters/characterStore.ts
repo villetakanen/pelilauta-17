@@ -12,7 +12,7 @@ import {
 import { uid } from '@stores/session';
 import { toClientEntry } from '@utils/client/entryUtils';
 import { logDebug } from '@utils/logHelpers';
-import { type WritableAtom, atom, computed } from 'nanostores';
+import { atom, computed, type WritableAtom } from 'nanostores';
 
 const _character: WritableAtom<Character | null> = atom(null);
 export const character = computed(_character, (value) => value);

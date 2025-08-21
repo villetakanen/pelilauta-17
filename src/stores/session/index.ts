@@ -139,5 +139,5 @@ export async function logout() {
   await fetch('/api/auth/session', { method: 'DELETE' });
 }
 
-export * from './subscriber';
 export * from './account';
+export * from './subscriber';

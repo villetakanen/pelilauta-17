@@ -1,4 +1,4 @@
-import { type User, getAuth } from 'firebase/auth';
+import { getAuth, type User } from 'firebase/auth';
 import { app as firebaseApp } from '.';
 
 const auth = getAuth(firebaseApp);

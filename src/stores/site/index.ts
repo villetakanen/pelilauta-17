@@ -1,8 +1,8 @@
 import { updateSite } from '@firebase/client/site/updateSite';
 import {
+  parseSite,
   SITES_COLLECTION_NAME,
   type Site,
-  parseSite,
 } from '@schemas/SiteSchema';
 import { toClientEntry } from '@utils/client/entryUtils';
 import { logDebug, logWarn } from '@utils/logHelpers';

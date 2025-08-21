@@ -55,7 +55,7 @@ export async function postToBluesky(
     // detectFacets works with AtpAgent
     await rt.detectFacets(authenticatedAgent);
 
-    let embed: Record<string, unknown> | undefined = undefined;
+    let embed: Record<string, unknown> | undefined;
     if (linkUrl) {
       logDebug('Attempting to create Bluesky link card for:', linkUrl);
       try {

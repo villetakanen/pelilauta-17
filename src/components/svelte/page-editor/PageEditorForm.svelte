@@ -39,7 +39,7 @@ let tags = $state<string[]>(page.tags || []);
 let contentMigrated = $state(false);
 let saving = $state(false);
 
-function handleChange(event: Event) {
+function handleChange(_event: Event) {
   hasChanges = true;
 }
 

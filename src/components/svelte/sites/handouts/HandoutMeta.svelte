@@ -16,7 +16,7 @@ interface Props {
 }
 const { site: initialSite, handout }: Props = $props();
 let newReader = $state('');
-let readers = $state(handout.readers ?? new Array<string>());
+let readers = $state(handout.readers ?? ([] as string[]));
 
 /**
  * Handout Metadata editor

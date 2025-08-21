@@ -53,7 +53,7 @@ export async function GET({ params }: APIContext): Promise<Response> {
     .get();
 
   const response = {
-    entries: new Array<Tag>(),
+    entries: [] as Tag[],
   };
   for (const doc of docs.docs) {
     console.log(doc);

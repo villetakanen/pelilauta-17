@@ -1,6 +1,6 @@
 // rss/threads.xml.ts
 import rss, { type RSSFeedItem } from '@astrojs/rss';
-import { type Thread, parseThread } from '@schemas/ThreadSchema';
+import { parseThread, type Thread } from '@schemas/ThreadSchema';
 import { toClientEntry } from '@utils/client/entryUtils';
 import { createSnippet } from '@utils/contentHelpers';
 import { t } from '@utils/i18n';

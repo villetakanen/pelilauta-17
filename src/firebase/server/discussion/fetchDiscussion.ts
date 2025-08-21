@@ -1,7 +1,7 @@
 import {
+  parseReply,
   REPLIES_COLLECTION,
   type Reply,
-  parseReply,
 } from '@schemas/ReplySchema';
 import { THREADS_COLLECTION_NAME } from '@schemas/ThreadSchema';
 import { toClientEntry } from '@utils/client/entryUtils';

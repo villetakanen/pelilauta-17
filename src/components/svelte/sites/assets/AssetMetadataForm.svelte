@@ -2,11 +2,10 @@
 import { updateSiteAsset } from '@firebase/client/site/updateSiteAsset';
 import type { Asset } from '@schemas/AssetSchema';
 import type { Site } from '@schemas/SiteSchema';
+import { pushSnack } from '@utils/client/snackUtils';
 import { t } from '@utils/i18n';
 import { logError } from '@utils/logHelpers';
 import LicenseSelect from './LicenseSelect.svelte';
-
-import { pushSnack } from '@utils/client/snackUtils';
 
 interface Props {
   site: Site;

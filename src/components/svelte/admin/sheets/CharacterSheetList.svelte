@@ -4,6 +4,7 @@ import { CHARACTER_SHEETS_COLLECTION_NAME } from '@schemas/CharacterSheetSchema'
 import { pushSnack } from '@utils/client/snackUtils';
 import { logDebug, logError } from '@utils/logHelpers';
 import { systemToNoun } from '@utils/schemaHelpers';
+
 let characterSheets = $state<CharacterSheet[]>([]);
 let loading = $state(true);
 

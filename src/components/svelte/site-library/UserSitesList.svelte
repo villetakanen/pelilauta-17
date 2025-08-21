@@ -5,6 +5,7 @@ import { t } from '@utils/i18n.ts';
 import { onMount } from 'svelte';
 import FilteredSites from './FilteredSites.svelte';
 import { filters, toggleOrder } from './filters.svelte.ts';
+
 const directionNoun = $derived(
   filters.orderDirection === 'asc' ? 'arrow-up' : 'arrow-down',
 );

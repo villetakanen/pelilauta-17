@@ -1,4 +1,4 @@
-import type { MarkedExtension, Tokens } from 'marked';
+import type { MarkedExtension } from 'marked';
 
 /**
  * Creates a marked extension to handle @profile tags.
@@ -26,7 +26,7 @@ export function createProfileTagExtension(baseUrl: string): MarkedExtension {
         const profileTagRegex =
           /(^|\s)@([a-zA-Z0-9\u00C0-\u017F_-]+)(?!\.[a-zA-Z]{2,})/g;
 
-        return markdown.replace(profileTagRegex, (match, prefix, username) => {
+        return markdown.replace(profileTagRegex, (_match, prefix, username) => {
           const href = `${baseUrl}/profiles/${encodeURIComponent(username.toLowerCase())}`;
           return `${prefix}<a href="${href}">@${username}</a>`;
         });

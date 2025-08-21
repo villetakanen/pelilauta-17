@@ -1,8 +1,8 @@
 import type { Entry } from '@schemas/EntrySchema';
 import {
   type DocumentData,
-  Timestamp,
   serverTimestamp,
+  Timestamp,
 } from 'firebase/firestore';
 
 export interface Params {

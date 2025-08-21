@@ -1,6 +1,5 @@
 import { expect, test } from 'vitest';
-import { toDisplayString } from '../../src/utils/contentHelpers';
-import { extractTags } from '../../src/utils/contentHelpers';
+import { extractTags, toDisplayString } from '../../src/utils/contentHelpers';
 
 test('toDisplayString returns N/A if date is undefined', () => {
   expect(toDisplayString(undefined)).toBe('N/A');

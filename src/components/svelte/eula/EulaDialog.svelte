@@ -12,7 +12,7 @@ import { t } from '@utils/i18n';
 import { logError, logWarn } from '@utils/logHelpers';
 import { toMekanismiURI } from '@utils/mekanismiUtils';
 import { toFid } from '@utils/toFid';
-import { type Snippet, onMount } from 'svelte';
+import { onMount, type Snippet } from 'svelte';
 import NickNameInput from './NickNameInput.svelte';
 
 interface Props {

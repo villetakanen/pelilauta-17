@@ -1,7 +1,7 @@
 import {
+  parseSite,
   SITES_COLLECTION_NAME,
   type Site,
-  parseSite,
 } from '@schemas/SiteSchema';
 import { toClientEntry } from '@utils/client/entryUtils';
 import { logError } from '@utils/logHelpers';

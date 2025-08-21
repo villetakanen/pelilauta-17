@@ -5,6 +5,7 @@ import { update } from '@stores/site';
 import { toDisplayString } from '@utils/contentHelpers';
 import { logDebug } from '@utils/logHelpers';
 import { updateDoc } from 'firebase/firestore';
+
 interface Props {
   channel: Channel;
 }

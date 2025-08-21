@@ -3,8 +3,8 @@ import { type CnListItem, CnSortableList } from '@11thdeg/cyan-next';
 import { updateSite } from '@firebase/client/site/updateSite';
 import {
   type CategoryRef,
-  type Site,
   parseCategories,
+  type Site,
 } from '@schemas/SiteSchema';
 import SvelteSortableList from '@svelte/app/SvelteSortableList.svelte';
 import { pushSnack } from '@utils/client/snackUtils';

@@ -1,14 +1,4 @@
-import {
-  type CnAvatar,
-  CnAvatarButton,
-  CnBubble,
-  CnCard,
-  CnDialog,
-  CnIcon,
-  CnNavigationIcon,
-  type CnReactionButton,
-} from '@11thdeg/cyan-next';
-import type { b } from 'vitest/dist/suite-IbNSsUWN.js';
+import { type CnReactionButton } from '@11thdeg/cyan-next';
 declare module 'solid-js' {
   namespace JSX {
     interface IntrinsicElements {

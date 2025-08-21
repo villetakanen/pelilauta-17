@@ -36,7 +36,7 @@ export async function GET({ params }: APIContext): Promise<Response> {
         // No cache, as handouts can be edited
       },
     });
-  } catch (err: unknown) {
+  } catch (_err: unknown) {
     return new Response('Invalid handout data', { status: 500 });
   }
 }

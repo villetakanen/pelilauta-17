@@ -6,6 +6,7 @@ import { THREADS_COLLECTION_NAME } from '@schemas/ThreadSchema';
 import ReplyDeleteSection from '@svelte/discussion/ReplyDeleteSection.svelte';
 import { toClientEntry } from '@utils/client/entryUtils';
 import { t } from '@utils/i18n';
+
 const { threadKey, replyKey } = Astro.params;
 
 if (!threadKey || !replyKey) {

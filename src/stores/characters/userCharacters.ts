@@ -7,7 +7,7 @@ import {
 import { uid } from '@stores/session';
 import { toClientEntry } from '@utils/client/entryUtils';
 import { logDebug, logError } from '@utils/logHelpers';
-import { type WritableAtom, effect } from 'nanostores';
+import { effect, type WritableAtom } from 'nanostores';
 import { z } from 'zod';
 
 /**

@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { ThreadSchema, createThread } from '../../src/schemas/ThreadSchema';
+import { createThread, ThreadSchema } from '../../src/schemas/ThreadSchema';
 
 test('createThread factory creates a thread object', () => {
   const thread = createThread(

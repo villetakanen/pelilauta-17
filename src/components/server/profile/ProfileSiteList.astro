@@ -1,5 +1,5 @@
 ---
-import { type Site, parseSite } from '@schemas/SiteSchema';
+import { parseSite, type Site } from '@schemas/SiteSchema';
 import SiteCard from '@server/ui/SiteCard.astro';
 import { toClientEntry } from '@utils/client/entryUtils';
 import { t } from '@utils/i18n';
@@ -13,7 +13,7 @@ const { uid } = Astro.props;
 const origin = new URL(Astro.request.url).origin;
 const siteListRequest = await fetch(`${origin}/api/sites?uid=${uid}`);
 
-const sites = new Array<Site>();
+const sites: Site[] = [];
 
 try {
   if (siteListRequest.status === 200) {

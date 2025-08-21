@@ -4,8 +4,8 @@ import type { Site } from '@schemas/SiteSchema';
 import { update } from '@stores/site';
 import { pushSnack } from '@utils/client/snackUtils';
 import { t } from '@utils/i18n';
-import SystemSelect from '../SystemSelect.svelte';
 import LicenseSelect from '../assets/LicenseSelect.svelte';
+import SystemSelect from '../SystemSelect.svelte';
 import SiteHomepageSelect from './SiteHomepageSelect.svelte';
 
 interface Props {

@@ -100,7 +100,7 @@ function moveStatToGroup(statIndex: number, newGroup: string) {
 }
 
 function getStatIndex(stat: CharacterStat): number {
-  return stats.findIndex((s) => s === stat);
+  return stats.indexOf(stat);
 }
 
 function handleTypeChange(e: Event, statIndex: number) {

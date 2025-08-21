@@ -2,13 +2,13 @@ import { persistentAtom } from '@nanostores/persistent';
 import { logError } from '@utils/logHelpers';
 import { onMount } from 'nanostores';
 import { db } from 'src/firebase/client';
-import { uid } from '.';
 import {
-  SUBSCRIPTIONS_FIRESTORE_PATH,
-  type Subscription,
   createSubscription,
   parseSubscription,
+  SUBSCRIPTIONS_FIRESTORE_PATH,
+  type Subscription,
 } from '../../schemas/SubscriberSchema';
+import { uid } from '.';
 
 export const $subscriber = persistentAtom<Subscription>(
   'subscriberStore',
