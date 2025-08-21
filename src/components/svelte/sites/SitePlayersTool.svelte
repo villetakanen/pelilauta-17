@@ -1,5 +1,4 @@
 <script lang="ts">
-import type { CyanToggleButton } from '@11thdeg/cyan-next';
 import { addNotification } from '@firebase/client/notifications';
 import { uid } from '@stores/session';
 import ProfileLink from '@svelte/app/ProfileLink.svelte';

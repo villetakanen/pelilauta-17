@@ -1,5 +1,4 @@
 <script lang="ts">
-import type { CnCard } from '@11thdeg/cyan-next';
 import type { Thread } from '@schemas/ThreadSchema';
 import { uid } from '@stores/session';
 import { hasSeen } from '@stores/subscription';

@@ -1,5 +1,4 @@
 ---
-import '@11thdeg/cyan-next/dist/style.css';
 import 'src/overrides.css';
 import { ClientRouter } from 'astro:transitions';
 import { t } from '@utils/i18n';
@@ -71,14 +70,6 @@ const ogImage = image || `${Astro.url.origin}favicons/fox-ico-512.png`;
 
   <!-- Astro Transitions -->
   <ClientRouter />
-
-  <!-- Import Design System Web Components -->
-  <script>
-    import '@11thdeg/cyan-next'
-    import '../../../../cn-dice/src/cn-dice'
-    import '../../../../cn-lightbox/src/cn-lightbox'
-    import '../../../../cn-story-clock/src'
-  </script>
 
   <!-- Service Worker -->
   <ServiceWorker />

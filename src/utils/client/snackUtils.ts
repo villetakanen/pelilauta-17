@@ -1,4 +1,3 @@
-import type { SnackbarMessage } from '@11thdeg/cyan-next';
 import { type LocaleSubstitutions, t } from '@utils/i18n';
 
 function _toMessage(

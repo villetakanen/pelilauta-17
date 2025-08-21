@@ -15,13 +15,6 @@ const statsInGroup = $derived.by(() => {
   return $character.sheet.stats.filter((stat) => stat.group === group);
 });
 
-// Dynamic import of the Lit element for code splitting
-onMount(async () => {
-  await import(
-    '../../../../../cn-d20-ability-score/src/cn-d20-ability-score.ts'
-  );
-});
-
 function formatStatValue(stat: CharacterStat): string {
   switch (stat.type) {
     case 'number':

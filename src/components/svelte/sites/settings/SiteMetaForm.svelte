@@ -1,5 +1,4 @@
 <script lang="ts">
-import type { CyanToggleButton } from '@11thdeg/cyan-next';
 import type { Site } from '@schemas/SiteSchema';
 import { update } from '@stores/site';
 import { pushSnack } from '@utils/client/snackUtils';

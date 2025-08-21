@@ -1,9 +1,4 @@
 <script lang="ts">
-import {
-  type CnIcon,
-  type CnListItem,
-  CnSortableList,
-} from '@11thdeg/cyan-next';
 import { onMount } from 'svelte';
 
 interface Props {

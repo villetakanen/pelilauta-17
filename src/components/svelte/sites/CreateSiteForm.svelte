@@ -1,5 +1,4 @@
 <script lang="ts">
-import type { CyanToggleButton } from '@11thdeg/cyan-next';
 import type { Site } from '@schemas/SiteSchema';
 import { uid } from '@stores/session';
 import WithAuth from '@svelte/app/WithAuth.svelte';

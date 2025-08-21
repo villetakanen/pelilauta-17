@@ -1,5 +1,4 @@
 ---
-import '@11thdeg/cyan-next/dist/style.css'; // Import the Design System CSS
 import 'src/overrides.css'; // Import your custom CSS
 
 // No view transitions from the editors
@@ -24,14 +23,6 @@ const canonicalURL = Astro.url.origin;
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{metaTitle}</title>
-
-  <!-- Import Design System Web Components -->
-  <script>
-    import '@11thdeg/cyan-next'
-    import '../../../../cn-dice/src/cn-dice'
-    import '../../../../cn-editor/src/cn-editor'
-    import '../../../../cn-lightbox/src/cn-lightbox'
-  </script>
 
   <link rel="manifest" href="/manifest.webmanifest" />
   <link rel="canonical" href={canonicalURL} />

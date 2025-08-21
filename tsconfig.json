@@ -1,13 +1,6 @@
 {
   "extends": "astro/tsconfigs/strict",
-  "exclude": [
-    "node_modules",
-    "dist",
-    "e2e",
-    "cn-dice/dist",
-    "cn-editor/dist",
-    "cn-lightbox/dist"
-  ],
+  "exclude": ["node_modules", "dist", "e2e"],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {

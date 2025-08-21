@@ -1,5 +1,4 @@
 <script lang="ts">
-import { CyanToggleButton } from '@11thdeg/cyan-next';
 import { updateCharacterSheet } from '@firebase/client/characterSheets/updateCharacterSheet';
 import {
   type CharacterStat,

@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@11thdeg/cyan-next':
-        specifier: 1.3.1
-        version: 1.3.1
       '@astrojs/check':
         specifier: ^0.9.4
         version: 0.9.4(typescript@5.8.3)
@@ -167,9 +164,6 @@ importers:
         version: 7.3.0
 
 packages:
-
-  '@11thdeg/cyan-next@1.3.1':
-    resolution: {integrity: sha512-o3vroWUJ/eaA7/TkvRlzfrvhLZX+3B14BQVwlMytj7SCpwrv6DnPVpU5kcq/1mhMV7JHq7Y3DNVuj4pNE1HGZA==}
 
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
@@ -3591,10 +3585,6 @@ packages:
     resolution: {integrity: sha512-aMKprgk5YhBNyH25hj8wGt2+D52Sw1DRRIzqBwLp2Ya9mFmY8KPvvtvmna8SxVR9JMZ4kzMD68N22vlaRpkeFA==}
     engines: {node: '>=8'}
 
-  connect@1.9.2:
-    resolution: {integrity: sha512-6Z9RPjQOHjaI47gK385djHVv7SEkRm1Y9AAvBhiI7gSXpO5sFktTkAD+dkbcaiEo2xaNlS1KIJU3XRxqbPLx6w==}
-    deprecated: connect 1.x series is deprecated
-
   consola@3.4.2:
     resolution: {integrity: sha512-5IKcdX0nnYavi6G7TtOhwkYzyjfJlatbjMjuLSfE2kYT5pMDOilZ4OvMhi637CcDICTmz3wARPoyhqyX1Y+XvA==}
     engines: {node: ^14.18.0 || >=16.10.0}
@@ -4094,11 +4084,6 @@ packages:
     resolution: {integrity: sha512-/kP8CAwxzLVEeFrMm4kMmy4CCDlpipyA7MYLVrdJIkV0fYF0UaigQHRsxHiuY/GEea+bh4KSv3TIlgr+2UL6bw==}
     engines: {node: '>=12.0.0'}
 
-  express@2.5.11:
-    resolution: {integrity: sha512-gc3jJ0P3Bh1Zjkxe0ICSNmjhDvYWKiXfQIdDWuRPr8S4IZAZexzJHjrzNz56LsRKHTL0OiXQq602GfwZjZ8xPQ==}
-    deprecated: express 2.x series is deprecated
-    hasBin: true
-
   extend@3.0.2:
     resolution: {integrity: sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==}
 
@@ -4243,11 +4228,6 @@ packages:
   formdata-polyfill@4.0.10:
     resolution: {integrity: sha512-buewHzMvYL29jdeQTVILecSaZKnt/RJWjoZCF5OW60Z67/GmSLBkOFM7qh1PI3zFNtJbaZL5eQu1vLfazOwj4g==}
     engines: {node: '>=12.20.0'}
-
-  formidable@1.0.17:
-    resolution: {integrity: sha512-95MFT5qipMvUiesmuvGP1BI4hh5XWCzyTapiNJ/k8JBQda7rPy7UCWYItz2uZEdTgGNy1eInjzlL9Wx1O9fedg==}
-    engines: {node: '>=0.8.0'}
-    deprecated: 'Please upgrade to latest, formidable@v2 or formidable@v3! Check these notes: https://bit.ly/2ZEqIau'
 
   forwarded-parse@2.1.2:
     resolution: {integrity: sha512-alTFZZQDKMporBH77856pXgzhEzaUVmLCDk+egLgIgHst3Tpndzz8MnKe+GzRJRfvVdn69HhpW7cmXzvtLvJAw==}
@@ -5413,9 +5393,6 @@ packages:
     resolution: {integrity: sha512-xRc4oEhT6eaBpU1XF7AjpOFD+xQmXNB5OVKwp4tqCuBpHLS/ZbBDrc07mYTDqVMg6PfxUjjNp85O6Cd2Z/5HWA==}
     engines: {node: '>= 0.6'}
 
-  mime@1.2.4:
-    resolution: {integrity: sha512-u4y8WFj7SnfbHxyzCMSV2nL/GKbfZ+lidPf1V4/XUKCJ49N6ttQWp/xnqpbMQEx3naBSt93i2qtPLFj/mjPDaA==}
-
   mime@3.0.0:
     resolution: {integrity: sha512-jSCU7/VB1loIWBZe14aEYHU/+1UMEHoaO7qxCOVJOw9GgH72VAWppxNcjU+x9a2k3GSIBXNKxXQFqRvvZ7vr3A==}
     engines: {node: '>=10.0.0'}
@@ -5470,10 +5447,6 @@ packages:
   minizlib@3.0.2:
     resolution: {integrity: sha512-oG62iEk+CYt5Xj2YqI5Xi9xWUeZhDI8jjQmC5oThVH5JGCTgIjr7ciJDzC7MBzYd//WvR1OTmP5Q38Q8ShQtVA==}
     engines: {node: '>= 18'}
-
-  mkdirp@0.3.0:
-    resolution: {integrity: sha512-OHsdUcVAQ6pOtg5JYWpCBo9W/GySVuwvP9hueRMW7UqshC0tbfzLv8wjySTPm3tfUZ/21CE9E1pJagOA91Pxew==}
-    deprecated: Legacy versions of mkdirp are no longer supported. Please update to mkdirp 1.x. (Note that the API surface has changed to use Promises in 1.x.)
 
   mkdirp@3.0.1:
     resolution: {integrity: sha512-+NsyUUAZDmo6YVHzL/stxSu3t9YS1iljliy3BSDrXJ/dkn1KYdmtZODGGjLcc9XLgVVpH4KshHB8XmZgMhaBXg==}
@@ -5962,9 +5935,6 @@ packages:
     resolution: {integrity: sha512-l1jNAspIBSFqbT+y+5FosojNpVpF94nlI+wDUpqP9enwOTfHx9f0gh5nB96vl+6yTpsJsypeNrwfzPrKuHB41A==}
     engines: {node: '>=8'}
 
-  qs@0.4.2:
-    resolution: {integrity: sha512-VAtfWeUtlBOnGiWFok2vOIMmwumiLmpqXDcXQcAEIQmLYgDbjrkHrcFBfth+YVDeRsz7jX44dhJr7IBJR0t/FQ==}
-
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
 
@@ -6337,9 +6307,6 @@ packages:
     resolution: {integrity: sha512-UOPtVuYkzYGee0Bd2Szz8d2G3RfMfJ2t3qVdZUAozZyAk+a0Sxa+QKix0YCwjL/A1RR0ar44nCxaoN9FxdJGwA==}
     engines: {node: '>= 18'}
 
-  solid@0.2.1:
-    resolution: {integrity: sha512-kVdiCZd2dMH7ESvmHrEZuOUgjADW2nWjiDzyhgPfC79i6UnZyzyspaMbpjxPh1JTul6Zh3bLocY9FaFY/ikyKA==}
-
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
@@ -6544,9 +6511,6 @@ packages:
 
   text-hex@1.0.0:
     resolution: {integrity: sha512-uuVGNWzgJ4yhRaNSiubPY7OjISw4sw4E5Uv0wbjp+OzcbmVU/rsT8ujgcXJhn9ypzsgr5vlzpPqP+MBBKcGvbg==}
-
-  thermos@0.1.0:
-    resolution: {integrity: sha512-1sYrbXxpUJyoBpPlDzXpiB4uS8OzwPL+C/chT58X8gD+EpQpIeLOAYEBx/JnCDIKa53ur9WYMvYEuAjbXwr8UQ==}
 
   through@2.3.8:
     resolution: {integrity: sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg==}
@@ -7488,13 +7452,6 @@ packages:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
 snapshots:
-
-  '@11thdeg/cyan-next@1.3.1':
-    dependencies:
-      '@types/node': 22.15.23
-      lit: 3.3.0
-      solid: 0.2.1
-      turndown: 7.2.0
 
   '@ampproject/remapping@2.3.0':
     dependencies:
@@ -11769,12 +11726,6 @@ snapshots:
       write-file-atomic: 3.0.3
       xdg-basedir: 4.0.0
 
-  connect@1.9.2:
-    dependencies:
-      formidable: 1.0.17
-      mime: 3.0.0
-      qs: 0.4.2
-
   consola@3.4.2: {}
 
   conventional-changelog-angular@7.0.0:
@@ -12359,13 +12310,6 @@ snapshots:
 
   expect-type@1.2.1: {}
 
-  express@2.5.11:
-    dependencies:
-      connect: 1.9.2
-      mime: 1.2.4
-      mkdirp: 0.3.0
-      qs: 0.4.2
-
   extend@3.0.2: {}
 
   external-editor@3.1.0:
@@ -12570,8 +12514,6 @@ snapshots:
   formdata-polyfill@4.0.10:
     dependencies:
       fetch-blob: 3.2.0
-
-  formidable@1.0.17: {}
 
   forwarded-parse@2.1.2: {}
 
@@ -14021,9 +13963,8 @@ snapshots:
     dependencies:
       mime-db: 1.54.0
 
-  mime@1.2.4: {}
-
-  mime@3.0.0: {}
+  mime@3.0.0:
+    optional: true
 
   mimic-fn@2.1.0: {}
 
@@ -14064,8 +14005,6 @@ snapshots:
   minizlib@3.0.2:
     dependencies:
       minipass: 7.1.2
-
-  mkdirp@0.3.0: {}
 
   mkdirp@3.0.1: {}
 
@@ -14535,8 +14474,6 @@ snapshots:
   pupa@2.1.1:
     dependencies:
       escape-goat: 2.1.1
-
-  qs@0.4.2: {}
 
   queue-microtask@1.2.3: {}
 
@@ -15076,11 +15013,6 @@ snapshots:
 
   smol-toml@1.3.4: {}
 
-  solid@0.2.1:
-    dependencies:
-      express: 2.5.11
-      thermos: 0.1.0
-
   source-map-js@1.2.1: {}
 
   source-map-support@0.5.21:
@@ -15337,8 +15269,6 @@ snapshots:
   text-extensions@2.4.0: {}
 
   text-hex@1.0.0: {}
-
-  thermos@0.1.0: {}
 
   through@2.3.8: {}
 
