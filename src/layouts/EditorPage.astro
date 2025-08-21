@@ -1,0 +1,34 @@
+---
+import EditorHead from '@server/BaseHead/EditorHead.astro';
+import Snackbar from '@server/app/Snackbar.astro';
+import AppBar from 'src/components/server/AppBar.astro';
+import AppRail from 'src/components/server/AppRail.astro';
+
+const { title, shortTitle, description } = Astro.props;
+---
+
+<html lang="fi">
+  <EditorHead title={title} description={description} />
+  <body>
+
+    <!-- Modal top bar (with back-link) -->
+    <AppBar title={title} shortTitle={shortTitle} modal>
+      <slot name="app-bar" />
+    </AppBar>
+
+    <!-- We will not show the botton bar on mobile for editor views -->
+
+    <!-- AppRail is always shown on desktop, it does not take that much space -->
+    <AppRail />
+
+  <!-- The main application content area -->
+    <main>
+    <!-- The main content area is expected to contain a form with .content-editor class -->
+    <slot />
+  </main>
+
+    <!-- Editor does not have the tailer - so we need to import snackbar here -->
+    <Snackbar />
+
+  </body>
+</html>

@@ -1,0 +1,143 @@
+---
+import type { Channel } from '@schemas/ChannelSchema';
+import { type Thread, parseThread } from '@schemas/ThreadSchema';
+import ForumOnboardingArticle from '@svelte/threads/ForumOnboardingArticle.svelte';
+import { t } from '@utils/i18n';
+import { logDebug, logError } from '@utils/logHelpers';
+import ChannelInfoSection from './ChannelInfoSection.astro';
+import PaginationToolbar from './PagingToolbar.astro';
+import ThreadListItem from './ThreadListItem.astro';
+
+/**
+ * Channel application component that displays a paginated list of threads
+ * for a specific channel with server-side rendering.
+ */
+export interface Props {
+  /** Channel data to display */
+  channel: Channel;
+  /** Starting position for pagination (1-based) */
+  startAt: number;
+}
+
+const { channel, startAt } = Astro.props;
+const origin = Astro.url.origin;
+
+let threads: Thread[] = [];
+let lastThreadFlowTime = 0;
+let hasNextPage = false;
+let hasError = false;
+
+// Set appropriate cache headers
+if (startAt === 1) {
+  Astro.response.headers.set(
+    'Cache-Control',
+    'public, max-age=300, s-maxage=600',
+  );
+} else {
+  Astro.response.headers.set(
+    'Cache-Control',
+    'public, max-age=60, s-maxage=120',
+  );
+}
+
+try {
+  const queryString =
+    startAt > 1
+      ? `${origin}/api/threads.json?channel=${channel.slug}&limit=10&startAt=${startAt}`
+      : `${origin}/api/threads.json?channel=${channel.slug}&limit=10`;
+
+  logDebug('ChannelApp', 'Fetching threads:', queryString);
+
+  const threadListResponse = await fetch(queryString);
+
+  if (!threadListResponse.ok) {
+    throw new Error(`Failed to fetch threads: ${threadListResponse.status}`);
+  }
+
+  const threadsJSON = await threadListResponse.json();
+
+  if (!Array.isArray(threadsJSON)) {
+    throw new Error('Invalid response format: expected array');
+  }
+
+  threads = threadsJSON.map((thread: Thread) =>
+    parseThread(thread, thread.key),
+  );
+  lastThreadFlowTime = threads[threads.length - 1]?.flowTime || 0;
+  hasNextPage = threads.length === 10;
+
+  logDebug('ChannelApp', 'Loaded threads:', threads.length);
+} catch (error) {
+  logError('ChannelApp', 'Failed to load threads:', error);
+  hasError = true;
+}
+---
+
+<div class="content-columns">
+  <div class="column-l">
+    <ForumOnboardingArticle client:only="svelte" />
+    
+    <main class="surface" role="main">
+      <header class="toolbar px-2">
+        <nav aria-label="Breadcrumb">
+          <ol class="toolbar list-none">
+            <li>
+              <a href="/channels/" class="text-link">{t('threads:forum.title')}</a>
+            </li>
+            <li>
+              <cn-icon noun="chevron-left" small aria-hidden="true"></cn-icon>
+            </li>
+            <li aria-current="page">
+              <span>{channel.name}</span>
+            </li>
+          </ol>
+        </nav>
+      </header>
+
+      <PaginationToolbar
+        channel={channel}
+        lastThreadFlowTime={lastThreadFlowTime}
+        hasNextPage={hasNextPage}
+      />
+
+      {hasError ? (
+        <section class="p-4 text-center" role="alert">
+          <cn-icon noun="warning" size="2rem" class="text-error mb-2" aria-hidden="true"></cn-icon>
+          <p class="text-error mb-2">{t('errors:loading.threads')}</p>
+          <button 
+            onclick="window.location.reload()" 
+            class="btn btn-secondary"
+          >
+            {t('actions:retry')}
+          </button>
+        </section>
+      ) : threads.length === 0 ? (
+        <section class="p-4 text-center">
+          <cn-icon noun="message" size="2rem" class="text-light mb-2" aria-hidden="true"></cn-icon>
+          <p class="text-light">{t('threads:empty.channel')}</p>
+          <p class="text-caption mt-1">{t('threads:empty.channelHint')}</p>
+        </section>
+      ) : (
+        <section class="p-2" aria-label={t('threads:list.label')}>
+          <ul class="list-none p-0 m-0">
+            {threads.map((thread: Thread) => (
+              <li>
+                <ThreadListItem thread={thread} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <PaginationToolbar
+        channel={channel}
+        lastThreadFlowTime={lastThreadFlowTime}
+        hasNextPage={hasNextPage}
+      />
+    </main>
+  </div>
+
+  <aside class="column-s">
+    <ChannelInfoSection channel={channel} startAt={startAt} />
+  </aside>
+</div>

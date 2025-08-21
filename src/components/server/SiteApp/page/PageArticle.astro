@@ -1,0 +1,33 @@
+---
+import type { Page } from '@schemas/PageSchema';
+import type { Site } from '@schemas/SiteSchema';
+import PageArticleFooter from './PageArticleFooter.astro';
+
+interface Props {
+  page: Page;
+  site: Site;
+}
+const { site, page } = Astro.props as Props;
+const elevation = site.posterURL ? 'surface' : 'elevation-1';
+---
+
+<article 
+  class={`column-l ${elevation}`} 
+  style="padding: calc(4 * var(--cn-grid))">
+
+  <div 
+    style="min-height: 70dvh" 
+    set:html={page.htmlContent}>
+  </div>
+
+  <!-- Display page tags if any -->
+  {page.tags ? <div class="toolbar justify-start">
+    {page.tags.map((tag) => (
+      <a href={`/tags/${tag.toLowerCase()}`} class="cn-tag">{tag}</a>
+    ))} 
+  </div> : ''}
+
+  <PageArticleFooter page={page} site={site}/>
+</article>
+
+ 

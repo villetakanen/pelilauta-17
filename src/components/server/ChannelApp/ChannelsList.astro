@@ -1,0 +1,50 @@
+---
+import type { Channel } from '@schemas/ChannelSchema';
+import ForumOnboardingArticle from '@svelte/threads/ForumOnboardingArticle.svelte';
+import ChannelInfoRow from './ChannelInfoRow.astro';
+
+/**
+ * Takes in Channels[] and prints a section for each category
+ * */
+interface Props {
+  channels: Channel[];
+}
+
+const { channels } = Astro.props;
+
+function categories(): string[] {
+  return Array.from(
+    new Set(channels.map((channel: Channel) => channel.category)),
+  ) as string[];
+}
+
+function inCategory(cat: string) {
+  return channels.filter((channel: Channel) => channel.category === cat);
+}
+---
+<div class="content-columns">
+  <div class="column-l">
+    <ForumOnboardingArticle client:only="svelte"/>
+
+    { categories().map((cat: string) => (
+      <div class="surface pb-1 mb-2">
+        <h3 class="m-0 downscaled header-4 elevation-1 p-1">{cat}</h3>
+        <div class="grid my-1">
+          { inCategory(cat).map((channel: Channel) => (
+            <ChannelInfoRow channel={channel} />   
+          )) }
+        </div>
+      </div>
+    )) }
+    <div class="flex items-center p-2">
+      <cn-icon noun="discussion" xlarge />
+    </div>
+  </div>
+</div>
+
+<style>
+.grid {
+  grid-template-columns: calc(var(--cn-icon-size) + var(--cn-grid)) 3fr 2fr;
+  gap: var(--cn-gap);
+}
+</style>

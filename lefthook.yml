@@ -1,0 +1,14 @@
+pre-push:
+  commands:
+    check:
+      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
+      run: npx @biomejs/biome check --no-errors-on-unmatched --files-ignore-unknown=true {push_files}
+    test:unit:
+      glob: '*.{ts,js,{spec,test}.{ts,js}}'
+      run: >
+        npx vitest --run
+
+commit-msg:
+  scripts:
+    "commitlint.sh":
+      runner: bash

@@ -1,0 +1,56 @@
+---
+import type { Channel } from '@schemas/ChannelSchema';
+import { type Thread, ThreadSchema } from '@schemas/ThreadSchema';
+import PofileLink from '@svelte/app/ProfileLink.svelte';
+import { toDisplayString } from '@utils/contentHelpers';
+import { t } from '@utils/i18n';
+import { logError } from '@utils/logHelpers';
+
+// Server-island fething the the thread with greatest createdAt value and the thread with greatest updatedAt value
+export interface Props {
+  channel: Channel;
+}
+const { channel } = Astro.props;
+
+let latestThread: Thread | null = null;
+let latestUpdatedThread: Thread | null = null;
+
+try {
+  const latestThreadResponse = await fetch(
+    `${Astro.url.origin}/api/threads.json?channel=${channel.slug}&sort=createdAt&limit=1`,
+  );
+  const latestUpdatedThreadResponse = await fetch(
+    `${Astro.url.origin}/api/threads.json?channel=${channel.slug}&sort=flowtime&limit=1`,
+  );
+
+  latestThread = ThreadSchema.parse(
+    ((await latestThreadResponse.json()) as Array<Thread>)[0],
+  );
+
+  latestUpdatedThread = ThreadSchema.parse(
+    ((await latestUpdatedThreadResponse.json()) as Array<Thread>)[0],
+  );
+} catch (error) {
+  logError('Error fetching latest thread:', error);
+}
+---
+<div style="min-width: 0; overflow-x: hidden;" class="p-1">
+  {latestThread && (
+    <p class="text-caption m-0">{t('threads:channel.latest.createdAt')}</p>
+    <p class="downscaled m-0 mb-1 no-text-wrap">
+      <a href={`/threads/${latestThread.key}}`} >{latestThread?.title}</a><br/>
+      {toDisplayString(latestThread?.createdAt)} - <PofileLink uid={latestThread.owners[0]} client:only="svelte"/>
+    </p>
+  )}
+  {latestUpdatedThread && latestUpdatedThread.key !== latestThread?.key && (
+    <div class="border-t my-1"></div>
+    <p class="text-caption m-0">{t('threads:channel.latest.flowTime')}</p>
+    <p class="downscaled m-0 mb-1 no-text-wrap">
+      <a href={`/threads/${latestUpdatedThread.key}`}>{latestUpdatedThread?.title}</a><br/>
+      {toDisplayString(latestUpdatedThread?.updatedAt)} - <PofileLink uid={latestUpdatedThread.owners[0]} client:only="svelte"/>
+    </p>
+  )}
+  {(latestUpdatedThread?.key === latestThread?.key && (
+    <p class="text-caption m-0">{t('threads:channel.latest.latestIsNewest')}</p>
+  )) }
+</div>

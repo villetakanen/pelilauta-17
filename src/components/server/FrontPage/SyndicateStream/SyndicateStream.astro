@@ -1,0 +1,66 @@
+---
+import { t } from '@utils/i18n';
+import { logError } from '@utils/logHelpers';
+import Parser from 'rss-parser';
+import SyndicatePost from './SyndicatePost.astro';
+
+type RSSItem = {
+  title: string;
+  link: string;
+  pubDate: string;
+  contentSnippet: string;
+};
+
+let posts: RSSItem[] = [];
+let posts2: RSSItem[] = [];
+
+try {
+  // We want to grab the myrrys.com RSS feed and post the latest 3 posts in this stream.
+  const parser = new Parser();
+  const feed = await parser.parseURL('https://www.myrrys.com/blog/rss.xml');
+  posts = feed.items.slice(0, 3) as RSSItem[];
+  posts.sort(
+    (a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime(),
+  );
+
+  // We want to grab the https://roolipelitiedotus.fi/feed/ RSS feed and post the latest 3 posts in this stream.
+  const parser2 = new Parser();
+  const feed2 = await parser2.parseURL('https://roolipelitiedotus.fi/feed/');
+  posts2 = feed2.items.slice(0, 3) as RSSItem[];
+} catch (e) {
+  logError(e);
+}
+---
+<div class="column-s flex flex-col">
+  <div style="position:relative">
+    <h3 class="downscaled mb-1">
+      <cn-icon noun="myrrys-scarlet"></cn-icon>
+      Myrrys.com
+    </h3>
+    <img src="/myrrys-proprietary/letl/letl_gm_screen_splash-690.webp" alt="Myrrys logo" class="w-16-9 poster" />
+    {posts.map((post:RSSItem) => <SyndicatePost post={post} /> )}
+
+    <div class="toolbar justify-center">
+      <a href="https://myrrys.com" class="text button">
+        {t('actions:readMore')}
+      </a>
+    </div>
+  </div>
+
+  <div class="text-center py-1">
+    <cn-icon noun="d20" large></cn-icon><br/>
+  </div>
+
+  <div>
+  <h3 class="downscaled mt-1 mb-1">
+    <img src="https://roolipelitiedotus.fi/wp-content/uploads/2018/07/logonayte-150x150.png" class="icon">
+    Roolipelitiedotus.fi</h3>
+    {posts2.map((post) => <SyndicatePost post={post} /> )}
+
+    <div class="toolbar justify-center">
+      <a href="https://roolipelitiedotus.fi" class="text button">
+        {t('actions:readMore')}
+      </a>
+    </div>
+  </div>
+</div>

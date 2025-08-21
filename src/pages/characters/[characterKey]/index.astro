@@ -1,0 +1,72 @@
+---
+import { getCharacter } from '@firebase/server/characters/getCharacter';
+import Page from '@layouts/Page.astro';
+import type { Character } from '@schemas/CharacterSchema';
+import { type Site, SiteSchema } from '@schemas/SiteSchema';
+import BackgroundPoster from '@server/ui/BackgroundPoster.astro';
+import CharacterApp from '@svelte/characters/CharacterApp/CharacterApp.svelte';
+import { t } from '@utils/i18n';
+import { logError } from '@utils/logHelpers';
+import { verifySession } from '@utils/server/auth/verifySession';
+
+const { characterKey } = Astro.params;
+
+const hasSession = await verifySession(Astro);
+
+if (!hasSession) {
+  // Note: characters are for logged-in users only
+  Astro.redirect(`/login?redirect=/characters/${characterKey}`);
+}
+
+let character: Character | undefined;
+let site: Site | undefined;
+
+// Fetch character data
+try {
+  character = await getCharacter(characterKey);
+} catch (error) {
+  logError(error, 'Failed to get character', { characterKey });
+  if (error instanceof Error && error.message.includes('not_found')) {
+    Astro.redirect('/404');
+  } else {
+    Astro.redirect('/500');
+  }
+}
+
+// If we have siteKey, fetch the site data
+if (character?.siteKey) {
+  // Fetch site data if character has a siteKey
+  try {
+    const siteResponse = await fetch(
+      `${Astro.url.origin}/api/sites/${character.siteKey}`,
+    );
+    site = SiteSchema.parse(await siteResponse.json());
+  } catch (error) {
+    logError(error, 'Failed to fetch site data', {
+      siteKey: character?.siteKey,
+    });
+    // If site data fetch fails, we can still render the character without site info
+    site = undefined;
+  }
+}
+
+// Lets see if we have a background image for the character
+const poster = character?.avatar || site?.posterURL || undefined;
+
+const title = `${t('app:shortname')} – ${t('characters:character.title')}`;
+const shortTitle = t('characters:character.title');
+const description = t('characters:character.description');
+---
+<Page
+  title={title}
+  shortTitle={shortTitle}
+  description={description}
+  >
+    {character && <CharacterApp {characterKey} client:only="svelte"/>}
+    {poster && (
+      <BackgroundPoster
+        src={poster}
+        slot="app-background-poster"
+      />
+    )}
+</Page>

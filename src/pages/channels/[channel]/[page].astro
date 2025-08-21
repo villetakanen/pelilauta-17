@@ -1,0 +1,58 @@
+---
+import PageWithTray from '@layouts/PageWithTray.astro';
+import { parseChannel } from '@schemas/ChannelSchema';
+import ChannelApp from '@server/ChannelApp/ChannelApp.astro';
+import ChannelTray from '@server/ChannelApp/ChannelTray.astro';
+import DeferredSection from '@server/app/DeferredSection.astro';
+import BackgroundPoster from '@server/ui/BackgroundPoster.astro';
+import ChannelFabs from '@svelte/threads/ChannelFabs.svelte';
+import { t } from '@utils/i18n';
+
+const channelKey = Astro.params.channel || 'pelilauta';
+const page = Astro.params.page ? Number(Astro.params.page) : 1;
+
+const origin = Astro.url.origin;
+const channelsResponse = await fetch(`${origin}/api/meta/channels.json`);
+const channels = await channelsResponse.json();
+const channeldata = channels.find(
+  (channel: { slug: string }) => channel.slug === channelKey,
+);
+
+if (!channeldata) {
+  Astro.response.status = 404;
+  Astro.response.headers.set(
+    'Cache-Control',
+    's-maxage=60, stale-while-revalidate',
+  );
+  return;
+}
+
+const channel = parseChannel(channeldata);
+const title = `${t('app:shortname')} - ${channel.name}`;
+const shortTitle = channel.name;
+---
+<PageWithTray title={title} shortTitle={shortTitle} description={channel.description}>
+
+  <!-- This loads the channel contents from the server based on channel metadata and
+       the desired start page. 
+  -->
+  <ChannelApp channel={channel} startAt={page} server:defer>
+    <DeferredSection class="column-l" slot="fallback"/>
+  </ChannelApp>
+
+  <ChannelTray slot="app-tray" server:defer>
+    <cn-loader noun="discussion" x-large slot="fallback"/>
+  </ChannelTray>
+
+  <ChannelFabs client:only="svelte" slot="fab-tray"/>
+
+  <BackgroundPoster
+      slot="app-background-poster"
+      src="/myrrys-proprietary/juno-viinikka/juno-viinikka-dragon-2.webp"
+      md="/myrrys-proprietary/juno-viinikka/juno-viinikka-dragon-2-960.webp"
+    />
+  
+  <p class="text-caption text-center" style="opacity:0.44" slot="app-footer-credits">
+    Taustakuva © Juno Viinikka (<a href="https://linktr.ee/junowski">https://linktr.ee/junowski</a>)
+  </p>
+</PageWithTray>

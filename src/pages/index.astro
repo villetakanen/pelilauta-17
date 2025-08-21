@@ -1,0 +1,37 @@
+---
+import SyndicateStream from '@server/FrontPage/SyndicateStream/SyndicateStream.astro';
+import TopSitesStream from '@server/FrontPage/TopSitesStream.astro';
+import TopThreadsStream from '@server/FrontPage/TopThreadsStream.astro';
+import DeferredSection from '@server/app/DeferredSection.astro';
+import BackgroundPoster from '@server/ui/BackgroundPoster.astro';
+import FrontpageFabs from '@svelte/frontpage/FrontpageFabs.svelte';
+import Page from 'src/layouts/Page.astro';
+
+// Set a short cache time for the front page
+Astro.response.headers.set(
+  'Cache-Control',
+  's-maxage=1, stale-while-revalidate',
+);
+---
+<Page title={import.meta.env.PUBLIC_APP_NAME} noSharing>
+    <div class="content-columns">
+      
+      <TopThreadsStream/>
+      
+      <SyndicateStream server:defer>
+        <DeferredSection class="column-s" slot="fallback" />
+      </SyndicateStream>
+
+      <TopSitesStream />
+
+    </div>
+    <FrontpageFabs client:only="svelte" slot="fab-tray"/>
+    <BackgroundPoster
+      slot="app-background-poster"
+      src="/myrrys-proprietary/juno-viinikka/juno-viinikka-dragon-1.webp"
+      md="/myrrys-proprietary/juno-viinikka/juno-viinikka-dragon-1-960.webp"
+    />
+    <p class="text-caption text-center" style="opacity:0.44" slot="app-footer-credits">
+      Taustakuva © Juno Viinikka (<a href="https://linktr.ee/junowski">https://linktr.ee/junowski</a>)
+    </p>
+</Page>

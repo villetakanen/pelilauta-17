@@ -1,0 +1,38 @@
+---
+import type { Page } from '@schemas/PageSchema';
+import type { Site } from '@schemas/SiteSchema';
+import { toDisplayString } from '@utils/contentHelpers';
+import { t } from '@utils/i18n';
+
+interface Props {
+  page: Page;
+  site: Site;
+}
+
+const { page, site } = Astro.props as Props;
+
+const showLicenseAsLink = site.license?.startsWith('cc') as boolean;
+const showLicenseAsText = !showLicenseAsLink && site.license !== '0';
+---
+<footer class="downscaled toolbar border-t mt-2">
+
+  <p class="m-0 p-0">
+    {toDisplayString(page.flowTime)}
+  </p>
+  
+  {showLicenseAsText && <p>
+    {t('site:license.forText')} {t('site:license.' + site.license)} {site.license}
+  </p>}
+  {showLicenseAsLink && <p>
+    <a href={t('site:license.links.' + site.license)} target="_blank" rel="noopener noreferrer">
+      {t('site:license.forText')} 
+      {t('site:license.' + site.license)}
+    </a>
+  </p>}
+
+  <p class="m-0 p-0">
+    <a href={`/sites/${site.key}/${page.key}/history`}>
+      {t('site:page.history.title')}
+    </a>
+  </p>
+</footer>

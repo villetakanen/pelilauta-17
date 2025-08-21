@@ -1,0 +1,67 @@
+---
+import type { Thread } from '@schemas/ThreadSchema';
+import ProfileLink from '@svelte/app/ProfileLink.svelte';
+import ReactionButton from '@svelte/app/ReactionButton.svelte';
+import CardSubscription from '@svelte/frontpage/CardSubscription.svelte';
+import { toDisplayString } from '@utils/contentHelpers';
+import { marked } from 'marked';
+
+export interface Props {
+  thread: Thread;
+  noun: string;
+}
+
+const { thread, noun } = Astro.props;
+
+const poster = thread.poster
+  ? thread.poster
+  : thread.images && thread.images.length > 0
+    ? thread.images[0].url
+    : undefined;
+
+const md = thread.markdownContent || '';
+const snippet = await marked(md.slice(0, 220));
+---
+
+<div style="flex-basis: auto; width: 100%">
+  <cn-card 
+    href={`/threads/${thread.key}`} 
+    title={thread.title} 
+    cover={poster} 
+    elevation="1" 
+    {noun}
+    id={`thread-card-${thread.key}`} 
+  >
+    <div class="downscaled">
+      <Fragment set:html={snippet} />
+    </div>
+
+    <div slot="actions" class="toolbar items-center">
+      <div class="grow downscaled">
+        <p class="m-0 px-1">
+          <ProfileLink uid={thread.owners[0]} client:only="svelte" /> 
+          <br />
+          {toDisplayString(thread.flowTime)}
+        </p>
+      </div>
+
+      <ReactionButton
+        key={thread.key}
+        title={thread.title}
+        target="thread"
+        client:only="svelte" />
+      <CardSubscription thread={thread} client:only="svelte"/>
+
+      <div>
+        <a href={`/threads/${thread.key}#discussion`} class="decoration-none">
+          <div class="flex align-center">
+            <cn-icon noun="send" small />
+            <span class="text-caption decoration-none">
+              {thread.replyCount || 0}
+            </span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </cn-card>
+</div>

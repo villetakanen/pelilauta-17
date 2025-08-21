@@ -1,0 +1,45 @@
+---
+import { t } from '@utils/i18n';
+import { version } from 'package.json';
+import ActiveUsersWidget from './ActiveUsersWidget.astro';
+---
+
+<footer class="AppFooter content-columns border-t">
+  <section class="column-s flex flex-col align-center justify-center">
+    <cn-icon noun="fox" xlarge style="color:var(--chroma-surface-70);align-self: center;"/>
+    <p class="caption text-center mb-0">
+      {t('app:shortname')}<br>
+      <a href="/docs/80-release-notes">{version}</a></p>
+      <p class="caption text-center mt-0">
+        <a href="/rss/threads.xml">RSS</a>
+      </p>
+      <div class="text-caption">
+        <slot name="app-footer-credits" />
+      </div>
+  </section>
+  <section class="column-s">
+    <h4>{t('app:footer.links.title')}</h4>
+    <ul>
+      <li>
+        <a href="https://myrrys.com">Myrrys</a>
+      </li>
+      <li>
+        <a href="https://discord.gg/c5bAGzNKZz">Roolipelifoorumi -discord</a>
+      </li>
+      <li>
+        <a href="https://discord.gg/2MHBhzw">Roolipelit -discord</a>
+      </li>
+      <li>
+        <a href="https://roolipelitiedotus.fi/">Roolipelitiedotus</a>
+      </li>
+      <li>
+        <a href="https://lollo.ilmatar.net/index.php?title=Etusivu">L&L OGL Wiki</a>
+      </li>
+    </ul>
+  </section>
+
+  <section class="column-s">
+    <ActiveUsersWidget /> 
+  </section>
+  
+</footer>

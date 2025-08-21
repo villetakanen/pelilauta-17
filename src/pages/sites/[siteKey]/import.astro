@@ -1,0 +1,36 @@
+---
+import ModalPage from '@layouts/ModalPage.astro';
+import { parseSite } from '@schemas/SiteSchema';
+import ImportApp from '@svelte/sites/import/ImportApp.svelte';
+import { toClientEntry } from '@utils/client/entryUtils';
+import { t } from '@utils/i18n';
+
+interface Props {
+  siteKey: string;
+}
+const { siteKey } = Astro.params;
+
+// if no siteKey is provided, redirect to 404
+if (!siteKey) {
+  return Astro.redirect('/404');
+}
+
+// Fetch site data from the api
+const siteResponse = await fetch(`${Astro.url.origin}/api/sites/${siteKey}`);
+if (siteResponse.status === 404) {
+  return Astro.redirect('/404');
+}
+const siteData = await siteResponse.json();
+const site = parseSite(toClientEntry(siteData), siteKey);
+const title = `${site.name} – ${t('site:import.title')}`;
+
+if (!site) {
+  return Astro.redirect('/404');
+}
+---
+<ModalPage
+  title={title}
+  description={site.description}
+>
+  <ImportApp site={site} client:only="svelte"/>
+</ModalPage>

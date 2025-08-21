@@ -1,0 +1,29 @@
+---
+import Page from '@layouts/Page.astro';
+import ChannelsApp from '@server/ChannelApp/ChannelsApp.astro';
+import DeferredSection from '@server/app/DeferredSection.astro';
+import BackgroundPoster from '@server/ui/BackgroundPoster.astro';
+import FrontpageFabs from '@svelte/frontpage/FrontpageFabs.svelte';
+import { t } from '@utils/i18n';
+
+const title = `${t('app:shortname')} - ${t('threads:forum.title')}`;
+const description = t('threads:forum.description');
+---
+<Page title={title} description={description}>
+
+  <ChannelsApp server:defer>
+    <DeferredSection class="column-l" noun="discussion" slot="fallback"/>
+  </ChannelsApp>
+
+  <FrontpageFabs client:only="svelte" slot="fab-tray"/>
+
+  <BackgroundPoster
+      slot="app-background-poster"
+      src="/myrrys-proprietary/juno-viinikka/juno-viinikka-dragon-2.webp"
+      md="/myrrys-proprietary/juno-viinikka/juno-viinikka-dragon-2-960.webp"
+    />
+  
+  <p class="text-caption text-center" style="opacity:0.44" slot="app-footer-credits">
+    Taustakuva © Juno Viinikka (<a href="https://linktr.ee/junowski">https://linktr.ee/junowski</a>)
+  </p>
+</Page>

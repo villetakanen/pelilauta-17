@@ -1,0 +1,28 @@
+---
+import EulaDialog from '@svelte/eula/EulaDialog.svelte';
+import EulaContent from 'src/docs/03-eula.md';
+/**
+ * All the scripts and elements that should be included in the very end of the document
+ */
+---
+<cn-snackbar />
+
+<script is:inline>
+// On load, we want to see, if there is a snackbar message in session storage for the MPA
+window.addEventListener('load', () => {
+  const message = JSON.parse(sessionStorage.getItem('snack'));
+  if (message) {
+    console.debug('Dispatching snackbar message', message);
+    window.dispatchEvent(new CustomEvent('cn-snackbar-add', { detail: message }));
+    sessionStorage.removeItem('snack');
+  }
+});
+</script>
+
+<div id="base-tail">
+  <slot />
+</div>
+
+<EulaDialog client:only="svelte">
+  <EulaContent />
+</EulaDialog>

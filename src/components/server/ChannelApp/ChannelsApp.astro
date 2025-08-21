@@ -1,0 +1,13 @@
+---
+import { ChannelsSchema } from '@schemas/ChannelSchema';
+import ChannelsList from './ChannelsList.astro';
+
+// Lets fetch the channels from the API
+const origin = new URL(Astro.request.url).origin;
+// Fetch site data from the api
+const channelsResponse = await fetch(`${origin}/api/meta/channels.json`);
+const channelsData = await channelsResponse.json();
+
+const channels = ChannelsSchema.parse(channelsData);
+---
+<ChannelsList channels={channels} />

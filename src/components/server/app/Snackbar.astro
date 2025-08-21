@@ -1,0 +1,13 @@
+<cn-snackbar />
+
+<script is:inline>
+// On load, we want to see, if there is a snackbar message in session storage for the MPA
+window.addEventListener('load', () => {
+  const message = JSON.parse(sessionStorage.getItem('snack'));
+  if (message) {
+    console.debug('Dispatching snackbar message', message);
+    window.dispatchEvent(new CustomEvent('cn-snackbar-add', { detail: message }));
+    sessionStorage.removeItem('snack');
+  }
+});
+</script>

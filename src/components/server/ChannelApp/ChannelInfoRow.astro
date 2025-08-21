@@ -1,0 +1,32 @@
+---
+import type { Channel } from '@schemas/ChannelSchema';
+import ChannelListInfoCell from './channelList/ChannelListInfoCell.astro';
+import ChannelListInfoCellLoading from './channelList/ChannelListInfoCellLoading.astro';
+
+interface Props {
+  channel: Channel;
+}
+const { channel } = Astro.props;
+---
+
+  <cn-icon class="m-1" noun={channel.icon} ></cn-icon>
+    
+  <div>
+    <h4 class="downscaled m-0">
+      <a href={`/channels/${channel.slug}/1`}>{channel.name}</a>
+    </h4>
+    <p class="m-0 downscaled">{channel.description}</p>
+  </div>
+    
+  <!--div class="downscaled">
+    <p class="m-0 mb-0">
+      {channel.threadCount}&nbsp;
+      <cn-icon xsmall noun="discussion" ></cn-icon>
+      <br />
+      {toDisplayString(channel.flowTime)}
+    </p>
+  </div-->
+
+<ChannelListInfoCell {channel}>
+  <ChannelListInfoCellLoading slot="fallback" />
+</ChannelListInfoCell>  

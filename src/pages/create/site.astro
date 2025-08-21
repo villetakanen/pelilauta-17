@@ -1,0 +1,12 @@
+---
+import ModalPage from '@layouts/ModalPage.astro';
+import CreateSiteForm from '@svelte/sites/CreateSiteForm.svelte';
+import { t } from '@utils/i18n';
+
+const title = `${t('app:shortname')} – ${t('site:create.title')}`;
+const shortTitle = t('site:create.title');
+---
+
+<ModalPage title={title} shortTitle={shortTitle}>
+  <CreateSiteForm client:only="svelte" />
+</ModalPage>

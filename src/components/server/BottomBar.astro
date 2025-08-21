@@ -1,0 +1,51 @@
+---
+import SettingNavigationButton from '@svelte/app/SettingNavigationButton.svelte';
+import InboxNavigationButton from '@svelte/inbox/InboxNavigationButton.svelte';
+import { t } from 'src/utils/i18n';
+
+const currentPath = Astro.url.pathname;
+
+type RailItem = {
+  label?: string;
+  href: string;
+  icon: string;
+};
+
+const rail: Array<RailItem> = [
+  {
+    href: '/',
+    icon: 'fox',
+  },
+  {
+    href: '/channels',
+    icon: 'discussion',
+    label: t('navigation:threads'),
+  },
+  {
+    href: '/library',
+    icon: 'books',
+    label: t('navigation:library'),
+  },
+];
+---
+<div id="nav-bar-shader"></div>
+<nav id="nav-bar">
+    {
+        rail.map((item) => {
+          const isActive = currentPath === item.href
+          return (
+            <a href={item.href}>
+              <cn-navigation-icon
+                active={isActive}
+                noun={item.icon}
+                label={item.label}
+                checked={currentPath === item.href}
+              />
+            </a>
+          )
+        })
+      }
+  <InboxNavigationButton client:only="svelte" />
+  <SettingNavigationButton client:only="svelte"/>
+</nav>
+

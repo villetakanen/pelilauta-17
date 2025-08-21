@@ -1,0 +1,13 @@
+---
+import ModalPage from '@layouts/ModalPage.astro';
+import CreateCharacterForm from '@svelte/characters/CreateCharacterForm.svelte';
+import { t } from '@utils/i18n';
+
+const title = `${t('app:shortname')} – ${t('characters:create.title')}`;
+const shortTitle = t('site:create.title');
+const siteKey = Astro.url.searchParams.get('siteKey') || '';
+---
+
+<ModalPage title={title} shortTitle={shortTitle}>
+  <CreateCharacterForm siteKey={siteKey} client:only="svelte" />
+</ModalPage>

@@ -1,0 +1,40 @@
+---
+import BottomBar from '@server/BottomBar.astro';
+import AppFooter from '@server/app/AppFooter.astro';
+import AppBar from 'src/components/server/AppBar.astro';
+import AppRail from 'src/components/server/AppRail.astro';
+import BaseHead from '../components/server/BaseHead/BaseHead.astro';
+import BaseTail from '../components/server/BaseTail.astro';
+
+type Props = {
+  title?: string;
+  shortTitle?: string;
+  description?: string;
+  image?: string;
+  noSharing?: boolean;
+};
+
+const { title, description, image, shortTitle, noSharing } = Astro.props;
+---
+
+<html lang="fi">
+  <BaseHead {title} {description} {image} {noSharing}/>
+  <body>
+    <AppBar title={title} shortTitle={shortTitle} noSharing={noSharing}>
+      <slot name="app-bar" />
+    </AppBar>
+    <AppRail />
+    <BottomBar />
+	  <main>
+      <slot />
+      <AppFooter>
+        <slot name="app-footer-credits" slot="app-footer-credits"/>
+      </AppFooter>
+    </main>
+    <nav id="fab-tray">
+      <slot name="fab-tray"></slot>
+    </nav>
+    <slot name="app-background-poster" />
+    <BaseTail />
+  </body>
+</html>

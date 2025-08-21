@@ -1,0 +1,24 @@
+---
+import ModalPage from '@layouts/ModalPage.astro';
+import { parseSite } from '@schemas/SiteSchema';
+import DeleteClockApp from '@svelte/sites/DeleteClockApp.svelte';
+import { toClientEntry } from '@utils/client/entryUtils';
+
+interface Props {
+  id: string;
+  siteKey: string;
+}
+const { id, siteKey } = Astro.params;
+
+const origin = new URL(Astro.request.url).origin;
+const siteResponse = await fetch(`${origin}/api/sites/${siteKey}`);
+
+if (siteResponse.status === 404) {
+  return Astro.redirect('/404');
+}
+
+const site = parseSite(toClientEntry(await siteResponse.json()), siteKey);
+---
+<ModalPage>
+  <DeleteClockApp site={site} key={id} client:only="svelte"/-->
+</ModalPage>

@@ -1,0 +1,25 @@
+---
+import Page from '@layouts/Page.astro';
+import ConfirmCharacterDeletion from '@svelte/characters/ConfirmCharacterDeletion.svelte';
+import { t } from '@utils/i18n';
+import { verifySession } from '@utils/server/auth/verifySession';
+
+const { characterKey } = Astro.params;
+
+const user = await verifySession(Astro);
+
+if (!user) {
+  Astro.redirect(`/login?redirect=/characters/${characterKey}`);
+}
+
+const title = `${t('actions:delete')} – ${t('characters:character.title')}`;
+const shortTitle = t('characters:character.title');
+const description = t('characters:character.description');
+---
+<Page
+  title={title}
+  shortTitle={shortTitle}
+  description={description}
+  >
+    { (characterKey && user) ? <ConfirmCharacterDeletion {characterKey} client:only/> : null }
+</Page>

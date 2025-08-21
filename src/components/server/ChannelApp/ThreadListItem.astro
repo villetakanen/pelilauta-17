@@ -1,0 +1,50 @@
+---
+import type { Thread } from '@schemas/ThreadSchema';
+import ProfileLink from '@svelte/app/ProfileLink.svelte';
+import ThreadSubsciber from '@svelte/threads/ThreadSubscriber.svelte';
+import { toDisplayString } from '@utils/contentHelpers';
+import { t } from '@utils/i18n';
+
+interface Props {
+  thread: Thread;
+}
+const { thread } = Astro.props;
+---
+<article class="tl-grid hoverable" id={`thread-${thread.key}`}>
+  <ThreadSubsciber thread={thread} client:only="svelte" />
+
+  <!-- Grid col 1 -->
+  <div>
+    <h4 class="downscaled m-0">
+      <a href={`/threads/${thread.key}`} class="no-decoration">
+        {thread.title}
+      </a>
+    </h4>
+    <p class="text-caption m-0">
+      <ProfileLink uid={thread.author} client:only="svelte"/>
+      {thread.tags?.map((tag) => (
+        <span class="pill">
+          {tag}
+        </span>
+      ))}
+    </p>
+  </div>
+
+  <!-- Grid col 2 -->
+  <div class="text-caption m-0 border-left">
+    <a href={`/threads/${thread.key}#discussion`}>
+      {t('threads:info.flowTime', { time: toDisplayString(thread.flowTime) })}<br>
+      {t('threads:info.replies', { count: thread.replyCount || 0 })}
+    </a>
+  </div>
+
+</article>
+
+<style>
+@media (min-width: 621px) {
+  .tl-grid {
+    display: grid;
+    grid-template-columns: 3fr 1fr 
+  }
+}
+</style>

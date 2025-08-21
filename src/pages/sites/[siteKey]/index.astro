@@ -1,0 +1,57 @@
+---
+import { parsePage } from '@schemas/PageSchema';
+import { parseSite } from '@schemas/SiteSchema';
+import PageApp from '@server/SiteApp/PageApp.astro';
+import SiteTray from '@server/SiteApp/SiteTray.astro';
+import BackgroundPoster from '@server/ui/BackgroundPoster.astro';
+import PageFabs from '@svelte/sites/PageFabs.svelte';
+import { toClientEntry } from '@utils/client/entryUtils';
+import { logError } from '@utils/logHelpers';
+import { systemToNoun } from '@utils/schemaHelpers';
+import PageWithTray from 'src/layouts/PageWithTray.astro';
+
+const { siteKey: siteKeyParam } = Astro.params;
+const siteKey = siteKeyParam || 'mekanismi'; // This should not happen, but just in case
+
+const origin = new URL(Astro.request.url).origin;
+
+// Fetch site data from the api
+const siteResponse = await fetch(`${origin}/api/sites/${siteKey}`);
+if (siteResponse.status === 404) {
+  return Astro.redirect('/404');
+}
+
+const site = parseSite(toClientEntry(await siteResponse.json()), siteKey);
+const homePageKey = site.homepage || site.key;
+
+// Fetch page data from the api
+const pageResponse = await fetch(
+  `${origin}/api/sites/${siteKey}/pages/${homePageKey}.json`,
+);
+
+// We get some sentry errors when the page is not found, so we need to handle this
+// gracefully. This should not happen unless someone is crawling random adresses, but just in case.
+if (pageResponse.status === 404) {
+  logError(
+    `Page ${homePageKey} not found for site ${siteKey}. Redirecting to 404.`,
+  );
+  return Astro.redirect('/404');
+}
+
+const page = parsePage(toClientEntry(await pageResponse.json()), homePageKey);
+
+const noun = systemToNoun(site.system);
+const image = site.avatarURL || site.posterURL || site.backgroundURL;
+---
+<PageWithTray
+  title={site.name}
+  noun={noun}
+  description={site.description}
+  image={image}>
+  <SiteTray slot="app-tray" site={site}/>
+  <PageApp site={site} page={page} />
+  <PageFabs pageKey={homePageKey} site={site} client:only="svelte" slot="fab-tray" />
+  { site.backgroundURL && 
+    <BackgroundPoster src={site.backgroundURL} slot="app-background-poster"/>
+  }
+</PageWithTray>

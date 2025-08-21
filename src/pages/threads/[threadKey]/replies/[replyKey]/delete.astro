@@ -1,0 +1,39 @@
+---
+import { serverDB } from '@firebase/server';
+import ModalPage from '@layouts/ModalPage.astro';
+import { REPLIES_COLLECTION, ReplySchema } from '@schemas/ReplySchema';
+import { THREADS_COLLECTION_NAME } from '@schemas/ThreadSchema';
+import ReplyDeleteSection from '@svelte/discussion/ReplyDeleteSection.svelte';
+import { toClientEntry } from '@utils/client/entryUtils';
+import { t } from '@utils/i18n';
+const { threadKey, replyKey } = Astro.params;
+
+if (!threadKey || !replyKey) {
+  throw new Error('threadKey/replyKey is required');
+}
+
+const replyData = await serverDB
+  .collection(THREADS_COLLECTION_NAME)
+  .doc(threadKey)
+  .collection(REPLIES_COLLECTION)
+  .doc(replyKey)
+  .get();
+
+if (!replyData.exists) {
+  return Astro.redirect('/404');
+}
+
+const reply = ReplySchema.parse(
+  toClientEntry({
+    ...replyData.data(),
+    key: replyData.id,
+  }),
+);
+---
+<ModalPage title={t('threads:discussion.delete.reply')}>
+  <ReplyDeleteSection
+    threadKey={threadKey}
+    {reply}
+    client:only="svelte"
+  />
+</ModalPage>

@@ -1,0 +1,36 @@
+---
+import EditorPage from '@layouts/EditorPage.astro';
+import { type Channel, ChannelSchema } from '@schemas/ChannelSchema';
+import ThreadEditorForm from '@svelte/thread-editor/ThreadEditorForm.svelte';
+import { t } from '@utils/i18n';
+import { verifySession } from '@utils/server/auth/verifySession';
+
+// Ensure we have a logged-in user before proceeding
+const session = await verifySession(Astro);
+
+if (!session) {
+  return Astro.redirect(
+    `/login?redirect=${encodeURIComponent(Astro.url.pathname)}`,
+  );
+}
+
+const title = `${t('app:shortname')} – ${t('actions:create.thread')}`;
+const shortTitle = t('actions:create.thread');
+const channel = Astro.url.searchParams.get('channel') || undefined;
+
+// Fetch channels from the server
+const channelsResponse = await fetch(
+  `${Astro.url.origin}/api/meta/channels.json`,
+);
+const channelsData = await channelsResponse.json();
+const channels = channelsData.map((channel: Partial<Channel>) =>
+  ChannelSchema.parse(channel),
+);
+---
+
+<EditorPage title={title} shortTitle={shortTitle}>
+  <ThreadEditorForm
+    topic={channel}
+    channels={channels}
+    client:only="svelte"/>
+</EditorPage>

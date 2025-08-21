@@ -1,0 +1,11 @@
+---
+import PageWithTray from '@layouts/PageWithTray.astro';
+import AdminTray from '@svelte/admin/AdminTray.svelte';
+import SiteAdmin from '@svelte/admin/SitesAdmin.svelte';
+
+const visible = import.meta.env.SECRET_FEATURE_FLAG_Admin_tools === 'true';
+---
+<PageWithTray title="Admin" description="Admin tools for pelilauta">
+  <AdminTray client:only="svelte" slot="app-tray" showLocalTools={visible} /> 
+  <SiteAdmin client:only="svelte" />
+</PageWithTray>

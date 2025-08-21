@@ -1,0 +1,10 @@
+---
+import Page from '@layouts/Page.astro';
+import { t } from '@utils/i18n';
+import SiteListColumn from 'src/components/server/SiteList/SiteListColumn.astro';
+---
+<Page title={t('site:siteList.title')}>
+  <div class="content-columns">
+    <SiteListColumn />
+  </div>
+</Page>

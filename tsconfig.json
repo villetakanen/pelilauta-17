@@ -1,0 +1,28 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "exclude": [
+    "node_modules",
+    "dist",
+    "e2e",
+    "cn-dice/dist",
+    "cn-editor/dist",
+    "cn-lightbox/dist"
+  ],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@utils/*": ["src/utils/*"],
+      "@server/*": ["src/components/server/*"],
+      "@shared/*": ["src/components/shared/*"],
+      "@schemas/*": ["src/schemas/*"],
+      "@layouts/*": ["src/layouts/*"],
+      "@stores/*": ["src/stores/*"],
+      "@firebase/*": ["src/firebase/*"],
+      "@svelte/*": ["src/components/svelte/*"]
+    },
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js",
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false
+  }
+}

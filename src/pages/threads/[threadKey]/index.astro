@@ -1,0 +1,38 @@
+---
+import { ThreadSchema } from '@schemas/ThreadSchema';
+import DiscussionApp from '@server/DiscussionApp/DiscussionApp.astro';
+import ThreadArticle from '@server/ThreadsApp/ThreadArticle.astro';
+import ThreadInfoSection from '@server/ThreadsApp/ThreadInfoSection.astro';
+import { createSnippet } from '@utils/contentHelpers';
+import { t } from '@utils/i18n';
+import Page from 'src/layouts/Page.astro';
+
+const { threadKey } = Astro.params;
+
+if (!threadKey) {
+  return Astro.redirect('/404');
+}
+// Fetch the tread data from the API
+const threadResponse = await fetch(
+  `${Astro.url.origin}/api/threads/${threadKey}.json`,
+);
+
+if (!threadResponse.ok) {
+  return Astro.redirect('/404');
+}
+
+// We can expect the Thread to be in client-side format, so
+// we'll simply parse it to verify the structure.
+const thread = ThreadSchema.parse(await threadResponse.json());
+
+const title = `${t('app:shortname')} - ${thread.channel}`;
+
+const snippet = createSnippet(thread.markdownContent || '');
+---
+<Page title={title} description={snippet}>
+  <div class="content-columns">
+    <ThreadArticle thread={thread} />
+    <ThreadInfoSection thread={thread} />
+  </div>
+  <DiscussionApp thread={thread} />
+</Page>

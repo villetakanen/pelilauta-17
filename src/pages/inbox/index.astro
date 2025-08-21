@@ -1,0 +1,7 @@
+---
+import ModalPage from '@layouts/ModalPage.astro';
+import InboxApp from '@svelte/inbox/InboxApp.svelte';
+---
+<ModalPage>
+  <InboxApp client:only="svelte" />
+</ModalPage>

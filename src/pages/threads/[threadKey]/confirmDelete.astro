@@ -1,0 +1,26 @@
+---
+import ModalPage from '@layouts/ModalPage.astro';
+import { parseThread } from '@schemas/ThreadSchema';
+import ConfirmDeleteThread from '@svelte/threads/ConfirmDeleteThread.svelte';
+import { toClientEntry } from '@utils/client/entryUtils';
+
+const { threadKey } = Astro.params;
+// Fetch site data from the api
+const threadResponse = await fetch(
+  `${Astro.url.origin}/api/threads/${threadKey}.json`,
+);
+
+if (threadResponse.status === 404) {
+  return Astro.redirect('/404');
+}
+const threadData = await threadResponse.json();
+
+const thread = parseThread(toClientEntry(threadData), threadKey);
+
+if (!threadKey) {
+  throw new Error('threadKey is required');
+}
+---
+<ModalPage>
+  <ConfirmDeleteThread {thread} client:only="svelte" />
+</ModalPage>

@@ -1,0 +1,51 @@
+---
+import Page from '@layouts/Page.astro';
+import type { Tag } from '@schemas/TagSchema';
+import ProfileLink from '@svelte/app/ProfileLink.svelte';
+import { t } from '@utils/i18n';
+
+const { tag } = Astro.params;
+
+if (!tag) {
+  return Astro.redirect('/404');
+}
+
+const origin = new URL(Astro.request.url).origin;
+
+// Fetch site data from the api
+const tagResponse = await fetch(`${origin}/api/tags/${tag}.json`);
+
+if (tagResponse.status === 404) {
+  return Astro.redirect('/404');
+}
+
+const tagData = await tagResponse.json();
+const entries = tagData.entries as Tag[];
+
+function parseUrl(tag: Tag) {
+  if (tag.type === 'page') {
+    return `/sites/${tag.key}`;
+  }
+  return `/threads/${tag.key}`;
+}
+---
+
+<Page title={`#${tag}`} description="A list of threads with this tag">
+  <div class="content-columns">
+    <article>
+      <h2>{t('tag:title', {tag: tag})}</h2>
+
+      <ul>
+        {entries.map((entry) => (
+        <li class="flex items-center">
+          { entry.type === 'page' ? <cn-icon noun="card" small/> : <cn-icon name="discussion" small/> }
+          <span>
+            <a href={parseUrl(entry)}>{entry.title}</a>
+          </span>
+          <ProfileLink uid={entry.author} client:only="svelte"/>
+        </li>
+        ))}
+      </ul>
+    </article>
+  </div>
+</Page>

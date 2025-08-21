@@ -1,0 +1,20 @@
+---
+import PageWithTray from '@layouts/PageWithTray.astro';
+import { parseSite } from '@schemas/SiteSchema';
+import SiteTray from '@server/SiteApp/SiteTray.astro';
+import SiteDataApp from '@svelte/sites/data/SiteDataApp.svelte';
+import { toClientEntry } from '@utils/client/entryUtils';
+
+const { siteKey } = Astro.params;
+
+const siteResponse = await fetch(`${Astro.url.origin}/api/sites/${siteKey}`);
+if (siteResponse.status === 404) {
+  return Astro.redirect('/404');
+}
+
+const site = parseSite(toClientEntry(await siteResponse.json()), siteKey);
+---
+<PageWithTray>
+  <SiteTray slot="app-tray" site={site}/>
+  <SiteDataApp site={site} client:only="svelte" />
+</PageWithTray>

@@ -1,0 +1,27 @@
+---
+import PageWithTray from '@layouts/PageWithTray.astro';
+import LibraryTray from '@server/library/LibraryTray.astro';
+import BackgroundPoster from '@server/ui/BackgroundPoster.astro';
+import CharacterLibraryApp from '@svelte/characters/library/CharacterLibraryApp.svelte';
+import CharacterLibraryFabs from '@svelte/characters/library/CharacterLibraryFabs.svelte';
+import { t } from '@utils/i18n';
+
+const title = `${t('app:shortname')} – ${t('library:characters.title')}`;
+const shortTitle = t('library:characters.title');
+const description = t('library:characters.description');
+---
+
+<PageWithTray title={title} description={description} shortTitle={shortTitle}>
+  <LibraryTray slot="app-tray" />
+  <CharacterLibraryApp client:only="svelte" />
+  <CharacterLibraryFabs client:only="svelte" slot="fab-tray"/>
+  
+  <BackgroundPoster
+      slot="app-background-poster"
+      src="/myrrys-proprietary/juno-viinikka/juno-viinikka-dragon-2.webp"
+      md="/myrrys-proprietary/juno-viinikka/juno-viinikka-dragon-2-960.webp"
+    />
+    <p class="text-caption text-center" style="opacity:0.44" slot="app-footer-credits">
+      Taustakuva © Juno Viinikka (<a href="https://linktr.ee/junowski">https://linktr.ee/junowski</a>)
+    </p>
+</PageWithTray>

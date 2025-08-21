@@ -1,0 +1,40 @@
+---
+import { type Site, SiteSchema } from '@schemas/SiteSchema';
+import SiteCard from '@server/ui/SiteCard.astro';
+import OnboardingCard from '@svelte/frontpage/OnboardingCard.svelte';
+import { t } from '@utils/i18n';
+import { logError } from '@utils/logHelpers';
+
+const siteListResponse = await fetch(`${Astro.url.origin}/api/sites?limit=5`);
+
+let sites: Array<Site> = [];
+
+if (siteListResponse.ok) {
+  // If the response is ok, we parse the JSON
+  // and map it to our Site type
+  sites = (await siteListResponse.json()).map((site: Site) =>
+    SiteSchema.parse(site),
+  );
+} else {
+  // If there was an error, we log it for further investigation. This is likely caused
+  // by Vercel and the Firebase connectivity being flaky. Or us initializing the database
+  // connection in a way that is not compatible with Vercel's serverless functions.
+  logError('Failed to fetch top sites', {
+    status: siteListResponse.status,
+    statusText: siteListResponse.statusText,
+  });
+}
+---
+<section class="column-s">
+  <OnboardingCard client:only="svelte"/>
+  <div class="flex-col">
+    {sites.map((site) => (
+      site && <SiteCard site={site}/>
+    ))}
+  </div>
+  <div class="flex items-center mt-2">
+    <a href="/sites" class="button">
+      {t('actions:showMore')}
+    </a>
+  </div>
+</section>

@@ -1,0 +1,51 @@
+---
+import '@11thdeg/cyan-next/dist/style.css'; // Import the Design System CSS
+import 'src/overrides.css'; // Import your custom CSS
+
+// No view transitions from the editors
+// import { ClientRouter } from 'astro:transitions';
+
+import { t } from '@utils/i18n';
+import ServiceWorker from './ServiceWorker.astro';
+
+type Props = {
+  title?: string;
+  description?: string;
+};
+
+const { title, description } = Astro.props;
+const metaDescription = description || t('app:meta.editor.description');
+const metaTitle = title || t('app:meta..editor.title');
+
+// intentionally break the URL to avoid indexing the editors
+const canonicalURL = Astro.url.origin;
+---
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{metaTitle}</title>
+
+  <!-- Import Design System Web Components -->
+  <script>
+    import '@11thdeg/cyan-next'
+    import '../../../../cn-dice/src/cn-dice'
+    import '../../../../cn-editor/src/cn-editor'
+    import '../../../../cn-lightbox/src/cn-lightbox'
+  </script>
+
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="canonical" href={canonicalURL} />
+  <meta name="theme-color" content="#00304f" />
+  <meta name="color-scheme" content="dark light">
+
+  <!-- Site info -->    
+  <meta name="description" content={metaDescription} />
+  <meta name="generator" content={Astro.generator} />  
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&amp;family=Open+Sans:ital,wght@0,300..800;1,300..800&amp;display=swap" rel="stylesheet">
+
+  <ServiceWorker />
+</head>

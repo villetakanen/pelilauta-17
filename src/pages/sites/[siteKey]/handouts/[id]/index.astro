@@ -1,0 +1,45 @@
+---
+import PageWithTray from '@layouts/PageWithTray.astro';
+import { handoutFrom } from '@schemas/HandoutSchema';
+import { parseSite } from '@schemas/SiteSchema';
+import HandoutApp from '@server/SiteApp/HandoutApp.astro';
+import SiteTray from '@server/SiteApp/SiteTray.astro';
+import BackgroundPoster from '@server/ui/BackgroundPoster.astro';
+import HandoutFabs from '@svelte/sites/handouts/HandoutFabs.svelte';
+import { toClientEntry } from '@utils/client/entryUtils';
+
+interface Props {
+  siteKey: string;
+  id: string;
+}
+const { siteKey, id } = Astro.params;
+const { origin } = new URL(Astro.request.url);
+
+// Fetch site data from the api
+const siteResponse = await fetch(`${origin}/api/sites/${siteKey}`);
+if (siteResponse.status === 404) {
+  return Astro.redirect('/404');
+}
+const site = parseSite(toClientEntry(await siteResponse.json()), siteKey);
+
+// Fetch handout data from the api
+const handoutResponse = await fetch(
+  `${origin}/api/sites/${siteKey}/handouts/${id}.json`,
+);
+if (handoutResponse.status === 404) {
+  return Astro.redirect(`/sites/${siteKey}/handout/`);
+}
+const handout = handoutFrom(
+  toClientEntry(await handoutResponse.json()),
+  id,
+  siteKey,
+);
+---
+<PageWithTray title={handout.title} description={site.description} noun="books" image={site.avatarURL}>
+  <HandoutApp handout={handout} site={site}/>
+  <HandoutFabs handout={handout} site={site} slot="fab-tray" client:only="svelte"/>
+  <SiteTray slot="app-tray" site={site}/>
+  { site.backgroundURL && 
+    <BackgroundPoster src={site.backgroundURL} slot="app-background-poster"/>
+  }
+</PageWithTray>

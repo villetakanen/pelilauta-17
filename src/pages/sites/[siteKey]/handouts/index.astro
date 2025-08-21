@@ -1,0 +1,60 @@
+---
+import PageWithTray from '@layouts/PageWithTray.astro';
+import { type Site, SiteSchema } from '@schemas/SiteSchema';
+import SiteTray from '@server/SiteApp/SiteTray.astro';
+import BackgroundPoster from '@server/ui/BackgroundPoster.astro';
+import HandoutsApp from '@svelte/sites/handouts/HandoutsApp.svelte';
+import HandoutsFabs from '@svelte/sites/handouts/HandoutsFabs.svelte';
+import { t } from '@utils/i18n';
+import { logError, logWarn } from '@utils/logHelpers';
+
+const { siteKey } = Astro.params;
+
+if (!siteKey) {
+  logWarn('HandoutsPage', 'No siteKey provided in params');
+  return Astro.redirect('/404');
+}
+
+let site: Site | null = null;
+
+try {
+  const siteResponse = await fetch(`${Astro.url.origin}/api/sites/${siteKey}`);
+
+  if (siteResponse.status === 404) {
+    logWarn('HandoutsPage', `Site not found: ${siteKey}`);
+    return Astro.redirect('/404');
+  }
+
+  if (!siteResponse.ok) {
+    throw new Error(`Failed to fetch site: ${siteResponse.status}`);
+  }
+
+  // Site data is converted to client-side format at the API level
+  // so we can directly parse it here.
+  const siteData = await siteResponse.json();
+  site = SiteSchema.parse(siteData);
+} catch (error) {
+  logError('HandoutsPage', 'Failed to load site data:', error);
+  return Astro.redirect('/404');
+}
+const title = `${site.name} – ${t('site:handouts.title')}`;
+const description = site.description || t('site:handouts.description');
+const image = site.avatarURL || site.posterURL || site.backgroundURL;
+---
+
+<PageWithTray
+  title={title}
+  description={description}
+  image={image}
+  noun="books"
+  shortTitle={site.name}
+  noSharing={true}
+>
+  <HandoutsApp site={site} client:only="svelte"/>
+  <HandoutsFabs site={site} client:only="svelte" slot="fab-tray"/>
+  <SiteTray site={site} slot="app-tray"/>
+  { site.backgroundURL && 
+    <BackgroundPoster src={site.backgroundURL} slot="app-background-poster"/>
+  }
+
+</PageWithTray>

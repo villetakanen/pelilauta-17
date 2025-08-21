@@ -1,0 +1,46 @@
+---
+import type { Thread } from '@schemas/ThreadSchema';
+import ProfileLink from '@svelte/app/ProfileLink.svelte';
+import ReactionButton from '@svelte/app/ReactionButton.svelte';
+import ThreadInfoActions from '@svelte/threads/ThreadInfoActions.svelte';
+import { toDisplayString } from '@utils/contentHelpers';
+import { t } from '@utils/i18n';
+
+interface Props {
+  thread: Thread;
+}
+
+const { thread } = Astro.props;
+
+const author = `${thread?.owners[0] || ''}`;
+const channel = `${thread?.channel || '-'}`;
+---
+<section class="column-s">
+  <cn-card
+    title={t('threads:info.title')}
+    noun='discussion'
+  >
+    <p>
+      {toDisplayString(thread.flowTime)}
+    </p>
+    <p class="mb-0">
+      <ProfileLink uid={author} client:only="svelte" /> 
+      {t('threads:info.inTopic')}
+      <a href={`/channels/${channel}/1`} class="link">
+        {channel.charAt(0).toUpperCase() + channel.slice(1)}
+      </a>
+      <div slot="actions" class="toolbar items-center">
+        <div class="flex align-center">
+          <cn-icon noun="send" small />
+          <span class="text-caption decoration-none">
+            {thread.replyCount}
+          </span>
+        </div>
+        <ReactionButton target="thread" key={thread.key} 
+          title={thread.title}
+          client:only="svelte" />
+      </div>
+     </p>
+    </cn-card>
+  <ThreadInfoActions {thread} client:only="svelte" />
+</section>
