@@ -1,11 +1,12 @@
+import netlify from '@astrojs/netlify';
 import svelte from '@astrojs/svelte';
-import vercel from '@astrojs/vercel';
 import sentry from '@sentry/astro';
 import { defineConfig } from 'astro/config';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://astro.build/config
 export default defineConfig({
+  // Filter out null values
   integrations: [
     svelte(),
     // Conditionally include Sentry based on the NODE_ENV
@@ -22,11 +23,10 @@ export default defineConfig({
           },
         })
       : null, // Don't include Sentry in development
-  ].filter(Boolean), // Filter out null values
+  ].filter(Boolean),
+
   output: 'server',
-  adapter: vercel({
-    webAnalytics: { enabled: true },
-  }),
+
   vite: {
     optimizeDeps: {
       include: ['nanostores', '@nanostores/persistent'],
@@ -47,4 +47,6 @@ export default defineConfig({
       }),
     ],
   },
+
+  adapter: netlify(),
 });
