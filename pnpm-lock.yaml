@@ -8,6 +8,12 @@ importers:
 
   .:
     dependencies:
+      '@11thdeg/cyan-css':
+        specifier: 4.0.0-beta.4
+        version: 4.0.0-beta.4(@fontsource/open-sans@5.2.6)(lato-font@3.0.0)
+      '@11thdeg/cyan-lit':
+        specifier: 4.0.0-beta.4
+        version: 4.0.0-beta.4
       '@astrojs/check':
         specifier: ^0.9.4
         version: 0.9.4(typescript@5.8.3)
@@ -164,6 +170,15 @@ importers:
         version: 7.3.0
 
 packages:
+
+  '@11thdeg/cyan-css@4.0.0-beta.4':
+    resolution: {integrity: sha512-+0ShKvKja/9omzSry7KK8vyAHmchK/Gdu9dT1VyWpFqyBAqMgQDVCcQd1krIhTMcP/dkE0nRbrFJ4KrREqULrA==}
+    peerDependencies:
+      '@fontsource/open-sans': '*'
+      lato-font: '*'
+
+  '@11thdeg/cyan-lit@4.0.0-beta.4':
+    resolution: {integrity: sha512-uOyzRtz7P+rnw7yiivUH2s8br+mdOv8pCWZKLSzAumNtay9mpKbAiKFKcXQxfvBn8tLVCE8oG/P0+T+UOfb1iA==}
 
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
@@ -1688,6 +1703,9 @@ packages:
 
   '@firebase/webchannel-wrapper@1.0.3':
     resolution: {integrity: sha512-2xCRM9q9FlzGZCdgDMJwc0gyUkWFtkosy7Xxr6sFgQwn+wMNIWd7xIvYNauU1r64B5L5rsGKy/n9TKJ0aAFeqQ==}
+
+  '@fontsource/open-sans@5.2.6':
+    resolution: {integrity: sha512-mnfnUmBWQ+J220gqbibbzmKcc1kawV+lb3/Pspzu+Opnxza12oUffIg0ufG8g+3j1fnSznEWgyNV40MjtmJj6g==}
 
   '@google-cloud/firestore@7.11.1':
     resolution: {integrity: sha512-ZxOdH8Wr01hBDvKCQfMWqwUcfNcN3JY19k1LtS1fTFhEyorYPLsbWN+VxIRL46pOYGHTPkU3Or5HbT/SLQM5nA==}
@@ -4978,6 +4996,9 @@ packages:
     resolution: {integrity: sha512-weT+r0kTkRQdCdYCNtkMwWXQTMEswKrFBkm4ckQOMVhhqhIMI1UT2hMj+1iigIhgSZm5gTmrRXBNoGUgaTY1xA==}
     engines: {node: '>=8'}
 
+  lato-font@3.0.0:
+    resolution: {integrity: sha512-wKhFCh9XX91Lepf38ynnZTNpkQD1OWuXV1RwFgcchUVQZzBixJ/yXCaVCIrNI3CbgT9pLcLzWKgn+6OETzAnug==}
+
   lazystream@1.0.1:
     resolution: {integrity: sha512-b94GiNHQNy6JNTrt5w6zNyffMrNkXZb3KTkCZJb2V1xaEGCk093vkZ2jk3tpaeP33/OiXC+WvK9AxUebnf5nbw==}
     engines: {node: '>= 0.6.3'}
@@ -5061,6 +5082,9 @@ packages:
 
   lit@3.3.0:
     resolution: {integrity: sha512-DGVsqsOIHBww2DqnuZzW7QsuCdahp50ojuDaBPC7jUDRpYoH0z7kHBBYZewRzer75FwtrkmkKk7iOAwSaWdBmw==}
+
+  lit@3.3.1:
+    resolution: {integrity: sha512-Ksr/8L3PTapbdXJCk+EJVB78jDodUMaP54gD24W186zGRARvwrsPfS60wae/SSCTCNZVPd1chXqio1qHQmu4NA==}
 
   locate-character@3.0.0:
     resolution: {integrity: sha512-SW13ws7BjaeJ6p7Q6CO2nchbYEc3X3J6WrmTTDto7yMPqVSZTUyY5Tjbid+Ab8gLnATtygYtiDIJGQRRn2ZOiA==}
@@ -7453,6 +7477,15 @@ packages:
 
 snapshots:
 
+  '@11thdeg/cyan-css@4.0.0-beta.4(@fontsource/open-sans@5.2.6)(lato-font@3.0.0)':
+    dependencies:
+      '@fontsource/open-sans': 5.2.6
+      lato-font: 3.0.0
+
+  '@11thdeg/cyan-lit@4.0.0-beta.4':
+    dependencies:
+      lit: 3.3.1
+
   '@ampproject/remapping@2.3.0':
     dependencies:
       '@jridgewell/gen-mapping': 0.3.8
@@ -9352,6 +9385,8 @@ snapshots:
       tslib: 2.8.1
 
   '@firebase/webchannel-wrapper@1.0.3': {}
+
+  '@fontsource/open-sans@5.2.6': {}
 
   '@google-cloud/firestore@7.11.1':
     dependencies:
@@ -13376,6 +13411,8 @@ snapshots:
     dependencies:
       package-json: 6.5.0
 
+  lato-font@3.0.0: {}
+
   lazystream@1.0.1:
     dependencies:
       readable-stream: 2.3.8
@@ -13465,6 +13502,12 @@ snapshots:
       '@types/trusted-types': 2.0.7
 
   lit@3.3.0:
+    dependencies:
+      '@lit/reactive-element': 2.1.0
+      lit-element: 4.2.0
+      lit-html: 3.3.0
+
+  lit@3.3.1:
     dependencies:
       '@lit/reactive-element': 2.1.0
       lit-element: 4.2.0
