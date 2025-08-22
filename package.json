@@ -11,12 +11,13 @@
     "test": "vitest",
     "check": "biome check --write .",
     "test:e2e": "node e2e/init-test-db.js && playwright test",
-    "generateSW": "SW_DIST_PATH=.vercel/output/static workbox injectManifest workbox.config.cjs",
+    "generateSW": "SW_DIST_PATH=dist workbox injectManifest workbox.config.cjs",
     "backup:storage": "node tooling/backupStorage.js"
   },
   "dependencies": {
+    "@11thdeg/cn-editor": "4.0.0-beta.7",
     "@11thdeg/cyan-css": "4.0.0-beta.4",
-    "@11thdeg/cyan-lit": "4.0.0-beta.4",
+    "@11thdeg/cyan-lit": "4.0.0-beta.5",
     "@astrojs/check": "^0.9.4",
     "@astrojs/netlify": "^6.5.7",
     "@astrojs/rss": "^4.0.12",

@@ -8,12 +8,15 @@ importers:
 
   .:
     dependencies:
+      '@11thdeg/cn-editor':
+        specifier: 4.0.0-beta.7
+        version: 4.0.0-beta.7
       '@11thdeg/cyan-css':
         specifier: 4.0.0-beta.4
         version: 4.0.0-beta.4(@fontsource/open-sans@5.2.6)(lato-font@3.0.0)
       '@11thdeg/cyan-lit':
-        specifier: 4.0.0-beta.4
-        version: 4.0.0-beta.4
+        specifier: 4.0.0-beta.5
+        version: 4.0.0-beta.5
       '@astrojs/check':
         specifier: ^0.9.4
         version: 0.9.4(typescript@5.8.3)
@@ -171,14 +174,17 @@ importers:
 
 packages:
 
+  '@11thdeg/cn-editor@4.0.0-beta.7':
+    resolution: {integrity: sha512-GLa9i1b5+KGGe9XZjVjo38jAG9uqJDECTWtgjqRK4m3yHIubp65z+DTrUPDuSES/sktRdoPPz8KOZMFA7Ty8Iw==}
+
   '@11thdeg/cyan-css@4.0.0-beta.4':
     resolution: {integrity: sha512-+0ShKvKja/9omzSry7KK8vyAHmchK/Gdu9dT1VyWpFqyBAqMgQDVCcQd1krIhTMcP/dkE0nRbrFJ4KrREqULrA==}
     peerDependencies:
       '@fontsource/open-sans': '*'
       lato-font: '*'
 
-  '@11thdeg/cyan-lit@4.0.0-beta.4':
-    resolution: {integrity: sha512-uOyzRtz7P+rnw7yiivUH2s8br+mdOv8pCWZKLSzAumNtay9mpKbAiKFKcXQxfvBn8tLVCE8oG/P0+T+UOfb1iA==}
+  '@11thdeg/cyan-lit@4.0.0-beta.5':
+    resolution: {integrity: sha512-zQS0eOgCMviwD1bVkzgOdKIfQ4UT0aHqWzNl+4S6ecUKN62h8QgGumHTgkdeJ/tLAtHGsD6DvsJjugkEpvHnUg==}
 
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
@@ -2063,8 +2069,14 @@ packages:
   '@lit-labs/ssr-dom-shim@1.3.0':
     resolution: {integrity: sha512-nQIWonJ6eFAvUUrSlwyHDm/aE8PBDu5kRpL0vHMg6K8fK3Diq1xdPjTnsJSwxABhaZ+5eBi1btQB5ShUTKo4nQ==}
 
+  '@lit-labs/ssr-dom-shim@1.4.0':
+    resolution: {integrity: sha512-ficsEARKnmmW5njugNYKipTm4SFnbik7CXtoencDZzmzo/dQ+2Q0bgkzJuoJP20Aj0F+izzJjOqsnkd6F/o1bw==}
+
   '@lit/reactive-element@2.1.0':
     resolution: {integrity: sha512-L2qyoZSQClcBmq0qajBVbhYEcG6iK0XfLn66ifLe/RfC0/ihpc+pl0Wdn8bJ8o+hj38cG0fGXRgSS20MuXn7qA==}
+
+  '@lit/reactive-element@2.1.1':
+    resolution: {integrity: sha512-N+dm5PAYdQ8e6UlywyyrgI2t++wFGXfHx+dSJ1oBrg6FAxUj40jId++EaRm80MKX5JnlH1sBsyZ5h0bcZKemCg==}
 
   '@mapbox/node-pre-gyp@2.0.0':
     resolution: {integrity: sha512-llMXd39jtP0HpQLVI37Bf1m2ADlEb35GYSh1SDSLsBhR+5iCxiNGlT31yqbNtVHygHAtMy6dWFERpU2JgufhPg==}
@@ -5077,8 +5089,14 @@ packages:
   lit-element@4.2.0:
     resolution: {integrity: sha512-MGrXJVAI5x+Bfth/pU9Kst1iWID6GHDLEzFEnyULB/sFiRLgkd8NPK/PeeXxktA3T6EIIaq8U3KcbTU5XFcP2Q==}
 
+  lit-element@4.2.1:
+    resolution: {integrity: sha512-WGAWRGzirAgyphK2urmYOV72tlvnxw7YfyLDgQ+OZnM9vQQBQnumQ7jUJe6unEzwGU3ahFOjuz1iz1jjrpCPuw==}
+
   lit-html@3.3.0:
     resolution: {integrity: sha512-RHoswrFAxY2d8Cf2mm4OZ1DgzCoBKUKSPvA1fhtSELxUERq2aQQ2h05pO9j81gS1o7RIRJ+CePLogfyahwmynw==}
+
+  lit-html@3.3.1:
+    resolution: {integrity: sha512-S9hbyDu/vs1qNrithiNyeyv64c9yqiW9l+DBgI18fL+MTvOtWoFR0FWiyq1TxaYef5wNlpEmzlXoBlZEO+WjoA==}
 
   lit@3.3.0:
     resolution: {integrity: sha512-DGVsqsOIHBww2DqnuZzW7QsuCdahp50ojuDaBPC7jUDRpYoH0z7kHBBYZewRzer75FwtrkmkKk7iOAwSaWdBmw==}
@@ -7477,12 +7495,27 @@ packages:
 
 snapshots:
 
+  '@11thdeg/cn-editor@4.0.0-beta.7':
+    dependencies:
+      '@codemirror/commands': 6.8.1
+      '@codemirror/lang-markdown': 6.3.2
+      '@codemirror/language': 6.11.1
+      '@codemirror/language-data': 6.5.1
+      '@codemirror/state': 6.5.2
+      '@codemirror/view': 6.37.1
+      '@lezer/highlight': 1.2.1
+      codemirror: 6.0.1
+      dompurify: 3.2.6
+      lit: 3.3.0
+      turndown: 7.2.0
+      turndown-plugin-gfm: 1.0.2
+
   '@11thdeg/cyan-css@4.0.0-beta.4(@fontsource/open-sans@5.2.6)(lato-font@3.0.0)':
     dependencies:
       '@fontsource/open-sans': 5.2.6
       lato-font: 3.0.0
 
-  '@11thdeg/cyan-lit@4.0.0-beta.4':
+  '@11thdeg/cyan-lit@4.0.0-beta.5':
     dependencies:
       lit: 3.3.1
 
@@ -9752,9 +9785,15 @@ snapshots:
 
   '@lit-labs/ssr-dom-shim@1.3.0': {}
 
+  '@lit-labs/ssr-dom-shim@1.4.0': {}
+
   '@lit/reactive-element@2.1.0':
     dependencies:
       '@lit-labs/ssr-dom-shim': 1.3.0
+
+  '@lit/reactive-element@2.1.1':
+    dependencies:
+      '@lit-labs/ssr-dom-shim': 1.4.0
 
   '@mapbox/node-pre-gyp@2.0.0':
     dependencies:
@@ -13497,7 +13536,17 @@ snapshots:
       '@lit/reactive-element': 2.1.0
       lit-html: 3.3.0
 
+  lit-element@4.2.1:
+    dependencies:
+      '@lit-labs/ssr-dom-shim': 1.4.0
+      '@lit/reactive-element': 2.1.1
+      lit-html: 3.3.1
+
   lit-html@3.3.0:
+    dependencies:
+      '@types/trusted-types': 2.0.7
+
+  lit-html@3.3.1:
     dependencies:
       '@types/trusted-types': 2.0.7
 
@@ -13509,9 +13558,9 @@ snapshots:
 
   lit@3.3.1:
     dependencies:
-      '@lit/reactive-element': 2.1.0
-      lit-element: 4.2.0
-      lit-html: 3.3.0
+      '@lit/reactive-element': 2.1.1
+      lit-element: 4.2.1
+      lit-html: 3.3.1
 
   locate-character@3.0.0: {}
 

@@ -10,7 +10,7 @@ import { pushSnack } from '@utils/client/snackUtils';
 import { extractTags } from '@utils/contentHelpers';
 import { t } from '@utils/i18n';
 import { logDebug, logError } from '@utils/logHelpers';
-import type { CnEditor } from 'cn-editor/src/cn-editor';
+import type { CnEditor } from '@11thdeg/cn-editor';
 import ChannelSelect from './ChannelSelect.svelte';
 import { submitThreadUpdate } from './submitThreadUpdate';
 

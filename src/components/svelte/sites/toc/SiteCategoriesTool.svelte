@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { CnSortableList, type CnListItem } from '@11thdeg/cyan-lit';
 import { updateSite } from '@firebase/client/site/updateSite';
 import {
   type CategoryRef,

@@ -6,7 +6,7 @@ import {
   update,
 } from '@stores/characters/characterStore';
 import { t } from '@utils/i18n';
-import type { CnEditor } from 'cn-editor/src/cn-editor';
+import type { CnEditor } from '@11thdeg/cn-editor/';
 
 export interface Props {
   characterKey: string;
