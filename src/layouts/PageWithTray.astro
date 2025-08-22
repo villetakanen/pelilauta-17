@@ -1,0 +1,45 @@
+---
+import AppFooter from '../components/server/app/AppFooter.astro';
+import BaseTail from '../components/server/BaseTail.astro';
+import BottomBar from '../components/server/BottomBar.astro';
+import AppBar from '../components/server/AppBar.astro';
+import AppRail from '../components/server/AppRail.astro';
+import BaseHead from '../components/server/BaseHead/BaseHead.astro';
+
+type Props = {
+  title?: string;
+  description?: string;
+  image?: string;
+  noun?: string;
+  shortTitle?: string;
+  noSharing?: boolean;
+};
+
+const { title, description, image, noun, shortTitle, noSharing } = Astro.props;
+---
+
+<html lang="en">
+  <BaseHead title={title} description={description} image={image} {noSharing}/>
+  <body>
+    <AppBar title={title} noun={noun} shortTitle={shortTitle}>
+      <slot name="app-bar" />
+    </AppBar>
+	  <AppRail title={title}/>
+    <BottomBar />
+
+    <cn-tray-button></cn-tray-button> 
+    <nav class="cn-tray">
+      <slot name="app-tray" />
+   </nav>
+   
+	  <main>
+      <div class="view-patch">
+      <slot />
+      </div>
+      <AppFooter />
+    </main>
+    <nav id="fab-tray"><slot name="fab-tray"></slot></nav>
+    <slot name="app-background-poster" />
+    <BaseTail />
+  </body>
+</html>

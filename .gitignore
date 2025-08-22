@@ -31,7 +31,6 @@ server_principal.json
 
 # jetbrains setting folder
 .idea/
-src/layouts/PageWithTray.astro
 
 # Playwright
 auth.json
