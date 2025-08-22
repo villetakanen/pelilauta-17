@@ -1,10 +1,10 @@
 ---
-import PofileLink from 'src/components/svelte/app/ProfileLink.svelte';
 import type { Channel } from 'src/schemas/ChannelSchema';
 import { type Thread, ThreadSchema } from 'src/schemas/ThreadSchema';
 import { toDisplayString } from 'src/utils/contentHelpers';
 import { t } from 'src/utils/i18n';
 import { logError } from 'src/utils/logHelpers';
+import PofileLink from '../../../svelte/app/ProfileLink.svelte';
 
 // Server-island fething the the thread with greatest createdAt value and the thread with greatest updatedAt value
 export interface Props {

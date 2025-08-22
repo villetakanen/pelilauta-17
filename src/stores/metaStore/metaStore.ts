@@ -1,8 +1,8 @@
 import { persistentAtom } from '@nanostores/persistent';
 import { doc, getDoc } from 'firebase/firestore';
 import { onMount } from 'nanostores';
-import { db } from 'src/firebase/client';
 import type { AppMeta } from 'src/schemas/AppMetaSchema';
+import { db } from '../../firebase/client';
 
 export const appMeta = persistentAtom<AppMeta>(
   'app-meta',

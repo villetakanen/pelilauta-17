@@ -1,5 +1,4 @@
 import type { APIContext } from 'astro';
-import { serverDB } from 'src/firebase/server';
 import {
   CHARACTERS_COLLECTION_NAME,
   CharacterSchema,
@@ -7,6 +6,7 @@ import {
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { logError, logWarn } from 'src/utils/logHelpers';
 import { tokenToUid } from 'src/utils/server/auth/tokenToUid';
+import { serverDB } from '../../../firebase/server';
 
 export async function DELETE({
   params,

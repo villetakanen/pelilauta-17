@@ -1,11 +1,11 @@
 ---
-import DiscussionApp from 'src/components/server/DiscussionApp/DiscussionApp.astro';
-import ThreadArticle from 'src/components/server/ThreadsApp/ThreadArticle.astro';
-import ThreadInfoSection from 'src/components/server/ThreadsApp/ThreadInfoSection.astro';
-import Page from 'src/layouts/Page.astro';
 import { ThreadSchema } from 'src/schemas/ThreadSchema';
 import { createSnippet } from 'src/utils/contentHelpers';
 import { t } from 'src/utils/i18n';
+import DiscussionApp from '../../../components/server/DiscussionApp/DiscussionApp.astro';
+import ThreadArticle from '../../../components/server/ThreadsApp/ThreadArticle.astro';
+import ThreadInfoSection from '../../../components/server/ThreadsApp/ThreadInfoSection.astro';
+import Page from '../../../layouts/Page.astro';
 
 const { threadKey } = Astro.params;
 

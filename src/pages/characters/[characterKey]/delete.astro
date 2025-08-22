@@ -1,8 +1,8 @@
 ---
-import ConfirmCharacterDeletion from 'src/components/svelte/characters/ConfirmCharacterDeletion.svelte';
-import Page from 'src/layouts/Page.astro';
 import { t } from 'src/utils/i18n';
 import { verifySession } from 'src/utils/server/auth/verifySession';
+import ConfirmCharacterDeletion from '../../../components/svelte/characters/ConfirmCharacterDeletion.svelte';
+import Page from '../../../layouts/Page.astro';
 
 const { characterKey } = Astro.params;
 

@@ -11,7 +11,7 @@ import type { Thread } from 'src/schemas/ThreadSchema';
  * @param thread
  */
 export async function updateOnNewThread(thread: Thread): Promise<void> {
-  const { serverDB } = await import('src/firebase/server');
+  const { serverDB } = await import('..');
   const channelPath = CHANNELS_META_REF.split('/');
 
   const metadataRef = serverDB.collection(channelPath[0]).doc(channelPath[1]);

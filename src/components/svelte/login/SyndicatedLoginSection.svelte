@@ -25,7 +25,7 @@ async function loginWithGoogle(e: SubmitEvent) {
     const { GoogleAuthProvider, signInWithPopup } = await import(
       'firebase/auth'
     );
-    const { auth } = await import('src/firebase/client');
+    const { auth } = await import('../../../firebase/client');
 
     const provider = new GoogleAuthProvider();
     provider.addScope('email'); // Request email scope

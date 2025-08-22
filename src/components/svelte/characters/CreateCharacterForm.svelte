@@ -5,14 +5,14 @@
  * 2. Press create.
  */
 
-import WithAuth from 'src/components/svelte/app/WithAuth.svelte';
 import type { Character } from 'src/schemas/CharacterSchema';
 import type { CharacterSheet } from 'src/schemas/CharacterSheetSchema';
 import type { Site } from 'src/schemas/SiteSchema';
-import { uid } from 'src/stores/session';
 import { pushSessionSnack, pushSnack } from 'src/utils/client/snackUtils';
 import { t } from 'src/utils/i18n';
 import { logError } from 'src/utils/logHelpers';
+import { uid } from '../../../stores/session';
+import WithAuth from '../app/WithAuth.svelte';
 import CharacterSheetSelect from './CharacterSheetSelect.svelte';
 import SiteSelect from './SiteSelect.svelte';
 

@@ -31,7 +31,7 @@ export async function addReply(
   quoteref?: string,
   files: File[] = [],
 ): Promise<void> {
-  const { db } = await import('src/firebase/client');
+  const { db } = await import('..');
   const {
     serverTimestamp,
     addDoc,

@@ -1,9 +1,9 @@
 <script lang="ts">
-import ProfileLink from 'src/components/svelte/app/ProfileLink.svelte';
-import UserSelect from 'src/components/svelte/app/UserSelect.svelte';
-import { uid } from 'src/stores/session';
 import { t } from 'src/utils/i18n';
+import { uid } from '../../../stores/session';
 import { site, update } from '../../../stores/site';
+import ProfileLink from '../app/ProfileLink.svelte';
+import UserSelect from '../app/UserSelect.svelte';
 
 let selectedUid = $state('-');
 

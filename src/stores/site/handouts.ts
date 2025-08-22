@@ -7,10 +7,10 @@ import {
   handoutFrom,
 } from 'src/schemas/HandoutSchema';
 import { SITES_COLLECTION_NAME } from 'src/schemas/SiteSchema';
-import { uid } from 'src/stores/session';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { toFirestoreEntry } from 'src/utils/client/toFirestoreEntry';
 import { logDebug, logWarn } from 'src/utils/logHelpers';
+import { uid } from '../session';
 import { site } from '.';
 
 export const handouts = atom([] as Handout[]);
@@ -26,7 +26,7 @@ onMount(handouts, () => {
 });
 
 async function subscribe(key: string) {
-  const { db } = await import('src/firebase/client');
+  const { db } = await import('../../firebase/client');
   const { collection, onSnapshot, query } = await import('firebase/firestore');
 
   if (site.get()?.owners.includes(uid.get())) {

@@ -6,8 +6,8 @@ import {
   type Subscription,
   SubscriptionSchema,
 } from 'src/schemas/SubscriberSchema';
-import { uid } from 'src/stores/session';
 import { logDebug, logError, logWarn } from 'src/utils/logHelpers';
+import { uid } from '../session';
 
 /**
  * # Subscription Store
@@ -39,7 +39,7 @@ import { logDebug, logError, logWarn } from 'src/utils/logHelpers';
  * ## Usage in Svelte Components
  *
  * ```typescript
- * import { subscription, hasSeen } from 'src/stores/subscription';
+ * import { subscription, hasSeen } from './';
  *
  * // In component
  * const hasUserSeen = $derived($hasSeen('thread-123', 1640995200000));

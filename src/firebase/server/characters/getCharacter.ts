@@ -32,7 +32,7 @@ export async function getCharacter(
   }
 
   try {
-    const { serverDB } = await import('src/firebase/server');
+    const { serverDB } = await import('..');
 
     const docRef = serverDB.collection(CHARACTERS_COLLECTION_NAME).doc(key);
     const docSnapshot = await docRef.get();

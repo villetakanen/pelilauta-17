@@ -1,6 +1,6 @@
 <script lang="ts">
-import { anonymous } from 'src/stores/session';
 import { t } from 'src/utils/i18n';
+import { anonymous } from '../../../stores/session';
 </script>
 {#if $anonymous}
   <article class="mb-2 surface secondary">

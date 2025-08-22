@@ -4,8 +4,8 @@ import {
   SITES_COLLECTION_NAME,
   type Site,
 } from 'src/schemas/SiteSchema';
-import { uid } from 'src/stores/session';
 import { logDebug } from 'src/utils/logHelpers';
+import { uid } from '../../../stores/session';
 
 /**
  * Creates a new site in the database, returns the key of the new site

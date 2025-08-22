@@ -2,9 +2,9 @@
 import type { APIRoute } from 'astro';
 import type { FirebaseError } from 'firebase-admin';
 import type { DecodedIdToken } from 'firebase-admin/auth';
-import { serverAuth } from 'src/firebase/server';
 import { logDebug, logWarn } from 'src/utils/logHelpers';
 import { postToBluesky } from 'src/utils/server/bsky/bskyService';
+import { serverAuth } from '../../../firebase/server';
 
 export const POST: APIRoute = async ({ request }) => {
   const endpointName = '/api/bsky/post'; // For logging context

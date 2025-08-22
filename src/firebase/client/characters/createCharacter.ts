@@ -16,7 +16,7 @@ export async function createCharacter(
 ): Promise<string> {
   try {
     const { addDoc, collection } = await import('firebase/firestore');
-    const { db } = await import('src/firebase/client');
+    const { db } = await import('..');
     const { toFirestoreEntry } = await import(
       'src/utils/client/toFirestoreEntry'
     );

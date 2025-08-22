@@ -1,9 +1,9 @@
 <script lang="ts">
-import WithAuth from 'src/components/svelte/app/WithAuth.svelte';
 import { subscribeCharacterSheet } from 'src/stores/characters/characterSheetStore';
 import { appMeta } from 'src/stores/metaStore/metaStore';
-import { uid } from 'src/stores/session';
 import { pushSnack } from 'src/utils/client/snackUtils';
+import { uid } from '../../../../stores/session';
+import WithAuth from '../../app/WithAuth.svelte';
 import SheetInfoForm from './SheetInfoForm.svelte';
 import SheetStatGroups from './SheetStatGroups.svelte';
 import SheetStats from './SheetStats.svelte';

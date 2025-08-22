@@ -1,10 +1,10 @@
 ---
-import EmailLoginSection from 'src/components/svelte/login/EmailLoginSection.svelte';
-import PasswordLoginSection from 'src/components/svelte/login/PasswordLoginSection.svelte';
-import SyndicatedLoginSection from 'src/components/svelte/login/SyndicatedLoginSection.svelte';
-import ModalPage from 'src/layouts/ModalPage.astro';
 import { t } from 'src/utils/i18n';
 import { verifySession } from 'src/utils/server/auth/verifySession';
+import EmailLoginSection from '../components/svelte/login/EmailLoginSection.svelte';
+import PasswordLoginSection from '../components/svelte/login/PasswordLoginSection.svelte';
+import SyndicatedLoginSection from '../components/svelte/login/SyndicatedLoginSection.svelte';
+import ModalPage from '../layouts/ModalPage.astro';
 
 // Move session verification to the very top, before any other logic
 const session = await verifySession(Astro);

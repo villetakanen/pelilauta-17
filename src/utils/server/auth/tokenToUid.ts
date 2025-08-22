@@ -2,7 +2,7 @@
  * Converts a sesion firebase bearer token to a valid uid
  * */
 export async function tokenToUid(request: Request): Promise<string | null> {
-  const { serverAuth } = await import('src/firebase/server');
+  const { serverAuth } = await import('../../../firebase/server');
 
   // 1. Get Authorization Header
   const authHeader = request.headers.get('Authorization');

@@ -10,7 +10,7 @@ export async function GET({ request }: APIContext) {
   const searchParams = getAstroQueryParams(request);
 
   try {
-    const { serverDB } = await import('src/firebase/server');
+    const { serverDB } = await import('../../../firebase/server');
 
     const queryWithLimit = searchParams.limit
       ? serverDB

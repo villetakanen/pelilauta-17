@@ -26,7 +26,7 @@ onMount(sheet, () => {
 export async function subscribeCharacterSheet(sheetKey: string) {
   try {
     const { doc, onSnapshot } = await import('firebase/firestore');
-    const { db } = await import('src/firebase/client');
+    const { db } = await import('../../firebase/client');
 
     logDebug(
       'characterSheetStore',
@@ -76,7 +76,7 @@ export async function createCharacterSheet(
 ): Promise<string> {
   try {
     const { addDoc, collection } = await import('firebase/firestore');
-    const { db } = await import('src/firebase/client');
+    const { db } = await import('../../firebase/client');
 
     // Parse and validate the sheet data
     const characterSheet = CharacterSheetSchema.parse(sheetData);

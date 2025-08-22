@@ -1,8 +1,8 @@
 import { deleteDoc, doc } from 'firebase/firestore';
 import { deleteObject, listAll, ref } from 'firebase/storage';
 import { SITES_COLLECTION_NAME, type Site } from 'src/schemas/SiteSchema';
-import { uid } from 'src/stores/session';
 import { logError } from 'src/utils/logHelpers';
+import { uid } from '../../../stores/session';
 import { app, db } from '..';
 
 /**

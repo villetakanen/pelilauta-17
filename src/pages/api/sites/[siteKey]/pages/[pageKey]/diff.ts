@@ -11,7 +11,7 @@ export async function GET({ params }: APIContext): Promise<Response> {
   }
 
   try {
-    const { serverDB } = await import('src/firebase/server');
+    const { serverDB } = await import('../../../../../../firebase/server');
     const historyDocRef = serverDB
       .collection(SITES_COLLECTION_NAME)
       .doc(siteKey)

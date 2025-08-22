@@ -1,9 +1,9 @@
 ---
-import ImportApp from 'src/components/svelte/sites/import/ImportApp.svelte';
-import ModalPage from 'src/layouts/ModalPage.astro';
 import { parseSite } from 'src/schemas/SiteSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { t } from 'src/utils/i18n';
+import ImportApp from '../../../components/svelte/sites/import/ImportApp.svelte';
+import ModalPage from '../../../layouts/ModalPage.astro';
 
 interface Props {
   siteKey: string;

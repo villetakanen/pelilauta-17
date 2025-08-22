@@ -1,13 +1,13 @@
 <script lang="ts">
 import { applyPatch, type Change, diffLines } from 'diff';
-import AvatarLink from 'src/components/svelte/app/AvatarLink.svelte';
-import ProfileLink from 'src/components/svelte/app/ProfileLink.svelte';
 import type { PageHistory } from 'src/schemas/PageHistorySchema';
 import type { Page } from 'src/schemas/PageSchema';
-import { uid } from 'src/stores/session';
 import { toDisplayString, toTimeString } from 'src/utils/contentHelpers';
 import { t } from 'src/utils/i18n';
 import { logDebug } from 'src/utils/logHelpers';
+import { uid } from '../../../../stores/session';
+import AvatarLink from '../../app/AvatarLink.svelte';
+import ProfileLink from '../../app/ProfileLink.svelte';
 
 interface Props {
   page: Page;

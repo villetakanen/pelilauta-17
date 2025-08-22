@@ -1,9 +1,9 @@
 ---
-import ProfileLink from 'src/components/svelte/app/ProfileLink.svelte';
-import ThreadSubsciber from 'src/components/svelte/threads/ThreadSubscriber.svelte';
 import type { Thread } from 'src/schemas/ThreadSchema';
 import { toDisplayString } from 'src/utils/contentHelpers';
 import { t } from 'src/utils/i18n';
+import ProfileLink from '../../svelte/app/ProfileLink.svelte';
+import ThreadSubsciber from '../../svelte/threads/ThreadSubscriber.svelte';
 
 interface Props {
   thread: Thread;

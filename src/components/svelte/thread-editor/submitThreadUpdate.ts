@@ -5,9 +5,9 @@ import type { Thread } from 'src/schemas/ThreadSchema';
 import { logError } from 'src/utils/logHelpers';
 
 async function getProfile(uid: string) {
-  const { db } = await import('src/firebase/client');
+  const { db } = await import('../../../firebase/client');
   const { getDoc, doc } = await import('firebase/firestore');
-  const { normalizeProfileData } = await import('src/stores/profiles');
+  const { normalizeProfileData } = await import('../../../stores/profiles');
 
   try {
     const publicProfileDoc = await getDoc(

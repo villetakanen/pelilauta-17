@@ -1,7 +1,7 @@
 ---
-import AdminTray from 'src/components/svelte/admin/AdminTray.svelte';
-import ChannelsAdmin from 'src/components/svelte/admin/channels/ChannelsAdmin.svelte';
-import PageWithTray from 'src/layouts/PageWithTray.astro';
+import AdminTray from '../../components/svelte/admin/AdminTray.svelte';
+import ChannelsAdmin from '../../components/svelte/admin/channels/ChannelsAdmin.svelte';
+import PageWithTray from '../../layouts/PageWithTray.astro';
 
 const visible = import.meta.env.SECRET_FEATURE_FLAG_Admin_tools === 'true';
 ---

@@ -52,7 +52,7 @@ export async function POST(context: APIContext): Promise<Response> {
     );
 
     // 3. Get or create reactions document
-    const { serverDB } = await import('src/firebase/server');
+    const { serverDB } = await import('../../../firebase/server');
     const reactionsRef = serverDB
       .collection(REACTIONS_COLLECTION_NAME)
       .doc(request.key);
@@ -163,7 +163,7 @@ async function sendReactionNotification(
 
     // We could call the notification API directly here, but for now let's
     // inline the notification creation to avoid circular dependencies
-    const { serverDB } = await import('src/firebase/server');
+    const { serverDB } = await import('../../../firebase/server');
     const { FieldValue } = await import('firebase-admin/firestore');
 
     const base = notification.notification;
@@ -207,7 +207,7 @@ async function getTargetEntryOwners(
   target: 'thread' | 'site' | 'reply',
   key: string,
 ): Promise<string[]> {
-  const { serverDB } = await import('src/firebase/server');
+  const { serverDB } = await import('../../../firebase/server');
 
   let docRef: null | DocumentReference;
   switch (target) {

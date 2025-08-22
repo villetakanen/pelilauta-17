@@ -1,9 +1,9 @@
 <script lang="ts">
 import type { Page } from 'src/schemas/PageSchema';
 import type { Site } from 'src/schemas/SiteSchema';
-import { uid } from 'src/stores/session';
 import { pushSessionSnack } from 'src/utils/client/snackUtils';
 import { t } from 'src/utils/i18n';
+import { uid } from '../../../stores/session';
 
 interface Props {
   site: Site;

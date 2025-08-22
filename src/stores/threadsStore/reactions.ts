@@ -4,7 +4,7 @@ import {
   runTransaction,
   type Transaction,
 } from 'firebase/firestore';
-import { db } from 'src/firebase/client';
+import { db } from '../../firebase/client';
 
 /**
  * Given   I am logged in

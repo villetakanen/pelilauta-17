@@ -16,7 +16,7 @@ export async function regenerateSiteToc(siteKey: string): Promise<number> {
   const { doc, getDoc, getDocs, collection, updateDoc } = await import(
     'firebase/firestore'
   );
-  const { db } = await import('src/firebase/client');
+  const { db } = await import('..');
 
   const siteDoc = await getDoc(doc(db, SITES_COLLECTION_NAME, siteKey));
 

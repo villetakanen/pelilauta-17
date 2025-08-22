@@ -1,8 +1,8 @@
 <script lang="ts">
 import type { Handout } from 'src/schemas/HandoutSchema';
 import type { Site } from 'src/schemas/SiteSchema';
-import { uid } from 'src/stores/session';
 import { t } from 'src/utils/i18n';
+import { uid } from '../../../../stores/session';
 
 interface Props {
   handout: Handout;

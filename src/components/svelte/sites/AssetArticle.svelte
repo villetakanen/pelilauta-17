@@ -2,9 +2,9 @@
 import { deleteSiteAsset } from 'src/firebase/client/site/deleteSiteFromAssets';
 import type { Asset } from 'src/schemas/AssetSchema';
 import type { Site } from 'src/schemas/SiteSchema';
-import { uid } from 'src/stores/session';
 import { pushSnack } from 'src/utils/client/snackUtils';
 import { t } from 'src/utils/i18n';
+import { uid } from '../../../stores/session';
 
 type Props = {
   asset: Asset;

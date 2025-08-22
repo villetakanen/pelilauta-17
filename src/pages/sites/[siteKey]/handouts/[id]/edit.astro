@@ -1,9 +1,9 @@
 ---
-import HandoutEditor from 'src/components/svelte/sites/handouts/HandoutEditor.svelte';
-import EditorPage from 'src/layouts/EditorPage.astro';
 import { handoutFrom } from 'src/schemas/HandoutSchema';
 import { parseSite } from 'src/schemas/SiteSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
+import HandoutEditor from '../../../../../components/svelte/sites/handouts/HandoutEditor.svelte';
+import EditorPage from '../../../../../layouts/EditorPage.astro';
 
 interface Props {
   siteKey: string;

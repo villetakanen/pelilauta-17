@@ -1,11 +1,11 @@
 <script lang="ts">
 import { marked } from 'marked';
-import AvatarLink from 'src/components/svelte/app/AvatarLink.svelte';
-import ProfileLink from 'src/components/svelte/app/ProfileLink.svelte';
-import ReactionButton from 'src/components/svelte/app/ReactionButton.svelte';
 import type { Reply } from 'src/schemas/ReplySchema';
-import { uid } from 'src/stores/session';
 import { t } from 'src/utils/i18n';
+import { uid } from '../../../stores/session';
+import AvatarLink from '../app/AvatarLink.svelte';
+import ProfileLink from '../app/ProfileLink.svelte';
+import ReactionButton from '../app/ReactionButton.svelte';
 
 interface Props {
   reply: Reply;

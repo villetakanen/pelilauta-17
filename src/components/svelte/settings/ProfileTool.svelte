@@ -2,9 +2,9 @@
 import { updateProfile } from 'src/firebase/client/profile/updateProfile';
 import { uploadAvatar } from 'src/firebase/client/profile/uploadAvatar';
 import type { Profile } from 'src/schemas/ProfileSchema';
-import { logout, uid } from 'src/stores/session';
 import { resizeImage } from 'src/utils/client/resizeImage';
 import { t } from 'src/utils/i18n';
+import { logout, uid } from '../../../stores/session';
 
 type Props = {
   profile: Profile;

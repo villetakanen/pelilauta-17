@@ -1,12 +1,12 @@
 ---
-import PageApp from 'src/components/server/SiteApp/PageApp.astro';
-import SiteTray from 'src/components/server/SiteApp/SiteTray.astro';
-import BackgroundPoster from 'src/components/server/ui/BackgroundPoster.astro';
-import PageFabs from 'src/components/svelte/sites/PageFabs.svelte';
-import PageWithTray from 'src/layouts/PageWithTray.astro';
 import { PageSchema } from 'src/schemas/PageSchema';
 import { SiteSchema } from 'src/schemas/SiteSchema';
 import { systemToNoun } from 'src/utils/schemaHelpers';
+import PageApp from '../../../../components/server/SiteApp/PageApp.astro';
+import SiteTray from '../../../../components/server/SiteApp/SiteTray.astro';
+import BackgroundPoster from '../../../../components/server/ui/BackgroundPoster.astro';
+import PageFabs from '../../../../components/svelte/sites/PageFabs.svelte';
+import PageWithTray from '../../../../layouts/PageWithTray.astro';
 
 interface Props {
   siteKey: string;

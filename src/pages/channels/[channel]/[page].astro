@@ -1,12 +1,12 @@
 ---
-import DeferredSection from 'src/components/server/app/DeferredSection.astro';
-import ChannelApp from 'src/components/server/ChannelApp/ChannelApp.astro';
-import ChannelTray from 'src/components/server/ChannelApp/ChannelTray.astro';
-import BackgroundPoster from 'src/components/server/ui/BackgroundPoster.astro';
-import ChannelFabs from 'src/components/svelte/threads/ChannelFabs.svelte';
-import PageWithTray from 'src/layouts/PageWithTray.astro';
 import { parseChannel } from 'src/schemas/ChannelSchema';
 import { t } from 'src/utils/i18n';
+import DeferredSection from '../../../components/server/app/DeferredSection.astro';
+import ChannelApp from '../../../components/server/ChannelApp/ChannelApp.astro';
+import ChannelTray from '../../../components/server/ChannelApp/ChannelTray.astro';
+import BackgroundPoster from '../../../components/server/ui/BackgroundPoster.astro';
+import ChannelFabs from '../../../components/svelte/threads/ChannelFabs.svelte';
+import PageWithTray from '../../../layouts/PageWithTray.astro';
 
 const channelKey = Astro.params.channel || 'pelilauta';
 const page = Astro.params.page ? Number(Astro.params.page) : 1;

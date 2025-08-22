@@ -15,7 +15,7 @@ const topics = $derived.by(() => {
 });
 
 onMount(async () => {
-  const { db } = await import('src/firebase/client');
+  const { db } = await import('../../../../firebase/client');
   const { doc, onSnapshot } = await import('firebase/firestore');
   const channelsRef = doc(db, 'meta', 'threads');
   onSnapshot(channelsRef, (doc) => {

@@ -1,11 +1,11 @@
 <script lang="ts">
 import { PageSchema } from 'src/schemas/PageSchema';
 import type { Site } from 'src/schemas/SiteSchema';
-import { uid } from 'src/stores/session';
 import { pushSessionSnack } from 'src/utils/client/snackUtils';
 import { t } from 'src/utils/i18n';
 import { logDebug } from 'src/utils/logHelpers';
 import { toMekanismiURI } from 'src/utils/mekanismiUtils';
+import { uid } from '../../../stores/session';
 import MembersOnly from './MembersOnly.svelte';
 
 interface Props {

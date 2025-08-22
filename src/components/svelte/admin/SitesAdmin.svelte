@@ -1,16 +1,16 @@
 <script lang="ts">
-import ProfileLink from 'src/components/svelte/app/ProfileLink.svelte';
-import WithAuth from 'src/components/svelte/app/WithAuth.svelte';
 import {
   parseSite,
   SITES_COLLECTION_NAME,
   type Site,
 } from 'src/schemas/SiteSchema';
 import { appMeta } from 'src/stores/metaStore/metaStore';
-import { uid } from 'src/stores/session';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { toDisplayString } from 'src/utils/contentHelpers';
 import { onMount } from 'svelte';
+import { uid } from '../../../stores/session';
+import ProfileLink from '../app/ProfileLink.svelte';
+import WithAuth from '../app/WithAuth.svelte';
 import AddSiteReactions from './AddSiteReactions.svelte';
 
 const visible = $derived.by(() => $appMeta.admins.includes($uid));

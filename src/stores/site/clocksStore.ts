@@ -22,7 +22,7 @@ onMount(clocks, () => {
 });
 
 async function subscribe(key: string) {
-  const { db } = await import('src/firebase/client');
+  const { db } = await import('../../firebase/client');
   const { collection, onSnapshot } = await import('firebase/firestore');
 
   onSnapshot(

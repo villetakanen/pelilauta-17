@@ -1,6 +1,4 @@
 <script lang="ts">
-import { uid } from 'src/stores/session';
-import { site } from 'src/stores/site';
 import {
   importedPages,
   importStore,
@@ -9,6 +7,8 @@ import {
 import { pushSnack } from 'src/utils/client/snackUtils';
 import { logDebug, logError } from 'src/utils/logHelpers';
 import { toMekanismiURI } from 'src/utils/mekanismiUtils';
+import { uid } from '../../../../stores/session';
+import { site } from '../../../../stores/site';
 
 const pages = $derived($importedPages);
 const currentSite = $derived($site);

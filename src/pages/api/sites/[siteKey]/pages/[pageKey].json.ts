@@ -1,10 +1,10 @@
 import type { APIContext } from 'astro';
-import { serverDB } from 'src/firebase/server';
 import { PAGES_COLLECTION_NAME, parsePage } from 'src/schemas/PageSchema';
 import { SITES_COLLECTION_NAME, siteFrom } from 'src/schemas/SiteSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { logError } from 'src/utils/logHelpers';
 import { renderWikiContent } from 'src/utils/server/wiki/renderWikiContent';
+import { serverDB } from '../../../../../firebase/server';
 
 export async function GET({ params, url }: APIContext): Promise<Response> {
   const { siteKey, pageKey } = params;

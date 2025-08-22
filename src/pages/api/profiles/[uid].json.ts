@@ -1,10 +1,10 @@
 import type { APIContext } from 'astro';
-import { serverDB } from 'src/firebase/server';
 import {
   PROFILES_COLLECTION_NAME,
   parseProfile,
 } from 'src/schemas/ProfileSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
+import { serverDB } from '../../../firebase/server';
 
 export async function GET({ params }: APIContext): Promise<Response> {
   const { uid } = params;

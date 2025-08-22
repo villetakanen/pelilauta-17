@@ -1,8 +1,8 @@
 <script lang="ts">
-import WithAuth from 'src/components/svelte/app/WithAuth.svelte';
-import { newCount, notifications } from 'src/stores/inbox';
-import { uid } from 'src/stores/session';
 import { t } from 'src/utils/i18n';
+import { newCount, notifications } from '../../../stores/inbox';
+import { uid } from '../../../stores/session';
+import WithAuth from '../app/WithAuth.svelte';
 import NotificationItem from './NotificationItem.svelte';
 
 /**

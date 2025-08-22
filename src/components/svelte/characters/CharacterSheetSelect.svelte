@@ -21,7 +21,7 @@ $effect(() => {
 
 async function loadCharacterSheets() {
   try {
-    const { db } = await import('src/firebase/client');
+    const { db } = await import('../../../firebase/client');
     const { collection, getDocs } = await import('firebase/firestore');
     const { CharacterSheetSchema } = await import(
       'src/schemas/CharacterSheetSchema'

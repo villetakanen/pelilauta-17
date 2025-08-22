@@ -10,9 +10,9 @@ import {
   type Character,
   CharacterSchema,
 } from 'src/schemas/CharacterSchema';
-import { uid } from 'src/stores/session';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { logDebug } from 'src/utils/logHelpers';
+import { uid } from '../session';
 
 const _character: WritableAtom<Character | null> = atom(null);
 export const character = computed(_character, (value) => value);
@@ -37,7 +37,7 @@ export async function subscribe(key: string) {
   loading.set(true);
   unsubscribe();
 
-  const { db } = await import('src/firebase/client');
+  const { db } = await import('../../firebase/client');
   const { onSnapshot, doc } = await import('firebase/firestore');
   const characterDoc = doc(db, CHARACTERS_COLLECTION_NAME, key);
 
@@ -55,7 +55,7 @@ export async function subscribe(key: string) {
 export async function update(data: Partial<Character>) {
   logDebug('characterStore', 'Updating character:', data);
   const { updateDoc, doc } = await import('firebase/firestore');
-  const { db } = await import('src/firebase/client');
+  const { db } = await import('../../firebase/client');
   const { toFirestoreEntry } = await import(
     'src/utils/client/toFirestoreEntry'
   );

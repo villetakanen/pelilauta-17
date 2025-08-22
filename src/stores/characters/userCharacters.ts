@@ -5,10 +5,10 @@ import {
   type Character,
   CharacterSchema,
 } from 'src/schemas/CharacterSchema';
-import { uid } from 'src/stores/session';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { logDebug, logError } from 'src/utils/logHelpers';
 import { z } from 'zod';
+import { uid } from '../session';
 
 /**
  * A nanostore for caching the user's characters.
@@ -77,7 +77,7 @@ async function subscribeToUserCharacters(currentUid: string) {
   );
   unsubscribe(); // Unsubscribe from any previous listener
   try {
-    const { db } = await import('src/firebase/client');
+    const { db } = await import('../../firebase/client');
     const { onSnapshot, collection, query, where } = await import(
       'firebase/firestore'
     );

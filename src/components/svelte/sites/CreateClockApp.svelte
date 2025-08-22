@@ -2,9 +2,9 @@
 import { addClocktoSite } from 'src/firebase/client/site/addClockToSite';
 import { parseClock } from 'src/schemas/ClockSchema';
 import type { Site } from 'src/schemas/SiteSchema';
-import { uid } from 'src/stores/session';
 import { t } from 'src/utils/i18n';
 import { logError } from 'src/utils/logHelpers';
+import { uid } from '../../../stores/session';
 
 interface Props {
   site: Site;

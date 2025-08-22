@@ -5,8 +5,8 @@ import {
   type Notification,
   parseNotification,
 } from 'src/schemas/NotificationSchema';
-import { uid } from 'src/stores/session';
 import { logDebug } from 'src/utils/logHelpers';
+import { uid } from '../session';
 
 export const notifications = persistentAtom<Notification[]>(
   'notifications',

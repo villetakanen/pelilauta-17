@@ -1,9 +1,9 @@
 <script lang="ts">
-import ProfileLink from 'src/components/svelte/app/ProfileLink.svelte';
 import { setFrozen } from 'src/firebase/client/account/setFrozen';
 import type { Account } from 'src/schemas/AccountSchema';
 import { appMeta } from 'src/stores/metaStore/metaStore';
 import { toDisplayString } from 'src/utils/contentHelpers';
+import ProfileLink from '../app/ProfileLink.svelte';
 
 interface Props {
   account: Account;

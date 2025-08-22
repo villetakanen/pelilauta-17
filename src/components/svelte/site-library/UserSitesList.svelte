@@ -1,8 +1,8 @@
 <script lang="ts">
-import { uid } from 'src/stores/session/';
-import { userSites } from 'src/stores/userSites/index.ts';
-import { t } from 'src/utils/i18n.ts';
 import { onMount } from 'svelte';
+import { uid } from '../../../stores/session';
+import { userSites } from '../../../stores/userSites/index.ts';
+import { t } from '../../../utils/i18n.ts';
 import FilteredSites from './FilteredSites.svelte';
 import { filters, toggleOrder } from './filters.svelte.ts';
 
