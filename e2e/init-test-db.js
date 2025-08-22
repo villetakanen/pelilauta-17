@@ -23,7 +23,7 @@ const serviceAccount = {
   token_uri: process.env.SECRET_token_uri,
   auth_provider_x509_cert_url: process.env.SECRET_auth_provider_x509_cert_url,
   client_x509_cert_url: process.env.SECRET_client_x509_cert_url,
-  universe_domain: process.env.SECRET_universe_domain,
+  universe_domain: process.env.PUBLIC_universe_domain,
 };
 
 const serverApp = initializeApp({
