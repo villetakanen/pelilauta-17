@@ -1,11 +1,11 @@
 <script lang="ts">
-import { updateCharacterSheet } from '@firebase/client/characterSheets/updateCharacterSheet';
+import { updateCharacterSheet } from 'src/firebase/client/characterSheets/updateCharacterSheet';
 import {
   type CharacterStat,
   CharacterStatSchema,
-} from '@schemas/CharacterSheetSchema';
-import { loading, sheet } from '@stores/characters/characterSheetStore';
-import { logDebug, logError } from '@utils/logHelpers';
+} from 'src/schemas/CharacterSheetSchema';
+import { loading, sheet } from 'src/stores/characters/characterSheetStore';
+import { logDebug, logError } from 'src/utils/logHelpers';
 
 let stats = $state<CharacterStat[]>([]);
 let expandedGroups = $state<Set<string>>(new Set());

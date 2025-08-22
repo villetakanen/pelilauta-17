@@ -1,7 +1,7 @@
 <script lang="ts">
-import type { CharacterStat } from '@schemas/CharacterSheetSchema';
-import { character } from '@stores/characters/characterStore';
-import { t } from '@utils/i18n';
+import type { CharacterStat } from 'src/schemas/CharacterSheetSchema';
+import { character } from 'src/stores/characters/characterStore';
+import { t } from 'src/utils/i18n';
 import { onMount } from 'svelte';
 
 interface Props {

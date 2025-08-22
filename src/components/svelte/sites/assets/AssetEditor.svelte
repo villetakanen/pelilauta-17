@@ -1,9 +1,9 @@
 <script lang="ts">
-import { ASSET_LICENSES_KEYS, type Asset } from '@schemas/AssetSchema';
-import type { Site } from '@schemas/SiteSchema';
-import { uid } from '@stores/session';
-import { pushSnack } from '@utils/client/snackUtils';
-import { t } from '@utils/i18n';
+import { ASSET_LICENSES_KEYS, type Asset } from 'src/schemas/AssetSchema';
+import type { Site } from 'src/schemas/SiteSchema';
+import { uid } from 'src/stores/session';
+import { pushSnack } from 'src/utils/client/snackUtils';
+import { t } from 'src/utils/i18n';
 import AssetMetadataForm from './AssetMetadataForm.svelte';
 
 interface Props {

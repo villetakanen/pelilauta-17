@@ -1,5 +1,5 @@
-import { ChannelsSchema } from '@schemas/ChannelSchema';
-import { THREADS_COLLECTION_NAME, type Thread } from '@schemas/ThreadSchema';
+import { ChannelsSchema } from 'src/schemas/ChannelSchema';
+import { THREADS_COLLECTION_NAME, type Thread } from 'src/schemas/ThreadSchema';
 
 /**
  * Delete a thread from the database and update the channel thread count. Please

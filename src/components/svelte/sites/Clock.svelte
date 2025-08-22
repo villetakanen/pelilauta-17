@@ -1,7 +1,7 @@
 <script lang="ts">
-import type { Clock } from '@schemas/ClockSchema';
-import { uid } from '@stores/session';
 import type { CnStoryClock } from 'cn-story-clock/src';
+import type { Clock } from 'src/schemas/ClockSchema';
+import { uid } from 'src/stores/session';
 import { site } from '../../../stores/site';
 import { updateClock } from '../../../stores/site/clocksStore';
 

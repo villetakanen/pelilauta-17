@@ -1,13 +1,13 @@
 <script lang="ts">
+import ProfileSection from 'src/components/shared/ProfileSection.svelte';
 import {
   PROFILES_COLLECTION_NAME,
   type Profile,
   parseProfile,
-} from '@schemas/ProfileSchema';
-import ProfileSection from '@shared/ProfileSection.svelte';
-import { uid } from '@stores/session';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { t } from '@utils/i18n';
+} from 'src/schemas/ProfileSchema';
+import { uid } from 'src/stores/session';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { t } from 'src/utils/i18n';
 import { onMount } from 'svelte';
 import Actions from './Actions.svelte';
 import AuthnSection from './AuthnSection.svelte';

@@ -1,9 +1,9 @@
-import type { Entry } from '@schemas/EntrySchema';
 import {
   type DocumentData,
   serverTimestamp,
   Timestamp,
 } from 'firebase/firestore';
+import type { Entry } from 'src/schemas/EntrySchema';
 
 export interface Params {
   silent?: boolean;

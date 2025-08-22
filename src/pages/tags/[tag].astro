@@ -1,8 +1,8 @@
 ---
-import Page from '@layouts/Page.astro';
-import type { Tag } from '@schemas/TagSchema';
-import ProfileLink from '@svelte/app/ProfileLink.svelte';
-import { t } from '@utils/i18n';
+import ProfileLink from 'src/components/svelte/app/ProfileLink.svelte';
+import Page from 'src/layouts/Page.astro';
+import type { Tag } from 'src/schemas/TagSchema';
+import { t } from 'src/utils/i18n';
 
 const { tag } = Astro.params;
 

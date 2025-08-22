@@ -1,5 +1,5 @@
-import { logError } from '@utils/logHelpers';
 import type { User } from 'firebase/auth';
+import { logError } from 'src/utils/logHelpers';
 
 /**
  * Completes the authentication flow by saving the session cookie and redirecting.
@@ -23,7 +23,7 @@ export async function completeAuthFlow(user: User, redirectPath = '/') {
 
     // Dynamically import client utilities
     const { pushSessionSnack } = await import('./snackUtils');
-    const { t } = await import('@utils/i18n');
+    const { t } = await import('src/utils/i18n');
 
     pushSessionSnack(t('login:snacks.success'));
 

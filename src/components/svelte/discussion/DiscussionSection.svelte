@@ -3,13 +3,13 @@ import {
   REPLIES_COLLECTION,
   type Reply,
   ReplySchema,
-} from '@schemas/ReplySchema';
-import { THREADS_COLLECTION_NAME, type Thread } from '@schemas/ThreadSchema';
-import { uid } from '@stores/session';
-import { hasSeen, setSeen } from '@stores/subscription';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { fixImageData } from '@utils/fixImageData';
-import { t } from '@utils/i18n';
+} from 'src/schemas/ReplySchema';
+import { THREADS_COLLECTION_NAME, type Thread } from 'src/schemas/ThreadSchema';
+import { uid } from 'src/stores/session';
+import { hasSeen, setSeen } from 'src/stores/subscription';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { fixImageData } from 'src/utils/fixImageData';
+import { t } from 'src/utils/i18n';
 import { onMount } from 'svelte';
 import ReplyArticle from './ReplyArticle.svelte';
 import ReplyDialog from './ReplyDialog.svelte';

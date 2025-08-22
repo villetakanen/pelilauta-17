@@ -1,9 +1,9 @@
 import { persistentAtom } from '@nanostores/persistent';
-import { PROFILES_COLLECTION_NAME } from '@schemas/ProfileSchema';
-import { t } from '@utils/i18n';
-import { logError, logWarn } from '@utils/logHelpers';
-import { toFid } from '@utils/toFid';
 import { atom, computed } from 'nanostores';
+import { PROFILES_COLLECTION_NAME } from 'src/schemas/ProfileSchema';
+import { t } from 'src/utils/i18n';
+import { logError, logWarn } from 'src/utils/logHelpers';
+import { toFid } from 'src/utils/toFid';
 import { z } from 'zod';
 
 export const PublicProfileSchema = z.object({
@@ -78,7 +78,7 @@ async function fetchProfile(key: string) {
 
   try {
     const { getDoc, doc } = await import('firebase/firestore');
-    const { db } = await import('@firebase/client');
+    const { db } = await import('src/firebase/client');
 
     const publicProfileDoc = await getDoc(doc(db, 'profiles', key));
 
@@ -128,7 +128,7 @@ export async function fetchProfileEntry(key: string): Promise<PublicProfile> {
 
   try {
     const { getDoc, doc } = await import('firebase/firestore');
-    const { db } = await import('@firebase/client');
+    const { db } = await import('src/firebase/client');
 
     const publicProfileDoc = await getDoc(doc(db, 'profiles', key));
 
@@ -170,7 +170,7 @@ export async function fetchAllProfiles() {
   logWarn('Fetching all active profiles');
 
   try {
-    const { db } = await import('@firebase/client');
+    const { db } = await import('src/firebase/client');
     const { getDocs, collection, query } = await import('firebase/firestore');
 
     const q = query(

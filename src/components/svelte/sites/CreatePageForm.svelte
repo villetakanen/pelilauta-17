@@ -1,11 +1,11 @@
 <script lang="ts">
-import { PageSchema } from '@schemas/PageSchema';
-import type { Site } from '@schemas/SiteSchema';
-import { uid } from '@stores/session';
-import { pushSessionSnack } from '@utils/client/snackUtils';
-import { t } from '@utils/i18n';
-import { logDebug } from '@utils/logHelpers';
-import { toMekanismiURI } from '@utils/mekanismiUtils';
+import { PageSchema } from 'src/schemas/PageSchema';
+import type { Site } from 'src/schemas/SiteSchema';
+import { uid } from 'src/stores/session';
+import { pushSessionSnack } from 'src/utils/client/snackUtils';
+import { t } from 'src/utils/i18n';
+import { logDebug } from 'src/utils/logHelpers';
+import { toMekanismiURI } from 'src/utils/mekanismiUtils';
 import MembersOnly from './MembersOnly.svelte';
 
 interface Props {
@@ -54,8 +54,8 @@ async function onsubmit(e: Event) {
   try {
     logDebug('CreatePageForm', 'Creating page:', { title, category });
 
-    const { addPage } = await import('@firebase/client/page/addPage');
-    const { pageFrom } = await import('@schemas/PageSchema');
+    const { addPage } = await import('src/firebase/client/page/addPage');
+    const { pageFrom } = await import('src/schemas/PageSchema');
 
     const page = PageSchema.parse({
       key: urlKey || '',

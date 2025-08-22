@@ -1,4 +1,4 @@
-import { logError } from '@utils/logHelpers';
+import { logError } from 'src/utils/logHelpers';
 import { z } from 'zod';
 
 export const ASSETS_COLLECTION_NAME = 'assets';

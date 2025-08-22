@@ -1,5 +1,5 @@
-import { type LocaleSubstitutions, t } from '@utils/i18n';
 import type { SnackbarMessage } from 'node_modules/@11thdeg/cyan-lit/dist/cn-snackbar/cn-snackbar';
+import { type LocaleSubstitutions, t } from 'src/utils/i18n';
 
 function _toMessage(
   snack: string | SnackbarMessage,

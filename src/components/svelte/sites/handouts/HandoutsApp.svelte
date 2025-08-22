@@ -1,8 +1,8 @@
 <script lang="ts">
-import type { Site } from '@schemas/SiteSchema';
-import { site } from '@stores/site';
-import { t } from '@utils/i18n';
-import { logError } from '@utils/logHelpers';
+import type { Site } from 'src/schemas/SiteSchema';
+import { site } from 'src/stores/site';
+import { t } from 'src/utils/i18n';
+import { logError } from 'src/utils/logHelpers';
 import { onMount } from 'svelte';
 import MembersOnly from '../MembersOnly.svelte';
 import HandoutList from './HandoutList.svelte';

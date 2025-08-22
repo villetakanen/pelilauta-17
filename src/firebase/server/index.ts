@@ -1,4 +1,4 @@
-// import { logWarn } from '@utils/logHelpers';
+// import { logWarn } from 'src/utils/logHelpers';
 import type { ServiceAccount } from 'firebase-admin';
 import admin from 'firebase-admin';
 import { cert, initializeApp } from 'firebase-admin/app';

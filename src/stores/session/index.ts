@@ -1,9 +1,9 @@
 import { persistentAtom } from '@nanostores/persistent';
-import { pushSnack } from '@utils/client/snackUtils';
-import { logWarn } from '@utils/logHelpers';
 import type { User } from 'firebase/auth';
 import { computed, onMount } from 'nanostores';
 import { auth } from 'src/firebase/client';
+import { pushSnack } from 'src/utils/client/snackUtils';
+import { logWarn } from 'src/utils/logHelpers';
 import {
   $account,
   subscribe as subscribeToAccount,

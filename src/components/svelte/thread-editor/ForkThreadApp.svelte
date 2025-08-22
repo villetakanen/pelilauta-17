@@ -1,16 +1,16 @@
 <script lang="ts">
-import { addReply } from '@firebase/client/threads/addReply';
-import { CHANNEL_DEFAULT_SLUG, type Channels } from '@schemas/ChannelSchema';
-import type { Reply } from '@schemas/ReplySchema';
-import type { Thread } from '@schemas/ThreadSchema';
-import { uid } from '@stores/session';
-import MarkdownContent from '@svelte/app/MarkdownContent.svelte';
-import ProfileLink from '@svelte/app/ProfileLink.svelte';
-import { pushSnack } from '@utils/client/snackUtils';
-import { extractTags } from '@utils/contentHelpers';
-import { t } from '@utils/i18n';
-import { logDebug, logError } from '@utils/logHelpers';
 import type { CnEditor } from '@11thdeg/cn-editor';
+import MarkdownContent from 'src/components/svelte/app/MarkdownContent.svelte';
+import ProfileLink from 'src/components/svelte/app/ProfileLink.svelte';
+import { addReply } from 'src/firebase/client/threads/addReply';
+import { CHANNEL_DEFAULT_SLUG, type Channels } from 'src/schemas/ChannelSchema';
+import type { Reply } from 'src/schemas/ReplySchema';
+import type { Thread } from 'src/schemas/ThreadSchema';
+import { uid } from 'src/stores/session';
+import { pushSnack } from 'src/utils/client/snackUtils';
+import { extractTags } from 'src/utils/contentHelpers';
+import { t } from 'src/utils/i18n';
+import { logDebug, logError } from 'src/utils/logHelpers';
 import ChannelSelect from './ChannelSelect.svelte';
 import { submitThreadUpdate } from './submitThreadUpdate';
 

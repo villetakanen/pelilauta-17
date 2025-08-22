@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { Site } from '@schemas/SiteSchema';
+import type { Site } from 'src/schemas/SiteSchema';
 import { onMount } from 'svelte';
 
 interface Props {

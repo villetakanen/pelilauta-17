@@ -1,13 +1,13 @@
-import { authedPost } from '@firebase/client/apiClient';
-import { type Channel, ChannelSchema } from '@schemas/ChannelSchema';
-import { PROFILES_COLLECTION_NAME } from '@schemas/ProfileSchema';
-import type { Thread } from '@schemas/ThreadSchema';
-import { logError } from '@utils/logHelpers';
+import { authedPost } from 'src/firebase/client/apiClient';
+import { type Channel, ChannelSchema } from 'src/schemas/ChannelSchema';
+import { PROFILES_COLLECTION_NAME } from 'src/schemas/ProfileSchema';
+import type { Thread } from 'src/schemas/ThreadSchema';
+import { logError } from 'src/utils/logHelpers';
 
 async function getProfile(uid: string) {
-  const { db } = await import('@firebase/client');
+  const { db } = await import('src/firebase/client');
   const { getDoc, doc } = await import('firebase/firestore');
-  const { normalizeProfileData } = await import('@stores/profiles');
+  const { normalizeProfileData } = await import('src/stores/profiles');
 
   try {
     const publicProfileDoc = await getDoc(
@@ -69,9 +69,9 @@ export async function submitThreadUpdate(
   data: Partial<Thread>,
   files?: File[],
 ) {
-  const { addThread } = await import('@firebase/client/threads/addThread');
+  const { addThread } = await import('src/firebase/client/threads/addThread');
   const { updateThread } = await import(
-    '@firebase/client/threads/updateThread'
+    'src/firebase/client/threads/updateThread'
   );
 
   if (!data.title || !data.markdownContent || !data.channel || !data.owners) {

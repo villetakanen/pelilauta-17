@@ -1,4 +1,4 @@
-import type { Page } from '@schemas/PageSchema';
+import type { Page } from 'src/schemas/PageSchema';
 
 export async function updatePageRef(page: Page) {
   const { addPageRef } = await import('./addPageRef');

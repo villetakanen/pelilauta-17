@@ -1,7 +1,7 @@
 <script lang="ts">
-import { handouts } from '@stores/site/handouts';
-import ProfileLink from '@svelte/app/ProfileLink.svelte';
-import { toDisplayString } from '@utils/contentHelpers';
+import ProfileLink from 'src/components/svelte/app/ProfileLink.svelte';
+import { handouts } from 'src/stores/site/handouts';
+import { toDisplayString } from 'src/utils/contentHelpers';
 import HandoutListItem from './HandoutListItem.svelte';
 </script>
 

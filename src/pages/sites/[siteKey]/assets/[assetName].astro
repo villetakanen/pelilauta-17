@@ -1,9 +1,9 @@
 ---
-import PageWithTray from '@layouts/PageWithTray.astro';
-import { parseSite } from '@schemas/SiteSchema';
-import AssetEditor from '@server/SiteApp/AssetEditor.astro';
-import SiteTray from '@server/SiteApp/SiteTray.astro';
-import { toClientEntry } from '@utils/client/entryUtils';
+import AssetEditor from 'src/components/server/SiteApp/AssetEditor.astro';
+import SiteTray from 'src/components/server/SiteApp/SiteTray.astro';
+import PageWithTray from 'src/layouts/PageWithTray.astro';
+import { parseSite } from 'src/schemas/SiteSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
 
 const { siteKey, assetName } = Astro.params;
 

@@ -1,11 +1,11 @@
+import { updateDoc } from 'firebase/firestore';
 import {
   parseSite,
   SITES_COLLECTION_NAME,
   type Site,
-} from '@schemas/SiteSchema';
-import { uid } from '@stores/session';
-import { logDebug } from '@utils/logHelpers';
-import { updateDoc } from 'firebase/firestore';
+} from 'src/schemas/SiteSchema';
+import { uid } from 'src/stores/session';
+import { logDebug } from 'src/utils/logHelpers';
 
 /**
  * Creates a new site in the database, returns the key of the new site
@@ -16,7 +16,9 @@ import { updateDoc } from 'firebase/firestore';
 export async function createSite(site: Partial<Site>): Promise<string> {
   const { getFirestore, doc, getDoc, setDoc, addDoc, collection } =
     await import('firebase/firestore');
-  const { toFirestoreEntry } = await import('@utils/client/toFirestoreEntry');
+  const { toFirestoreEntry } = await import(
+    'src/utils/client/toFirestoreEntry'
+  );
 
   logDebug('createSite', site);
 

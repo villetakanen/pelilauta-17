@@ -1,9 +1,9 @@
 <script lang="ts">
-import { setFrozen } from '@firebase/client/account/setFrozen';
-import type { Account } from '@schemas/AccountSchema';
-import { appMeta } from '@stores/metaStore/metaStore';
-import ProfileLink from '@svelte/app/ProfileLink.svelte';
-import { toDisplayString } from '@utils/contentHelpers';
+import ProfileLink from 'src/components/svelte/app/ProfileLink.svelte';
+import { setFrozen } from 'src/firebase/client/account/setFrozen';
+import type { Account } from 'src/schemas/AccountSchema';
+import { appMeta } from 'src/stores/metaStore/metaStore';
+import { toDisplayString } from 'src/utils/contentHelpers';
 
 interface Props {
   account: Account;

@@ -1,5 +1,5 @@
 <script lang="ts">
-import { t } from '@utils/i18n';
+import { t } from 'src/utils/i18n';
 
 interface NickNameInputProps {
   nick: string;

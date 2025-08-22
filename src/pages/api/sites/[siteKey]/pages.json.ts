@@ -1,12 +1,12 @@
-import { serverDB } from '@firebase/server';
+import type { APIContext } from 'astro';
+import { serverDB } from 'src/firebase/server';
 import {
   PAGES_COLLECTION_NAME,
   type Page,
   parsePage,
-} from '@schemas/PageSchema';
-import { SITES_COLLECTION_NAME } from '@schemas/SiteSchema';
-import { toClientEntry } from '@utils/client/entryUtils';
-import type { APIContext } from 'astro';
+} from 'src/schemas/PageSchema';
+import { SITES_COLLECTION_NAME } from 'src/schemas/SiteSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
 
 export async function GET({ params }: APIContext): Promise<Response> {
   const { siteKey } = params;

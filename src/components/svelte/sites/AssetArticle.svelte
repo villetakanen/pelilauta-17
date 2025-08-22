@@ -1,10 +1,10 @@
 <script lang="ts">
-import { deleteSiteAsset } from '@firebase/client/site/deleteSiteFromAssets';
-import type { Asset } from '@schemas/AssetSchema';
-import type { Site } from '@schemas/SiteSchema';
-import { uid } from '@stores/session';
-import { pushSnack } from '@utils/client/snackUtils';
-import { t } from '@utils/i18n';
+import { deleteSiteAsset } from 'src/firebase/client/site/deleteSiteFromAssets';
+import type { Asset } from 'src/schemas/AssetSchema';
+import type { Site } from 'src/schemas/SiteSchema';
+import { uid } from 'src/stores/session';
+import { pushSnack } from 'src/utils/client/snackUtils';
+import { t } from 'src/utils/i18n';
 
 type Props = {
   asset: Asset;

@@ -1,4 +1,4 @@
-import { toFid } from '@utils/toFid';
+import { toFid } from 'src/utils/toFid';
 import { z } from 'zod';
 
 export const PROFILES_COLLECTION_NAME = 'profiles';

@@ -1,8 +1,8 @@
-import { serverDB } from '@firebase/server';
-import { parseReply, REPLIES_COLLECTION } from '@schemas/ReplySchema';
-import { THREADS_COLLECTION_NAME } from '@schemas/ThreadSchema';
-import { toClientEntry } from '@utils/client/entryUtils';
 import type { APIContext } from 'astro';
+import { serverDB } from 'src/firebase/server';
+import { parseReply, REPLIES_COLLECTION } from 'src/schemas/ReplySchema';
+import { THREADS_COLLECTION_NAME } from 'src/schemas/ThreadSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
 
 export async function GET({ params }: APIContext): Promise<Response> {
   const { threadKey, replyKey } = params;

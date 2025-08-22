@@ -1,10 +1,10 @@
 <script lang="ts">
-import { updateSiteAsset } from '@firebase/client/site/updateSiteAsset';
-import type { Asset } from '@schemas/AssetSchema';
-import type { Site } from '@schemas/SiteSchema';
-import { pushSnack } from '@utils/client/snackUtils';
-import { t } from '@utils/i18n';
-import { logError } from '@utils/logHelpers';
+import { updateSiteAsset } from 'src/firebase/client/site/updateSiteAsset';
+import type { Asset } from 'src/schemas/AssetSchema';
+import type { Site } from 'src/schemas/SiteSchema';
+import { pushSnack } from 'src/utils/client/snackUtils';
+import { t } from 'src/utils/i18n';
+import { logError } from 'src/utils/logHelpers';
 import LicenseSelect from './LicenseSelect.svelte';
 
 interface Props {

@@ -1,6 +1,6 @@
-import { toClientEntry } from '@utils/client/entryUtils';
-import { logError } from '@utils/logHelpers';
-import { parseFlowTime } from '@utils/schemaHelpers';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { logError } from 'src/utils/logHelpers';
+import { parseFlowTime } from 'src/utils/schemaHelpers';
 import { z } from 'zod';
 import { AssetSchema } from './AssetSchema';
 import { EntrySchema } from './EntrySchema';

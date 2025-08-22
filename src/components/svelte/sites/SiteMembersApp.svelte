@@ -1,7 +1,7 @@
 <script lang="ts">
-import type { Site } from '@schemas/SiteSchema';
-import { uid } from '@stores/session';
-import WithAuth from '@svelte/app/WithAuth.svelte';
+import WithAuth from 'src/components/svelte/app/WithAuth.svelte';
+import type { Site } from 'src/schemas/SiteSchema';
+import { uid } from 'src/stores/session';
 import { site } from '../../../stores/site';
 import SiteOwnersTool from './SiteOwnersTool.svelte';
 import SitePlayersTool from './SitePlayersTool.svelte';

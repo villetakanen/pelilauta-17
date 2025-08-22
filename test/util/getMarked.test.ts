@@ -1,4 +1,4 @@
-import type { Site } from '@schemas/SiteSchema';
+import type { Site } from 'src/schemas/SiteSchema';
 import { expect, test } from 'vitest';
 import { getMarkedInstance } from '../../src/utils/shared/getMarked';
 

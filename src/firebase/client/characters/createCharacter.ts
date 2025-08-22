@@ -1,8 +1,8 @@
 import {
   CHARACTERS_COLLECTION_NAME,
   type Character,
-} from '@schemas/CharacterSchema';
-import { logDebug, logError } from '@utils/logHelpers';
+} from 'src/schemas/CharacterSchema';
+import { logDebug, logError } from 'src/utils/logHelpers';
 
 /**
  * Creates a new character in the database
@@ -16,8 +16,10 @@ export async function createCharacter(
 ): Promise<string> {
   try {
     const { addDoc, collection } = await import('firebase/firestore');
-    const { db } = await import('@firebase/client');
-    const { toFirestoreEntry } = await import('@utils/client/toFirestoreEntry');
+    const { db } = await import('src/firebase/client');
+    const { toFirestoreEntry } = await import(
+      'src/utils/client/toFirestoreEntry'
+    );
 
     // Convert to Firestore format
     const firestoreData = toFirestoreEntry(data);

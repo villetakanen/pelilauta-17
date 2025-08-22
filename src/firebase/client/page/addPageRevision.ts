@@ -1,11 +1,11 @@
 import {
   PAGE_HISTORY_COLLECTION_NAME,
   PageHistorySchema,
-} from '@schemas/PageHistorySchema';
-import type { Page } from '@schemas/PageSchema';
-import { SITES_COLLECTION_NAME } from '@schemas/SiteSchema';
-import { uid } from '@stores/session';
-import { logDebug, logError, logWarn } from '@utils/logHelpers';
+} from 'src/schemas/PageHistorySchema';
+import type { Page } from 'src/schemas/PageSchema';
+import { SITES_COLLECTION_NAME } from 'src/schemas/SiteSchema';
+import { uid } from 'src/stores/session';
+import { logDebug, logError, logWarn } from 'src/utils/logHelpers';
 
 /**
  * Add a page revision to the history of a page using an efficient and safe
@@ -34,7 +34,7 @@ export async function addPageRevision(current: Page, incoming: Partial<Page>) {
   }
 
   try {
-    const { db } = await import('@firebase/client');
+    const { db } = await import('src/firebase/client');
     // We need `runTransaction` for this pattern
     const { doc, runTransaction, serverTimestamp } = await import(
       'firebase/firestore'

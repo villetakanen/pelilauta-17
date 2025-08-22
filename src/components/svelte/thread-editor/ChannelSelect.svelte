@@ -1,6 +1,6 @@
 <script lang="ts">
-import type { Channel } from '@schemas/ChannelSchema';
-import { t } from '@utils/i18n';
+import type { Channel } from 'src/schemas/ChannelSchema';
+import { t } from 'src/utils/i18n';
 
 interface Props {
   channels: Channel[];

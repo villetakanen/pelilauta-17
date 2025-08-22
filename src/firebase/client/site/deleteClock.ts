@@ -1,5 +1,5 @@
-import { CLOCKS_COLLECTION_NAME } from '@schemas/ClockSchema';
-import { SITES_COLLECTION_NAME } from '@schemas/SiteSchema';
+import { CLOCKS_COLLECTION_NAME } from 'src/schemas/ClockSchema';
+import { SITES_COLLECTION_NAME } from 'src/schemas/SiteSchema';
 
 /**
  * Deletes a clock from a site and updates the table of contents.

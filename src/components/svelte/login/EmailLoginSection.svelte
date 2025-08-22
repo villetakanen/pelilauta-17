@@ -1,9 +1,9 @@
 <script lang="ts">
 // Import utilities, stores, and lifecycle functions
-import { completeAuthFlow } from '@utils/client/authUtils';
-import { pushSessionSnack } from '@utils/client/snackUtils';
-import { t } from '@utils/i18n';
-import { logError } from '@utils/logHelpers';
+import { completeAuthFlow } from 'src/utils/client/authUtils';
+import { pushSessionSnack } from 'src/utils/client/snackUtils';
+import { t } from 'src/utils/i18n';
+import { logError } from 'src/utils/logHelpers';
 import { onMount } from 'svelte';
 
 interface Props {
@@ -25,7 +25,7 @@ const verifyLink = async () => {
   try {
     // Dynamically import Firebase Auth functions and instance
     const { signInWithEmailLink } = await import('firebase/auth');
-    const { auth } = await import('@firebase/client');
+    const { auth } = await import('src/firebase/client');
 
     const emailFromStorage = window.localStorage.getItem('emailForSignIn');
     const loginRedirectRoute =
@@ -81,7 +81,7 @@ const sendLink = async (e: SubmitEvent) => {
   try {
     // Dynamically import Firebase Auth functions and instance
     const { sendSignInLinkToEmail } = await import('firebase/auth');
-    const { auth } = await import('@firebase/client');
+    const { auth } = await import('src/firebase/client');
 
     window.localStorage.setItem('emailForSignIn', email);
     // Optionally store the intended redirect route if needed after login
@@ -108,7 +108,7 @@ const sendLink = async (e: SubmitEvent) => {
 onMount(async () => {
   // Dynamically import Firebase Auth functions and instance
   const { isSignInWithEmailLink } = await import('firebase/auth');
-  const { auth } = await import('@firebase/client');
+  const { auth } = await import('src/firebase/client');
 
   if (isSignInWithEmailLink(auth, window.location.href)) {
     verifyLink();

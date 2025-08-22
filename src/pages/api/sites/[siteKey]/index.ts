@@ -1,7 +1,7 @@
-import { serverDB } from '@firebase/server';
-import { parseSite, SITES_COLLECTION_NAME } from '@schemas/SiteSchema';
-import { toClientEntry } from '@utils/client/entryUtils';
 import type { APIContext } from 'astro';
+import { serverDB } from 'src/firebase/server';
+import { parseSite, SITES_COLLECTION_NAME } from 'src/schemas/SiteSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
 
 export async function GET({ params }: APIContext): Promise<Response> {
   const { siteKey } = params;

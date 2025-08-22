@@ -1,13 +1,13 @@
 import { persistentAtom } from '@nanostores/persistent';
+import { computed, type WritableAtom } from 'nanostores';
 import {
   createSubscription,
   SUBSCRIPTIONS_FIRESTORE_PATH,
   type Subscription,
   SubscriptionSchema,
-} from '@schemas/SubscriberSchema';
-import { uid } from '@stores/session';
-import { logDebug, logError, logWarn } from '@utils/logHelpers';
-import { computed, type WritableAtom } from 'nanostores';
+} from 'src/schemas/SubscriberSchema';
+import { uid } from 'src/stores/session';
+import { logDebug, logError, logWarn } from 'src/utils/logHelpers';
 
 /**
  * # Subscription Store
@@ -39,7 +39,7 @@ import { computed, type WritableAtom } from 'nanostores';
  * ## Usage in Svelte Components
  *
  * ```typescript
- * import { subscription, hasSeen } from '@stores/subscription';
+ * import { subscription, hasSeen } from 'src/stores/subscription';
  *
  * // In component
  * const hasUserSeen = $derived($hasSeen('thread-123', 1640995200000));

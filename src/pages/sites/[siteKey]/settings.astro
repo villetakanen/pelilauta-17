@@ -1,8 +1,8 @@
 ---
-import ModalPage from '@layouts/ModalPage.astro';
-import { parseSite } from '@schemas/SiteSchema';
-import SettingsApp from '@svelte/sites/settings/SettingsApp.svelte';
-import { toClientEntry } from '@utils/client/entryUtils';
+import SettingsApp from 'src/components/svelte/sites/settings/SettingsApp.svelte';
+import ModalPage from 'src/layouts/ModalPage.astro';
+import { parseSite } from 'src/schemas/SiteSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
 
 const { siteKey } = Astro.params;
 

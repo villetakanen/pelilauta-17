@@ -1,4 +1,4 @@
-import type { Site } from '@schemas/SiteSchema';
+import type { Site } from 'src/schemas/SiteSchema';
 
 /**
  * Takes in rendered HTML and rewrites asset wikimarkup to assets to point to the correct site.

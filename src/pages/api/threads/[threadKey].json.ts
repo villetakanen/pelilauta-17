@@ -1,9 +1,9 @@
-import { serverDB } from '@firebase/server';
-import { CHANNEL_DEFAULT_SLUG } from '@schemas/ChannelSchema';
-import { parseThread, THREADS_COLLECTION_NAME } from '@schemas/ThreadSchema';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { fixImageData } from '@utils/fixImageData';
 import type { APIContext } from 'astro';
+import { serverDB } from 'src/firebase/server';
+import { CHANNEL_DEFAULT_SLUG } from 'src/schemas/ChannelSchema';
+import { parseThread, THREADS_COLLECTION_NAME } from 'src/schemas/ThreadSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { fixImageData } from 'src/utils/fixImageData';
 
 export async function GET({ params }: APIContext): Promise<Response> {
   const { threadKey } = params;

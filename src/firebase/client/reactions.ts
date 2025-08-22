@@ -1,5 +1,5 @@
-import { authedPost } from '@firebase/client/apiClient';
-import type { Reactions } from '@schemas/ReactionsSchema';
+import { authedPost } from 'src/firebase/client/apiClient';
+import type { Reactions } from 'src/schemas/ReactionsSchema';
 import type { ReactionRequest } from '../../pages/api/reactions/index';
 
 export type ToggleReactionRequest = ReactionRequest;

@@ -1,17 +1,17 @@
-import { NotificationRequestSchema } from '@schemas/NotificationSchema';
+import type { z } from 'astro/zod';
+import { NotificationRequestSchema } from 'src/schemas/NotificationSchema';
 import {
   REACTIONS_COLLECTION_NAME,
   type Reactions,
-} from '@schemas/ReactionsSchema';
-import { REPLIES_COLLECTION, type Reply } from '@schemas/ReplySchema';
+} from 'src/schemas/ReactionsSchema';
+import { REPLIES_COLLECTION, type Reply } from 'src/schemas/ReplySchema';
 import {
   type ImageArraySchema,
   THREADS_COLLECTION_NAME,
   type Thread,
-} from '@schemas/ThreadSchema';
-import { createSnippet } from '@utils/contentHelpers';
-import { logWarn } from '@utils/logHelpers';
-import type { z } from 'astro/zod';
+} from 'src/schemas/ThreadSchema';
+import { createSnippet } from 'src/utils/contentHelpers';
+import { logWarn } from 'src/utils/logHelpers';
 import { authedPost } from '../apiClient';
 import { addAssetToThread } from './addAssetToThread';
 
@@ -31,7 +31,7 @@ export async function addReply(
   quoteref?: string,
   files: File[] = [],
 ): Promise<void> {
-  const { db } = await import('@firebase/client');
+  const { db } = await import('src/firebase/client');
   const {
     serverTimestamp,
     addDoc,
@@ -41,7 +41,9 @@ export async function addReply(
     updateDoc,
     setDoc,
   } = await import('firebase/firestore');
-  const { toFirestoreEntry } = await import('@utils/client/toFirestoreEntry');
+  const { toFirestoreEntry } = await import(
+    'src/utils/client/toFirestoreEntry'
+  );
 
   // Add a new reply to the thread
   const replyData: Partial<Reply> = {

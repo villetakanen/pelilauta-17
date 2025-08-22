@@ -1,8 +1,8 @@
 ---
-import ModalPage from '@layouts/ModalPage.astro';
-import { parseSite } from '@schemas/SiteSchema';
-import DeleteClockApp from '@svelte/sites/DeleteClockApp.svelte';
-import { toClientEntry } from '@utils/client/entryUtils';
+import DeleteClockApp from 'src/components/svelte/sites/DeleteClockApp.svelte';
+import ModalPage from 'src/layouts/ModalPage.astro';
+import { parseSite } from 'src/schemas/SiteSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
 
 interface Props {
   id: string;

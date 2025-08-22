@@ -1,16 +1,16 @@
-import { addNotification } from '@firebase/client/notifications';
+import { where } from 'firebase/firestore';
+import { atom, onMount } from 'nanostores';
+import { addNotification } from 'src/firebase/client/notifications';
 import {
   HANDOUTS_COLLECTION_NAME,
   type Handout,
   handoutFrom,
-} from '@schemas/HandoutSchema';
-import { SITES_COLLECTION_NAME } from '@schemas/SiteSchema';
-import { uid } from '@stores/session';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { toFirestoreEntry } from '@utils/client/toFirestoreEntry';
-import { logDebug, logWarn } from '@utils/logHelpers';
-import { where } from 'firebase/firestore';
-import { atom, onMount } from 'nanostores';
+} from 'src/schemas/HandoutSchema';
+import { SITES_COLLECTION_NAME } from 'src/schemas/SiteSchema';
+import { uid } from 'src/stores/session';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { toFirestoreEntry } from 'src/utils/client/toFirestoreEntry';
+import { logDebug, logWarn } from 'src/utils/logHelpers';
 import { site } from '.';
 
 export const handouts = atom([] as Handout[]);

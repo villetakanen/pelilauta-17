@@ -1,7 +1,7 @@
 <script lang="ts">
-import type { Character } from '@schemas/CharacterSchema';
-import SiteLink from '@svelte/sites/SiteLink.svelte';
-import { t } from '@utils/i18n';
+import SiteLink from 'src/components/svelte/sites/SiteLink.svelte';
+import type { Character } from 'src/schemas/CharacterSchema';
+import { t } from 'src/utils/i18n';
 import type { Snippet } from 'svelte';
 
 export interface CharacterCardProps {

@@ -1,17 +1,17 @@
-import { type Channel, parseChannel } from '@schemas/ChannelSchema';
+import { type Channel, parseChannel } from 'src/schemas/ChannelSchema';
 import {
   REACTIONS_COLLECTION_NAME,
   type Reactions,
-} from '@schemas/ReactionsSchema';
+} from 'src/schemas/ReactionsSchema';
 import {
   createThread,
   parseThread,
   THREADS_COLLECTION_NAME,
   type Thread,
-} from '@schemas/ThreadSchema';
-import { markEntrySeen } from '@stores/session';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { logError, logWarn } from '@utils/logHelpers';
+} from 'src/schemas/ThreadSchema';
+import { markEntrySeen } from 'src/stores/session';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { logError, logWarn } from 'src/utils/logHelpers';
 import { addAssetToThread } from './addAssetToThread';
 import { updateThreadTags } from './updateThreadTags';
 
@@ -82,7 +82,9 @@ export async function addThread(
 ): Promise<Thread> {
   const { updateDoc, addDoc, collection, getFirestore, doc, getDoc } =
     await import('firebase/firestore');
-  const { toFirestoreEntry } = await import('@utils/client/toFirestoreEntry');
+  const { toFirestoreEntry } = await import(
+    'src/utils/client/toFirestoreEntry'
+  );
 
   // Create a new thread object from the partial thread data
   const threadEntry = createThread(thread);

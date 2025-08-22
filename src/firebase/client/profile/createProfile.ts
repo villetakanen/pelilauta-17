@@ -1,4 +1,3 @@
-import { PROFILES_COLLECTION_NAME, type Profile } from '@schemas/ProfileSchema';
 import {
   collection,
   doc,
@@ -9,6 +8,10 @@ import {
   setDoc,
   where,
 } from 'firebase/firestore';
+import {
+  PROFILES_COLLECTION_NAME,
+  type Profile,
+} from 'src/schemas/ProfileSchema';
 import { db } from '..';
 
 export async function createProfile(data: Partial<Profile>, uid: string) {

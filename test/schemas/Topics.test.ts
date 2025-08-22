@@ -1,4 +1,4 @@
-import { topicSchema } from '@schemas/MetaTopicsSchema';
+import { topicSchema } from 'src/schemas/MetaTopicsSchema';
 import { expect, test } from 'vitest';
 
 test('topics require a name, noun (an icon name) and a slug to be valid', () => {

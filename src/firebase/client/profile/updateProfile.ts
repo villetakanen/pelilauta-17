@@ -1,5 +1,8 @@
-import { PROFILES_COLLECTION_NAME, type Profile } from '@schemas/ProfileSchema';
 import { doc, serverTimestamp, updateDoc } from 'firebase/firestore';
+import {
+  PROFILES_COLLECTION_NAME,
+  type Profile,
+} from 'src/schemas/ProfileSchema';
 import { db } from '..';
 
 export async function updateProfile(data: Partial<Profile>, uid: string) {

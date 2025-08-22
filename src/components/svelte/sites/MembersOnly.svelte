@@ -1,8 +1,8 @@
 <script lang="ts">
-import type { Site } from '@schemas/SiteSchema';
-import { uid } from '@stores/session';
-import WithAuth from '@svelte/app/WithAuth.svelte';
-import { t } from '@utils/i18n';
+import WithAuth from 'src/components/svelte/app/WithAuth.svelte';
+import type { Site } from 'src/schemas/SiteSchema';
+import { uid } from 'src/stores/session';
+import { t } from 'src/utils/i18n';
 import type { Snippet } from 'svelte';
 
 interface Props {

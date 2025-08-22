@@ -1,8 +1,8 @@
 ---
-import ModalPage from '@layouts/ModalPage.astro';
-import { parseThread } from '@schemas/ThreadSchema';
-import ConfirmDeleteThread from '@svelte/threads/ConfirmDeleteThread.svelte';
-import { toClientEntry } from '@utils/client/entryUtils';
+import ConfirmDeleteThread from 'src/components/svelte/threads/ConfirmDeleteThread.svelte';
+import ModalPage from 'src/layouts/ModalPage.astro';
+import { parseThread } from 'src/schemas/ThreadSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
 
 const { threadKey } = Astro.params;
 // Fetch site data from the api

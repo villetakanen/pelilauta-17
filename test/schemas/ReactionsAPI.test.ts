@@ -1,4 +1,4 @@
-import type { Reactions } from '@schemas/ReactionsSchema';
+import type { Reactions } from 'src/schemas/ReactionsSchema';
 import { describe, expect, test } from 'vitest';
 import { reactionRequestSchema } from '../../src/pages/api/reactions/index';
 

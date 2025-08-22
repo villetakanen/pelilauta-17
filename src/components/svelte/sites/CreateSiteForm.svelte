@@ -1,10 +1,10 @@
 <script lang="ts">
-import type { Site } from '@schemas/SiteSchema';
-import { uid } from '@stores/session';
-import WithAuth from '@svelte/app/WithAuth.svelte';
-import { pushSessionSnack, pushSnack } from '@utils/client/snackUtils';
-import { t } from '@utils/i18n';
-import { logError } from '@utils/logHelpers';
+import WithAuth from 'src/components/svelte/app/WithAuth.svelte';
+import type { Site } from 'src/schemas/SiteSchema';
+import { uid } from 'src/stores/session';
+import { pushSessionSnack, pushSnack } from 'src/utils/client/snackUtils';
+import { t } from 'src/utils/i18n';
+import { logError } from 'src/utils/logHelpers';
 import SystemSelect from './SystemSelect.svelte';
 
 /**
@@ -33,7 +33,7 @@ const valid = $derived.by(() => {
 });
 
 async function onNameBlur(e: FocusEvent) {
-  const { toMekanismiURI } = await import('@utils/mekanismiUtils');
+  const { toMekanismiURI } = await import('src/utils/mekanismiUtils');
   const input = e.target as HTMLInputElement;
   const name = input.value;
   const proposedKey = toMekanismiURI(name);
@@ -62,8 +62,8 @@ async function onNameBlur(e: FocusEvent) {
 async function onsubmit(e: Event) {
   e.preventDefault();
 
-  const { createSite } = await import('@firebase/client/site/createSite');
-  const { addPage } = await import('@firebase/client/page/addPage');
+  const { createSite } = await import('src/firebase/client/site/createSite');
+  const { addPage } = await import('src/firebase/client/page/addPage');
 
   try {
     const id = await createSite(siteData);

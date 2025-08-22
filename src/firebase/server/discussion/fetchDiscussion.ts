@@ -2,10 +2,10 @@ import {
   parseReply,
   REPLIES_COLLECTION,
   type Reply,
-} from '@schemas/ReplySchema';
-import { THREADS_COLLECTION_NAME } from '@schemas/ThreadSchema';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { fixImageData } from '@utils/fixImageData';
+} from 'src/schemas/ReplySchema';
+import { THREADS_COLLECTION_NAME } from 'src/schemas/ThreadSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { fixImageData } from 'src/utils/fixImageData';
 import { serverDB } from '..';
 
 /**

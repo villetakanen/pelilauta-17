@@ -1,7 +1,7 @@
 ---
-import PageWithTray from '@layouts/PageWithTray.astro';
-import AdminTray from '@svelte/admin/AdminTray.svelte';
-import SiteAdmin from '@svelte/admin/SitesAdmin.svelte';
+import AdminTray from 'src/components/svelte/admin/AdminTray.svelte';
+import SiteAdmin from 'src/components/svelte/admin/SitesAdmin.svelte';
+import PageWithTray from 'src/layouts/PageWithTray.astro';
 
 const visible = import.meta.env.SECRET_FEATURE_FLAG_Admin_tools === 'true';
 ---

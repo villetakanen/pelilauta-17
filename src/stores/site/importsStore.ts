@@ -6,9 +6,9 @@
  * page names, and provides functionality to preview and manage the import batch.
  */
 
-import type { Page } from '@schemas/PageSchema';
-import { logDebug } from '@utils/logHelpers';
 import { atom } from 'nanostores';
+import type { Page } from 'src/schemas/PageSchema';
+import { logDebug } from 'src/utils/logHelpers';
 
 export interface ImportedPage extends Partial<Page> {
   fileName: string;

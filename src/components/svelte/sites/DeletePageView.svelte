@@ -1,9 +1,9 @@
 <script lang="ts">
-import type { Page } from '@schemas/PageSchema';
-import type { Site } from '@schemas/SiteSchema';
-import { uid } from '@stores/session';
-import { pushSessionSnack } from '@utils/client/snackUtils';
-import { t } from '@utils/i18n';
+import type { Page } from 'src/schemas/PageSchema';
+import type { Site } from 'src/schemas/SiteSchema';
+import { uid } from 'src/stores/session';
+import { pushSessionSnack } from 'src/utils/client/snackUtils';
+import { t } from 'src/utils/i18n';
 
 interface Props {
   site: Site;
@@ -22,7 +22,7 @@ async function handleSubmit(event: SubmitEvent) {
   event.preventDefault();
 
   // Dynamically import the delete function
-  const { deletePage } = await import('@firebase/client/site/deletePage');
+  const { deletePage } = await import('src/firebase/client/site/deletePage');
   await deletePage(site.key, page.key);
 
   // Show success notification

@@ -1,9 +1,9 @@
 ---
-import ModalPage from '@layouts/ModalPage.astro';
-import { parseSite } from '@schemas/SiteSchema';
-import SiteMembersApp from '@svelte/sites/SiteMembersApp.svelte';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { t } from '@utils/i18n';
+import SiteMembersApp from 'src/components/svelte/sites/SiteMembersApp.svelte';
+import ModalPage from 'src/layouts/ModalPage.astro';
+import { parseSite } from 'src/schemas/SiteSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { t } from 'src/utils/i18n';
 
 const { siteKey: siteKeyParam } = Astro.params;
 const siteKey = siteKeyParam || 'mekanismi'; // This should not happen, but just in case

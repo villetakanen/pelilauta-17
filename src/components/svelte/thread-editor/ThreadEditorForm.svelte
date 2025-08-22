@@ -1,13 +1,13 @@
 <script lang="ts">
-import type { Channel } from '@schemas/ChannelSchema';
-import type { Thread } from '@schemas/ThreadSchema';
-import { uid } from '@stores/session';
-import AddFilesButton from '@svelte/app/AddFilesButton.svelte';
-import { pushSnack } from '@utils/client/snackUtils';
-import { extractTags } from '@utils/contentHelpers';
-import { t } from '@utils/i18n';
-import { logDebug, logError } from '@utils/logHelpers';
 import type { CnEditor } from 'cn-editor/src/cn-editor';
+import AddFilesButton from 'src/components/svelte/app/AddFilesButton.svelte';
+import type { Channel } from 'src/schemas/ChannelSchema';
+import type { Thread } from 'src/schemas/ThreadSchema';
+import { uid } from 'src/stores/session';
+import { pushSnack } from 'src/utils/client/snackUtils';
+import { extractTags } from 'src/utils/contentHelpers';
+import { t } from 'src/utils/i18n';
+import { logDebug, logError } from 'src/utils/logHelpers';
 import { onMount } from 'svelte';
 import ChannelSelect from './ChannelSelect.svelte';
 import { submitThreadUpdate } from './submitThreadUpdate';

@@ -1,5 +1,5 @@
-import { serverDB } from '@firebase/server';
-import { ACCOUNTS_COLLECTION_NAME } from '@schemas/AccountSchema';
+import { serverDB } from 'src/firebase/server';
+import { ACCOUNTS_COLLECTION_NAME } from 'src/schemas/AccountSchema';
 
 /**
  * Returns the active account UID's for the solution.

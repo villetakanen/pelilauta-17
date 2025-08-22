@@ -1,6 +1,6 @@
-import { REACTIONS_COLLECTION_NAME } from '@schemas/ReactionsSchema';
-import { REPLIES_COLLECTION } from '@schemas/ReplySchema';
-import { THREADS_COLLECTION_NAME } from '@schemas/ThreadSchema';
+import { REACTIONS_COLLECTION_NAME } from 'src/schemas/ReactionsSchema';
+import { REPLIES_COLLECTION } from 'src/schemas/ReplySchema';
+import { THREADS_COLLECTION_NAME } from 'src/schemas/ThreadSchema';
 
 /**
  * Handles deleting a reply from a thread, and updates all necessary metadata.

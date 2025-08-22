@@ -1,11 +1,14 @@
 <script lang="ts">
-import { HANDOUTS_COLLECTION_NAME, handoutFrom } from '@schemas/HandoutSchema';
-import { SITES_COLLECTION_NAME, type Site } from '@schemas/SiteSchema';
-import { uid } from '@stores/session';
-import { pushSnack } from '@utils/client/snackUtils';
-import { toFirestoreEntry } from '@utils/client/toFirestoreEntry';
-import { t } from '@utils/i18n';
-import { logError } from '@utils/logHelpers';
+import {
+  HANDOUTS_COLLECTION_NAME,
+  handoutFrom,
+} from 'src/schemas/HandoutSchema';
+import { SITES_COLLECTION_NAME, type Site } from 'src/schemas/SiteSchema';
+import { uid } from 'src/stores/session';
+import { pushSnack } from 'src/utils/client/snackUtils';
+import { toFirestoreEntry } from 'src/utils/client/toFirestoreEntry';
+import { t } from 'src/utils/i18n';
+import { logError } from 'src/utils/logHelpers';
 
 interface Props {
   site: Site;

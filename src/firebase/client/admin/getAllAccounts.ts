@@ -2,7 +2,7 @@ import {
   ACCOUNTS_COLLECTION_NAME,
   type Account,
   parseAccount,
-} from '@schemas/AccountSchema';
+} from 'src/schemas/AccountSchema';
 
 export async function getAllAccounts() {
   const { getFirestore, getDocs, collection } = await import(

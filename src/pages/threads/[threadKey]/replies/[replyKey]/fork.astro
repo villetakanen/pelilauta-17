@@ -1,10 +1,10 @@
 ---
-import ModalPage from '@layouts/ModalPage.astro';
-import { ChannelsSchema } from '@schemas/ChannelSchema';
-import { ReplySchema } from '@schemas/ReplySchema';
-import { ThreadSchema } from '@schemas/ThreadSchema';
-import ForkThreadApp from '@svelte/thread-editor/ForkThreadApp.svelte';
-import { t } from '@utils/i18n';
+import ForkThreadApp from 'src/components/svelte/thread-editor/ForkThreadApp.svelte';
+import ModalPage from 'src/layouts/ModalPage.astro';
+import { ChannelsSchema } from 'src/schemas/ChannelSchema';
+import { ReplySchema } from 'src/schemas/ReplySchema';
+import { ThreadSchema } from 'src/schemas/ThreadSchema';
+import { t } from 'src/utils/i18n';
 
 // We want to fetch the thread and the reply server side, and pass those to
 // the client form. All authz for ui will happen on the client side, and for

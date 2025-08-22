@@ -1,14 +1,14 @@
 <script lang="ts">
-import type { Handout } from '@schemas/HandoutSchema';
-import type { Site } from '@schemas/SiteSchema';
-import { uid } from '@stores/session';
-import { site } from '@stores/site';
-import { update } from '@stores/site/handouts';
-import ProfileLink from '@svelte/app/ProfileLink.svelte';
-import UserSelect from '@svelte/app/UserSelect.svelte';
-import { pushSnack } from '@utils/client/snackUtils';
-import { t } from '@utils/i18n';
-import { logDebug } from '@utils/logHelpers';
+import ProfileLink from 'src/components/svelte/app/ProfileLink.svelte';
+import UserSelect from 'src/components/svelte/app/UserSelect.svelte';
+import type { Handout } from 'src/schemas/HandoutSchema';
+import type { Site } from 'src/schemas/SiteSchema';
+import { uid } from 'src/stores/session';
+import { site } from 'src/stores/site';
+import { update } from 'src/stores/site/handouts';
+import { pushSnack } from 'src/utils/client/snackUtils';
+import { t } from 'src/utils/i18n';
+import { logDebug } from 'src/utils/logHelpers';
 
 interface Props {
   site: Site;

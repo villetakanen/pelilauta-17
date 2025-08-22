@@ -1,11 +1,11 @@
 // rss/threads.xml.ts
 import rss, { type RSSFeedItem } from '@astrojs/rss';
-import { parseThread, type Thread } from '@schemas/ThreadSchema';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { createSnippet } from '@utils/contentHelpers';
-import { t } from '@utils/i18n';
 import type { APIContext } from 'astro';
 import { marked } from 'marked';
+import { parseThread, type Thread } from 'src/schemas/ThreadSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { createSnippet } from 'src/utils/contentHelpers';
+import { t } from 'src/utils/i18n';
 
 export async function GET({ request }: APIContext) {
   /*if (import.meta.env.SECRET_FEATURE_FLAG_RSS !== 'true') {

@@ -1,4 +1,4 @@
-import { EntrySchema } from '@schemas/EntrySchema';
+import { EntrySchema } from 'src/schemas/EntrySchema';
 import { describe, expect, it } from 'vitest';
 
 describe('EntrySchema', () => {

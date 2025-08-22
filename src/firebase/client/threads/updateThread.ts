@@ -1,4 +1,4 @@
-import { THREADS_COLLECTION_NAME, type Thread } from '@schemas/ThreadSchema';
+import { THREADS_COLLECTION_NAME, type Thread } from 'src/schemas/ThreadSchema';
 
 export async function updateThread(data: Partial<Thread>) {
   if (!data.key) {

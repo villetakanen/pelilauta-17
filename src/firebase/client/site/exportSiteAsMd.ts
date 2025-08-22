@@ -1,5 +1,5 @@
-import type { Page } from '@schemas/PageSchema';
-import type { Site } from '@schemas/SiteSchema';
+import type { Page } from 'src/schemas/PageSchema';
+import type { Site } from 'src/schemas/SiteSchema';
 
 export async function exportSiteAsMd(site: Site, origin: string) {
   const pages: Array<string> = [];

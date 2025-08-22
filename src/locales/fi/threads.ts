@@ -1,4 +1,4 @@
-import type { Locale } from '@utils/i18n';
+import type { Locale } from 'src/utils/i18n';
 
 export const threads: Locale = {
   fork: {

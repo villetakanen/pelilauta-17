@@ -1,14 +1,14 @@
 <script lang="ts">
+import WithAuth from 'src/components/svelte/app/WithAuth.svelte';
 import {
   type PageHistory,
   PageHistorySchema,
-} from '@schemas/PageHistorySchema';
-import type { Page } from '@schemas/PageSchema';
-import type { Site } from '@schemas/SiteSchema';
-import { uid } from '@stores/session';
-import { site } from '@stores/site';
-import WithAuth from '@svelte/app/WithAuth.svelte';
-import { t } from '@utils/i18n';
+} from 'src/schemas/PageHistorySchema';
+import type { Page } from 'src/schemas/PageSchema';
+import type { Site } from 'src/schemas/SiteSchema';
+import { uid } from 'src/stores/session';
+import { site } from 'src/stores/site';
+import { t } from 'src/utils/i18n';
 import PageHistoryArticle from './PageHistoryArticle.svelte';
 import PageHistoryIndex from './PageHistoryIndex.svelte';
 

@@ -1,6 +1,6 @@
 <script lang="ts">
-import { logout } from '@stores/session';
-import { t } from '@utils/i18n';
+import { logout } from 'src/stores/session';
+import { t } from 'src/utils/i18n';
 
 async function logoutAction() {
   await logout();

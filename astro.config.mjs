@@ -38,7 +38,12 @@ export default defineConfig({
     ],
     optimizeDeps: {
       include: ['nanostores', '@nanostores/persistent'],
-      exclude: ['firebase/firestore', 'firebase/auth', 'firebase/storage', 'firebase/app'],
+      exclude: [
+        'firebase/firestore',
+        'firebase/auth',
+        'firebase/storage',
+        'firebase/app',
+      ],
     },
     ssr: {
       noExternal: ['nanostores', '@nanostores/persistent'],

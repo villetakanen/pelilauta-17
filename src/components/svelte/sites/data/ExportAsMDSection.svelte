@@ -1,9 +1,9 @@
 <script lang="ts">
-import { createSiteExport } from '@firebase/client/site/createSiteExport';
-import { exportSiteAsMd } from '@firebase/client/site/exportSiteAsMd';
-import { site } from '@stores/site';
-import { t } from '@utils/i18n';
 import { saveAs } from 'file-saver';
+import { createSiteExport } from 'src/firebase/client/site/createSiteExport';
+import { exportSiteAsMd } from 'src/firebase/client/site/exportSiteAsMd';
+import { site } from 'src/stores/site';
+import { t } from 'src/utils/i18n';
 
 async function exportSite() {
   if (!$site) return;

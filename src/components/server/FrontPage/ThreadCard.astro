@@ -1,10 +1,10 @@
 ---
-import type { Thread } from '@schemas/ThreadSchema';
-import ProfileLink from '@svelte/app/ProfileLink.svelte';
-import ReactionButton from '@svelte/app/ReactionButton.svelte';
-import CardSubscription from '@svelte/frontpage/CardSubscription.svelte';
-import { toDisplayString } from '@utils/contentHelpers';
 import { marked } from 'marked';
+import ProfileLink from 'src/components/svelte/app/ProfileLink.svelte';
+import ReactionButton from 'src/components/svelte/app/ReactionButton.svelte';
+import CardSubscription from 'src/components/svelte/frontpage/CardSubscription.svelte';
+import type { Thread } from 'src/schemas/ThreadSchema';
+import { toDisplayString } from 'src/utils/contentHelpers';
 
 export interface Props {
   thread: Thread;

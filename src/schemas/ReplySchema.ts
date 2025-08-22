@@ -1,4 +1,4 @@
-import { logError } from '@utils/logHelpers';
+import { logError } from 'src/utils/logHelpers';
 import { z } from 'zod';
 import { ContentEntrySchema } from './ContentEntry';
 import { ImageArraySchema } from './ThreadSchema';

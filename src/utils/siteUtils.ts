@@ -1,5 +1,5 @@
-import { pageFrom } from '@schemas/PageSchema';
-import type { Site } from '@schemas/SiteSchema';
+import { pageFrom } from 'src/schemas/PageSchema';
+import type { Site } from 'src/schemas/SiteSchema';
 
 export function generateFrontPage(site: Site, uid: string) {
   return pageFrom({

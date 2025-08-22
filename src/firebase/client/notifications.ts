@@ -1,9 +1,9 @@
 import {
   NOTIFICATION_FIRESTORE_COLLECTION,
   type Notification,
-} from '@schemas/NotificationSchema';
-import { toFirestoreEntry } from '@utils/client/toFirestoreEntry';
-import { logDebug } from '@utils/logHelpers';
+} from 'src/schemas/NotificationSchema';
+import { toFirestoreEntry } from 'src/utils/client/toFirestoreEntry';
+import { logDebug } from 'src/utils/logHelpers';
 
 export async function addNotification(notification: Notification) {
   const { addDoc, getFirestore, collection, setDoc, doc } = await import(

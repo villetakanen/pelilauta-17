@@ -1,11 +1,11 @@
+import { atom, onMount } from 'nanostores';
 import {
   CLOCKS_COLLECTION_NAME,
   type Clock,
   parseClock,
-} from '@schemas/ClockSchema';
-import { SITES_COLLECTION_NAME } from '@schemas/SiteSchema';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { atom, onMount } from 'nanostores';
+} from 'src/schemas/ClockSchema';
+import { SITES_COLLECTION_NAME } from 'src/schemas/SiteSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
 import { site } from '.';
 
 export const clocks = atom<Clock[]>([]);

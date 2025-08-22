@@ -1,15 +1,15 @@
 <script lang="ts">
-import { updateSite } from '@firebase/client/site/updateSite';
+import WithAuth from 'src/components/svelte/app/WithAuth.svelte';
+import { updateSite } from 'src/firebase/client/site/updateSite';
 import {
   type Site,
   type SiteSortOrder,
   SiteSortOrderSchema,
-} from '@schemas/SiteSchema';
-import { uid } from '@stores/session';
-import WithAuth from '@svelte/app/WithAuth.svelte';
-import { pushSnack } from '@utils/client/snackUtils';
-import { t } from '@utils/i18n';
-import { logError } from '@utils/logHelpers';
+} from 'src/schemas/SiteSchema';
+import { uid } from 'src/stores/session';
+import { pushSnack } from 'src/utils/client/snackUtils';
+import { t } from 'src/utils/i18n';
+import { logError } from 'src/utils/logHelpers';
 import SiteCategoriesTool from './SiteCategoriesTool.svelte';
 
 interface Props {

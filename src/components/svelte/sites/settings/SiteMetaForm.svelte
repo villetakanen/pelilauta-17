@@ -1,8 +1,8 @@
 <script lang="ts">
-import type { Site } from '@schemas/SiteSchema';
-import { update } from '@stores/site';
-import { pushSnack } from '@utils/client/snackUtils';
-import { t } from '@utils/i18n';
+import type { Site } from 'src/schemas/SiteSchema';
+import { update } from 'src/stores/site';
+import { pushSnack } from 'src/utils/client/snackUtils';
+import { t } from 'src/utils/i18n';
 import LicenseSelect from '../assets/LicenseSelect.svelte';
 import SystemSelect from '../SystemSelect.svelte';
 import SiteHomepageSelect from './SiteHomepageSelect.svelte';

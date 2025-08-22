@@ -1,11 +1,11 @@
 <script lang="ts">
-import { addAssetToSite } from '@firebase/client/site/addAssetToSite';
-import type { Site } from '@schemas/SiteSchema';
-import { uid } from '@stores/session';
-import { resizeImage } from '@utils/client/resizeImage';
-import { pushSnack } from '@utils/client/snackUtils';
-import { t } from '@utils/i18n';
-import { logWarn } from '@utils/logHelpers';
+import { addAssetToSite } from 'src/firebase/client/site/addAssetToSite';
+import type { Site } from 'src/schemas/SiteSchema';
+import { uid } from 'src/stores/session';
+import { resizeImage } from 'src/utils/client/resizeImage';
+import { pushSnack } from 'src/utils/client/snackUtils';
+import { t } from 'src/utils/i18n';
+import { logWarn } from 'src/utils/logHelpers';
 
 interface Props {
   site: Site;

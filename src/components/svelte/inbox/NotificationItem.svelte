@@ -1,10 +1,10 @@
 <script lang="ts">
-import { deleteNotification } from '@firebase/client/inbox/deleteNotification';
-import { markRead } from '@firebase/client/inbox/markRead';
-import type { Notification } from '@schemas/NotificationSchema';
-import ProfileLink from '@svelte/app/ProfileLink.svelte';
-import { toDisplayString } from '@utils/contentHelpers';
-import { t } from '@utils/i18n';
+import ProfileLink from 'src/components/svelte/app/ProfileLink.svelte';
+import { deleteNotification } from 'src/firebase/client/inbox/deleteNotification';
+import { markRead } from 'src/firebase/client/inbox/markRead';
+import type { Notification } from 'src/schemas/NotificationSchema';
+import { toDisplayString } from 'src/utils/contentHelpers';
+import { t } from 'src/utils/i18n';
 
 /**
  * A Line item in the notifications list.

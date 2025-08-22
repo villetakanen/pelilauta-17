@@ -1,8 +1,8 @@
-import { SITES_COLLECTION_NAME, type Site } from '@schemas/SiteSchema';
-import { uid } from '@stores/session';
-import { logError } from '@utils/logHelpers';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { deleteObject, listAll, ref } from 'firebase/storage';
+import { SITES_COLLECTION_NAME, type Site } from 'src/schemas/SiteSchema';
+import { uid } from 'src/stores/session';
+import { logError } from 'src/utils/logHelpers';
 import { app, db } from '..';
 
 /**

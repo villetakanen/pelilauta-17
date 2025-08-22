@@ -1,10 +1,10 @@
+import { atom, onMount, type WritableAtom } from 'nanostores';
 import {
   CHARACTER_SHEETS_COLLECTION_NAME,
   type CharacterSheet,
   CharacterSheetSchema,
-} from '@schemas/CharacterSheetSchema';
-import { logDebug, logError } from '@utils/logHelpers';
-import { atom, onMount, type WritableAtom } from 'nanostores';
+} from 'src/schemas/CharacterSheetSchema';
+import { logDebug, logError } from 'src/utils/logHelpers';
 
 export const sheet: WritableAtom<CharacterSheet | null> = atom(null);
 export const loading: WritableAtom<boolean> = atom(false);
@@ -26,7 +26,7 @@ onMount(sheet, () => {
 export async function subscribeCharacterSheet(sheetKey: string) {
   try {
     const { doc, onSnapshot } = await import('firebase/firestore');
-    const { db } = await import('@firebase/client');
+    const { db } = await import('src/firebase/client');
 
     logDebug(
       'characterSheetStore',
@@ -76,7 +76,7 @@ export async function createCharacterSheet(
 ): Promise<string> {
   try {
     const { addDoc, collection } = await import('firebase/firestore');
-    const { db } = await import('@firebase/client');
+    const { db } = await import('src/firebase/client');
 
     // Parse and validate the sheet data
     const characterSheet = CharacterSheetSchema.parse(sheetData);

@@ -1,4 +1,4 @@
-import { toDate } from '@utils/schemaHelpers';
+import { toDate } from 'src/utils/schemaHelpers';
 import { z } from 'zod';
 
 export const NOTIFICATION_FIRESTORE_COLLECTION = 'notifications';

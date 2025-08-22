@@ -1,6 +1,6 @@
 <script lang="ts">
-import { uid } from '@stores/session';
-import { t } from '@utils/i18n';
+import { uid } from 'src/stores/session';
+import { t } from 'src/utils/i18n';
 import type { Snippet } from 'svelte';
 
 interface Props {

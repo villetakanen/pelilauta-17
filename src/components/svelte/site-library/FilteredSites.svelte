@@ -1,5 +1,5 @@
 <script lang="ts">
-import { userSites } from '@stores/userSites';
+import { userSites } from 'src/stores/userSites';
 import { filters } from './filters.svelte';
 import SiteCard from './SiteCard.svelte';
 

@@ -1,10 +1,10 @@
 <script lang="ts">
-import { deleteClock } from '@firebase/client/site/deleteClock';
-import type { Site } from '@schemas/SiteSchema';
-import { uid } from '@stores/session';
-import WithAuth from '@svelte/app/WithAuth.svelte';
-import { pushSessionSnack } from '@utils/client/snackUtils';
-import { t } from '@utils/i18n';
+import WithAuth from 'src/components/svelte/app/WithAuth.svelte';
+import { deleteClock } from 'src/firebase/client/site/deleteClock';
+import type { Site } from 'src/schemas/SiteSchema';
+import { uid } from 'src/stores/session';
+import { pushSessionSnack } from 'src/utils/client/snackUtils';
+import { t } from 'src/utils/i18n';
 import { site } from '../../../stores/site';
 import { clocks } from '../../../stores/site/clocksStore';
 

@@ -1,12 +1,12 @@
 <script lang="ts">
+import type { CnEditor } from '@11thdeg/cn-editor/';
 import {
   character,
   loading,
   subscribe,
   update,
-} from '@stores/characters/characterStore';
-import { t } from '@utils/i18n';
-import type { CnEditor } from '@11thdeg/cn-editor/';
+} from 'src/stores/characters/characterStore';
+import { t } from 'src/utils/i18n';
 
 export interface Props {
   characterKey: string;
