@@ -3,6 +3,7 @@ import svelte from '@astrojs/svelte';
 import sentry from '@sentry/astro';
 import { defineConfig } from 'astro/config';
 import { visualizer } from 'rollup-plugin-visualizer';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 // https://astro.build/config
 export default defineConfig({
@@ -28,24 +29,20 @@ export default defineConfig({
   output: 'server',
 
   vite: {
-    optimizeDeps: {
-      include: ['nanostores', '@nanostores/persistent'],
-      exclude: [
-        'firebase/firestore',
-        'firebase/auth',
-        'firebase/storage',
-        'firebase/app',
-      ],
-    },
-    ssr: {
-      noExternal: ['nanostores', '@nanostores/persistent'],
-    },
     plugins: [
+      tsconfigPaths(),
       visualizer({
         emitFile: true,
         filename: 'stats.html',
       }),
     ],
+    optimizeDeps: {
+      include: ['nanostores', '@nanostores/persistent'],
+      exclude: ['firebase/firestore', 'firebase/auth', 'firebase/storage', 'firebase/app'],
+    },
+    ssr: {
+      noExternal: ['nanostores', '@nanostores/persistent'],
+    },
   },
 
   adapter: netlify(),
