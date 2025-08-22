@@ -173,7 +173,7 @@ const canImport = $derived(hasPages && !importing && currentSite && $uid);
     <button class="button outlined small" onclick={clearAll}>Clear All</button>
   </div>
   
-  <div class="flex-col gap-2">
+  <div class="flex flex-col">
     {#each pages as page, index}
       {@const exists = pageExists(page.name || '')}
       <article class="surface border p-2">

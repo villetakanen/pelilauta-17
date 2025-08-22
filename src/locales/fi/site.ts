@@ -186,6 +186,7 @@ export const site: Locale = {
   },
   siteList: {
     title: 'Julkiset sivustot',
+    footer: '{count} julkista peliä tai sivustoa.',
   },
   toc: {
     title: 'Hakemisto',

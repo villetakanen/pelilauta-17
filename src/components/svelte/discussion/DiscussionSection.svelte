@@ -67,7 +67,7 @@ onMount(async () => {
 </script>
 <div class="content-columns">
   <section class="column-l">
-    <div class="flex-col">
+    <div class="flex flex-col">
     {#each discussion as reply}
       <ReplyArticle {reply} />
     {/each}

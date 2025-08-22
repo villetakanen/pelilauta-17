@@ -3,7 +3,7 @@ import { type Site, SiteSchema } from 'src/schemas/SiteSchema';
 import { t } from 'src/utils/i18n';
 import { logError } from 'src/utils/logHelpers';
 import MySitesButton from '../../svelte/sites/MySitesButton.svelte';
-import SiteListItem from './SiteListItem.astro';
+import SiteCard from '../ui/SiteCard.astro';
 
 const origin = Astro.url.origin;
 let sites: Site[] = [];
@@ -26,14 +26,25 @@ try {
   // sites remains empty array, component will render without sites
 }
 ---
-<section class="column-l">
-  <div class="flex justify-space-between align-center">
-    <h2>{t('site:siteList.title')}</h2>
-    <MySitesButton client:only="svelte"/>
-  </div>
-  <div class="flex-col">
-    {sites && sites.map((site) => (
-      <SiteListItem site={site} />
-    ))}
-  </div>      
+<section class="content-cards">
+  <header>
+    <div class="toolbar">
+      <h1>{t('site:siteList.title')}</h1>
+      <MySitesButton client:only="svelte"/>
+    </div>
+  </header>
+
+  {sites && sites.map((site) => (
+    <SiteCard site={site}></SiteCard>
+  ))}
+
+  <footer>
+    <div class="toolbar">
+      <p>{t('site:siteList.footer', { count: sites.length })}</p>
+      <MySitesButton client:only="svelte"/>
+    </div>
+  </footer>
+
 </section>
+
+
