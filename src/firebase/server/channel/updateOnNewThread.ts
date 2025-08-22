@@ -2,8 +2,8 @@ import {
   CHANNELS_META_REF,
   ChannelsSchema,
   EntryMetadataSchema,
-} from '@schemas/ChannelSchema';
-import type { Thread } from '@schemas/ThreadSchema';
+} from 'src/schemas/ChannelSchema';
+import type { Thread } from 'src/schemas/ThreadSchema';
 
 /**
  * Handle channel metadata updates when a new thread is created.
@@ -11,7 +11,7 @@ import type { Thread } from '@schemas/ThreadSchema';
  * @param thread
  */
 export async function updateOnNewThread(thread: Thread): Promise<void> {
-  const { serverDB } = await import('@firebase/server');
+  const { serverDB } = await import('src/firebase/server');
   const channelPath = CHANNELS_META_REF.split('/');
 
   const metadataRef = serverDB.collection(channelPath[0]).doc(channelPath[1]);

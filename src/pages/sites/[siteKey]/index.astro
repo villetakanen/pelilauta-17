@@ -1,14 +1,14 @@
 ---
-import { parsePage } from '@schemas/PageSchema';
-import { parseSite } from '@schemas/SiteSchema';
-import PageApp from '@server/SiteApp/PageApp.astro';
-import SiteTray from '@server/SiteApp/SiteTray.astro';
-import BackgroundPoster from '@server/ui/BackgroundPoster.astro';
-import PageFabs from '@svelte/sites/PageFabs.svelte';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { logError } from '@utils/logHelpers';
-import { systemToNoun } from '@utils/schemaHelpers';
+import PageApp from 'src/components/server/SiteApp/PageApp.astro';
+import SiteTray from 'src/components/server/SiteApp/SiteTray.astro';
+import BackgroundPoster from 'src/components/server/ui/BackgroundPoster.astro';
+import PageFabs from 'src/components/svelte/sites/PageFabs.svelte';
 import PageWithTray from 'src/layouts/PageWithTray.astro';
+import { parsePage } from 'src/schemas/PageSchema';
+import { parseSite } from 'src/schemas/SiteSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { logError } from 'src/utils/logHelpers';
+import { systemToNoun } from 'src/utils/schemaHelpers';
 
 const { siteKey: siteKeyParam } = Astro.params;
 const siteKey = siteKeyParam || 'mekanismi'; // This should not happen, but just in case

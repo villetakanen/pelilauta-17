@@ -1,6 +1,6 @@
 <script lang="ts">
-import { logDebug } from '@utils/logHelpers';
-import { toMekanismiURI } from '@utils/mekanismiUtils';
+import { logDebug } from 'src/utils/logHelpers';
+import { toMekanismiURI } from 'src/utils/mekanismiUtils';
 
 interface Props {
   topics: Array<string>;

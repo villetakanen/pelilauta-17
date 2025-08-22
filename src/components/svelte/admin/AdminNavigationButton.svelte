@@ -1,5 +1,5 @@
 <script lang="ts">
-import { showAdminTools } from '@stores/session';
+import { showAdminTools } from 'src/stores/session';
 </script>
 
 {#if $showAdminTools}

@@ -2,7 +2,7 @@
 export const prerender = true;
 
 import { getCollection } from 'astro:content';
-import { t } from '@utils/i18n';
+import { t } from 'src/utils/i18n';
 
 const allComponents = await getCollection('docs');
 ---

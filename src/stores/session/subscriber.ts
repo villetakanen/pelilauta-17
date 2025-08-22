@@ -1,7 +1,7 @@
 import { persistentAtom } from '@nanostores/persistent';
-import { logError } from '@utils/logHelpers';
 import { onMount } from 'nanostores';
 import { db } from 'src/firebase/client';
+import { logError } from 'src/utils/logHelpers';
 import {
   createSubscription,
   parseSubscription,

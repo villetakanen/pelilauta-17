@@ -1,9 +1,9 @@
 ---
-import { parseSite, type Site } from '@schemas/SiteSchema';
-import SiteCard from '@server/ui/SiteCard.astro';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { t } from '@utils/i18n';
-import { logError } from '@utils/logHelpers';
+import SiteCard from 'src/components/server/ui/SiteCard.astro';
+import { parseSite, type Site } from 'src/schemas/SiteSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { t } from 'src/utils/i18n';
+import { logError } from 'src/utils/logHelpers';
 
 interface Props {
   uid: string;

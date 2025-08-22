@@ -2,9 +2,10 @@
 /*
  * A component to display the character's markdown content as an article.column-l
  */
-import { canEdit, character } from '@stores/characters/characterStore';
-import { t } from '@utils/i18n';
+
 import { marked } from 'marked';
+import { canEdit, character } from 'src/stores/characters/characterStore';
+import { t } from 'src/utils/i18n';
 
 // Client-side reactive content parsing
 const htmlContent = $derived.by(() => {

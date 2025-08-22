@@ -2,9 +2,9 @@ import {
   parseSite,
   SITES_COLLECTION_NAME,
   type Site,
-} from '@schemas/SiteSchema';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { logError } from '@utils/logHelpers';
+} from 'src/schemas/SiteSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { logError } from 'src/utils/logHelpers';
 
 /**
  * Deletes a specific asset from Firebase Storage and updates the site's document in Firestore.

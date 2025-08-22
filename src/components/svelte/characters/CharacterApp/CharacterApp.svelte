@@ -5,9 +5,9 @@
  * This component subscribes to a character's data and mounts the components
  * to display and interact with the character.
  */
-import { character, subscribe } from '@stores/characters/characterStore';
-import { t } from '@utils/i18n';
-import { logDebug } from '@utils/logHelpers';
+import { character, subscribe } from 'src/stores/characters/characterStore';
+import { t } from 'src/utils/i18n';
+import { logDebug } from 'src/utils/logHelpers';
 import CharacterArticle from './CharacterArticle.svelte';
 import CharacterInfo from './CharacterInfo.svelte';
 import StatBlock from './StatBlock.svelte';

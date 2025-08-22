@@ -1,5 +1,5 @@
-import { logError } from '@utils/logHelpers';
-import { toDate } from '@utils/schemaHelpers';
+import { logError } from 'src/utils/logHelpers';
+import { toDate } from 'src/utils/schemaHelpers';
 import { z } from 'zod';
 import { ContentEntrySchema, contentEntryFrom } from './ContentEntry';
 

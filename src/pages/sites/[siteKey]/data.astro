@@ -1,9 +1,9 @@
 ---
-import PageWithTray from '@layouts/PageWithTray.astro';
-import { parseSite } from '@schemas/SiteSchema';
-import SiteTray from '@server/SiteApp/SiteTray.astro';
-import SiteDataApp from '@svelte/sites/data/SiteDataApp.svelte';
-import { toClientEntry } from '@utils/client/entryUtils';
+import SiteTray from 'src/components/server/SiteApp/SiteTray.astro';
+import SiteDataApp from 'src/components/svelte/sites/data/SiteDataApp.svelte';
+import PageWithTray from 'src/layouts/PageWithTray.astro';
+import { parseSite } from 'src/schemas/SiteSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
 
 const { siteKey } = Astro.params;
 

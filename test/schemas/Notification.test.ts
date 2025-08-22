@@ -1,7 +1,7 @@
 import {
   NotificationSchema,
   parseNotification,
-} from '@schemas/NotificationSchema';
+} from 'src/schemas/NotificationSchema';
 import { expect, test } from 'vitest';
 
 test('parseNotification creates a notification object', () => {

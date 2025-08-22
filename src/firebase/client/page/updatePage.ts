@@ -1,6 +1,6 @@
-import { type Page, PageSchema, parsePage } from '@schemas/PageSchema';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { logDebug } from '@utils/logHelpers';
+import { type Page, PageSchema, parsePage } from 'src/schemas/PageSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { logDebug } from 'src/utils/logHelpers';
 import { addPageRevision } from './addPageRevision';
 import { updatePageRef } from './updatePageRef';
 import { updatePageTags } from './updatePageTags';
@@ -30,7 +30,9 @@ export async function updatePage(
   const { getFirestore, doc, updateDoc, getDoc } = await import(
     'firebase/firestore'
   );
-  const { toFirestoreEntry } = await import('@utils/client/toFirestoreEntry');
+  const { toFirestoreEntry } = await import(
+    'src/utils/client/toFirestoreEntry'
+  );
   const db = getFirestore();
 
   // Lets first get the page document

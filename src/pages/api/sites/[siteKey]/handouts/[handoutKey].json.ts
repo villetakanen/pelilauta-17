@@ -1,9 +1,12 @@
-import { serverDB } from '@firebase/server';
-import { HANDOUTS_COLLECTION_NAME, handoutFrom } from '@schemas/HandoutSchema';
-import { SITES_COLLECTION_NAME } from '@schemas/SiteSchema';
-import { toClientEntry } from '@utils/client/entryUtils';
 import type { APIContext } from 'astro';
 import { marked } from 'marked';
+import { serverDB } from 'src/firebase/server';
+import {
+  HANDOUTS_COLLECTION_NAME,
+  handoutFrom,
+} from 'src/schemas/HandoutSchema';
+import { SITES_COLLECTION_NAME } from 'src/schemas/SiteSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
 
 export async function GET({ params }: APIContext): Promise<Response> {
   const { siteKey, handoutKey } = params;

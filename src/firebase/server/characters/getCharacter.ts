@@ -2,9 +2,9 @@ import {
   CHARACTERS_COLLECTION_NAME,
   type Character,
   CharacterSchema,
-} from '@schemas/CharacterSchema';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { logError } from '@utils/logHelpers';
+} from 'src/schemas/CharacterSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { logError } from 'src/utils/logHelpers';
 import { ZodError } from 'zod';
 
 export const ERROR_TYPES = [
@@ -32,7 +32,7 @@ export async function getCharacter(
   }
 
   try {
-    const { serverDB } = await import('@firebase/server');
+    const { serverDB } = await import('src/firebase/server');
 
     const docRef = serverDB.collection(CHARACTERS_COLLECTION_NAME).doc(key);
     const docSnapshot = await docRef.get();

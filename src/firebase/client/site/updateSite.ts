@@ -1,4 +1,4 @@
-import { SITES_COLLECTION_NAME, type Site } from '@schemas/SiteSchema';
+import { SITES_COLLECTION_NAME, type Site } from 'src/schemas/SiteSchema';
 
 /**
  * Async, dynamic import of firebase/firestore and updateDoc for Site
@@ -17,7 +17,9 @@ export async function updateSite(
   }
   // Dynamic import of firebase/firestore and toFirestoreEntry
   const { getFirestore, doc, updateDoc } = await import('firebase/firestore');
-  const { toFirestoreEntry } = await import('@utils/client/toFirestoreEntry');
+  const { toFirestoreEntry } = await import(
+    'src/utils/client/toFirestoreEntry'
+  );
 
   // Create ref and prep data for update
   const siteDoc = doc(getFirestore(), SITES_COLLECTION_NAME, site.key);

@@ -1,13 +1,13 @@
 <script lang="ts">
-import { authedDelete } from '@firebase/client/apiClient';
+import { authedDelete } from 'src/firebase/client/apiClient';
 import {
   character,
   loading,
   subscribe,
-} from '@stores/characters/characterStore';
-import { pushSessionSnack } from '@utils/client/snackUtils';
-import { t } from '@utils/i18n';
-import { logDebug, logError } from '@utils/logHelpers';
+} from 'src/stores/characters/characterStore';
+import { pushSessionSnack } from 'src/utils/client/snackUtils';
+import { t } from 'src/utils/i18n';
+import { logDebug, logError } from 'src/utils/logHelpers';
 
 interface Props {
   characterKey: string;

@@ -37,7 +37,8 @@
       "!**/.astro/**/*",
       "!**/.vercel/**/*",
       "!**/*.cjs",
-      "!**/cn-lightbox/**/*"
+      "!**/cn-lightbox/**/*",
+      "!tooling/**/*"
     ]
   },
   "overrides": [

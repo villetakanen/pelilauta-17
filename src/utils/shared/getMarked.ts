@@ -1,6 +1,6 @@
-import type { Site } from '@schemas/SiteSchema';
-import type { Thread } from '@schemas/ThreadSchema';
 import { Marked, type MarkedExtension, type Tokens } from 'marked';
+import type { Site } from 'src/schemas/SiteSchema';
+import type { Thread } from 'src/schemas/ThreadSchema';
 import { createProfileTagExtension } from './marked/createProfileTagExtension';
 
 /**

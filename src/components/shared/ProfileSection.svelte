@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { Profile } from '@schemas/ProfileSchema';
+import type { Profile } from 'src/schemas/ProfileSchema';
 
 type Props = {
   profile: Profile;

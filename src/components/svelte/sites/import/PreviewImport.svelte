@@ -1,14 +1,14 @@
 <script lang="ts">
-import { uid } from '@stores/session';
-import { site } from '@stores/site';
+import { uid } from 'src/stores/session';
+import { site } from 'src/stores/site';
 import {
   importedPages,
   importStore,
   isImporting,
-} from '@stores/site/importsStore';
-import { pushSnack } from '@utils/client/snackUtils';
-import { logDebug, logError } from '@utils/logHelpers';
-import { toMekanismiURI } from '@utils/mekanismiUtils';
+} from 'src/stores/site/importsStore';
+import { pushSnack } from 'src/utils/client/snackUtils';
+import { logDebug, logError } from 'src/utils/logHelpers';
+import { toMekanismiURI } from 'src/utils/mekanismiUtils';
 
 const pages = $derived($importedPages);
 const currentSite = $derived($site);
@@ -85,7 +85,7 @@ async function importPages() {
 
         if (importedPage.action === 'create') {
           // Create new page
-          const { addPage } = await import('@firebase/client/page/addPage');
+          const { addPage } = await import('src/firebase/client/page/addPage');
 
           const pageData = removeUndefinedValues({
             name: importedPage.name || importedPage.fileName,
@@ -101,7 +101,7 @@ async function importPages() {
         } else {
           // Update existing page
           const { updatePage } = await import(
-            '@firebase/client/page/updatePage'
+            'src/firebase/client/page/updatePage'
           );
 
           if (!pageKey) {

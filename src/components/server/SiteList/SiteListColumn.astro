@@ -1,8 +1,8 @@
 ---
-import { type Site, SiteSchema } from '@schemas/SiteSchema';
-import MySitesButton from '@svelte/sites/MySitesButton.svelte';
-import { t } from '@utils/i18n';
-import { logError } from '@utils/logHelpers';
+import MySitesButton from 'src/components/svelte/sites/MySitesButton.svelte';
+import { type Site, SiteSchema } from 'src/schemas/SiteSchema';
+import { t } from 'src/utils/i18n';
+import { logError } from 'src/utils/logHelpers';
 import SiteListItem from './SiteListItem.astro';
 
 const origin = Astro.url.origin;

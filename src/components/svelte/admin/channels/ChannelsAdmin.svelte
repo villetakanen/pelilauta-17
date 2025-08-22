@@ -1,6 +1,6 @@
 <script lang="ts">
-import { type Channel, parseChannel } from '@schemas/ChannelSchema';
-import { logDebug } from '@utils/logHelpers';
+import { type Channel, parseChannel } from 'src/schemas/ChannelSchema';
+import { logDebug } from 'src/utils/logHelpers';
 import { onMount } from 'svelte';
 import AddChannelDialog from './AddChannelDialog.svelte';
 import ChannelSettings from './ChannelSettings.svelte';
@@ -15,7 +15,7 @@ const topics = $derived.by(() => {
 });
 
 onMount(async () => {
-  const { db } = await import('@firebase/client');
+  const { db } = await import('src/firebase/client');
   const { doc, onSnapshot } = await import('firebase/firestore');
   const channelsRef = doc(db, 'meta', 'threads');
   onSnapshot(channelsRef, (doc) => {

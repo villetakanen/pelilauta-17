@@ -1,7 +1,7 @@
-import { CLOCKS_COLLECTION_NAME, type Clock } from '@schemas/ClockSchema';
-import { SITES_COLLECTION_NAME } from '@schemas/SiteSchema';
-import { toFirestoreEntry } from '@utils/client/toFirestoreEntry';
-import { toMekanismiURI } from '@utils/mekanismiUtils';
+import { CLOCKS_COLLECTION_NAME, type Clock } from 'src/schemas/ClockSchema';
+import { SITES_COLLECTION_NAME } from 'src/schemas/SiteSchema';
+import { toFirestoreEntry } from 'src/utils/client/toFirestoreEntry';
+import { toMekanismiURI } from 'src/utils/mekanismiUtils';
 
 export async function addClocktoSite(siteKey: string, clock: Clock) {
   const { getFirestore, setDoc, getDoc, doc } = await import(

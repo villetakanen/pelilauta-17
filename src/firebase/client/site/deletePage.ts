@@ -1,6 +1,6 @@
-import { PAGES_COLLECTION_NAME } from '@schemas/PageSchema';
-import { parseSite, SITES_COLLECTION_NAME } from '@schemas/SiteSchema';
 import { deleteDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { PAGES_COLLECTION_NAME } from 'src/schemas/PageSchema';
+import { parseSite, SITES_COLLECTION_NAME } from 'src/schemas/SiteSchema';
 import { db } from '..';
 
 /**

@@ -1,4 +1,4 @@
-import type { ContentEntry } from '@schemas/ContentEntry';
+import type { ContentEntry } from 'src/schemas/ContentEntry';
 import TurndownService from 'turndown';
 
 interface AbstractEntry {

@@ -1,9 +1,9 @@
 <script lang="ts">
-import type { CharacterSheet } from '@schemas/CharacterSheetSchema';
-import { CHARACTER_SHEETS_COLLECTION_NAME } from '@schemas/CharacterSheetSchema';
-import { pushSnack } from '@utils/client/snackUtils';
-import { logDebug, logError } from '@utils/logHelpers';
-import { systemToNoun } from '@utils/schemaHelpers';
+import type { CharacterSheet } from 'src/schemas/CharacterSheetSchema';
+import { CHARACTER_SHEETS_COLLECTION_NAME } from 'src/schemas/CharacterSheetSchema';
+import { pushSnack } from 'src/utils/client/snackUtils';
+import { logDebug, logError } from 'src/utils/logHelpers';
+import { systemToNoun } from 'src/utils/schemaHelpers';
 
 let characterSheets = $state<CharacterSheet[]>([]);
 let loading = $state(true);
@@ -15,10 +15,10 @@ $effect(() => {
 
 async function loadCharacterSheets() {
   try {
-    const { db } = await import('@firebase/client');
+    const { db } = await import('src/firebase/client');
     const { collection, getDocs } = await import('firebase/firestore');
     const { CharacterSheetSchema } = await import(
-      '@schemas/CharacterSheetSchema'
+      'src/schemas/CharacterSheetSchema'
     );
 
     const snapshot = await getDocs(
@@ -53,7 +53,7 @@ async function deleteCharacterSheet(sheetKey: string, sheetName: string) {
   }
 
   try {
-    const { db } = await import('@firebase/client');
+    const { db } = await import('src/firebase/client');
     const { doc, deleteDoc } = await import('firebase/firestore');
     await deleteDoc(doc(db, CHARACTER_SHEETS_COLLECTION_NAME, sheetKey));
 

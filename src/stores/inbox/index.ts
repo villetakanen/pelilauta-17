@@ -1,12 +1,12 @@
 import { persistentAtom } from '@nanostores/persistent';
+import { computed, onMount, onStop } from 'nanostores';
 import {
   NOTIFICATION_FIRESTORE_COLLECTION,
   type Notification,
   parseNotification,
-} from '@schemas/NotificationSchema';
-import { uid } from '@stores/session';
-import { logDebug } from '@utils/logHelpers';
-import { computed, onMount, onStop } from 'nanostores';
+} from 'src/schemas/NotificationSchema';
+import { uid } from 'src/stores/session';
+import { logDebug } from 'src/utils/logHelpers';
 
 export const notifications = persistentAtom<Notification[]>(
   'notifications',

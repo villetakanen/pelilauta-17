@@ -1,4 +1,4 @@
-import { toDate } from '@utils/schemaHelpers';
+import { toDate } from 'src/utils/schemaHelpers';
 import * as z from 'zod';
 
 export const ACCOUNTS_COLLECTION_NAME = 'account';

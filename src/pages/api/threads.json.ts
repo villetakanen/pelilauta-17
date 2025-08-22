@@ -1,14 +1,14 @@
-import { CHANNEL_DEFAULT_SLUG } from '@schemas/ChannelSchema';
+import type { APIContext } from 'astro';
+import { Timestamp } from 'firebase-admin/firestore';
+import { serverDB } from 'src/firebase/server';
+import { CHANNEL_DEFAULT_SLUG } from 'src/schemas/ChannelSchema';
 import {
   parseThread,
   THREADS_COLLECTION_NAME,
   type Thread,
-} from '@schemas/ThreadSchema';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { getAstroQueryParams } from '@utils/server/astroApiHelpers';
-import type { APIContext } from 'astro';
-import { Timestamp } from 'firebase-admin/firestore';
-import { serverDB } from 'src/firebase/server';
+} from 'src/schemas/ThreadSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { getAstroQueryParams } from 'src/utils/server/astroApiHelpers';
 
 export async function GET({ request }: APIContext) {
   const publicThreads: Thread[] = [];

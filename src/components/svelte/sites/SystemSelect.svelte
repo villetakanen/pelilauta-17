@@ -1,6 +1,6 @@
 <script lang="ts">
-import { systemToNounMapping } from '@schemas/nouns';
-import { t } from '@utils/i18n';
+import { systemToNounMapping } from 'src/schemas/nouns';
+import { t } from 'src/utils/i18n';
 
 interface Props {
   system?: string;

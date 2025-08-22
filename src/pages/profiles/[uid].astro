@@ -1,8 +1,8 @@
 ---
-import Page from '@layouts/Page.astro';
-import { parseProfile } from '@schemas/ProfileSchema';
-import ProfileApp from '@server/profile/ProfileApp.astro';
-import { toClientEntry } from '@utils/client/entryUtils';
+import ProfileApp from 'src/components/server/profile/ProfileApp.astro';
+import Page from 'src/layouts/Page.astro';
+import { parseProfile } from 'src/schemas/ProfileSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
 
 const { uid } = Astro.params;
 

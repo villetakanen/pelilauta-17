@@ -1,7 +1,7 @@
 <script lang="ts">
-import type { Handout } from '@schemas/HandoutSchema';
-import ProfileLink from '@svelte/app/ProfileLink.svelte';
-import { toDisplayString } from '@utils/contentHelpers';
+import ProfileLink from 'src/components/svelte/app/ProfileLink.svelte';
+import type { Handout } from 'src/schemas/HandoutSchema';
+import { toDisplayString } from 'src/utils/contentHelpers';
 
 /**
  * A <li> item for displaying a single handout in the handout list.

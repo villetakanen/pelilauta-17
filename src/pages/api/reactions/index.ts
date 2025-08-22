@@ -1,19 +1,19 @@
+import type { APIContext } from 'astro';
+import type { DocumentReference } from 'firebase-admin/firestore';
 import {
   NOTIFICATION_FIRESTORE_COLLECTION,
   type NotificationRequest,
-} from '@schemas/NotificationSchema';
+} from 'src/schemas/NotificationSchema';
 import {
   REACTIONS_COLLECTION_NAME,
   type Reactions,
   reactionsSchema,
-} from '@schemas/ReactionsSchema';
-import { REPLIES_COLLECTION } from '@schemas/ReplySchema';
-import { SITES_COLLECTION_NAME } from '@schemas/SiteSchema';
-import { THREADS_COLLECTION_NAME } from '@schemas/ThreadSchema';
-import { logDebug, logError, logWarn } from '@utils/logHelpers';
-import { tokenToUid } from '@utils/server/auth/tokenToUid';
-import type { APIContext } from 'astro';
-import type { DocumentReference } from 'firebase-admin/firestore';
+} from 'src/schemas/ReactionsSchema';
+import { REPLIES_COLLECTION } from 'src/schemas/ReplySchema';
+import { SITES_COLLECTION_NAME } from 'src/schemas/SiteSchema';
+import { THREADS_COLLECTION_NAME } from 'src/schemas/ThreadSchema';
+import { logDebug, logError, logWarn } from 'src/utils/logHelpers';
+import { tokenToUid } from 'src/utils/server/auth/tokenToUid';
 import { z } from 'zod';
 
 export const reactionRequestSchema = z.object({
@@ -52,7 +52,7 @@ export async function POST(context: APIContext): Promise<Response> {
     );
 
     // 3. Get or create reactions document
-    const { serverDB } = await import('@firebase/server');
+    const { serverDB } = await import('src/firebase/server');
     const reactionsRef = serverDB
       .collection(REACTIONS_COLLECTION_NAME)
       .doc(request.key);
@@ -163,7 +163,7 @@ async function sendReactionNotification(
 
     // We could call the notification API directly here, but for now let's
     // inline the notification creation to avoid circular dependencies
-    const { serverDB } = await import('@firebase/server');
+    const { serverDB } = await import('src/firebase/server');
     const { FieldValue } = await import('firebase-admin/firestore');
 
     const base = notification.notification;
@@ -207,7 +207,7 @@ async function getTargetEntryOwners(
   target: 'thread' | 'site' | 'reply',
   key: string,
 ): Promise<string[]> {
-  const { serverDB } = await import('@firebase/server');
+  const { serverDB } = await import('src/firebase/server');
 
   let docRef: null | DocumentReference;
   switch (target) {

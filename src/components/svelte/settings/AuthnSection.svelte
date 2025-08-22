@@ -1,8 +1,8 @@
 <script lang="ts">
 // Import stores and utilities
-import { profile } from '@stores/session/profile'; // $profile is used directly as per nanostores/svelte
-import { pushSessionSnack } from '@utils/client/snackUtils'; // For user feedback
-import { t } from '@utils/i18n';
+import { profile } from 'src/stores/session/profile'; // $profile is used directly as per nanostores/svelte
+import { pushSessionSnack } from 'src/utils/client/snackUtils'; // For user feedback
+import { t } from 'src/utils/i18n';
 import { onMount } from 'svelte';
 
 // No props needed for this component
@@ -22,7 +22,7 @@ let loadingAvatarUpdate = $state(false); // For UX feedback during avatar update
 onMount(async () => {
   // Dynamically import Firebase Auth functions and instance
   const { onAuthStateChanged } = await import('firebase/auth');
-  const { auth } = await import('@firebase/client'); // Corrected path as per instructions
+  const { auth } = await import('src/firebase/client'); // Corrected path as per instructions
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -53,7 +53,7 @@ async function updateAvatar() {
   try {
     // Dynamically import Firebase profile update function
     const { updateProfile } = await import(
-      '@firebase/client/profile/updateProfile'
+      'src/firebase/client/profile/updateProfile'
     );
     await updateProfile({ avatarURL: avatarURL }, $profile.key);
     pushSessionSnack(t('settings:authz.updateAvatarSuccess'));

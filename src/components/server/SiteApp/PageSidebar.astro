@@ -1,9 +1,9 @@
 ---
-import type { Page } from '@schemas/PageSchema';
-import type { Site } from '@schemas/SiteSchema';
-import ReactionButton from '@svelte/app/ReactionButton.svelte';
-import { t } from '@utils/i18n';
-import { logWarn } from '@utils/logHelpers';
+import ReactionButton from 'src/components/svelte/app/ReactionButton.svelte';
+import type { Page } from 'src/schemas/PageSchema';
+import type { Site } from 'src/schemas/SiteSchema';
+import { t } from 'src/utils/i18n';
+import { logWarn } from 'src/utils/logHelpers';
 import SiteTocSection from './SiteTocSection.astro';
 
 interface Props {

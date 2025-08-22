@@ -1,5 +1,5 @@
 <script lang="ts">
-import { getProfileAtom, loading } from '@stores/profiles';
+import { getProfileAtom, loading } from 'src/stores/profiles';
 
 interface Props {
   uid: string;

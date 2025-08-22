@@ -1,5 +1,5 @@
-import { logError } from '@utils/logHelpers';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { logError } from 'src/utils/logHelpers';
 import { v4 as uuidv4 } from 'uuid';
 import { app } from '..';
 

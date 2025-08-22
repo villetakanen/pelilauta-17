@@ -1,4 +1,4 @@
-import { pageFrom } from '@schemas/PageSchema';
+import { pageFrom } from 'src/schemas/PageSchema';
 import { expect, test } from 'vitest';
 
 test('pageFrom parses a page with minimal data', () => {

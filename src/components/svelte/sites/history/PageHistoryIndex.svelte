@@ -1,9 +1,9 @@
 <script lang="ts">
-import type { PageHistory } from '@schemas/PageHistorySchema';
-import type { Page } from '@schemas/PageSchema';
-import ProfileLink from '@svelte/app/ProfileLink.svelte';
-import { toDisplayString } from '@utils/contentHelpers';
-import { t } from '@utils/i18n';
+import ProfileLink from 'src/components/svelte/app/ProfileLink.svelte';
+import type { PageHistory } from 'src/schemas/PageHistorySchema';
+import type { Page } from 'src/schemas/PageSchema';
+import { toDisplayString } from 'src/utils/contentHelpers';
+import { t } from 'src/utils/i18n';
 
 interface Props {
   page: Page;

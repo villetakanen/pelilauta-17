@@ -1,8 +1,8 @@
 <script lang="ts">
-import type { CharacterSheet } from '@schemas/CharacterSheetSchema';
-import { CHARACTER_SHEETS_COLLECTION_NAME } from '@schemas/CharacterSheetSchema';
-import { t } from '@utils/i18n';
-import { logDebug, logError } from '@utils/logHelpers';
+import type { CharacterSheet } from 'src/schemas/CharacterSheetSchema';
+import { CHARACTER_SHEETS_COLLECTION_NAME } from 'src/schemas/CharacterSheetSchema';
+import { t } from 'src/utils/i18n';
+import { logDebug, logError } from 'src/utils/logHelpers';
 
 interface Props {
   selectedSheetKey?: string;
@@ -21,10 +21,10 @@ $effect(() => {
 
 async function loadCharacterSheets() {
   try {
-    const { db } = await import('@firebase/client');
+    const { db } = await import('src/firebase/client');
     const { collection, getDocs } = await import('firebase/firestore');
     const { CharacterSheetSchema } = await import(
-      '@schemas/CharacterSheetSchema'
+      'src/schemas/CharacterSheetSchema'
     );
 
     const snapshot = await getDocs(

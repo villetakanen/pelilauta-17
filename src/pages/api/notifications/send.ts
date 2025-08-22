@@ -1,17 +1,17 @@
+import type { APIContext } from 'astro';
 import {
   NOTIFICATION_FIRESTORE_COLLECTION,
   type NotificationRequest,
   NotificationRequestSchema,
-} from '@schemas/NotificationSchema';
-import { logDebug, logError, logWarn } from '@utils/logHelpers';
-import { tokenToUid } from '@utils/server/auth/tokenToUid';
-import type { APIContext } from 'astro';
+} from 'src/schemas/NotificationSchema';
+import { logDebug, logError, logWarn } from 'src/utils/logHelpers';
+import { tokenToUid } from 'src/utils/server/auth/tokenToUid';
 import { ZodError } from 'zod';
 
 async function createNotificationEntries(
   request: NotificationRequest,
 ): Promise<{ success: number; failed: number }> {
-  const { serverDB } = await import('@firebase/server');
+  const { serverDB } = await import('src/firebase/server');
   const { FieldValue } = await import('firebase-admin/firestore');
   const base = request.notification;
   let successCount = 0;

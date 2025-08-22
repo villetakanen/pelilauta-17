@@ -1,13 +1,13 @@
 import { persistentAtom } from '@nanostores/persistent';
+import { effect, type WritableAtom } from 'nanostores';
 import {
   CHARACTERS_COLLECTION_NAME,
   type Character,
   CharacterSchema,
-} from '@schemas/CharacterSchema';
-import { uid } from '@stores/session';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { logDebug, logError } from '@utils/logHelpers';
-import { effect, type WritableAtom } from 'nanostores';
+} from 'src/schemas/CharacterSchema';
+import { uid } from 'src/stores/session';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { logDebug, logError } from 'src/utils/logHelpers';
 import { z } from 'zod';
 
 /**
@@ -77,7 +77,7 @@ async function subscribeToUserCharacters(currentUid: string) {
   );
   unsubscribe(); // Unsubscribe from any previous listener
   try {
-    const { db } = await import('@firebase/client');
+    const { db } = await import('src/firebase/client');
     const { onSnapshot, collection, query, where } = await import(
       'firebase/firestore'
     );

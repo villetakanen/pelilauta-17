@@ -1,9 +1,9 @@
 <script lang="ts">
-import type { Thread } from '@schemas/ThreadSchema';
-import { showAdminTools, uid } from '@stores/session';
-import { syndicateToBsky } from '@svelte/thread-editor/submitThreadUpdate';
-import { pushSnack } from '@utils/client/snackUtils';
-import { t } from '@utils/i18n';
+import { syndicateToBsky } from 'src/components/svelte/thread-editor/submitThreadUpdate';
+import type { Thread } from 'src/schemas/ThreadSchema';
+import { showAdminTools, uid } from 'src/stores/session';
+import { pushSnack } from 'src/utils/client/snackUtils';
+import { t } from 'src/utils/i18n';
 
 interface Props {
   thread?: Thread; // Keep optional to handle potential undefined cases gracefully

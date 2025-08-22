@@ -1,11 +1,11 @@
 ---
+import CreatePageForm from 'src/components/svelte/sites/CreatePageForm.svelte';
 // This page is modal, and thus does not contain
 // SEO metadata or a header.
-import ModalPage from '@layouts/ModalPage.astro';
-import { type Site, SiteSchema } from '@schemas/SiteSchema';
-import CreatePageForm from '@svelte/sites/CreatePageForm.svelte';
-import { t } from '@utils/i18n';
-import { logError } from '@utils/logHelpers';
+import ModalPage from 'src/layouts/ModalPage.astro';
+import { type Site, SiteSchema } from 'src/schemas/SiteSchema';
+import { t } from 'src/utils/i18n';
+import { logError } from 'src/utils/logHelpers';
 
 const { siteKey } = Astro.params;
 

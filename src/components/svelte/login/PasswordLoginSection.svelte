@@ -1,10 +1,10 @@
 <script lang="ts">
-import { completeAuthFlow } from '@utils/client/authUtils';
-import { pushSessionSnack } from '@utils/client/snackUtils'; // For user feedback
-import { t } from '@utils/i18n'; // For potential future translations
-// Import utilities
-import { logError } from '@utils/logHelpers';
 import { FirebaseError } from 'firebase/app';
+import { completeAuthFlow } from 'src/utils/client/authUtils';
+import { pushSessionSnack } from 'src/utils/client/snackUtils'; // For user feedback
+import { t } from 'src/utils/i18n'; // For potential future translations
+// Import utilities
+import { logError } from 'src/utils/logHelpers';
 
 // No props needed
 // interface Props {}
@@ -32,7 +32,7 @@ async function loginWithPassword(e: SubmitEvent) {
   try {
     // Dynamically import Firebase Auth function and instance
     const { signInWithEmailAndPassword } = await import('firebase/auth');
-    const { auth } = await import('@firebase/client');
+    const { auth } = await import('src/firebase/client');
 
     const userCredential = await signInWithEmailAndPassword(
       auth,

@@ -1,10 +1,10 @@
 ---
-import ModalPage from '@layouts/ModalPage.astro';
-import { parsePage } from '@schemas/PageSchema';
-import { parseSite } from '@schemas/SiteSchema';
-import DeletePageView from '@svelte/sites/DeletePageView.svelte';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { t } from '@utils/i18n';
+import DeletePageView from 'src/components/svelte/sites/DeletePageView.svelte';
+import ModalPage from 'src/layouts/ModalPage.astro';
+import { parsePage } from 'src/schemas/PageSchema';
+import { parseSite } from 'src/schemas/SiteSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { t } from 'src/utils/i18n';
 
 interface Props {
   siteKey: string;

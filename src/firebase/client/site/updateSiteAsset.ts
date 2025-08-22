@@ -1,6 +1,6 @@
-import { type Asset, parseAsset } from '@schemas/AssetSchema';
-import { SITES_COLLECTION_NAME, type Site } from '@schemas/SiteSchema';
 import { doc, updateDoc } from 'firebase/firestore';
+import { type Asset, parseAsset } from 'src/schemas/AssetSchema';
+import { SITES_COLLECTION_NAME, type Site } from 'src/schemas/SiteSchema';
 import { db } from '..';
 
 export async function updateSiteAsset(site: Site, asset: Partial<Asset>) {

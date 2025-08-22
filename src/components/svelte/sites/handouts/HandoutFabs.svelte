@@ -1,8 +1,8 @@
 <script lang="ts">
-import type { Handout } from '@schemas/HandoutSchema';
-import type { Site } from '@schemas/SiteSchema';
-import { uid } from '@stores/session';
-import { t } from '@utils/i18n';
+import type { Handout } from 'src/schemas/HandoutSchema';
+import type { Site } from 'src/schemas/SiteSchema';
+import { uid } from 'src/stores/session';
+import { t } from 'src/utils/i18n';
 
 interface Props {
   handout: Handout;

@@ -1,8 +1,8 @@
-import { type Page, parsePage } from '@schemas/PageSchema';
-import type { Site } from '@schemas/SiteSchema';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { DEFAULT_PROPS, entryToMarkdown } from '@utils/entryConversions';
 import JSZip from 'jszip';
+import { type Page, parsePage } from 'src/schemas/PageSchema';
+import type { Site } from 'src/schemas/SiteSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { DEFAULT_PROPS, entryToMarkdown } from 'src/utils/entryConversions';
 
 export async function createSiteExport(site: Site, origin: string) {
   const zip = new JSZip();

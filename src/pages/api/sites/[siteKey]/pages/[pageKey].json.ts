@@ -1,10 +1,10 @@
-import { serverDB } from '@firebase/server';
-import { PAGES_COLLECTION_NAME, parsePage } from '@schemas/PageSchema';
-import { SITES_COLLECTION_NAME, siteFrom } from '@schemas/SiteSchema';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { logError } from '@utils/logHelpers';
-import { renderWikiContent } from '@utils/server/wiki/renderWikiContent';
 import type { APIContext } from 'astro';
+import { serverDB } from 'src/firebase/server';
+import { PAGES_COLLECTION_NAME, parsePage } from 'src/schemas/PageSchema';
+import { SITES_COLLECTION_NAME, siteFrom } from 'src/schemas/SiteSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { logError } from 'src/utils/logHelpers';
+import { renderWikiContent } from 'src/utils/server/wiki/renderWikiContent';
 
 export async function GET({ params, url }: APIContext): Promise<Response> {
   const { siteKey, pageKey } = params;

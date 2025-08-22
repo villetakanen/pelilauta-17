@@ -1,12 +1,12 @@
-import { serverDB } from '@firebase/server';
+import type { APIContext } from 'astro';
+import { serverDB } from 'src/firebase/server';
 import {
   CHARACTERS_COLLECTION_NAME,
   type Character,
   CharacterSchema,
-} from '@schemas/CharacterSchema';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { logError, logWarn } from '@utils/logHelpers';
-import type { APIContext } from 'astro';
+} from 'src/schemas/CharacterSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { logError, logWarn } from 'src/utils/logHelpers';
 
 export async function GET({ params }: APIContext): Promise<Response> {
   const { siteKey } = params;

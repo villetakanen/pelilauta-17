@@ -1,15 +1,15 @@
 <script lang="ts">
-import { toggleReaction } from '@firebase/client/reactions';
 import { persistentAtom } from '@nanostores/persistent';
+import { toggleReaction } from 'src/firebase/client/reactions';
 import {
   REACTIONS_COLLECTION_NAME,
   type Reactions,
   reactionsSchema,
-} from '@schemas/ReactionsSchema';
-import { uid } from '@stores/session';
-import { pushSnack } from '@utils/client/snackUtils';
-import { t } from '@utils/i18n';
-import { logDebug, logWarn } from '@utils/logHelpers';
+} from 'src/schemas/ReactionsSchema';
+import { uid } from 'src/stores/session';
+import { pushSnack } from 'src/utils/client/snackUtils';
+import { t } from 'src/utils/i18n';
+import { logDebug, logWarn } from 'src/utils/logHelpers';
 import { onMount } from 'svelte';
 
 /**

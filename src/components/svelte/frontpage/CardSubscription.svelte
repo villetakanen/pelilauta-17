@@ -1,8 +1,8 @@
 <script lang="ts">
-    import type { CnCard } from '@11thdeg/cyan-lit';
-import type { Thread } from '@schemas/ThreadSchema';
-import { uid } from '@stores/session';
-import { hasSeen } from '@stores/subscription';
+import type { CnCard } from '@11thdeg/cyan-lit';
+import type { Thread } from 'src/schemas/ThreadSchema';
+import { uid } from 'src/stores/session';
+import { hasSeen } from 'src/stores/subscription';
 
 interface Props {
   thread: Thread;

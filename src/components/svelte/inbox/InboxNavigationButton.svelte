@@ -1,7 +1,7 @@
 <script lang="ts">
-import { newCount } from '@stores/inbox';
-import { uid } from '@stores/session';
-import { t } from '@utils/i18n';
+import { newCount } from 'src/stores/inbox';
+import { uid } from 'src/stores/session';
+import { t } from 'src/utils/i18n';
 
 const count = $derived.by(() => {
   if ($uid) {

@@ -1,7 +1,7 @@
-import { TAG_FIRESTORE_COLLECTION, TagSchema } from '@schemas/TagSchema';
-import type { Thread } from '@schemas/ThreadSchema';
-import { logError, logWarn } from '@utils/logHelpers';
-import { toDate } from '@utils/schemaHelpers';
+import { TAG_FIRESTORE_COLLECTION, TagSchema } from 'src/schemas/TagSchema';
+import type { Thread } from 'src/schemas/ThreadSchema';
+import { logError, logWarn } from 'src/utils/logHelpers';
+import { toDate } from 'src/utils/schemaHelpers';
 
 async function removeTags(key: string) {
   // remove the page tags entry from the tags collection

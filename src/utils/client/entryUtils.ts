@@ -1,5 +1,5 @@
-import type { Entry } from '@schemas/EntrySchema';
-import { toDate } from '@utils/schemaHelpers';
+import type { Entry } from 'src/schemas/EntrySchema';
+import { toDate } from 'src/utils/schemaHelpers';
 
 /**
  * Firestore handles dates as Timestamps, so we need to convert them from Timestamp to Date or number.

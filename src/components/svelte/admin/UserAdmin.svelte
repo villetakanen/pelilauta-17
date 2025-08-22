@@ -1,8 +1,8 @@
 <script lang="ts">
-import { getAllAccounts } from '@firebase/client/admin/getAllAccounts';
-import { appMeta } from '@stores/metaStore/metaStore';
-import { uid } from '@stores/session';
-import WithAuth from '@svelte/app/WithAuth.svelte';
+import WithAuth from 'src/components/svelte/app/WithAuth.svelte';
+import { getAllAccounts } from 'src/firebase/client/admin/getAllAccounts';
+import { appMeta } from 'src/stores/metaStore/metaStore';
+import { uid } from 'src/stores/session';
 import User from './User.svelte';
 
 const allow = $derived.by(() => $appMeta.admins.includes($uid));

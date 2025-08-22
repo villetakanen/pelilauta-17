@@ -1,9 +1,9 @@
 ---
-import EditorPage from '@layouts/EditorPage.astro';
-import { type Channel, ChannelSchema } from '@schemas/ChannelSchema';
-import { ThreadSchema } from '@schemas/ThreadSchema';
-import ThreadEditorForm from '@svelte/thread-editor/ThreadEditorForm.svelte';
-import { t } from '@utils/i18n';
+import ThreadEditorForm from 'src/components/svelte/thread-editor/ThreadEditorForm.svelte';
+import EditorPage from 'src/layouts/EditorPage.astro';
+import { type Channel, ChannelSchema } from 'src/schemas/ChannelSchema';
+import { ThreadSchema } from 'src/schemas/ThreadSchema';
+import { t } from 'src/utils/i18n';
 
 const { threadKey } = Astro.params;
 const title = `${t('app:shortname')} – ${t('threads:edit.title')}`;

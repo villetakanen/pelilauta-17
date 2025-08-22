@@ -1,13 +1,13 @@
-import { type Asset, parseAsset } from '@schemas/AssetSchema';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { type Asset, parseAsset } from 'src/schemas/AssetSchema';
 import {
   parseSite,
   SITES_COLLECTION_NAME,
   type Site,
-} from '@schemas/SiteSchema';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { logError } from '@utils/logHelpers';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+} from 'src/schemas/SiteSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { logError } from 'src/utils/logHelpers';
 import { v4 as uuidv4 } from 'uuid';
 import { app, db } from '..';
 

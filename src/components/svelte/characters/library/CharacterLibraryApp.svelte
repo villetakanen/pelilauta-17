@@ -1,7 +1,7 @@
 <script lang="ts">
-import { userCharacters } from '@stores/characters/userCharacters';
-import CharacterCard from '@svelte/characters/CharacterCard.svelte';
-import { t } from '@utils/i18n';
+import CharacterCard from 'src/components/svelte/characters/CharacterCard.svelte';
+import { userCharacters } from 'src/stores/characters/userCharacters';
+import { t } from 'src/utils/i18n';
 
 /**
  * A "Standalone" Svelte app displaying the players character library.

@@ -1,12 +1,12 @@
-import { serverDB } from '@firebase/server';
+import type { APIContext } from 'astro';
+import { serverDB } from 'src/firebase/server';
 import {
   CHARACTERS_COLLECTION_NAME,
   CharacterSchema,
-} from '@schemas/CharacterSchema';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { logError, logWarn } from '@utils/logHelpers';
-import { tokenToUid } from '@utils/server/auth/tokenToUid';
-import type { APIContext } from 'astro';
+} from 'src/schemas/CharacterSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { logError, logWarn } from 'src/utils/logHelpers';
+import { tokenToUid } from 'src/utils/server/auth/tokenToUid';
 
 export async function DELETE({
   params,

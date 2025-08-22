@@ -1,10 +1,10 @@
 ---
-import EditorPage from '@layouts/EditorPage.astro';
-import { PageSchema } from '@schemas/PageSchema';
-import { SiteSchema } from '@schemas/SiteSchema';
-import PageEditorForm from '@svelte/page-editor/PageEditorForm.svelte';
-import { t } from '@utils/i18n';
-import { logError } from '@utils/logHelpers';
+import PageEditorForm from 'src/components/svelte/page-editor/PageEditorForm.svelte';
+import EditorPage from 'src/layouts/EditorPage.astro';
+import { PageSchema } from 'src/schemas/PageSchema';
+import { SiteSchema } from 'src/schemas/SiteSchema';
+import { t } from 'src/utils/i18n';
+import { logError } from 'src/utils/logHelpers';
 
 interface Props {
   siteKey: string;

@@ -2,8 +2,8 @@ import {
   type PageRef,
   parseSite,
   SITES_COLLECTION_NAME,
-} from '@schemas/SiteSchema';
-import { toClientEntry } from '@utils/client/entryUtils';
+} from 'src/schemas/SiteSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
 import { db } from '..';
 import { updateSite } from '../site/updateSite';
 

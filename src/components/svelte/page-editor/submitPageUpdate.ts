@@ -1,6 +1,6 @@
-import { updatePage } from '@firebase/client/page/updatePage';
-import type { Page } from '@schemas/PageSchema';
-import { logWarn } from '@utils/logHelpers';
+import { updatePage } from 'src/firebase/client/page/updatePage';
+import type { Page } from 'src/schemas/PageSchema';
+import { logWarn } from 'src/utils/logHelpers';
 
 export async function submitPageUpdate(page: Page, data: Partial<Page>) {
   // Here you can do whatever you want with the data

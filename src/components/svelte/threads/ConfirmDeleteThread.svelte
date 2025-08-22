@@ -1,11 +1,11 @@
 <script lang="ts">
-import { deleteThread } from '@firebase/client/threads/deleteThread';
-import type { Thread } from '@schemas/ThreadSchema';
-import { uid } from '@stores/session';
-import WithAuth from '@svelte/app/WithAuth.svelte';
-import { pushSessionSnack, pushSnack } from '@utils/client/snackUtils';
-import { t } from '@utils/i18n';
-import { logError } from '@utils/logHelpers';
+import WithAuth from 'src/components/svelte/app/WithAuth.svelte';
+import { deleteThread } from 'src/firebase/client/threads/deleteThread';
+import type { Thread } from 'src/schemas/ThreadSchema';
+import { uid } from 'src/stores/session';
+import { pushSessionSnack, pushSnack } from 'src/utils/client/snackUtils';
+import { t } from 'src/utils/i18n';
+import { logError } from 'src/utils/logHelpers';
 
 interface Props {
   thread: Thread;

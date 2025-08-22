@@ -1,14 +1,14 @@
 import { persistentAtom } from '@nanostores/persistent';
+import type { WritableAtom } from 'nanostores';
 import {
   parseSite,
   SITES_COLLECTION_NAME,
   type Site,
   SiteSchema,
-} from '@schemas/SiteSchema';
-import { uid } from '@stores/session';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { logDebug, logError } from '@utils/logHelpers';
-import type { WritableAtom } from 'nanostores';
+} from 'src/schemas/SiteSchema';
+import { uid } from 'src/stores/session';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { logDebug, logError } from 'src/utils/logHelpers';
 import { z } from 'zod';
 
 /**

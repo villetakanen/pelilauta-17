@@ -1,5 +1,8 @@
-import { ACCOUNTS_COLLECTION_NAME, type Account } from '@schemas/AccountSchema';
 import { doc, serverTimestamp, updateDoc } from 'firebase/firestore';
+import {
+  ACCOUNTS_COLLECTION_NAME,
+  type Account,
+} from 'src/schemas/AccountSchema';
 import { db } from '..';
 
 export async function updateAccount(data: Partial<Account>, uid: string) {

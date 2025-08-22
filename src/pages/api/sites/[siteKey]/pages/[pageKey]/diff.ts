@@ -1,7 +1,7 @@
-import { PageHistorySchema } from '@schemas/PageHistorySchema';
-import { SITES_COLLECTION_NAME } from '@schemas/SiteSchema';
-import { logError } from '@utils/logHelpers';
 import type { APIContext } from 'astro';
+import { PageHistorySchema } from 'src/schemas/PageHistorySchema';
+import { SITES_COLLECTION_NAME } from 'src/schemas/SiteSchema';
+import { logError } from 'src/utils/logHelpers';
 
 export async function GET({ params }: APIContext): Promise<Response> {
   const { siteKey, pageKey } = params;
@@ -11,7 +11,7 @@ export async function GET({ params }: APIContext): Promise<Response> {
   }
 
   try {
-    const { serverDB } = await import('@firebase/server');
+    const { serverDB } = await import('src/firebase/server');
     const historyDocRef = serverDB
       .collection(SITES_COLLECTION_NAME)
       .doc(siteKey)

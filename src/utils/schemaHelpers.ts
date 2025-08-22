@@ -1,4 +1,4 @@
-import type { Entry } from '@schemas/EntrySchema';
+import type { Entry } from 'src/schemas/EntrySchema';
 import { systemToNounMapping } from '../schemas/nouns';
 import { logWarn } from './logHelpers';
 

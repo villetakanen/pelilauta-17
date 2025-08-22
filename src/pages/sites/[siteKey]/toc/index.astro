@@ -1,11 +1,11 @@
 ---
-import { parseSite } from '@schemas/SiteSchema';
-import SiteTocApp from '@server/SiteApp/SiteTocApp.astro';
-import SiteTray from '@server/SiteApp/SiteTray.astro';
-import BackgroundPoster from '@server/ui/BackgroundPoster.astro';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { t } from '@utils/i18n';
+import SiteTocApp from 'src/components/server/SiteApp/SiteTocApp.astro';
+import SiteTray from 'src/components/server/SiteApp/SiteTray.astro';
+import BackgroundPoster from 'src/components/server/ui/BackgroundPoster.astro';
 import PageWithTray from 'src/layouts/PageWithTray.astro';
+import { parseSite } from 'src/schemas/SiteSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { t } from 'src/utils/i18n';
 
 const { siteKey } = Astro.params;
 

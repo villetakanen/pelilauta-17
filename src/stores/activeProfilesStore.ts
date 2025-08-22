@@ -1,11 +1,11 @@
 import { persistentAtom } from '@nanostores/persistent';
-import { ACCOUNTS_COLLECTION_NAME } from '@schemas/AccountSchema';
+import { ACCOUNTS_COLLECTION_NAME } from 'src/schemas/AccountSchema';
 import {
   PROFILES_COLLECTION_NAME,
   type Profile,
   parseProfile,
-} from '@schemas/ProfileSchema';
-import { toClientEntry } from '@utils/client/entryUtils';
+} from 'src/schemas/ProfileSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
 
 export const activeProfiles = persistentAtom<Profile[]>('active-profiles', [], {
   encode: JSON.stringify,

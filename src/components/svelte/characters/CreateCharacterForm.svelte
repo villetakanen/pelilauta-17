@@ -5,14 +5,14 @@
  * 2. Press create.
  */
 
-import type { Character } from '@schemas/CharacterSchema';
-import type { CharacterSheet } from '@schemas/CharacterSheetSchema';
-import type { Site } from '@schemas/SiteSchema';
-import { uid } from '@stores/session';
-import WithAuth from '@svelte/app/WithAuth.svelte';
-import { pushSessionSnack, pushSnack } from '@utils/client/snackUtils';
-import { t } from '@utils/i18n';
-import { logError } from '@utils/logHelpers';
+import WithAuth from 'src/components/svelte/app/WithAuth.svelte';
+import type { Character } from 'src/schemas/CharacterSchema';
+import type { CharacterSheet } from 'src/schemas/CharacterSheetSchema';
+import type { Site } from 'src/schemas/SiteSchema';
+import { uid } from 'src/stores/session';
+import { pushSessionSnack, pushSnack } from 'src/utils/client/snackUtils';
+import { t } from 'src/utils/i18n';
+import { logError } from 'src/utils/logHelpers';
 import CharacterSheetSelect from './CharacterSheetSelect.svelte';
 import SiteSelect from './SiteSelect.svelte';
 
@@ -65,7 +65,7 @@ async function onsubmit(e: Event) {
   e.preventDefault();
 
   const { createCharacter } = await import(
-    '@firebase/client/characters/createCharacter'
+    'src/firebase/client/characters/createCharacter'
   );
 
   try {

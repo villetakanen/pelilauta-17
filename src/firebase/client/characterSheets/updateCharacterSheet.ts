@@ -1,7 +1,7 @@
 import {
   CHARACTER_SHEETS_COLLECTION_NAME,
   type CharacterSheet,
-} from '@schemas/CharacterSheetSchema';
+} from 'src/schemas/CharacterSheetSchema';
 
 /**
  * A helper function to update a character sheet document in Firestore.
@@ -21,9 +21,9 @@ export async function updateCharacterSheet(sheetData: Partial<CharacterSheet>) {
 
   const { doc, setDoc } = await import('firebase/firestore');
   const { convertDatesToTimestamps } = await import(
-    '@utils/client/toFirestoreEntry'
+    'src/utils/client/toFirestoreEntry'
   );
-  const { db } = await import('@firebase/client');
+  const { db } = await import('src/firebase/client');
 
   // First we need to make sure that any Dates in the sheetData are converted to
   // Firestore timestamps.

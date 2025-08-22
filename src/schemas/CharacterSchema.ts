@@ -1,4 +1,4 @@
-import { CharacterSheetSchema } from '@schemas/CharacterSheetSchema';
+import { CharacterSheetSchema } from 'src/schemas/CharacterSheetSchema';
 import { z } from 'zod';
 import { ContentEntrySchema } from './ContentEntry';
 

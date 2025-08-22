@@ -1,12 +1,12 @@
 ---
-import PageWithTray from '@layouts/PageWithTray.astro';
-import { parseSite } from '@schemas/SiteSchema';
-import SiteTray from '@server/SiteApp/SiteTray.astro';
-import BackgroundPoster from '@server/ui/BackgroundPoster.astro';
-import ClocksApp from '@svelte/sites/ClocksApp.svelte';
-import ClocksFabs from '@svelte/sites/ClocksFabs.svelte';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { t } from '@utils/i18n';
+import SiteTray from 'src/components/server/SiteApp/SiteTray.astro';
+import BackgroundPoster from 'src/components/server/ui/BackgroundPoster.astro';
+import ClocksApp from 'src/components/svelte/sites/ClocksApp.svelte';
+import ClocksFabs from 'src/components/svelte/sites/ClocksFabs.svelte';
+import PageWithTray from 'src/layouts/PageWithTray.astro';
+import { parseSite } from 'src/schemas/SiteSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { t } from 'src/utils/i18n';
 
 interface Props {
   siteKey: string;

@@ -1,8 +1,8 @@
 <script lang="ts">
-import { deleteSite } from '@firebase/client/site/deleteSite';
-import type { Site } from '@schemas/SiteSchema';
-import { pushSessionSnack, pushSnack } from '@utils/client/snackUtils';
-import { t } from '@utils/i18n';
+import { deleteSite } from 'src/firebase/client/site/deleteSite';
+import type { Site } from 'src/schemas/SiteSchema';
+import { pushSessionSnack, pushSnack } from 'src/utils/client/snackUtils';
+import { t } from 'src/utils/i18n';
 import type { P } from 'vitest/dist/chunks/environment.LoooBwUu.js';
 
 interface Props {

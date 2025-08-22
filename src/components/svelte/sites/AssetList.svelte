@@ -1,7 +1,7 @@
 <script lang="ts">
-import type { Site } from '@schemas/SiteSchema';
-import { site } from '@stores/site';
-import { t } from '@utils/i18n';
+import type { Site } from 'src/schemas/SiteSchema';
+import { site } from 'src/stores/site';
+import { t } from 'src/utils/i18n';
 import AssetArticle from './AssetArticle.svelte';
 
 type Props = {

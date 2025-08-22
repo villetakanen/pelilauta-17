@@ -1,10 +1,10 @@
 <script lang="ts">
-import { addClocktoSite } from '@firebase/client/site/addClockToSite';
-import { parseClock } from '@schemas/ClockSchema';
-import type { Site } from '@schemas/SiteSchema';
-import { uid } from '@stores/session';
-import { t } from '@utils/i18n';
-import { logError } from '@utils/logHelpers';
+import { addClocktoSite } from 'src/firebase/client/site/addClockToSite';
+import { parseClock } from 'src/schemas/ClockSchema';
+import type { Site } from 'src/schemas/SiteSchema';
+import { uid } from 'src/stores/session';
+import { t } from 'src/utils/i18n';
+import { logError } from 'src/utils/logHelpers';
 
 interface Props {
   site: Site;

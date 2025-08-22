@@ -1,6 +1,6 @@
 <script lang="ts">
-import { ASSET_LICENSES_KEYS } from '@schemas/AssetSchema';
-import { t } from '@utils/i18n';
+import { ASSET_LICENSES_KEYS } from 'src/schemas/AssetSchema';
+import { t } from 'src/utils/i18n';
 
 interface Props {
   value: string;

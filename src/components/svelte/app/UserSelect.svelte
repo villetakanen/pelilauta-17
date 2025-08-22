@@ -2,9 +2,9 @@
 import {
   activeProfiles,
   fetchActiveProfiles,
-} from '@stores/activeProfilesStore';
-import { uid } from '@stores/session';
-import { t } from '@utils/i18n';
+} from 'src/stores/activeProfilesStore';
+import { uid } from 'src/stores/session';
+import { t } from 'src/utils/i18n';
 import { onMount } from 'svelte';
 
 interface Props {

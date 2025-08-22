@@ -2,11 +2,11 @@ import {
   PAGES_COLLECTION_NAME,
   type Page,
   parsePage,
-} from '@schemas/PageSchema';
-import { SITES_COLLECTION_NAME } from '@schemas/SiteSchema';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { toFirestoreEntry } from '@utils/client/toFirestoreEntry';
-import { logDebug, logError } from '@utils/logHelpers';
+} from 'src/schemas/PageSchema';
+import { SITES_COLLECTION_NAME } from 'src/schemas/SiteSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { toFirestoreEntry } from 'src/utils/client/toFirestoreEntry';
+import { logDebug, logError } from 'src/utils/logHelpers';
 import { db } from '..';
 import { updatePageRef } from './updatePageRef';
 import { updatePageTags } from './updatePageTags';

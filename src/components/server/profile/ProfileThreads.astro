@@ -1,9 +1,9 @@
 ---
-import { type Channel, ChannelsSchema } from '@schemas/ChannelSchema';
-import { type Thread, ThreadSchema } from '@schemas/ThreadSchema';
-import ThreadCard from '@server/FrontPage/ThreadCard.astro';
-import { t } from '@utils/i18n';
-import { logError } from '@utils/logHelpers';
+import ThreadCard from 'src/components/server/FrontPage/ThreadCard.astro';
+import { type Channel, ChannelsSchema } from 'src/schemas/ChannelSchema';
+import { type Thread, ThreadSchema } from 'src/schemas/ThreadSchema';
+import { t } from 'src/utils/i18n';
+import { logError } from 'src/utils/logHelpers';
 import { z } from 'zod';
 
 // This is a server-side rendered part of the profile page that fetches

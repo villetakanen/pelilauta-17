@@ -1,6 +1,6 @@
 <script lang="ts">
-import { getSite, loading } from '@stores/sites/sitesStore';
-import { t } from '@utils/i18n';
+import { getSite, loading } from 'src/stores/sites/sitesStore';
+import { t } from 'src/utils/i18n';
 
 interface Props {
   siteKey: string;

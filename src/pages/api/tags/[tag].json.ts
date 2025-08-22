@@ -1,10 +1,10 @@
-import { serverDB } from '@firebase/server';
+import type { APIContext } from 'astro';
+import { serverDB } from 'src/firebase/server';
 import {
   TAG_FIRESTORE_COLLECTION,
   type Tag,
   TagSchema,
-} from '@schemas/TagSchema';
-import type { APIContext } from 'astro';
+} from 'src/schemas/TagSchema';
 
 /* type Thread = {
   title: string;

@@ -1,4 +1,4 @@
-import { NOTIFICATION_FIRESTORE_COLLECTION } from '@schemas/NotificationSchema';
+import { NOTIFICATION_FIRESTORE_COLLECTION } from 'src/schemas/NotificationSchema';
 
 export async function deleteNotification(key: string) {
   const { getFirestore, doc, deleteDoc } = await import('firebase/firestore');

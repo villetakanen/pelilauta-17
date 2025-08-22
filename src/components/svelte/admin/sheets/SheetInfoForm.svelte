@@ -1,9 +1,9 @@
 <script lang="ts">
-import { updateCharacterSheet } from '@firebase/client/characterSheets/updateCharacterSheet';
-import { loading, sheet } from '@stores/characters/characterSheetStore';
-import SystemSelect from '@svelte/sites/SystemSelect.svelte';
-import { pushSnack } from '@utils/client/snackUtils';
-import { t } from '@utils/i18n';
+import SystemSelect from 'src/components/svelte/sites/SystemSelect.svelte';
+import { updateCharacterSheet } from 'src/firebase/client/characterSheets/updateCharacterSheet';
+import { loading, sheet } from 'src/stores/characters/characterSheetStore';
+import { pushSnack } from 'src/utils/client/snackUtils';
+import { t } from 'src/utils/i18n';
 
 let name = $state('');
 let system = $state('');

@@ -1,6 +1,6 @@
-import { PROFILES_COLLECTION_NAME } from '@schemas/ProfileSchema';
-import { resizeImage } from '@utils/client/resizeImage';
-import { logError } from '@utils/logHelpers';
+import { PROFILES_COLLECTION_NAME } from 'src/schemas/ProfileSchema';
+import { resizeImage } from 'src/utils/client/resizeImage';
+import { logError } from 'src/utils/logHelpers';
 
 /**
  * Uploads an avatar image to the user's profile in Firebase Storage and uppdates the

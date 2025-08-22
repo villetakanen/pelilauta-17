@@ -1,13 +1,13 @@
 <script lang="ts">
-import type { Page } from '@schemas/PageSchema';
-import type { Site } from '@schemas/SiteSchema';
-import { uid } from '@stores/session';
-import WithAuth from '@svelte/app/WithAuth.svelte';
-import { pushSessionSnack, pushSnack } from '@utils/client/snackUtils';
-import { extractTags } from '@utils/contentHelpers';
-import { t } from '@utils/i18n';
-import { logError } from '@utils/logHelpers';
 import type { CnEditor } from 'cn-editor/src/cn-editor';
+import WithAuth from 'src/components/svelte/app/WithAuth.svelte';
+import type { Page } from 'src/schemas/PageSchema';
+import type { Site } from 'src/schemas/SiteSchema';
+import { uid } from 'src/stores/session';
+import { pushSessionSnack, pushSnack } from 'src/utils/client/snackUtils';
+import { extractTags } from 'src/utils/contentHelpers';
+import { t } from 'src/utils/i18n';
+import { logError } from 'src/utils/logHelpers';
 import { onMount } from 'svelte';
 import { submitPageUpdate } from './submitPageUpdate';
 

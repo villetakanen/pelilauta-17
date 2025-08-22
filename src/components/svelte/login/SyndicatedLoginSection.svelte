@@ -1,8 +1,8 @@
 <script lang="ts">
 // Import utilities and i18n function
-import { completeAuthFlow } from '@utils/client/authUtils';
-import { pushSessionSnack } from '@utils/client/snackUtils';
-import { t } from '@utils/i18n';
+import { completeAuthFlow } from 'src/utils/client/authUtils';
+import { pushSessionSnack } from 'src/utils/client/snackUtils';
+import { t } from 'src/utils/i18n';
 
 interface Props {
   redirect?: string;
@@ -25,7 +25,7 @@ async function loginWithGoogle(e: SubmitEvent) {
     const { GoogleAuthProvider, signInWithPopup } = await import(
       'firebase/auth'
     );
-    const { auth } = await import('@firebase/client');
+    const { auth } = await import('src/firebase/client');
 
     const provider = new GoogleAuthProvider();
     provider.addScope('email'); // Request email scope

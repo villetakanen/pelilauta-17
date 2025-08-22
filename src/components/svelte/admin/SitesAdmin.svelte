@@ -1,15 +1,15 @@
 <script lang="ts">
+import ProfileLink from 'src/components/svelte/app/ProfileLink.svelte';
+import WithAuth from 'src/components/svelte/app/WithAuth.svelte';
 import {
   parseSite,
   SITES_COLLECTION_NAME,
   type Site,
-} from '@schemas/SiteSchema';
-import { appMeta } from '@stores/metaStore/metaStore';
-import { uid } from '@stores/session';
-import ProfileLink from '@svelte/app/ProfileLink.svelte';
-import WithAuth from '@svelte/app/WithAuth.svelte';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { toDisplayString } from '@utils/contentHelpers';
+} from 'src/schemas/SiteSchema';
+import { appMeta } from 'src/stores/metaStore/metaStore';
+import { uid } from 'src/stores/session';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { toDisplayString } from 'src/utils/contentHelpers';
 import { onMount } from 'svelte';
 import AddSiteReactions from './AddSiteReactions.svelte';
 

@@ -1,12 +1,12 @@
-import { updateSite } from '@firebase/client/site/updateSite';
+import { atom, onMount } from 'nanostores';
+import { updateSite } from 'src/firebase/client/site/updateSite';
 import {
   parseSite,
   SITES_COLLECTION_NAME,
   type Site,
-} from '@schemas/SiteSchema';
-import { toClientEntry } from '@utils/client/entryUtils';
-import { logDebug, logWarn } from '@utils/logHelpers';
-import { atom, onMount } from 'nanostores';
+} from 'src/schemas/SiteSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { logDebug, logWarn } from 'src/utils/logHelpers';
 
 export const site = atom<Site | null>(null);
 

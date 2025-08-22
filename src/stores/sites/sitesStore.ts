@@ -1,7 +1,7 @@
 import { persistentAtom } from '@nanostores/persistent';
-import { type Site, SiteSchema } from '@schemas/SiteSchema';
-import { logDebug, logError, logWarn } from '@utils/logHelpers';
 import { type Atom, atom, computed } from 'nanostores';
+import { type Site, SiteSchema } from 'src/schemas/SiteSchema';
+import { logDebug, logError, logWarn } from 'src/utils/logHelpers';
 import { z } from 'zod';
 
 const sitesStorageSchema = z.array(SiteSchema);

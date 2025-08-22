@@ -1,4 +1,4 @@
-import type { Asset } from '@schemas/AssetSchema';
+import type { Asset } from 'src/schemas/AssetSchema';
 
 export interface EntryWithImages {
   images: Asset[] | string[] | string | null | undefined;

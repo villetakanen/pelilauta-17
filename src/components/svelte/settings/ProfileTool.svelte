@@ -1,10 +1,10 @@
 <script lang="ts">
-import { updateProfile } from '@firebase/client/profile/updateProfile';
-import { uploadAvatar } from '@firebase/client/profile/uploadAvatar';
-import type { Profile } from '@schemas/ProfileSchema';
-import { logout, uid } from '@stores/session';
-import { resizeImage } from '@utils/client/resizeImage';
-import { t } from '@utils/i18n';
+import { updateProfile } from 'src/firebase/client/profile/updateProfile';
+import { uploadAvatar } from 'src/firebase/client/profile/uploadAvatar';
+import type { Profile } from 'src/schemas/ProfileSchema';
+import { logout, uid } from 'src/stores/session';
+import { resizeImage } from 'src/utils/client/resizeImage';
+import { t } from 'src/utils/i18n';
 
 type Props = {
   profile: Profile;

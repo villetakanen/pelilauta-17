@@ -1,6 +1,6 @@
-import { serverDB } from '@firebase/server';
-import { type Channel, parseChannel } from '@schemas/ChannelSchema';
-import { toClientEntry } from '@utils/client/entryUtils';
+import { serverDB } from 'src/firebase/server';
+import { type Channel, parseChannel } from 'src/schemas/ChannelSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
 
 export async function GET(): Promise<Response> {
   const channels: Channel[] = [];

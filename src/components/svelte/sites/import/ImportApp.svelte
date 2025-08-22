@@ -1,6 +1,6 @@
 <script lang="ts">
-import type { Site } from '@schemas/SiteSchema';
-import { site } from '@stores/site';
+import type { Site } from 'src/schemas/SiteSchema';
+import { site } from 'src/stores/site';
 import PreviewImport from './PreviewImport.svelte';
 import UploadFilesForm from './UploadFilesForm.svelte';
 

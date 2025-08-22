@@ -1,12 +1,12 @@
 import { persistentAtom } from '@nanostores/persistent';
+import { atom, computed } from 'nanostores';
 import {
   ACCOUNTS_COLLECTION_NAME,
   type Account,
   parseAccount,
-} from '@schemas/AccountSchema';
-import { appMeta } from '@stores/metaStore/metaStore';
-import { logWarn } from '@utils/logHelpers';
-import { atom, computed } from 'nanostores';
+} from 'src/schemas/AccountSchema';
+import { appMeta } from 'src/stores/metaStore/metaStore';
+import { logWarn } from 'src/utils/logHelpers';
 
 // *** Primary session stores: Acccount ******************************************
 

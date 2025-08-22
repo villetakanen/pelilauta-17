@@ -1,7 +1,7 @@
-import { PAGES_COLLECTION_NAME } from '@schemas/PageSchema';
-import { type PageRef, SITES_COLLECTION_NAME } from '@schemas/SiteSchema';
-import { logWarn } from '@utils/logHelpers';
-import { toDate } from '@utils/schemaHelpers';
+import { PAGES_COLLECTION_NAME } from 'src/schemas/PageSchema';
+import { type PageRef, SITES_COLLECTION_NAME } from 'src/schemas/SiteSchema';
+import { logWarn } from 'src/utils/logHelpers';
+import { toDate } from 'src/utils/schemaHelpers';
 
 /**
  * Regenerates page references for a site.
@@ -16,7 +16,7 @@ export async function regenerateSiteToc(siteKey: string): Promise<number> {
   const { doc, getDoc, getDocs, collection, updateDoc } = await import(
     'firebase/firestore'
   );
-  const { db } = await import('@firebase/client');
+  const { db } = await import('src/firebase/client');
 
   const siteDoc = await getDoc(doc(db, SITES_COLLECTION_NAME, siteKey));
 
