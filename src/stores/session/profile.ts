@@ -1,12 +1,12 @@
 import { persistentAtom } from '@nanostores/persistent';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { atom } from 'nanostores';
-import { db } from 'src/firebase/client';
 import {
   PROFILES_COLLECTION_NAME,
   type Profile,
   parseProfile,
 } from 'src/schemas/ProfileSchema';
+import { db } from '../../firebase/client';
 
 /**
  * The nanostores atom that holds the current user Profile data.

@@ -4,7 +4,6 @@ import { updateAccount } from 'src/firebase/client/account/updateAccount';
 import { createProfile } from 'src/firebase/client/profile/createProfile';
 import type { Account } from 'src/schemas/AccountSchema';
 import type { Profile } from 'src/schemas/ProfileSchema';
-import { uid } from 'src/stores/session';
 import { requiresEula } from 'src/stores/session/account';
 import { profile } from 'src/stores/session/profile';
 import { pushSnack } from 'src/utils/client/snackUtils';
@@ -13,6 +12,7 @@ import { logError, logWarn } from 'src/utils/logHelpers';
 import { toMekanismiURI } from 'src/utils/mekanismiUtils';
 import { toFid } from 'src/utils/toFid';
 import { onMount, type Snippet } from 'svelte';
+import { uid } from '../../../stores/session';
 import NickNameInput from './NickNameInput.svelte';
 
 interface Props {
@@ -50,7 +50,7 @@ $effect(() => {
 });
 
 async function getUserInfo() {
-  const { auth } = await import('src/firebase/client');
+  const { auth } = await import('../../../firebase/client');
   const user = auth.currentUser;
   if (!user) return;
   avatarUrl = user.photoURL || '';

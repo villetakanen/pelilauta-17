@@ -1,9 +1,9 @@
 <script lang="ts">
-import WithAuth from 'src/components/svelte/app/WithAuth.svelte';
 import type { Site } from 'src/schemas/SiteSchema';
-import { uid } from 'src/stores/session';
 import { t } from 'src/utils/i18n';
 import type { Snippet } from 'svelte';
+import { uid } from '../../../stores/session';
+import WithAuth from '../app/WithAuth.svelte';
 
 interface Props {
   site: Site;

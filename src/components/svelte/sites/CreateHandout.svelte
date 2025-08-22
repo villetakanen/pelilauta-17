@@ -4,11 +4,11 @@ import {
   handoutFrom,
 } from 'src/schemas/HandoutSchema';
 import { SITES_COLLECTION_NAME, type Site } from 'src/schemas/SiteSchema';
-import { uid } from 'src/stores/session';
 import { pushSnack } from 'src/utils/client/snackUtils';
 import { toFirestoreEntry } from 'src/utils/client/toFirestoreEntry';
 import { t } from 'src/utils/i18n';
 import { logError } from 'src/utils/logHelpers';
+import { uid } from '../../../stores/session';
 
 interface Props {
   site: Site;

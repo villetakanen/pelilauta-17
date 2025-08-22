@@ -3,7 +3,7 @@ import { logError } from 'src/utils/logHelpers';
 
 export async function setFrozen(frozen: boolean, accountUid: string) {
   const { getFirestore, doc, updateDoc } = await import('firebase/firestore');
-  const { uid } = await import('src/stores/session');
+  const { uid } = await import('../../../stores/session');
   const { appMeta } = await import('src/stores/metaStore/metaStore');
 
   if (!appMeta.get().admins.includes(uid.get())) {

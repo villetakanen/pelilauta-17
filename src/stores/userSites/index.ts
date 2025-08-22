@@ -6,10 +6,10 @@ import {
   type Site,
   SiteSchema,
 } from 'src/schemas/SiteSchema';
-import { uid } from 'src/stores/session';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { logDebug, logError } from 'src/utils/logHelpers';
 import { z } from 'zod';
+import { uid } from '../session';
 
 /**
  * A nanostore for caching the user's sites.

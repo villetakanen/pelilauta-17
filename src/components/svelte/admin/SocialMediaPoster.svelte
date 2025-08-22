@@ -1,9 +1,9 @@
 <script lang="ts">
-import WithAuth from 'src/components/svelte/app/WithAuth.svelte';
 import { authedPost } from 'src/firebase/client/apiClient';
 import { appMeta } from 'src/stores/metaStore/metaStore';
-import { uid } from 'src/stores/session';
 import { pushSnack } from 'src/utils/client/snackUtils';
+import { uid } from '../../../stores/session';
+import WithAuth from '../app/WithAuth.svelte';
 
 const visible = $derived.by(() => $appMeta.admins.includes($uid));
 

@@ -1,8 +1,8 @@
 <script lang="ts">
-import SiteLink from 'src/components/svelte/sites/SiteLink.svelte';
 import type { Character } from 'src/schemas/CharacterSchema';
 import { t } from 'src/utils/i18n';
 import type { Snippet } from 'svelte';
+import SiteLink from '../sites/SiteLink.svelte';
 
 export interface CharacterCardProps {
   character: Character;

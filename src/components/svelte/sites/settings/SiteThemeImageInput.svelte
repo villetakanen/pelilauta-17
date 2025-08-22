@@ -1,9 +1,9 @@
 <script lang="ts">
 import { addAssetToSite } from 'src/firebase/client/site/addAssetToSite';
 import type { Site } from 'src/schemas/SiteSchema';
-import { update } from 'src/stores/site';
 import { resizeImage } from 'src/utils/client/resizeImage';
 import { t } from 'src/utils/i18n';
+import { update } from '../../../../stores/site';
 
 /**
  * A file input for setting a site theme image. There are 3 different images we want to use

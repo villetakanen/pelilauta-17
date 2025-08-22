@@ -1,7 +1,7 @@
 ---
-import CharacterEditorApp from 'src/components/svelte/characters/CharacterEditorApp/CharacterEditorApp.svelte';
-import EditorPage from 'src/layouts/EditorPage.astro';
 import { t } from 'src/utils/i18n';
+import CharacterEditorApp from '../../../components/svelte/characters/CharacterEditorApp/CharacterEditorApp.svelte';
+import EditorPage from '../../../layouts/EditorPage.astro';
 
 const { characterKey } = Astro.params;
 const title = `${t('app:shortname')} – ${t('characters:edit.title')}`;

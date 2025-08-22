@@ -1,13 +1,13 @@
 ---
-import BackgroundPoster from 'src/components/server/ui/BackgroundPoster.astro';
-import CharacterApp from 'src/components/svelte/characters/CharacterApp/CharacterApp.svelte';
 import { getCharacter } from 'src/firebase/server/characters/getCharacter';
-import Page from 'src/layouts/Page.astro';
 import type { Character } from 'src/schemas/CharacterSchema';
 import { type Site, SiteSchema } from 'src/schemas/SiteSchema';
 import { t } from 'src/utils/i18n';
 import { logError } from 'src/utils/logHelpers';
 import { verifySession } from 'src/utils/server/auth/verifySession';
+import BackgroundPoster from '../../../components/server/ui/BackgroundPoster.astro';
+import CharacterApp from '../../../components/svelte/characters/CharacterApp/CharacterApp.svelte';
+import Page from '../../../layouts/Page.astro';
 
 const { characterKey } = Astro.params;
 

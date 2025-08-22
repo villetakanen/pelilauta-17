@@ -78,7 +78,7 @@ async function fetchProfile(key: string) {
 
   try {
     const { getDoc, doc } = await import('firebase/firestore');
-    const { db } = await import('src/firebase/client');
+    const { db } = await import('../../firebase/client');
 
     const publicProfileDoc = await getDoc(doc(db, 'profiles', key));
 
@@ -128,7 +128,7 @@ export async function fetchProfileEntry(key: string): Promise<PublicProfile> {
 
   try {
     const { getDoc, doc } = await import('firebase/firestore');
-    const { db } = await import('src/firebase/client');
+    const { db } = await import('../../firebase/client');
 
     const publicProfileDoc = await getDoc(doc(db, 'profiles', key));
 
@@ -170,7 +170,7 @@ export async function fetchAllProfiles() {
   logWarn('Fetching all active profiles');
 
   try {
-    const { db } = await import('src/firebase/client');
+    const { db } = await import('../../firebase/client');
     const { getDocs, collection, query } = await import('firebase/firestore');
 
     const q = query(

@@ -1,14 +1,14 @@
 <script lang="ts">
-import ProfileSection from 'src/components/shared/ProfileSection.svelte';
 import {
   PROFILES_COLLECTION_NAME,
   type Profile,
   parseProfile,
 } from 'src/schemas/ProfileSchema';
-import { uid } from 'src/stores/session';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { t } from 'src/utils/i18n';
 import { onMount } from 'svelte';
+import { uid } from '../../../stores/session';
+import ProfileSection from '../../shared/ProfileSection.svelte';
 import Actions from './Actions.svelte';
 import AuthnSection from './AuthnSection.svelte';
 import ProfileTool from './ProfileTool.svelte';

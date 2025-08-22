@@ -9,9 +9,9 @@ import {
   THREADS_COLLECTION_NAME,
   type Thread,
 } from 'src/schemas/ThreadSchema';
-import { markEntrySeen } from 'src/stores/session';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { logError, logWarn } from 'src/utils/logHelpers';
+import { markEntrySeen } from '../../../stores/session';
 import { addAssetToThread } from './addAssetToThread';
 import { updateThreadTags } from './updateThreadTags';
 

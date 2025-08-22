@@ -1,12 +1,12 @@
 ---
-import HandoutApp from 'src/components/server/SiteApp/HandoutApp.astro';
-import SiteTray from 'src/components/server/SiteApp/SiteTray.astro';
-import BackgroundPoster from 'src/components/server/ui/BackgroundPoster.astro';
-import HandoutFabs from 'src/components/svelte/sites/handouts/HandoutFabs.svelte';
-import PageWithTray from 'src/layouts/PageWithTray.astro';
 import { handoutFrom } from 'src/schemas/HandoutSchema';
 import { parseSite } from 'src/schemas/SiteSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
+import HandoutApp from '../../../../../components/server/SiteApp/HandoutApp.astro';
+import SiteTray from '../../../../../components/server/SiteApp/SiteTray.astro';
+import BackgroundPoster from '../../../../../components/server/ui/BackgroundPoster.astro';
+import HandoutFabs from '../../../../../components/svelte/sites/handouts/HandoutFabs.svelte';
+import PageWithTray from '../../../../../layouts/PageWithTray.astro';
 
 interface Props {
   siteKey: string;

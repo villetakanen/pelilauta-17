@@ -1,9 +1,9 @@
 ---
-import SiteCard from 'src/components/server/ui/SiteCard.astro';
-import OnboardingCard from 'src/components/svelte/frontpage/OnboardingCard.svelte';
 import { type Site, SiteSchema } from 'src/schemas/SiteSchema';
 import { t } from 'src/utils/i18n';
 import { logError } from 'src/utils/logHelpers';
+import OnboardingCard from '../../svelte/frontpage/OnboardingCard.svelte';
+import SiteCard from '../ui/SiteCard.astro';
 
 const siteListResponse = await fetch(`${Astro.url.origin}/api/sites?limit=5`);
 

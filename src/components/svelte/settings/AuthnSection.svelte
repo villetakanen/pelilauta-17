@@ -22,7 +22,7 @@ let loadingAvatarUpdate = $state(false); // For UX feedback during avatar update
 onMount(async () => {
   // Dynamically import Firebase Auth functions and instance
   const { onAuthStateChanged } = await import('firebase/auth');
-  const { auth } = await import('src/firebase/client'); // Corrected path as per instructions
+  const { auth } = await import('../../../firebase/client'); // Corrected path as per instructions
 
   onAuthStateChanged(auth, (user) => {
     if (user) {

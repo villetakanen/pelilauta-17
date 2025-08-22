@@ -1,9 +1,9 @@
 <script lang="ts">
-import AddFilesButton from 'src/components/svelte/app/AddFilesButton.svelte';
 import { addReply } from 'src/firebase/client/threads/addReply';
 import type { Thread } from 'src/schemas/ThreadSchema';
-import { uid } from 'src/stores/session';
 import { t } from 'src/utils/i18n';
+import { uid } from '../../../stores/session';
+import AddFilesButton from '../app/AddFilesButton.svelte';
 
 interface Props {
   thread: Thread;

@@ -1,6 +1,5 @@
 <script lang="ts">
 import { type CnListItem, CnSortableList } from '@11thdeg/cyan-lit';
-import SvelteSortableList from 'src/components/svelte/app/SvelteSortableList.svelte';
 import { updateSite } from 'src/firebase/client/site/updateSite';
 import {
   type CategoryRef,
@@ -11,6 +10,7 @@ import { pushSnack } from 'src/utils/client/snackUtils';
 import { t } from 'src/utils/i18n';
 import { logDebug, logError } from 'src/utils/logHelpers';
 import { onMount } from 'svelte';
+import SvelteSortableList from '../../app/SvelteSortableList.svelte';
 
 interface Props {
   site: Site;

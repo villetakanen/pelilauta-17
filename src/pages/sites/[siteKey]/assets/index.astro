@@ -1,12 +1,12 @@
 ---
-import SiteTray from 'src/components/server/SiteApp/SiteTray.astro';
-import BackgroundPoster from 'src/components/server/ui/BackgroundPoster.astro';
-import AssetList from 'src/components/svelte/sites/AssetList.svelte';
-import UploadAssetFab from 'src/components/svelte/sites/assets/UploadAssetFab.svelte';
-import PageWithTray from 'src/layouts/PageWithTray.astro';
 import { parseSite } from 'src/schemas/SiteSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { t } from 'src/utils/i18n';
+import SiteTray from '../../../../components/server/SiteApp/SiteTray.astro';
+import BackgroundPoster from '../../../../components/server/ui/BackgroundPoster.astro';
+import AssetList from '../../../../components/svelte/sites/AssetList.svelte';
+import UploadAssetFab from '../../../../components/svelte/sites/assets/UploadAssetFab.svelte';
+import PageWithTray from '../../../../layouts/PageWithTray.astro';
 
 const { siteKey } = Astro.params;
 

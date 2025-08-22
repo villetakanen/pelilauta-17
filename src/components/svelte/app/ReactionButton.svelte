@@ -6,11 +6,11 @@ import {
   type Reactions,
   reactionsSchema,
 } from 'src/schemas/ReactionsSchema';
-import { uid } from 'src/stores/session';
 import { pushSnack } from 'src/utils/client/snackUtils';
 import { t } from 'src/utils/i18n';
 import { logDebug, logWarn } from 'src/utils/logHelpers';
 import { onMount } from 'svelte';
+import { uid } from '../../../stores/session';
 
 /**
  * An universal "love" button for Pelilauta 16+. The functionality here might break 16 and lesser

@@ -1,9 +1,9 @@
 <script lang="ts">
-import WithAuth from 'src/components/svelte/app/WithAuth.svelte';
 import { authedPost } from 'src/firebase/client/apiClient';
 import { appMeta } from 'src/stores/metaStore/metaStore';
-import { uid } from 'src/stores/session';
 import { logDebug } from 'src/utils/logHelpers';
+import { uid } from '../../../stores/session';
+import WithAuth from '../app/WithAuth.svelte';
 
 type Props = {
   showLocalTools: boolean;

@@ -1,7 +1,7 @@
 <script lang="ts">
-import { uid } from 'src/stores/session';
 import { profile } from 'src/stores/session/profile';
 import { t } from 'src/utils/i18n';
+import { uid } from '../../../stores/session';
 </script>
 {#if $uid}
 <a href="/settings" aria-label={$profile?.nick} data-testid="setting-navigation-button">

@@ -2,9 +2,9 @@
 import { updateDoc } from 'firebase/firestore';
 import type { Channel } from 'src/schemas/ChannelSchema';
 import { THREADS_COLLECTION_NAME } from 'src/schemas/ThreadSchema';
-import { update } from 'src/stores/site';
 import { toDisplayString } from 'src/utils/contentHelpers';
 import { logDebug } from 'src/utils/logHelpers';
+import { update } from '../../../../stores/site';
 
 interface Props {
   channel: Channel;
@@ -12,7 +12,7 @@ interface Props {
 const { channel }: Props = $props();
 
 async function forceRefresh() {
-  const { db } = await import('src/firebase/client');
+  const { db } = await import('../../../../firebase/client');
   const { getDocs, collection, query, where, getDoc, doc } = await import(
     'firebase/firestore'
   );

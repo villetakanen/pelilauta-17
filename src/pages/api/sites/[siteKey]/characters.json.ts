@@ -1,5 +1,4 @@
 import type { APIContext } from 'astro';
-import { serverDB } from 'src/firebase/server';
 import {
   CHARACTERS_COLLECTION_NAME,
   type Character,
@@ -7,6 +6,7 @@ import {
 } from 'src/schemas/CharacterSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { logError, logWarn } from 'src/utils/logHelpers';
+import { serverDB } from '../../../../firebase/server';
 
 export async function GET({ params }: APIContext): Promise<Response> {
   const { siteKey } = params;

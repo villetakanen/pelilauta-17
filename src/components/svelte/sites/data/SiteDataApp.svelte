@@ -1,7 +1,7 @@
 <script lang="ts">
 import type { Site } from 'src/schemas/SiteSchema';
-import { site } from 'src/stores/site';
 import { t } from 'src/utils/i18n';
+import { site } from '../../../../stores/site';
 import MembersOnly from '../MembersOnly.svelte';
 import ExportAsMdSection from './ExportAsMDSection.svelte';
 

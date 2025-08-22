@@ -1,5 +1,4 @@
 import type { APIContext } from 'astro';
-import { serverDB } from 'src/firebase/server';
 import {
   PAGES_COLLECTION_NAME,
   type Page,
@@ -7,6 +6,7 @@ import {
 } from 'src/schemas/PageSchema';
 import { SITES_COLLECTION_NAME } from 'src/schemas/SiteSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
+import { serverDB } from '../../../../firebase/server';
 
 export async function GET({ params }: APIContext): Promise<Response> {
   const { siteKey } = params;

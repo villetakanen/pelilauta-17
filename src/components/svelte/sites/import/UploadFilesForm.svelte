@@ -1,7 +1,7 @@
 <script lang="ts">
-import { site } from 'src/stores/site';
 import { importStore } from 'src/stores/site/importsStore';
 import { logDebug, logError, logWarn } from 'src/utils/logHelpers';
+import { site } from '../../../../stores/site';
 
 let fileInput = $state<HTMLInputElement | undefined>();
 let isUploading = $state(false);

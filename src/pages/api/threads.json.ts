@@ -1,6 +1,5 @@
 import type { APIContext } from 'astro';
 import { Timestamp } from 'firebase-admin/firestore';
-import { serverDB } from 'src/firebase/server';
 import { CHANNEL_DEFAULT_SLUG } from 'src/schemas/ChannelSchema';
 import {
   parseThread,
@@ -9,6 +8,7 @@ import {
 } from 'src/schemas/ThreadSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { getAstroQueryParams } from 'src/utils/server/astroApiHelpers';
+import { serverDB } from '../../firebase/server';
 
 export async function GET({ request }: APIContext) {
   const publicThreads: Thread[] = [];

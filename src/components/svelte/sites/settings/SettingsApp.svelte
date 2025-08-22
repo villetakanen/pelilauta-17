@@ -1,8 +1,8 @@
 <script lang="ts">
-import WithAuth from 'src/components/svelte/app/WithAuth.svelte';
 import type { Site } from 'src/schemas/SiteSchema';
-import { uid } from 'src/stores/session';
-import { site } from 'src/stores/site';
+import { uid } from '../../../../stores/session';
+import { site } from '../../../../stores/site';
+import WithAuth from '../../app/WithAuth.svelte';
 import SiteDangerZoneSection from './SiteDangerZoneSection.svelte';
 import SiteMetaForm from './SiteMetaForm.svelte';
 import SiteThemingSection from './SiteThemingSection.svelte';

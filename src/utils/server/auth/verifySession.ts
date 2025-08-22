@@ -1,6 +1,6 @@
 import type { APIContext } from 'astro';
-import { serverAuth } from 'src/firebase/server';
 import { logDebug } from 'src/utils/logHelpers';
+import { serverAuth } from '../../../firebase/server';
 
 export async function verifySession(astro: APIContext) {
   const cookie = astro.cookies.get('session')?.value;

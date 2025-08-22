@@ -1,5 +1,4 @@
 <script lang="ts">
-import CharacterCard from 'src/components/svelte/characters/CharacterCard.svelte';
 import type { Site } from 'src/schemas/SiteSchema';
 import {
   canEdit,
@@ -9,6 +8,7 @@ import {
 import { pushSnack } from 'src/utils/client/snackUtils';
 import { t } from 'src/utils/i18n';
 import { logError } from 'src/utils/logHelpers';
+import CharacterCard from '../CharacterCard.svelte';
 import SiteSelect from '../SiteSelect.svelte';
 
 type modes = 'view' | 'edit';

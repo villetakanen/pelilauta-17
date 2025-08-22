@@ -1,14 +1,14 @@
 ---
-import SiteTray from 'src/components/server/SiteApp/SiteTray.astro';
-import BackgroundPoster from 'src/components/server/ui/BackgroundPoster.astro';
-import CharacterCard from 'src/components/svelte/characters/CharacterCard.svelte';
-import CharactersFab from 'src/components/svelte/characters/CharactersFab.svelte';
-import PageWithTray from 'src/layouts/PageWithTray.astro';
 import { type Character, CharacterSchema } from 'src/schemas/CharacterSchema';
 import { parseSite } from 'src/schemas/SiteSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { t } from 'src/utils/i18n';
 import { logWarn } from 'src/utils/logHelpers';
+import SiteTray from '../../../components/server/SiteApp/SiteTray.astro';
+import BackgroundPoster from '../../../components/server/ui/BackgroundPoster.astro';
+import CharacterCard from '../../../components/svelte/characters/CharacterCard.svelte';
+import CharactersFab from '../../../components/svelte/characters/CharactersFab.svelte';
+import PageWithTray from '../../../layouts/PageWithTray.astro';
 
 interface Props {
   siteKey: string;

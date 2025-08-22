@@ -11,7 +11,7 @@ import { ZodError } from 'zod';
 async function createNotificationEntries(
   request: NotificationRequest,
 ): Promise<{ success: number; failed: number }> {
-  const { serverDB } = await import('src/firebase/server');
+  const { serverDB } = await import('../../../firebase/server');
   const { FieldValue } = await import('firebase-admin/firestore');
   const base = request.notification;
   let successCount = 0;

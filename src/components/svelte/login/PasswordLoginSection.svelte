@@ -32,7 +32,7 @@ async function loginWithPassword(e: SubmitEvent) {
   try {
     // Dynamically import Firebase Auth function and instance
     const { signInWithEmailAndPassword } = await import('firebase/auth');
-    const { auth } = await import('src/firebase/client');
+    const { auth } = await import('../../../firebase/client');
 
     const userCredential = await signInWithEmailAndPassword(
       auth,

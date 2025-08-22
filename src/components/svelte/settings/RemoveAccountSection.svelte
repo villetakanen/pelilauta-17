@@ -1,9 +1,10 @@
 <script lang="ts">
 // Import stores, utilities, and i18n function
-import { uid } from 'src/stores/session'; // $uid is used directly
+
 import { pushSessionSnack, pushSnack } from 'src/utils/client/snackUtils'; // For user feedback
 import { t } from 'src/utils/i18n';
 import { logWarn } from 'src/utils/logHelpers';
+import { uid } from '../../../stores/session'; // $uid is used directly
 
 // No props needed for this component
 // interface Props {}
@@ -49,7 +50,7 @@ async function deRegister(e: SubmitEvent) {
   try {
     // Dynamically import Firebase Firestore functions and db instance
     const { deleteDoc, doc } = await import('firebase/firestore');
-    const { db } = await import('src/firebase/client'); // Corrected path as per instructions
+    const { db } = await import('../../../firebase/client'); // Corrected path as per instructions
 
     await deleteDoc(doc(db, 'profiles', key));
     logWarn('Profile removed from the DB');
@@ -58,7 +59,7 @@ async function deRegister(e: SubmitEvent) {
     logWarn('Account removed from the DB');
 
     // Dynamically import and call logout
-    const { logout: sessionLogout } = await import('src/stores/session');
+    const { logout: sessionLogout } = await import('../../../stores/session');
     await sessionLogout();
 
     verifyText = ''; // Reset verification text

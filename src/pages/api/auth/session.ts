@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { serverAuth } from 'src/firebase/server';
+import { serverAuth } from '../../../firebase/server';
 
 export const POST: APIRoute = async ({ request, cookies }) => {
   const { token } = await request.json();

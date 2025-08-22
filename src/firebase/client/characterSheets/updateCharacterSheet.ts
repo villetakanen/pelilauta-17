@@ -23,7 +23,7 @@ export async function updateCharacterSheet(sheetData: Partial<CharacterSheet>) {
   const { convertDatesToTimestamps } = await import(
     'src/utils/client/toFirestoreEntry'
   );
-  const { db } = await import('src/firebase/client');
+  const { db } = await import('..');
 
   // First we need to make sure that any Dates in the sheetData are converted to
   // Firestore timestamps.

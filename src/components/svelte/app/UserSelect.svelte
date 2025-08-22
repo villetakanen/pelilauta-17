@@ -3,9 +3,9 @@ import {
   activeProfiles,
   fetchActiveProfiles,
 } from 'src/stores/activeProfilesStore';
-import { uid } from 'src/stores/session';
 import { t } from 'src/utils/i18n';
 import { onMount } from 'svelte';
+import { uid } from '../../../stores/session';
 
 interface Props {
   value: string;
