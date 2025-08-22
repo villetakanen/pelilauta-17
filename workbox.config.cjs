@@ -8,7 +8,7 @@ if (!globPath) {
 module.exports = {
   globDirectory: globPath,
   globPatterns: [
-    "**/*.{css,png,webp,avif,mp4,html,ico,woff2,json,js,svg,xml,txt}",
+    "**/*.{css,png,webp,avif,mp4,html,ico,woff2,json,js,svg,xml,txt,mjs}",
   ],
   swDest: `${globPath}/service-worker.js`,
   swSrc: "./public/service-worker.js",

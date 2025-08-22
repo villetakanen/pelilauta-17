@@ -8,6 +8,15 @@ importers:
 
   .:
     dependencies:
+      '@11thdeg/cn-editor':
+        specifier: 4.0.0-beta.7
+        version: 4.0.0-beta.7
+      '@11thdeg/cyan-css':
+        specifier: 4.0.0-beta.4
+        version: 4.0.0-beta.4(@fontsource/open-sans@5.2.6)(lato-font@3.0.0)
+      '@11thdeg/cyan-lit':
+        specifier: 4.0.0-beta.5
+        version: 4.0.0-beta.5
       '@astrojs/check':
         specifier: ^0.9.4
         version: 0.9.4(typescript@5.8.3)
@@ -164,6 +173,18 @@ importers:
         version: 7.3.0
 
 packages:
+
+  '@11thdeg/cn-editor@4.0.0-beta.7':
+    resolution: {integrity: sha512-GLa9i1b5+KGGe9XZjVjo38jAG9uqJDECTWtgjqRK4m3yHIubp65z+DTrUPDuSES/sktRdoPPz8KOZMFA7Ty8Iw==}
+
+  '@11thdeg/cyan-css@4.0.0-beta.4':
+    resolution: {integrity: sha512-+0ShKvKja/9omzSry7KK8vyAHmchK/Gdu9dT1VyWpFqyBAqMgQDVCcQd1krIhTMcP/dkE0nRbrFJ4KrREqULrA==}
+    peerDependencies:
+      '@fontsource/open-sans': '*'
+      lato-font: '*'
+
+  '@11thdeg/cyan-lit@4.0.0-beta.5':
+    resolution: {integrity: sha512-zQS0eOgCMviwD1bVkzgOdKIfQ4UT0aHqWzNl+4S6ecUKN62h8QgGumHTgkdeJ/tLAtHGsD6DvsJjugkEpvHnUg==}
 
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
@@ -1689,6 +1710,9 @@ packages:
   '@firebase/webchannel-wrapper@1.0.3':
     resolution: {integrity: sha512-2xCRM9q9FlzGZCdgDMJwc0gyUkWFtkosy7Xxr6sFgQwn+wMNIWd7xIvYNauU1r64B5L5rsGKy/n9TKJ0aAFeqQ==}
 
+  '@fontsource/open-sans@5.2.6':
+    resolution: {integrity: sha512-mnfnUmBWQ+J220gqbibbzmKcc1kawV+lb3/Pspzu+Opnxza12oUffIg0ufG8g+3j1fnSznEWgyNV40MjtmJj6g==}
+
   '@google-cloud/firestore@7.11.1':
     resolution: {integrity: sha512-ZxOdH8Wr01hBDvKCQfMWqwUcfNcN3JY19k1LtS1fTFhEyorYPLsbWN+VxIRL46pOYGHTPkU3Or5HbT/SLQM5nA==}
     engines: {node: '>=14.0.0'}
@@ -2045,8 +2069,14 @@ packages:
   '@lit-labs/ssr-dom-shim@1.3.0':
     resolution: {integrity: sha512-nQIWonJ6eFAvUUrSlwyHDm/aE8PBDu5kRpL0vHMg6K8fK3Diq1xdPjTnsJSwxABhaZ+5eBi1btQB5ShUTKo4nQ==}
 
+  '@lit-labs/ssr-dom-shim@1.4.0':
+    resolution: {integrity: sha512-ficsEARKnmmW5njugNYKipTm4SFnbik7CXtoencDZzmzo/dQ+2Q0bgkzJuoJP20Aj0F+izzJjOqsnkd6F/o1bw==}
+
   '@lit/reactive-element@2.1.0':
     resolution: {integrity: sha512-L2qyoZSQClcBmq0qajBVbhYEcG6iK0XfLn66ifLe/RfC0/ihpc+pl0Wdn8bJ8o+hj38cG0fGXRgSS20MuXn7qA==}
+
+  '@lit/reactive-element@2.1.1':
+    resolution: {integrity: sha512-N+dm5PAYdQ8e6UlywyyrgI2t++wFGXfHx+dSJ1oBrg6FAxUj40jId++EaRm80MKX5JnlH1sBsyZ5h0bcZKemCg==}
 
   '@mapbox/node-pre-gyp@2.0.0':
     resolution: {integrity: sha512-llMXd39jtP0HpQLVI37Bf1m2ADlEb35GYSh1SDSLsBhR+5iCxiNGlT31yqbNtVHygHAtMy6dWFERpU2JgufhPg==}
@@ -4978,6 +5008,9 @@ packages:
     resolution: {integrity: sha512-weT+r0kTkRQdCdYCNtkMwWXQTMEswKrFBkm4ckQOMVhhqhIMI1UT2hMj+1iigIhgSZm5gTmrRXBNoGUgaTY1xA==}
     engines: {node: '>=8'}
 
+  lato-font@3.0.0:
+    resolution: {integrity: sha512-wKhFCh9XX91Lepf38ynnZTNpkQD1OWuXV1RwFgcchUVQZzBixJ/yXCaVCIrNI3CbgT9pLcLzWKgn+6OETzAnug==}
+
   lazystream@1.0.1:
     resolution: {integrity: sha512-b94GiNHQNy6JNTrt5w6zNyffMrNkXZb3KTkCZJb2V1xaEGCk093vkZ2jk3tpaeP33/OiXC+WvK9AxUebnf5nbw==}
     engines: {node: '>= 0.6.3'}
@@ -5056,11 +5089,20 @@ packages:
   lit-element@4.2.0:
     resolution: {integrity: sha512-MGrXJVAI5x+Bfth/pU9Kst1iWID6GHDLEzFEnyULB/sFiRLgkd8NPK/PeeXxktA3T6EIIaq8U3KcbTU5XFcP2Q==}
 
+  lit-element@4.2.1:
+    resolution: {integrity: sha512-WGAWRGzirAgyphK2urmYOV72tlvnxw7YfyLDgQ+OZnM9vQQBQnumQ7jUJe6unEzwGU3ahFOjuz1iz1jjrpCPuw==}
+
   lit-html@3.3.0:
     resolution: {integrity: sha512-RHoswrFAxY2d8Cf2mm4OZ1DgzCoBKUKSPvA1fhtSELxUERq2aQQ2h05pO9j81gS1o7RIRJ+CePLogfyahwmynw==}
 
+  lit-html@3.3.1:
+    resolution: {integrity: sha512-S9hbyDu/vs1qNrithiNyeyv64c9yqiW9l+DBgI18fL+MTvOtWoFR0FWiyq1TxaYef5wNlpEmzlXoBlZEO+WjoA==}
+
   lit@3.3.0:
     resolution: {integrity: sha512-DGVsqsOIHBww2DqnuZzW7QsuCdahp50ojuDaBPC7jUDRpYoH0z7kHBBYZewRzer75FwtrkmkKk7iOAwSaWdBmw==}
+
+  lit@3.3.1:
+    resolution: {integrity: sha512-Ksr/8L3PTapbdXJCk+EJVB78jDodUMaP54gD24W186zGRARvwrsPfS60wae/SSCTCNZVPd1chXqio1qHQmu4NA==}
 
   locate-character@3.0.0:
     resolution: {integrity: sha512-SW13ws7BjaeJ6p7Q6CO2nchbYEc3X3J6WrmTTDto7yMPqVSZTUyY5Tjbid+Ab8gLnATtygYtiDIJGQRRn2ZOiA==}
@@ -7453,6 +7495,30 @@ packages:
 
 snapshots:
 
+  '@11thdeg/cn-editor@4.0.0-beta.7':
+    dependencies:
+      '@codemirror/commands': 6.8.1
+      '@codemirror/lang-markdown': 6.3.2
+      '@codemirror/language': 6.11.1
+      '@codemirror/language-data': 6.5.1
+      '@codemirror/state': 6.5.2
+      '@codemirror/view': 6.37.1
+      '@lezer/highlight': 1.2.1
+      codemirror: 6.0.1
+      dompurify: 3.2.6
+      lit: 3.3.0
+      turndown: 7.2.0
+      turndown-plugin-gfm: 1.0.2
+
+  '@11thdeg/cyan-css@4.0.0-beta.4(@fontsource/open-sans@5.2.6)(lato-font@3.0.0)':
+    dependencies:
+      '@fontsource/open-sans': 5.2.6
+      lato-font: 3.0.0
+
+  '@11thdeg/cyan-lit@4.0.0-beta.5':
+    dependencies:
+      lit: 3.3.1
+
   '@ampproject/remapping@2.3.0':
     dependencies:
       '@jridgewell/gen-mapping': 0.3.8
@@ -9353,6 +9419,8 @@ snapshots:
 
   '@firebase/webchannel-wrapper@1.0.3': {}
 
+  '@fontsource/open-sans@5.2.6': {}
+
   '@google-cloud/firestore@7.11.1':
     dependencies:
       '@opentelemetry/api': 1.9.0
@@ -9717,9 +9785,15 @@ snapshots:
 
   '@lit-labs/ssr-dom-shim@1.3.0': {}
 
+  '@lit-labs/ssr-dom-shim@1.4.0': {}
+
   '@lit/reactive-element@2.1.0':
     dependencies:
       '@lit-labs/ssr-dom-shim': 1.3.0
+
+  '@lit/reactive-element@2.1.1':
+    dependencies:
+      '@lit-labs/ssr-dom-shim': 1.4.0
 
   '@mapbox/node-pre-gyp@2.0.0':
     dependencies:
@@ -13376,6 +13450,8 @@ snapshots:
     dependencies:
       package-json: 6.5.0
 
+  lato-font@3.0.0: {}
+
   lazystream@1.0.1:
     dependencies:
       readable-stream: 2.3.8
@@ -13460,7 +13536,17 @@ snapshots:
       '@lit/reactive-element': 2.1.0
       lit-html: 3.3.0
 
+  lit-element@4.2.1:
+    dependencies:
+      '@lit-labs/ssr-dom-shim': 1.4.0
+      '@lit/reactive-element': 2.1.1
+      lit-html: 3.3.1
+
   lit-html@3.3.0:
+    dependencies:
+      '@types/trusted-types': 2.0.7
+
+  lit-html@3.3.1:
     dependencies:
       '@types/trusted-types': 2.0.7
 
@@ -13469,6 +13555,12 @@ snapshots:
       '@lit/reactive-element': 2.1.0
       lit-element: 4.2.0
       lit-html: 3.3.0
+
+  lit@3.3.1:
+    dependencies:
+      '@lit/reactive-element': 2.1.1
+      lit-element: 4.2.1
+      lit-html: 3.3.1
 
   locate-character@3.0.0: {}
 
