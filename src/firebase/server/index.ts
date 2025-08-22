@@ -18,7 +18,7 @@ const serviceAccount = {
   auth_provider_x509_cert_url: import.meta.env
     .SECRET_auth_provider_x509_cert_url,
   client_x509_cert_url: import.meta.env.SECRET_client_x509_cert_url,
-  universe_domain: import.meta.env.SECRET_universe_domain,
+  universe_domain: import.meta.env.PUBLIC_universe_domain,
 };
 
 const initApp = () => {
