@@ -19,10 +19,11 @@ onMount(() => {
 </script>
 
 <div class="content-cards">
-   <div class="full-width">
-      <div class="toolbar">
-        <h4 class="grow">{t('library:sites.title')}</h4>
-        <button class="text" aria-label={directionNoun} onclick={toggleOrder}>
+
+  <header>
+    <nav class="toolbar">
+      <h1 class="grow">{t('library:sites.title')}</h1>
+      <button class="text" aria-label={directionNoun} onclick={toggleOrder}>
           <cn-icon noun={directionNoun}></cn-icon>
         </button>
         <button
@@ -37,10 +38,12 @@ onMount(() => {
         >
           {t('entries:site.flowTime')}
         </button>
-      </div>
-   </div>
-   <FilteredSites />
-   <div class="full-width mb-2">
+    </nav>
+  </header>
+  
+  <FilteredSites />
+
+   <footer>
       <p>{t('library:sites.count', { count: $userSites.length })}</p>
-   </div>
+   </footer>
 </div>
