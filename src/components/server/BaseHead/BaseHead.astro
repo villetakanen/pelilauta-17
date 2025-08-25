@@ -1,4 +1,5 @@
 ---
+import Fonts from './Fonts.astro';
 import '../../../overrides.css';
 import { ClientRouter } from 'astro:transitions';
 import { t } from 'src/utils/i18n';
@@ -24,9 +25,11 @@ const ogImage = image || `${Astro.url.origin}favicons/fox-ico-512.png`;
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{metaTitle}</title>
 
+
+  <Fonts />
+
   <!-- Preconnect to external domains -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
   <link rel="preconnect" href="https://firebasestorage.googleapis.com" />
 
   <!-- SEO -->
@@ -48,12 +51,6 @@ const ogImage = image || `${Astro.url.origin}favicons/fox-ico-512.png`;
   <link rel="apple-touch-icon" href="/favicons/fox-ico-192.png" />
   <link rel="icon" type="image/png" sizes="192x192" href="/favicons/fox-ico-192.png" />
   <link rel="icon" type="image/png" sizes="512x512" href="/favicons/fox-ico-512.png" />
-
-  <!-- Fonts -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap"
-    rel="stylesheet"
-  />
 
   <!-- Open Graph -->
   <meta property="og:title" content={metaTitle} />
