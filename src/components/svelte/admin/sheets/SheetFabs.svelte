@@ -33,7 +33,7 @@ async function handleCreateCharacterSheet() {
 }
 </script>
 
-<div class="fab-tray" in:fly={{ y: 20, duration: 300, delay: 300 }}>
+<div class="fab-tray">
   <button 
     class="fab" 
     onclick={handleCreateCharacterSheet} 

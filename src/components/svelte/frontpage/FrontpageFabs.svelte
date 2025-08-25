@@ -10,7 +10,7 @@ const visible = $derived.by(() => {
 {#if visible}
   <a
     href="/create/thread"
-    class="fab"
+    class="button fab"
     data-testid="createDiscussionFab">
 
     <cn-icon noun="send" small></cn-icon>
