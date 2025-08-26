@@ -4,10 +4,11 @@ import { t } from 'src/utils/i18n';
 import ActiveUsersWidget from './ActiveUsersWidget.astro';
 ---
 
-<footer class="AppFooter content-columns border-t">
-  <section class="column-s flex flex-col align-center justify-center">
-    <cn-icon noun="fox" xlarge style="color:var(--chroma-surface-70);align-self: center;"/>
-    <p class="caption text-center mb-0">
+<footer>
+  <div class="content-columns">
+    <section class="column-s flex flex-col items-center">
+      <cn-icon noun="fox" xlarge style="color:var(--chroma-surface-70);"/>
+      <p class="text-center mb-0">
       {t('app:shortname')}<br>
       <a href="/docs/80-release-notes">{version}</a></p>
       <p class="caption text-center mt-0">
@@ -41,5 +42,5 @@ import ActiveUsersWidget from './ActiveUsersWidget.astro';
   <section class="column-s">
     <ActiveUsersWidget /> 
   </section>
-  
+  </div>
 </footer>
