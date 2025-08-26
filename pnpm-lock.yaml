@@ -9,14 +9,14 @@ importers:
   .:
     dependencies:
       '@11thdeg/cn-editor':
-        specifier: 4.0.0-beta.9
-        version: 4.0.0-beta.9
-      '@11thdeg/cyan-css':
         specifier: 4.0.0-beta.11
-        version: 4.0.0-beta.11(@fontsource/open-sans@5.2.6)(lato-font@3.0.0)
+        version: 4.0.0-beta.11
+      '@11thdeg/cyan-css':
+        specifier: 4.0.0-beta.12
+        version: 4.0.0-beta.12(@fontsource/open-sans@5.2.6)(lato-font@3.0.0)
       '@11thdeg/cyan-lit':
-        specifier: 4.0.0-beta.9
-        version: 4.0.0-beta.9
+        specifier: 4.0.0-beta.11
+        version: 4.0.0-beta.11
       '@astrojs/check':
         specifier: ^0.9.4
         version: 0.9.4(typescript@5.9.2)
@@ -144,17 +144,17 @@ importers:
 
 packages:
 
-  '@11thdeg/cn-editor@4.0.0-beta.9':
-    resolution: {integrity: sha512-LKx4uIULnAJicD+prDB33UXD1DKitt5XSe6ElsbY871Xo0clHigTSl2aeKfbs8IjmZXZbc3iWpBfUjYLjKgVPA==}
+  '@11thdeg/cn-editor@4.0.0-beta.11':
+    resolution: {integrity: sha512-ljAXfXMUeQLh4ie3A4RVYEe93Gmd0w6N161zujNSmKuEi7eKmXd4EA7VWFgU8vuPZIpB+fysR6F3PBEjUjNCdg==}
 
-  '@11thdeg/cyan-css@4.0.0-beta.11':
-    resolution: {integrity: sha512-NIRkaMi8WkQgZ8/ppa/fc1+F/vaFJIrMG5TJtLT4IiWUTU44CYhyEI5NCST7VLij7GO5g2IBiZnIqzGC/OpOwA==}
+  '@11thdeg/cyan-css@4.0.0-beta.12':
+    resolution: {integrity: sha512-U0M1JyZSmPduzrJMyig/f77+qxc+pxX7LIUSdfOJaU536yhrZeBmrqftqyOE/lKr6MNFOm9FDnp+u8XbzeMimQ==}
     peerDependencies:
       '@fontsource/open-sans': '*'
       lato-font: '*'
 
-  '@11thdeg/cyan-lit@4.0.0-beta.9':
-    resolution: {integrity: sha512-PZF75+BxvnkhP0dZcvULdh1hv3QSu4+ynSwZxOWpRC1QM3LZhLzPs56rIAVxiLo5y647fe6VecBmj7OmW9ZPnw==}
+  '@11thdeg/cyan-lit@4.0.0-beta.11':
+    resolution: {integrity: sha512-Jy+PUlRXToFiCCoWYkUxszmVPqU4QtGwEmWbyqAhR7OmfUj9RJNXyW0v49zJIGwvfS9aHzEH/SLgjok8eUFHoA==}
 
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
@@ -7337,7 +7337,7 @@ packages:
 
 snapshots:
 
-  '@11thdeg/cn-editor@4.0.0-beta.9':
+  '@11thdeg/cn-editor@4.0.0-beta.11':
     dependencies:
       '@codemirror/commands': 6.8.1
       '@codemirror/lang-markdown': 6.3.2
@@ -7351,12 +7351,12 @@ snapshots:
       turndown: 7.2.0
       turndown-plugin-gfm: 1.0.2
 
-  '@11thdeg/cyan-css@4.0.0-beta.11(@fontsource/open-sans@5.2.6)(lato-font@3.0.0)':
+  '@11thdeg/cyan-css@4.0.0-beta.12(@fontsource/open-sans@5.2.6)(lato-font@3.0.0)':
     dependencies:
       '@fontsource/open-sans': 5.2.6
       lato-font: 3.0.0
 
-  '@11thdeg/cyan-lit@4.0.0-beta.9':
+  '@11thdeg/cyan-lit@4.0.0-beta.11':
     dependencies:
       lit: 3.3.1
 
