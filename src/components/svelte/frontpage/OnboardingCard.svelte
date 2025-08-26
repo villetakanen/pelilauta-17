@@ -11,7 +11,7 @@ import { uid } from '../../../stores/session';
     class="secondary mb-2"
     >
     <p>{t('app:onboarding.text')}</p>
-    <div slot="actions" class="toolbar justify-center">
+    <div slot="actions" class="toolbar items-center">
       <a href="/login" class="button cta">
         {t('actions:login')}
       </a>

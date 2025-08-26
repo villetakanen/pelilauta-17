@@ -1,7 +1,7 @@
-import type { APIRoute } from 'astro';
-import { ACCOUNTS_COLLECTION_NAME } from '@schemas/AccountSchema';
 import { serverDB } from '@firebase/server';
+import { ACCOUNTS_COLLECTION_NAME } from '@schemas/AccountSchema';
 import { logError } from '@utils/logHelpers';
+import type { APIRoute } from 'astro';
 
 /**
  * Returns the active account UID's for the solution.
@@ -37,4 +37,4 @@ export const GET: APIRoute = async function GET() {
       },
     });
   }
-}
+};
