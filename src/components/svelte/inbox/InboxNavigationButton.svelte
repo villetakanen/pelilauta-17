@@ -8,16 +8,14 @@ const count = $derived.by(() => {
     if ($newCount > 9) {
       return '9+';
     }
-    return `${$newCount}`;
+    return $newCount < 10 ? `${$newCount}` : undefined;
   }
+  return undefined
 });
 </script>
 
 {#if $uid}
-  <a href="/inbox" style="display:block; position:relative">
-    <cn-navigation-icon noun="send" label={t('navigation:inbox')} ></cn-navigation-icon>
-    {#if $newCount > 0}
-      <span class="pill notification-pill">{count}</span>
-    {/if}
+  <a href="/inbox" style="display:block; position:relative" aria-label={t('navigation:inbox')} >
+    <cn-navigation-icon noun="send" label={t('navigation:inbox')} notification={count}></cn-navigation-icon>
   </a>
 {/if}

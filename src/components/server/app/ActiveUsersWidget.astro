@@ -28,10 +28,17 @@ try {
 {activeUids.length > 0 && (
   <section class="active-users-widget">
     <h4>{t('app:footer.activeUsers.title')}</h4>
-    <div class="flex flex-wrap" style="gap: 0;">
+    <div class="grid aug">
       {activeUids.map((uid: string) => (
         <AvatarLink uid={uid} client:only="svelte"/>
       ))}
     </div>
   </section>
 )}
+
+<style>
+.aug {
+  --gw: 7;
+  grid-template-columns: calc(var(--cn-grid) * var(--gw)) calc(var(--cn-grid) * var(--gw)) calc(var(--cn-grid) * var(--gw)) calc(var(--cn-grid) * var(--gw));
+}
+</style>
