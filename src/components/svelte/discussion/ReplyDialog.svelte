@@ -2,6 +2,7 @@
 import { addReply } from 'src/firebase/client/threads/addReply';
 import type { Thread } from 'src/schemas/ThreadSchema';
 import { t } from 'src/utils/i18n';
+import { logError } from 'src/utils/logHelpers';
 import { uid } from '../../../stores/session';
 import AddFilesButton from '../app/AddFilesButton.svelte';
 
@@ -14,6 +15,7 @@ let replyContent = $state<string>('');
 let files = $state<File[]>([]);
 let changed = $state(false);
 let saving = $state(false);
+let error = $state<string | null>(null);
 
 const previews = $derived.by(() => {
   return files.map((file) => ({
@@ -34,27 +36,40 @@ function handleClose() {
   dialog.close();
   changed = false;
   saving = false;
+  error = null;
 }
 
 async function onsubmit(e: Event) {
-  // Hide the dialog while saving the reply
-  const dialog = document.getElementById(dialogId) as HTMLDialogElement;
-  dialog.close();
-
-  // TODO: Send the reply
   e.preventDefault();
+
+  // Don't close dialog yet - keep it open during save
   saving = true;
+  error = null;
+
   const form = e.target as HTMLFormElement;
   const formData = new FormData(form);
   const markdownContent = formData.get('reply') as string;
 
-  if (files.length > 0) {
-    await addReply(thread, $uid, markdownContent, '', files);
-  } else {
-    await addReply(thread, $uid, markdownContent);
-  }
+  try {
+    if (files.length > 0) {
+      await addReply(thread, $uid, markdownContent, '', files);
+    } else {
+      await addReply(thread, $uid, markdownContent);
+    }
 
-  handleClose();
+    // Only close dialog on successful save
+    handleClose();
+  } catch (err) {
+    // Log the error for debugging
+    logError('ReplyDialog', 'Failed to save reply:', err);
+
+    // Show user-friendly error but keep dialog open so user can retry
+    error =
+      err instanceof Error
+        ? err.message
+        : 'Failed to save reply. Please try again.';
+    saving = false;
+  }
 }
 </script>
 
@@ -75,6 +90,13 @@ async function onsubmit(e: Event) {
   </div>
 
   <form {onsubmit}>
+
+    {#if error}
+    <div class="error-message" style="background: var(--cn-color-error-bg, #fee); color: var(--cn-color-error, #c00); padding: var(--cn-gap-xs); border-radius: var(--cn-radius); margin-bottom: var(--cn-gap);">
+      <cn-icon noun="info"></cn-icon>
+      <span>{error}</span>
+    </div>
+    {/if}
 
     {#if files.length > 0}
     <section style="container: images / inline-size; width: min(420px,90vw); margin: 0 auto; margin-bottom: var(--cn-gap)">
@@ -102,11 +124,16 @@ async function onsubmit(e: Event) {
       disabled={saving}
     />
       <div class="grow"></div>
-      <button type="button" class="text" onclick={handleClose}>
+      <button type="button" class="text" onclick={handleClose} disabled={saving}>
         {t('actions:cancel')}
       </button>
-      <button type="submit" class="call-to-action">
-        {t('actions:send')}
+      <button type="submit" class="call-to-action" disabled={saving}>
+        {#if saving}
+          <cn-icon noun="clock"></cn-icon>
+          <span>{t('actions:saving') || 'Saving...'}</span>
+        {:else}
+          {t('actions:send')}
+        {/if}
       </button>
     </div>
   </form>
