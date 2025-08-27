@@ -24,18 +24,16 @@ const images = $derived.by(() => {
   );
 });
 </script>
-<article  class="flex flex-no-wrap">
-  {#if !fromUser}
-    <div class="sm-hidden flex-none">
-      <AvatarLink uid={reply.owners[0]} />
-    </div>
-  {/if}
-
+<article  class="flex {fromUser ? 'flex-row-reverse' : ''}">
+  <div class="sm-hidden flex-none" style="flex: 0 0 auto">
+    <AvatarLink uid={reply.owners[0]} />
+  </div>
   <cn-bubble reply={fromUser || undefined} class="grow">
     <div class="toolbar downscaled">
-      <p>
+      <p class="grow">
         <ProfileLink uid={reply.owners[0]} />
       </p>
+      <ReactionButton target="reply" small key={reply.key}></ReactionButton>
       <cn-menu inline>
         <ul>
           <li>
@@ -65,14 +63,6 @@ const images = $derived.by(() => {
       {/if}
       {@html marked(reply.markdownContent || '')}
     </div>
-    <div class="toolbar justify-end">
-      <ReactionButton target="reply" small key={reply.key}></ReactionButton>
-    </div>
   </cn-bubble>
     
-  {#if fromUser}
-    <div class="sm-hidden flex-none">
-      <AvatarLink uid={reply.owners[0]} />
-    </div>
-  {/if}
 </article>
