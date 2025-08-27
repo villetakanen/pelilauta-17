@@ -31,7 +31,7 @@ const images = $derived.by(() => {
     </div>
   {/if}
 
-  <cn-bubble reply={fromUser || undefined}>
+  <cn-bubble reply={fromUser || undefined} class="grow">
     <div class="toolbar downscaled">
       <p>
         <ProfileLink uid={reply.owners[0]} />

@@ -16,13 +16,22 @@ import { authedPost } from '../apiClient';
 import { addAssetToThread } from './addAssetToThread';
 
 /**
- * Adds a reply to a thread and sends notifications to thread owners
+ * Adds a reply to a thread with complete workflow including file uploads, reactions setup, and notifications
+ *
+ * This function performs the following operations:
+ * 1. Creates a new reply document in the thread's replies subcollection
+ * 2. Uploads any attached files to Firebase Storage and links them to the reply
+ * 3. Updates the parent thread's reply count and flow time
+ * 4. Initializes reaction data for the new reply (with author as sole subscriber)
+ * 5. Sends notification to thread owner (if different from reply author)
+ *
  * @param thread - The thread to add the reply to
- * @param author - The author's UID
- * @param markdownContent - The reply content in markdown
- * @param quoteref - Optional reference to quoted message
- * @param files - Optional files to upload
- * @returns Promise that resolves when reply is added (notifications are non-blocking)
+ * @param author - The author's UID who is creating the reply
+ * @param markdownContent - The reply content in markdown format
+ * @param quoteref - Optional reference to quoted message/reply key
+ * @param files - Optional array of files to upload and attach to the reply
+ * @returns Promise that resolves when reply is successfully added (notifications are fire-and-forget)
+ * @throws Error if reply creation, file upload, or thread update fails
  */
 export async function addReply(
   thread: Thread,
@@ -45,6 +54,9 @@ export async function addReply(
     'src/utils/client/toFirestoreEntry'
   );
 
+  /**
+   * Step 1: Create the reply document data structure
+   */
   // Add a new reply to the thread
   const replyData: Partial<Reply> = {
     threadKey: thread.key,
@@ -53,6 +65,9 @@ export async function addReply(
   };
   if (quoteref) replyData.quoteref = quoteref;
 
+  /**
+   * Step 2: Handle file uploads if any files are attached
+   */
   if (files.length > 0) {
     const uploadedImages: z.infer<typeof ImageArraySchema> = [];
     for (const file of files) {
@@ -63,6 +78,9 @@ export async function addReply(
     replyData.images = uploadedImages;
   }
 
+  /**
+   * Step 3: Save the reply to Firestore
+   */
   const data = toFirestoreEntry(replyData);
 
   const reply = await addDoc(
@@ -70,12 +88,18 @@ export async function addReply(
     data,
   );
 
+  /**
+   * Step 4: Update parent thread metadata (reply count and last activity time)
+   */
   // Update the thread with the new reply count and flow time (last reply/update/change time)
   await updateDoc(doc(db, THREADS_COLLECTION_NAME, thread.key), {
     replyCount: increment(1),
     flowTime: serverTimestamp(),
   });
 
+  /**
+   * Step 5: Initialize reaction system for the new reply
+   */
   // Add a notification to the thread creator (the first owner of the thread)
   const targetTitle =
     markdownContent.length > 50 // Fixed typo
@@ -83,12 +107,15 @@ export async function addReply(
       : markdownContent;
 
   const reactions: Reactions = {
-    subscribers: [...thread.owners],
+    subscribers: [author], // ✅ Only the reply author should be subscribed to their own reply
     love: [],
   };
   // Add the reactions to the reply
   await setDoc(doc(db, REACTIONS_COLLECTION_NAME, reply.id), reactions);
 
+  /**
+   * Step 6: Send notification to thread owner (fire-and-forget)
+   */
   // If the author of the reply is the same as the thread creator,
   // we don't need to add a notification to the thread creator
   if (thread.owners[0] === author) return;
