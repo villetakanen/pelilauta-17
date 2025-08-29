@@ -124,7 +124,8 @@ export async function addThread(
   });
 
   // Update collateral data
-  thread.channel && (await increaseThreadCount(thread.channel));
+  // TODO: Move increaseThreadCount to server-side API to avoid permission issues
+  // thread.channel && (await increaseThreadCount(thread.channel));
 
   const dbThreadDoc = await getDoc(
     doc(getFirestore(), THREADS_COLLECTION_NAME, docRef.id),

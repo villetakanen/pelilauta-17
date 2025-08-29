@@ -63,7 +63,7 @@ export function toFirestoreEntry(
 
   return {
     ...rest,
-    author: entry.owners ? [0] : '-',
+    author: entry.owners ? entry.owners[0] : '-',
   };
 }
 

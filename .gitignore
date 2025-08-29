@@ -25,6 +25,7 @@ pnpm-debug.log*
 .env
 .env.*
 server_principal.json
+.temp
 
 # macOS-specific files
 .DS_Store
