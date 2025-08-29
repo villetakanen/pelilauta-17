@@ -6,7 +6,7 @@ A role-playing games community platform built with modern web technologies. Peli
 
 - **Frontend**: [Astro](https://astro.build/) with SSR, [Svelte 5](https://svelte.dev/) (Runes mode), [Lit](https://lit.dev/) design system
 - **Backend**: [Google Firebase](https://firebase.google.com/) (Auth, Firestore, Storage)
-- **Deployment**: [Vercel](https://vercel.com/) with GitHub integration
+- **Deployment**: [Netlify](https://netlify.com/) with GitHub integration
 - **Styling**: Lit design system + atomic CSS classes
 - **State Management**: [Nanostores](https://github.com/nanostores/nanostores)
 - **Validation**: [Zod](https://zod.dev/) schemas
@@ -62,8 +62,8 @@ SECRET_FEATURE_FLAG_PASSWORD_LOGIN=true  # Enables password login for e2e tests
 ## Development
 
 ### Prerequisites
-- Node.js 18+
-- npm or pnpm
+- Node.js 20+
+- pnpm
 - Firebase project with Auth, Firestore, and Storage enabled
 
 ### Setup
@@ -71,23 +71,23 @@ SECRET_FEATURE_FLAG_PASSWORD_LOGIN=true  # Enables password login for e2e tests
 1. Clone the repository
 2. Install dependencies:
    ```bash
-   npm install
+   pnpm install
    ```
 3. Configure environment variables (see above)
 4. Start development server:
    ```bash
-   npm run dev
+   pnpm dev
    ```
 
 ### Key Commands
 
 ```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run preview      # Preview production build
-npm run lint         # Run Biome linting
-npm run format       # Format code with Biome
-npm run type-check   # TypeScript type checking
+pnpm dev          # Start development server
+pnpm build        # Build for production
+pnpm preview      # Preview production build
+pnpm check        # Run Biome linting and formatting
+pnpm test         # Run unit tests
+pnpm test:e2e     # Run end-to-end tests
 ```
 
 ## Core Features
@@ -167,10 +167,10 @@ const site = SiteSchema.parse(rawData);
 
 ## Deployment
 
-The application is deployed to Vercel with automatic deployments from the main branch:
+The application is deployed to Netlify with automatic deployments from the main branch:
 
-1. Connect repository to Vercel
-2. Configure environment variables in Vercel dashboard
+1. Connect repository to Netlify
+2. Configure environment variables in Netlify dashboard
 3. Deploy automatically on push to main
 
 ## Contributing

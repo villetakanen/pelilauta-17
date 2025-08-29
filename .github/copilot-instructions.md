@@ -1,7 +1,7 @@
 # Copilot instructions
 
 We are creating a role playing games community site with Astro, Lit and Svelte. The application
-will be deployed to Vercel using a Github integration.
+will be deployed to Netlify using a Github integration.
 
 ## SSR with Astro
 
