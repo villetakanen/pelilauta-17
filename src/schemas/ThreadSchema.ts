@@ -29,7 +29,7 @@ export const ThreadSchema = ContentEntrySchema.extend({
   author: z.string().optional(),
 
   // Override owners to ensure at least one owner (the thread author)
-  owners: z.array(z.string()).min(1, 'Thread must have at least one owner'),
+  owners: z.array(z.string()).min(1, 'Please add at least one thread owner.'),
 });
 
 export type Thread = z.infer<typeof ThreadSchema>;
