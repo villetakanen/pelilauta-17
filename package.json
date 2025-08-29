@@ -1,7 +1,7 @@
 {
   "name": "Pelilauta",
   "type": "module",
-  "version": "18.0.0-beta.2",
+  "version": "18.0.0-beta.3",
   "engines": {
     "node": ">=20.0.0"
   },
@@ -20,11 +20,11 @@
     "backup:storage": "node tooling/backupStorage.js"
   },
   "dependencies": {
-    "@11thdeg/cn-editor": "4.0.0-beta.12",
-    "@11thdeg/cyan-css": "4.0.0-beta.15",
-    "@11thdeg/cyan-lit": "4.0.0-beta.12",
+    "@11thdeg/cn-editor": "4.0.0-beta.13",
+    "@11thdeg/cyan-css": "4.0.0-beta.17",
+    "@11thdeg/cyan-lit": "4.0.0-beta.14",
     "@astrojs/check": "^0.9.4",
-    "@astrojs/netlify": "^6.5.8",
+    "@astrojs/netlify": "^6.5.9",
     "@astrojs/rss": "^4.0.12",
     "@astrojs/svelte": "^7.1.0",
     "@atproto/api": "^0.15.14",
