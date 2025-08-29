@@ -101,7 +101,7 @@ async function onsubmit(e: Event) {
     {/if}
 
     <textarea
-      placeholder={t('entries:reply.markdownContent')}
+      placeholder={t('entries:reply.placeholders.markdownContent')}
       rows="5"
       name="reply"
       required

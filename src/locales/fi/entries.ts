@@ -61,7 +61,9 @@ export const entries: Locale = {
     },
   },
   reply: {
-    markdownContent: '...',
+    placeholders: {
+      markdownContent: 'Kirjoita viesti...',
+    },
   },
   default: 'Oletus',
   page: {

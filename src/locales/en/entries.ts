@@ -61,7 +61,9 @@ export const entries: Locale = {
     },
   },
   reply: {
-    markdownContent: '...',
+    placeholders: {
+      markdownContent: 'Write a message...',
+    },
   },
   default: 'Default',
   page: {
