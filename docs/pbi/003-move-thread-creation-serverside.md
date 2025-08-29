@@ -100,28 +100,28 @@ export async function POST({ request }: APIContext): Promise<Response> {
 
 ### Acceptance Criteria
 
-- [ ] Thread creation form submission receives **202 Accepted** response within **500 milliseconds**
-- [ ] **Frozen or suspended accounts receive a 403 Forbidden response and cannot create threads**
-- [ ] New thread document is created in `THREADS_COLLECTION_NAME` with correct structure
-- [ ] Attached files are uploaded to Firebase Storage and linked to the thread
-- [ ] Channel thread count is updated **eventually** in the `meta/threads` collection
-- [ ] Reactions document is created for the new thread
-- [ ] Thread tags are processed and updated in the system
-- [ ] Thread creator is automatically marked as having "seen" the thread
+- [x] Thread creation form submission receives **202 Accepted** response within **500 milliseconds**
+- [x] **Frozen or suspended accounts receive a 403 Forbidden response and cannot create threads**
+- [x] New thread document is created in `THREADS_COLLECTION_NAME` with correct structure
+- [x] Attached files are uploaded to Firebase Storage and linked to the thread
+- [x] Channel thread count is updated **eventually** in the `meta/threads` collection
+- [x] Reactions document is created for the new thread
+- [x] Thread tags are processed and updated in the system
+- [x] Thread creator is automatically marked as having "seen" the thread
 - [ ] Client-side components handle the API response correctly
-- [ ] Error responses include meaningful error messages
-- [ ] Background task failures are logged but don't affect the initial response
+- [x] Error responses include meaningful error messages
+- [x] Background task failures are logged but don't affect the initial response
 - [ ] The original client-side `addThread` function is removed or deprecated
 
 ### Testing Requirements
 
-- [ ] Unit tests for the new API endpoint
-- [ ] **Tests for frozen/suspended account rejection (403 Forbidden)**
-- [ ] Integration tests for file upload functionality
+- [x] Unit tests for the new API endpoint
+- [x] **Tests for frozen/suspended account rejection (403 Forbidden)**
+- [x] Integration tests for file upload functionality
 - [ ] E2E tests to ensure form submission works end-to-end
-- [ ] Performance tests to verify the 500ms response time requirement
-- [ ] Error handling tests for various failure scenarios
-- [ ] Background task completion verification
+- [x] Performance tests to verify the 500ms response time requirement
+- [x] Error handling tests for various failure scenarios
+- [x] Background task completion verification
 
 ### Migration Strategy
 
@@ -143,3 +143,124 @@ export async function POST({ request }: APIContext): Promise<Response> {
 ### Priority
 
 **High Priority** - This addresses critical user experience issues and technical debt around permission handling and transaction consistency.
+
+---
+
+## Implementation Status
+
+### ✅ **COMPLETED - API Endpoint Implementation**
+
+**Date:** August 29, 2025
+
+The server-side API endpoint has been successfully implemented with the following features:
+
+#### API Endpoint: `POST /api/threads/create`
+
+**Location:** `/src/pages/api/threads/create.ts`
+
+**Features Implemented:**
+- ✅ Authentication using `tokenToUid` 
+- ✅ Account status validation (frozen/suspended accounts blocked with 403)
+- ✅ Multipart form data parsing for thread metadata and file uploads
+- ✅ Input validation for required fields (title, markdownContent, channel)
+- ✅ Synchronous file upload to Firebase Storage
+- ✅ Thread document creation in Firestore
+- ✅ Early return with 202 Accepted response
+- ✅ Background task execution for non-critical operations:
+  - Reactions document initialization
+  - Channel thread count updates
+  - Tag processing and storage
+  - Thread "seen" status for creator
+- ✅ Comprehensive error handling and logging
+- ✅ Performance optimized for <500ms response time
+
+**Request Format:**
+```
+POST /api/threads/create
+Content-Type: multipart/form-data
+Authorization: Bearer <firebase-jwt-token>
+
+Required fields:
+- title: string
+- markdownContent: string  
+- channel: string
+
+Optional fields:
+- siteKey: string
+- youtubeId: string
+- poster: string (URL)
+- tags: string (JSON array)
+- public: string ("true"/"false", defaults to "true")
+- file_0, file_1, etc.: File (images only)
+```
+
+**Response Format:**
+```json
+{
+  "success": true,
+  "threadKey": "generated-thread-id",
+  "message": "Thread created successfully"
+}
+```
+
+#### API Testing Infrastructure
+
+**Location:** `/test/api/`
+
+**Files Created:**
+- ✅ `setup.ts` - Test utilities and Firebase test configuration
+- ✅ `threads-create.test.ts` - Comprehensive API endpoint tests
+- ✅ `init-api-test-db.js` - Database initialization for API tests
+
+**Test Categories Implemented:**
+- ✅ Authentication tests (401 responses)
+- ✅ Account status validation tests (403 for frozen accounts)
+- ✅ Input validation tests (400 for missing fields)
+- ✅ Thread creation tests (202 success responses)
+- ✅ File upload tests (with actual image files)
+- ✅ Performance tests (response time validation)
+- ✅ Data persistence verification
+- ✅ Error handling tests
+
+**New Package Script:**
+```bash
+pnpm test:api
+```
+This script initializes test database, starts test server, and runs API tests.
+
+#### Security Features
+
+- ✅ **Account Status Verification**: Frozen/suspended accounts receive 403 Forbidden
+- ✅ **Input Sanitization**: All form data validated and sanitized
+- ✅ **File Type Validation**: Only image files allowed for uploads
+- ✅ **Authentication Required**: All requests must include valid Firebase JWT
+- ✅ **Server-side Permissions**: Uses Firebase Admin SDK with elevated privileges
+
+### 🔄 **NEXT PHASE - Client-Side Integration**
+
+The following items remain for the next implementation phase:
+
+#### Client-Side Changes Needed:
+- [ ] Update thread creation forms to use new API endpoint
+- [ ] Replace `addThread` function calls with API requests
+- [ ] Handle 202 Accepted responses appropriately
+- [ ] Update form submission to send `multipart/form-data`
+- [ ] Add loading states and error handling for API calls
+- [ ] Update UI to show immediate feedback on thread creation
+
+#### Migration Strategy:
+1. **Phase 1:** ✅ API endpoint implemented and tested
+2. **Phase 2:** Update client-side components (NEXT)
+3. **Phase 3:** E2E testing of full workflow
+4. **Phase 4:** Deprecate old `addThread` function
+5. **Phase 5:** Production deployment and monitoring
+
+#### Files to Update in Next Phase:
+- Thread creation components using `addThread`
+- Form handling logic
+- `src/firebase/client/threads/addThread.ts` (deprecate)
+- Any components calling thread creation functions
+
+The API endpoint is production-ready and can handle the full thread creation workflow with improved performance, security, and reliability.
+
+---
