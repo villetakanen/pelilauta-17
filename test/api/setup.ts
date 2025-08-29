@@ -1,17 +1,21 @@
 /**
  * API Test Setup
- * 
+ *
  * This module sets up the test environment for API testing.
  * It provides utilities for making authenticated requests and managing test data.
  */
 
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { config } from 'dotenv';
-import { cert, initializeApp, type App } from 'firebase-admin/app';
-import { getAuth, type Auth } from 'firebase-admin/auth';
-import { FieldValue, getFirestore, type Firestore } from 'firebase-admin/firestore';
-import { readFileSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { type App, cert, initializeApp } from 'firebase-admin/app';
+import { type Auth, getAuth } from 'firebase-admin/auth';
+import {
+  FieldValue,
+  type Firestore,
+  getFirestore,
+} from 'firebase-admin/firestore';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -37,10 +41,13 @@ export function initializeTestFirebase() {
     const serviceAccountPath = join(__dirname, '../../server_principal.json');
     const serviceAccount = JSON.parse(readFileSync(serviceAccountPath, 'utf8'));
 
-    serverApp = initializeApp({
-      credential: cert(serviceAccount),
-      databaseURL: process.env.PUBLIC_databaseURL,
-    }, 'test-app');
+    serverApp = initializeApp(
+      {
+        credential: cert(serviceAccount),
+        databaseURL: process.env.PUBLIC_databaseURL,
+      },
+      'test-app',
+    );
 
     serverDB = getFirestore(serverApp);
     serverAuth = getAuth(serverApp);
@@ -64,9 +71,12 @@ export const TEST_USERS = {
 /**
  * Create a test user account in Firestore
  */
-export async function createTestAccount(uid: string, options: { frozen?: boolean } = {}) {
+export async function createTestAccount(
+  uid: string,
+  options: { frozen?: boolean } = {},
+) {
   const { serverDB } = initializeTestFirebase();
-  
+
   const accountData = {
     uid,
     eulaAccepted: true,
@@ -86,44 +96,49 @@ export async function createTestAccount(uid: string, options: { frozen?: boolean
  */
 export async function getTestToken(uid: string): Promise<string> {
   const { serverAuth } = initializeTestFirebase();
-  
+
   // Create a custom token
   const customToken = await serverAuth.createCustomToken(uid);
-  
+
   // We need to exchange this custom token for an ID token using Firebase Auth
   // This requires the Firebase client SDK in a Node.js environment
-  
+
   try {
     // Import Firebase client auth dynamically
     const { signInWithCustomToken, getAuth } = await import('firebase/auth');
     const { initializeApp, getApps } = await import('firebase/app');
-    
+
     // Initialize Firebase client app if not already done
     // biome-ignore lint/suspicious/noImplicitAnyLet: Firebase app type is complex in dynamic imports
     let clientApp;
     const existingApps = getApps();
-    const testClientApp = existingApps.find(app => app.name === 'test-client');
-    
+    const testClientApp = existingApps.find(
+      (app) => app.name === 'test-client',
+    );
+
     if (testClientApp) {
       clientApp = testClientApp;
     } else {
       // Initialize with test project config (from server_principal.json)
-      clientApp = initializeApp({
-        apiKey: 'AIzaSyBkvavPZKGp-pJE-xI0tZT20npQ3koBh-s', // Current test project API key
-        authDomain: 'skaldbase-test.firebaseapp.com',
-        projectId: 'skaldbase-test',
-        storageBucket: 'skaldbase-test.appspot.com',
-        messagingSenderId: '111440066677784424025',
-        appId: '1:111440066677784424025:web:test', // Generic test app ID
-      }, 'test-client');
+      clientApp = initializeApp(
+        {
+          apiKey: 'AIzaSyBkvavPZKGp-pJE-xI0tZT20npQ3koBh-s', // Current test project API key
+          authDomain: 'skaldbase-test.firebaseapp.com',
+          projectId: 'skaldbase-test',
+          storageBucket: 'skaldbase-test.appspot.com',
+          messagingSenderId: '111440066677784424025',
+          appId: '1:111440066677784424025:web:test', // Generic test app ID
+        },
+        'test-client',
+      );
     }
-    
+
     const auth = getAuth(clientApp);
-    
+
     // Sign in with the custom token to get an ID token
     const userCredential = await signInWithCustomToken(auth, customToken);
     const idToken = await userCredential.user.getIdToken();
-    
+
     return idToken;
   } catch (error) {
     console.error('Error exchanging custom token for ID token:', error);
@@ -134,10 +149,12 @@ export async function getTestToken(uid: string): Promise<string> {
 /**
  * Create authenticated headers for API requests
  */
-export async function getAuthHeaders(uid: string): Promise<Record<string, string>> {
+export async function getAuthHeaders(
+  uid: string,
+): Promise<Record<string, string>> {
   const token = await getTestToken(uid);
   return {
-    'Authorization': `Bearer ${token}`,
+    Authorization: `Bearer ${token}`,
     'Content-Type': 'application/json',
   };
 }
@@ -145,10 +162,12 @@ export async function getAuthHeaders(uid: string): Promise<Record<string, string
 /**
  * Create multipart form data headers for file uploads
  */
-export async function getMultipartAuthHeaders(uid: string): Promise<Record<string, string>> {
+export async function getMultipartAuthHeaders(
+  uid: string,
+): Promise<Record<string, string>> {
   const token = await getTestToken(uid);
   return {
-    'Authorization': `Bearer ${token}`,
+    Authorization: `Bearer ${token}`,
     // Note: Content-Type will be set automatically by fetch when using FormData
   };
 }
@@ -158,25 +177,25 @@ export async function getMultipartAuthHeaders(uid: string): Promise<Record<strin
  */
 export async function cleanupTestData() {
   const { serverDB } = initializeTestFirebase();
-  
+
   try {
     // Clean up test threads
     const threadsQuery = await serverDB
       .collection('stream')
       .where('channel', '==', 'test-channel')
       .get();
-    
+
     const batch = serverDB.batch();
     for (const doc of threadsQuery.docs) {
       batch.delete(doc.ref);
-      
+
       // Also clean up reactions
       try {
         batch.delete(serverDB.collection('reactions').doc(doc.id));
       } catch {
         // Ignore if reactions don't exist
       }
-      
+
       // Clean up tags
       try {
         batch.delete(serverDB.collection('tags').doc(doc.id));
@@ -184,7 +203,7 @@ export async function cleanupTestData() {
         // Ignore if tags don't exist
       }
     }
-    
+
     await batch.commit();
   } catch (error) {
     console.warn('Error during test cleanup:', error);
@@ -203,11 +222,11 @@ export function getTestServerUrl(): string {
  */
 export async function makeApiRequest(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<Response> {
   const baseUrl = getTestServerUrl();
   const url = `${baseUrl}${endpoint}`;
-  
+
   return fetch(url, {
     ...options,
     headers: {
@@ -235,19 +254,19 @@ export function createTestThreadData(overrides: Record<string, string> = {}) {
  */
 export function createThreadFormData(
   threadData: Record<string, string>,
-  files: File[] = []
+  files: File[] = [],
 ): FormData {
   const formData = new FormData();
-  
+
   // Add thread data
   for (const [key, value] of Object.entries(threadData)) {
     formData.append(key, value);
   }
-  
+
   // Add files
   files.forEach((file, index) => {
     formData.append(`file_${index}`, file);
   });
-  
+
   return formData;
 }

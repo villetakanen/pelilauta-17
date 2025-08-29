@@ -27,9 +27,9 @@ export const ThreadSchema = ContentEntrySchema.extend({
   updatedAt: z.any().optional(),
   quoteRef: z.string().optional(),
   author: z.string().optional(),
-  
+
   // Override owners to ensure at least one owner (the thread author)
-  owners: z.array(z.string()).min(1, "Thread must have at least one owner"),
+  owners: z.array(z.string()).min(1, 'Thread must have at least one owner'),
 });
 
 export type Thread = z.infer<typeof ThreadSchema>;
@@ -76,8 +76,9 @@ export function createThread(
   threadKey?: string,
 ): Thread {
   // Ensure owners array has at least one entry
-  const owners = source?.owners && source.owners.length > 0 ? source.owners : ['-'];
-  
+  const owners =
+    source?.owners && source.owners.length > 0 ? source.owners : ['-'];
+
   const thread = {
     key: threadKey || source?.key || '',
     title: source?.title || '',
@@ -102,12 +103,11 @@ export function createThread(
   // Remove empty fields, empty strings, and empty arrays (but keep owners even if it's ['-'])
   for (const key of Object.keys(thread) as (keyof typeof thread)[]) {
     if (
-      key !== 'owners' && (
-        thread[key] === undefined ||
+      key !== 'owners' &&
+      (thread[key] === undefined ||
         thread[key] === null ||
         (typeof thread[key] === 'string' && thread[key] === '') ||
-        (Array.isArray(thread[key]) && thread[key].length === 0)
-      )
+        (Array.isArray(thread[key]) && thread[key].length === 0))
     ) {
       delete thread[key];
     }

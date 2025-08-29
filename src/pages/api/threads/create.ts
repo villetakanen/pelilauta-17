@@ -1,23 +1,23 @@
 import type { APIContext } from 'astro';
-import { getStorage } from 'firebase-admin/storage';
 import { FieldValue } from 'firebase-admin/firestore';
-import type { z } from 'zod';
+import { getStorage } from 'firebase-admin/storage';
+import { ACCOUNTS_COLLECTION_NAME } from 'src/schemas/AccountSchema';
 import {
   REACTIONS_COLLECTION_NAME,
   type Reactions,
 } from 'src/schemas/ReactionsSchema';
+import { SUBSCRIPTIONS_FIRESTORE_PATH } from 'src/schemas/SubscriberSchema';
+import { TAG_FIRESTORE_COLLECTION, TagSchema } from 'src/schemas/TagSchema';
 import {
   createThread,
   type ImageArraySchema,
   THREADS_COLLECTION_NAME,
   type Thread,
 } from 'src/schemas/ThreadSchema';
-import { TAG_FIRESTORE_COLLECTION, TagSchema } from 'src/schemas/TagSchema';
-import { ACCOUNTS_COLLECTION_NAME } from 'src/schemas/AccountSchema';
-import { SUBSCRIPTIONS_FIRESTORE_PATH } from 'src/schemas/SubscriberSchema';
 import { logDebug, logError, logWarn } from 'src/utils/logHelpers';
-import { tokenToUid } from 'src/utils/server/auth/tokenToUid';
 import { toDate } from 'src/utils/schemaHelpers';
+import { tokenToUid } from 'src/utils/server/auth/tokenToUid';
+import type { z } from 'zod';
 import { serverDB } from '../../../firebase/server';
 
 /**
@@ -28,12 +28,12 @@ async function uploadFileToStorage(file: File, uid: string): Promise<string> {
   const timestamp = Date.now();
   const filename = `${timestamp}-${file.name}`;
   const filePath = `threads/${uid}/${filename}`;
-  
+
   const bucket = storage.bucket();
   const fileRef = bucket.file(filePath);
-  
+
   const buffer = Buffer.from(await file.arrayBuffer());
-  
+
   await fileRef.save(buffer, {
     metadata: {
       contentType: file.type,
@@ -44,13 +44,13 @@ async function uploadFileToStorage(file: File, uid: string): Promise<string> {
       },
     },
   });
-  
+
   // Return the download URL
   const [url] = await fileRef.getSignedUrl({
     action: 'read',
     expires: '03-09-2491', // Far future date
   });
-  
+
   return url;
 }
 
@@ -59,14 +59,17 @@ async function uploadFileToStorage(file: File, uid: string): Promise<string> {
  */
 async function checkAccountStatus(uid: string): Promise<boolean> {
   try {
-    const accountDoc = await serverDB.collection(ACCOUNTS_COLLECTION_NAME).doc(uid).get();
+    const accountDoc = await serverDB
+      .collection(ACCOUNTS_COLLECTION_NAME)
+      .doc(uid)
+      .get();
     if (!accountDoc.exists) {
       logWarn('createThread', `Account not found for uid: ${uid}`);
       return false; // Account not found, treat as not frozen
     }
 
     const accountData = accountDoc.data();
-    return !!(accountData?.frozen); // Return true if frozen, false otherwise
+    return !!accountData?.frozen; // Return true if frozen, false otherwise
   } catch (error) {
     logError('createThread', 'Error checking account status:', error);
     return false; // On error, don't block (but log for investigation)
@@ -85,15 +88,22 @@ function executeBackgroundTasks(
   // Use setTimeout to queue background tasks without blocking the response
   setTimeout(async () => {
     try {
-      logDebug('createThread:background', 'Starting background tasks for thread', threadKey);
-      
+      logDebug(
+        'createThread:background',
+        'Starting background tasks for thread',
+        threadKey,
+      );
+
       // Task 1: Initialize reaction system for the new thread
       const reactions: Reactions = {
         subscribers: [uid], // Thread creator is subscribed to their own thread
         love: [],
       };
 
-      await serverDB.collection(REACTIONS_COLLECTION_NAME).doc(threadKey).set(reactions);
+      await serverDB
+        .collection(REACTIONS_COLLECTION_NAME)
+        .doc(threadKey)
+        .set(reactions);
       logDebug('createThread:background', 'Created reactions document');
 
       // Task 2: Update channel thread count in meta/threads collection
@@ -106,22 +116,38 @@ function executeBackgroundTasks(
             const data = channelsDoc.data();
             const channelsArray = data?.topics || [];
 
-            const channelIndex = channelsArray.findIndex((c: { slug: string }) => c.slug === thread.channel);
+            const channelIndex = channelsArray.findIndex(
+              (c: { slug: string }) => c.slug === thread.channel,
+            );
             if (channelIndex !== -1) {
-              channelsArray[channelIndex].threadCount = (channelsArray[channelIndex].threadCount || 0) + 1;
-              
+              channelsArray[channelIndex].threadCount =
+                (channelsArray[channelIndex].threadCount || 0) + 1;
+
               await channelsRef.update({
                 topics: channelsArray,
               });
-              logDebug('createThread:background', 'Updated channel thread count');
+              logDebug(
+                'createThread:background',
+                'Updated channel thread count',
+              );
             } else {
-              logWarn('createThread:background', 'Channel not found in meta/threads');
+              logWarn(
+                'createThread:background',
+                'Channel not found in meta/threads',
+              );
             }
           } else {
-            logWarn('createThread:background', 'meta/threads document not found');
+            logWarn(
+              'createThread:background',
+              'meta/threads document not found',
+            );
           }
         } catch (error) {
-          logError('createThread:background', 'Error updating channel thread count:', error);
+          logError(
+            'createThread:background',
+            'Error updating channel thread count:',
+            error,
+          );
         }
       }
 
@@ -137,26 +163,38 @@ function executeBackgroundTasks(
             flowTime: toDate(thread.flowTime).getTime(),
           });
 
-          await serverDB.collection(TAG_FIRESTORE_COLLECTION).doc(threadKey).set(tagData);
+          await serverDB
+            .collection(TAG_FIRESTORE_COLLECTION)
+            .doc(threadKey)
+            .set(tagData);
           logDebug('createThread:background', 'Created tag document');
         } catch (error) {
-          logError('createThread:background', 'Error creating tag document:', error);
+          logError(
+            'createThread:background',
+            'Error creating tag document:',
+            error,
+          );
         }
       }
 
       // Task 4: Mark thread as seen for the creator
       try {
-        const subscriberRef = serverDB.collection(SUBSCRIPTIONS_FIRESTORE_PATH).doc(uid);
+        const subscriberRef = serverDB
+          .collection(SUBSCRIPTIONS_FIRESTORE_PATH)
+          .doc(uid);
         const subscriberDoc = await subscriberRef.get();
-        
+
         if (subscriberDoc.exists) {
           const currentSeenEntities = subscriberDoc.data()?.seenEntities || {};
           currentSeenEntities[threadKey] = Date.now();
-          
+
           await subscriberRef.update({
             seenEntities: currentSeenEntities,
           });
-          logDebug('createThread:background', 'Marked thread as seen for creator');
+          logDebug(
+            'createThread:background',
+            'Marked thread as seen for creator',
+          );
         } else {
           // Create subscriber document if it doesn't exist
           await subscriberRef.set({
@@ -168,13 +206,23 @@ function executeBackgroundTasks(
             notifyOnLikes: true,
             messagingTokens: [],
           });
-          logDebug('createThread:background', 'Created subscriber document and marked thread as seen');
+          logDebug(
+            'createThread:background',
+            'Created subscriber document and marked thread as seen',
+          );
         }
       } catch (error) {
-        logError('createThread:background', 'Error marking thread as seen:', error);
+        logError(
+          'createThread:background',
+          'Error marking thread as seen:',
+          error,
+        );
       }
 
-      logDebug('createThread:background', 'All background tasks completed successfully');
+      logDebug(
+        'createThread:background',
+        'All background tasks completed successfully',
+      );
     } catch (error) {
       // Log but don't throw - background tasks are non-critical
       logError('createThread:background', 'Background task failed:', error);
@@ -208,7 +256,10 @@ export async function POST({ request }: APIContext): Promise<Response> {
     // 2. Check account status (frozen/suspended)
     const isFrozen = await checkAccountStatus(uid);
     if (isFrozen) {
-      logWarn(endpointName, `Frozen account attempted to create thread: ${uid}`);
+      logWarn(
+        endpointName,
+        `Frozen account attempted to create thread: ${uid}`,
+      );
       return new Response(
         JSON.stringify({
           success: false,
@@ -226,7 +277,7 @@ export async function POST({ request }: APIContext): Promise<Response> {
 
     // 3. Parse multipart form data
     const formData = await request.formData();
-    
+
     const title = formData.get('title') as string;
     const markdownContent = formData.get('markdownContent') as string;
     const channel = formData.get('channel') as string;
@@ -235,7 +286,7 @@ export async function POST({ request }: APIContext): Promise<Response> {
     const poster = formData.get('poster') as string | null;
     const tagsString = formData.get('tags') as string | null;
     const publicFlag = formData.get('public') as string | null;
-    
+
     // Parse tags from JSON string if provided
     let tags: string[] | undefined;
     if (tagsString) {
@@ -246,7 +297,7 @@ export async function POST({ request }: APIContext): Promise<Response> {
         tags = undefined;
       }
     }
-    
+
     // Get all files from form data
     const files: File[] = [];
     for (const [key, value] of formData.entries()) {
@@ -255,7 +306,10 @@ export async function POST({ request }: APIContext): Promise<Response> {
       }
     }
 
-    logDebug(endpointName, `Processing thread creation for channel ${channel} with ${files.length} files`);
+    logDebug(
+      endpointName,
+      `Processing thread creation for channel ${channel} with ${files.length} files`,
+    );
 
     // 4. Validate required fields
     if (!title || !markdownContent || !channel) {
@@ -275,16 +329,16 @@ export async function POST({ request }: APIContext): Promise<Response> {
     }
 
     // 5. **CRITICAL TASK (SYNCHRONOUS)**: Create thread document first, then upload files
-    
+
     // Create the thread data structure
     const threadData: Partial<Thread> = {
       title,
       markdownContent,
       channel,
       owners: [uid],
-      public: publicFlag === 'false' ? false : true, // Default to true
+      public: publicFlag !== 'false', // Default to true
     };
-    
+
     if (siteKey) threadData.siteKey = siteKey;
     if (youtubeId) threadData.youtubeId = youtubeId;
     if (poster) threadData.poster = poster;
@@ -313,7 +367,7 @@ export async function POST({ request }: APIContext): Promise<Response> {
 
     // Upload files if any (this is the potentially slow part we need to do synchronously)
     const uploadedImages: z.infer<typeof ImageArraySchema> = [];
-    
+
     if (files.length > 0) {
       for (const file of files) {
         try {
@@ -373,7 +427,6 @@ export async function POST({ request }: APIContext): Promise<Response> {
     executeBackgroundTasks(threadKey, completeThread, uid);
 
     return response;
-
   } catch (_error) {
     logError(endpointName, 'Error processing thread creation:', _error);
     return new Response(

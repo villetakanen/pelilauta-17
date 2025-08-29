@@ -1,7 +1,6 @@
 import type { APIContext } from 'astro';
+import { FieldValue } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
-import { v4 as uuidv4 } from 'uuid';
-import type { z } from 'zod';
 import { NotificationRequestSchema } from 'src/schemas/NotificationSchema';
 import {
   REACTIONS_COLLECTION_NAME,
@@ -11,14 +10,15 @@ import { REPLIES_COLLECTION, type Reply } from 'src/schemas/ReplySchema';
 import {
   type ImageArraySchema,
   THREADS_COLLECTION_NAME,
-  ThreadSchema,
   type Thread,
+  ThreadSchema,
 } from 'src/schemas/ThreadSchema';
 import { createSnippet } from 'src/utils/contentHelpers';
 import { logDebug, logError, logWarn } from 'src/utils/logHelpers';
 import { tokenToUid } from 'src/utils/server/auth/tokenToUid';
+import { v4 as uuidv4 } from 'uuid';
+import type { z } from 'zod';
 import { serverApp, serverDB } from '../../../firebase/server';
-import { FieldValue } from 'firebase-admin/firestore';
 
 interface UploadedFile {
   url: string;
@@ -81,14 +81,21 @@ function executeBackgroundTasks(
   // Use setTimeout to queue background tasks without blocking the response
   setTimeout(async () => {
     try {
-      logDebug('addReply:background', 'Starting background tasks for reply', replyId);
-      
+      logDebug(
+        'addReply:background',
+        'Starting background tasks for reply',
+        replyId,
+      );
+
       // Task 1: Update thread metadata (reply count and flow time)
-      await serverDB.collection(THREADS_COLLECTION_NAME).doc(threadKey).update({
-        replyCount: FieldValue.increment(1),
-        flowTime: FieldValue.serverTimestamp(),
-      });
-      
+      await serverDB
+        .collection(THREADS_COLLECTION_NAME)
+        .doc(threadKey)
+        .update({
+          replyCount: FieldValue.increment(1),
+          flowTime: FieldValue.serverTimestamp(),
+        });
+
       logDebug('addReply:background', 'Updated thread metadata');
 
       // Task 2: Initialize reaction system for the new reply
@@ -97,8 +104,11 @@ function executeBackgroundTasks(
         love: [],
       };
 
-      await serverDB.collection(REACTIONS_COLLECTION_NAME).doc(replyId).set(reactions);
-      
+      await serverDB
+        .collection(REACTIONS_COLLECTION_NAME)
+        .doc(replyId)
+        .set(reactions);
+
       logDebug('addReply:background', 'Created reactions document');
 
       // Task 3: Send notification to thread owner (if different from reply author)
@@ -135,11 +145,14 @@ function executeBackgroundTasks(
           .collection('notifications')
           .doc(notificationDoc.key)
           .set(notificationDoc);
-        
+
         logDebug('addReply:background', 'Sent notification to thread owner');
       }
 
-      logDebug('addReply:background', 'All background tasks completed successfully');
+      logDebug(
+        'addReply:background',
+        'All background tasks completed successfully',
+      );
     } catch (error) {
       // Log but don't throw - background tasks are non-critical
       logError('addReply:background', 'Background task failed:', error);
@@ -172,11 +185,11 @@ export async function POST({ request }: APIContext): Promise<Response> {
 
     // 2. Parse multipart form data
     const formData = await request.formData();
-    
+
     const threadKey = formData.get('threadKey') as string;
     const markdownContent = formData.get('markdownContent') as string;
     const quoteref = formData.get('quoteref') as string | null;
-    
+
     // Get all files from form data
     const files: File[] = [];
     for (const [key, value] of formData.entries()) {
@@ -185,7 +198,10 @@ export async function POST({ request }: APIContext): Promise<Response> {
       }
     }
 
-    logDebug(endpointName, `Processing reply for thread ${threadKey} with ${files.length} files`);
+    logDebug(
+      endpointName,
+      `Processing reply for thread ${threadKey} with ${files.length} files`,
+    );
 
     // 3. Validate required fields
     if (!threadKey || !markdownContent) {
@@ -205,7 +221,10 @@ export async function POST({ request }: APIContext): Promise<Response> {
     }
 
     // 4. Fetch thread data to validate it exists and get metadata
-    const threadDoc = await serverDB.collection(THREADS_COLLECTION_NAME).doc(threadKey).get();
+    const threadDoc = await serverDB
+      .collection(THREADS_COLLECTION_NAME)
+      .doc(threadKey)
+      .get();
     if (!threadDoc.exists) {
       return new Response(
         JSON.stringify({
@@ -229,7 +248,7 @@ export async function POST({ request }: APIContext): Promise<Response> {
 
     // 5. **CRITICAL TASK (SYNCHRONOUS)**: Upload files and create reply document
     const uploadedImages: z.infer<typeof ImageArraySchema> = [];
-    
+
     // Upload files first (this is the potentially slow part we need to do synchronously)
     for (const file of files) {
       try {
@@ -259,11 +278,11 @@ export async function POST({ request }: APIContext): Promise<Response> {
       markdownContent,
       owners: [uid],
     };
-    
+
     if (quoteref) {
       replyData.quoteref = quoteref;
     }
-    
+
     if (uploadedImages.length > 0) {
       replyData.images = uploadedImages;
     }
@@ -306,7 +325,6 @@ export async function POST({ request }: APIContext): Promise<Response> {
     executeBackgroundTasks(threadKey, replyId, uid, markdownContent, thread);
 
     return response;
-
   } catch (error) {
     logError(endpointName, 'Error processing reply:', error);
     return new Response(

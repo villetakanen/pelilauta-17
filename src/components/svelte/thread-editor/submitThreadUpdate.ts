@@ -69,7 +69,9 @@ export async function submitThreadUpdate(
   data: Partial<Thread>,
   files?: File[],
 ) {
-  const { createThreadApi } = await import('../../../firebase/client/threads/createThreadApi.ts');
+  const { createThreadApi } = await import(
+    '../../../firebase/client/threads/createThreadApi.ts'
+  );
   const { updateThread } = await import(
     'src/firebase/client/threads/updateThread'
   );

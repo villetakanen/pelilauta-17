@@ -7,17 +7,20 @@ const BASE_URL = process.env.BASE_URL || 'http://localhost:4321';
 test.describe('Reply Submission UX Improvements', () => {
   // Increase timeout for these tests as they involve authentication and navigation
   test.setTimeout(120000);
-  
+
   test('Can create a thread and add a reply quickly', async ({ page }) => {
     // Listen for console errors and API responses
-    page.on('console', msg => {
+    page.on('console', (msg) => {
       if (msg.type() === 'error') {
         console.log('Browser console error:', msg.text());
       }
     });
-    
-    page.on('response', response => {
-      if (response.url().includes('/api/threads/create') || response.url().includes('/api/threads/add-reply')) {
+
+    page.on('response', (response) => {
+      if (
+        response.url().includes('/api/threads/create') ||
+        response.url().includes('/api/threads/add-reply')
+      ) {
         console.log('API Response:', response.status(), response.url());
       }
     });
@@ -27,10 +30,10 @@ test.describe('Reply Submission UX Improvements', () => {
 
     // Wait for the page to load and authentication state to be ready
     await page.waitForLoadState('domcontentloaded');
-    
+
     // Verify user is still authenticated on the create thread page
     await expect(page.getByTestId('setting-navigation-button')).toBeVisible();
-    
+
     // Wait a bit more for auth state to fully propagate
     await page.waitForTimeout(2000);
 
@@ -44,12 +47,15 @@ test.describe('Reply Submission UX Improvements', () => {
     await page.fill('input[name="title"]', uniqueThreadTitle);
 
     // Wait for cn-editor to be visible and CodeMirror to load
-    await page.waitForSelector('cn-editor', { state: 'attached', timeout: 15000 });
+    await page.waitForSelector('cn-editor', {
+      state: 'attached',
+      timeout: 15000,
+    });
     await page.waitForSelector('cn-editor .cm-editor', { timeout: 15000 });
 
     // Set cn-editor content using evaluate with proper event triggering
     await page.evaluate((content) => {
-      const editor = document.querySelector('cn-editor') as HTMLElement & { 
+      const editor = document.querySelector('cn-editor') as HTMLElement & {
         value?: string;
         dispatchEvent?: (event: Event) => void;
       };
@@ -67,12 +73,15 @@ test.describe('Reply Submission UX Improvements', () => {
 
     // Submit the thread and wait a bit before checking for navigation
     await page.getByTestId('send-thread-button').click();
-    
+
     // Wait a bit to see if any error messages appear
     await page.waitForTimeout(2000);
-    
+
     // Check if there's an error message before waiting for navigation
-    const errorMessage = page.locator('[data-testid="snackbar"]').or(page.locator('.error')).or(page.locator('[role="alert"]'));
+    const errorMessage = page
+      .locator('[data-testid="snackbar"]')
+      .or(page.locator('.error'))
+      .or(page.locator('[role="alert"]'));
     if (await errorMessage.isVisible()) {
       const errorText = await errorMessage.textContent();
       console.log('Error message detected:', errorText);
@@ -80,14 +89,16 @@ test.describe('Reply Submission UX Improvements', () => {
     }
 
     // Wait for navigation to the new thread page
-    await page.waitForURL(/\/threads\/[^\/]+$/, { timeout: 15000 });
+    await page.waitForURL(/\/threads\/[^/]+$/, { timeout: 15000 });
 
     // Verify the thread was created successfully
-    await expect(page.getByRole('heading', { name: uniqueThreadTitle, level: 1 })).toBeVisible();
-    
+    await expect(
+      page.getByRole('heading', { name: uniqueThreadTitle, level: 1 }),
+    ).toBeVisible();
+
     // Now add a reply - open the reply dialog
     await page.getByRole('button', { name: 'Vastaa' }).click();
-    
+
     // Wait for dialog to be visible
     await expect(page.getByRole('dialog')).toBeVisible();
 
@@ -100,21 +111,24 @@ test.describe('Reply Submission UX Improvements', () => {
 
     // The dialog should close
     await expect(page.getByRole('dialog')).toBeHidden({ timeout: 2000 });
-    
+
     // Verify the reply appears
     await expect(page.getByText(replyContent)).toBeVisible({ timeout: 10000 });
   });
 
   test('Can add a reply with file attachment', async ({ page }) => {
     // Listen for console errors and API responses
-    page.on('console', msg => {
+    page.on('console', (msg) => {
       if (msg.type() === 'error') {
         console.log('Browser console error:', msg.text());
       }
     });
-    
-    page.on('response', response => {
-      if (response.url().includes('/api/threads/create') || response.url().includes('/api/threads/add-reply')) {
+
+    page.on('response', (response) => {
+      if (
+        response.url().includes('/api/threads/create') ||
+        response.url().includes('/api/threads/add-reply')
+      ) {
         console.log('API Response:', response.status(), response.url());
       }
     });
@@ -124,10 +138,10 @@ test.describe('Reply Submission UX Improvements', () => {
 
     // Wait for the page to load and authentication state to be ready
     await page.waitForLoadState('domcontentloaded');
-    
+
     // Verify user is still authenticated on the create thread page
     await expect(page.getByTestId('setting-navigation-button')).toBeVisible();
-    
+
     // Wait a bit more for auth state to fully propagate
     await page.waitForTimeout(2000);
 
@@ -140,14 +154,17 @@ test.describe('Reply Submission UX Improvements', () => {
 
     // Fill in the thread title
     await page.fill('input[name="title"]', uniqueThreadTitle);
-    
+
     // Wait for cn-editor to be visible and CodeMirror to load
-    await page.waitForSelector('cn-editor', { state: 'attached', timeout: 15000 });
+    await page.waitForSelector('cn-editor', {
+      state: 'attached',
+      timeout: 15000,
+    });
     await page.waitForSelector('cn-editor .cm-editor', { timeout: 15000 });
-    
+
     // Set cn-editor content using evaluate with proper event triggering
     await page.evaluate((content) => {
-      const editor = document.querySelector('cn-editor') as HTMLElement & { 
+      const editor = document.querySelector('cn-editor') as HTMLElement & {
         value?: string;
         dispatchEvent?: (event: Event) => void;
       };
@@ -162,15 +179,18 @@ test.describe('Reply Submission UX Improvements', () => {
 
     // Wait for the send button to be enabled
     await expect(page.getByTestId('send-thread-button')).toBeEnabled();
-    
+
     // Submit the thread
     await page.getByTestId('send-thread-button').click();
-    
+
     // Wait a bit to see if any error messages appear
     await page.waitForTimeout(2000);
-    
+
     // Check if there's an error message before waiting for navigation
-    const errorMessage = page.locator('[data-testid="snackbar"]').or(page.locator('.error')).or(page.locator('[role="alert"]'));
+    const errorMessage = page
+      .locator('[data-testid="snackbar"]')
+      .or(page.locator('.error'))
+      .or(page.locator('[role="alert"]'));
     if (await errorMessage.isVisible()) {
       const errorText = await errorMessage.textContent();
       console.log('Error message detected:', errorText);
@@ -178,14 +198,16 @@ test.describe('Reply Submission UX Improvements', () => {
     }
 
     // Wait for navigation to the new thread page
-    await page.waitForURL(/\/threads\/[^\/]+$/, { timeout: 15000 });
+    await page.waitForURL(/\/threads\/[^/]+$/, { timeout: 15000 });
 
     // Verify the thread was created successfully
-    await expect(page.getByRole('heading', { name: uniqueThreadTitle, level: 1 })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: uniqueThreadTitle, level: 1 }),
+    ).toBeVisible();
 
     // Open the reply dialog
     await page.getByRole('button', { name: 'Vastaa' }).click();
-    
+
     // Wait for dialog to be visible
     await expect(page.getByRole('dialog')).toBeVisible();
 
@@ -194,12 +216,12 @@ test.describe('Reply Submission UX Improvements', () => {
 
     // Create a simple test image file (1x1 pixel PNG)
     const testImageBuffer = Buffer.from([
-      0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D,
+      0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
       0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
-      0x08, 0x02, 0x00, 0x00, 0x00, 0x90, 0x77, 0x53, 0xDE, 0x00, 0x00, 0x00,
-      0x0C, 0x49, 0x44, 0x41, 0x54, 0x08, 0xD7, 0x63, 0xF8, 0x00, 0x00, 0x00,
-      0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x37, 0x6E, 0xF9, 0x24, 0x00,
-      0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82
+      0x08, 0x02, 0x00, 0x00, 0x00, 0x90, 0x77, 0x53, 0xde, 0x00, 0x00, 0x00,
+      0x0c, 0x49, 0x44, 0x41, 0x54, 0x08, 0xd7, 0x63, 0xf8, 0x00, 0x00, 0x00,
+      0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x37, 0x6e, 0xf9, 0x24, 0x00,
+      0x00, 0x00, 0x00, 0x49, 0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82,
     ]);
 
     // Upload the test image - set file directly on the hidden input
@@ -220,7 +242,7 @@ test.describe('Reply Submission UX Improvements', () => {
 
     // The dialog should close quickly even with file upload
     await expect(page.getByRole('dialog')).toBeHidden({ timeout: 2000 });
-    
+
     const endTime = Date.now();
     const responseTime = endTime - startTime;
 
@@ -234,13 +256,13 @@ test.describe('Reply Submission UX Improvements', () => {
 
   test('Reply form validation works correctly', async ({ page }) => {
     // Listen for console errors and API responses
-    page.on('console', msg => {
+    page.on('console', (msg) => {
       if (msg.type() === 'error') {
         console.log('Browser console error:', msg.text());
       }
     });
-    
-    page.on('response', response => {
+
+    page.on('response', (response) => {
       if (response.url().includes('/api/threads/create')) {
         console.log('API Response:', response.status(), response.url());
       }
@@ -251,10 +273,10 @@ test.describe('Reply Submission UX Improvements', () => {
 
     // Wait for the page to load and authentication state to be ready
     await page.waitForLoadState('domcontentloaded');
-    
+
     // Verify user is still authenticated on the create thread page
     await expect(page.getByTestId('setting-navigation-button')).toBeVisible();
-    
+
     // Wait a bit more for auth state to fully propagate
     await page.waitForTimeout(2000);
 
@@ -266,12 +288,15 @@ test.describe('Reply Submission UX Improvements', () => {
 
     // Fill in the thread title
     await page.fill('input[name="title"]', uniqueThreadTitle);
-    
-    await page.waitForSelector('cn-editor', { state: 'attached', timeout: 15000 });
+
+    await page.waitForSelector('cn-editor', {
+      state: 'attached',
+      timeout: 15000,
+    });
     await page.waitForSelector('cn-editor .cm-editor', { timeout: 15000 });
-    
+
     await page.evaluate((content) => {
-      const editor = document.querySelector('cn-editor') as HTMLElement & { 
+      const editor = document.querySelector('cn-editor') as HTMLElement & {
         value?: string;
         dispatchEvent?: (event: Event) => void;
       };
@@ -282,17 +307,20 @@ test.describe('Reply Submission UX Improvements', () => {
         editor.dispatchEvent(new Event('blur', { bubbles: true }));
       }
     }, 'Thread for testing reply validation.');
-    
+
     // Wait for the send button to be enabled
     await expect(page.getByTestId('send-thread-button')).toBeEnabled();
-    
+
     await page.getByTestId('send-thread-button').click();
-    
+
     // Wait a bit to see if any error messages appear
     await page.waitForTimeout(2000);
-    
+
     // Check if there's an error message before waiting for navigation
-    const errorMessage = page.locator('[data-testid="snackbar"]').or(page.locator('.error')).or(page.locator('[role="alert"]'));
+    const errorMessage = page
+      .locator('[data-testid="snackbar"]')
+      .or(page.locator('.error'))
+      .or(page.locator('[role="alert"]'));
     if (await errorMessage.isVisible()) {
       const errorText = await errorMessage.textContent();
       console.log('Error message detected:', errorText);
@@ -300,10 +328,12 @@ test.describe('Reply Submission UX Improvements', () => {
     }
 
     // Wait for navigation to the new thread page
-    await page.waitForURL(/\/threads\/[^\/]+$/, { timeout: 15000 });
+    await page.waitForURL(/\/threads\/[^/]+$/, { timeout: 15000 });
 
     // Verify the thread was created successfully
-    await expect(page.getByRole('heading', { name: uniqueThreadTitle, level: 1 })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: uniqueThreadTitle, level: 1 }),
+    ).toBeVisible();
 
     // Open the reply dialog
     await page.getByRole('button', { name: 'Vastaa' }).click();
@@ -316,7 +346,9 @@ test.describe('Reply Submission UX Improvements', () => {
     await expect(page.getByRole('dialog')).toBeVisible();
 
     // Fill in some content and try again
-    await page.getByPlaceholder('Kirjoita viesti...').fill('Valid reply content');
+    await page
+      .getByPlaceholder('Kirjoita viesti...')
+      .fill('Valid reply content');
     await page.getByRole('button', { name: 'Lähetä' }).click();
 
     // Now it should close
@@ -325,12 +357,15 @@ test.describe('Reply Submission UX Improvements', () => {
 
   test('Error handling works correctly', async ({ page }) => {
     // Test with missing auth entirely (unauthenticated request)
-    const response = await page.request.post(`${BASE_URL}/api/threads/add-reply`, {
-      data: {
-        threadKey: 'test-thread',
-        markdownContent: 'This should fail without auth',
-      }
-    });
+    const response = await page.request.post(
+      `${BASE_URL}/api/threads/add-reply`,
+      {
+        data: {
+          threadKey: 'test-thread',
+          markdownContent: 'This should fail without auth',
+        },
+      },
+    );
 
     expect(response.status()).toBe(401); // Should return unauthorized
 
@@ -338,20 +373,22 @@ test.describe('Reply Submission UX Improvements', () => {
     // because page.request.post doesn't inherit the page's authentication context.
     // The API properly validates and returns 400 for missing fields when authenticated,
     // but we can't easily test this scenario in E2E tests.
-    
+
     // Instead, let's test that authentication is working by trying to create a thread
     await authenticate(page);
     await page.goto(`${BASE_URL}/create/thread`);
 
     // Wait for the page to load and authentication state to be ready
     await page.waitForLoadState('domcontentloaded');
-    
+
     // Verify user is still authenticated on the create thread page
     await expect(page.getByTestId('setting-navigation-button')).toBeVisible();
-    
+
     // This should work - creating a valid thread to verify auth is working
-    await expect(page.fill('input[name="title"]', 'Test')).resolves.not.toThrow();
-    
+    await expect(
+      page.fill('input[name="title"]', 'Test'),
+    ).resolves.not.toThrow();
+
     // If we got here, authentication is working properly
     expect(true).toBe(true); // Authentication test passed
   });

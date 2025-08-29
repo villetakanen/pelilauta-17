@@ -1,19 +1,19 @@
 /**
  * API Tests for /api/threads/create endpoint
- * 
+ *
  * These tests verify the thread creation API endpoint functionality,
  * including authentication, validation, file uploads, and error handling.
  */
 
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import {
-  initializeTestFirebase,
-  createTestAccount,
-  getMultipartAuthHeaders,
   cleanupTestData,
-  makeApiRequest,
+  createTestAccount,
   createTestThreadData,
   createThreadFormData,
+  getMultipartAuthHeaders,
+  initializeTestFirebase,
+  makeApiRequest,
   TEST_USERS,
 } from './setup';
 
@@ -21,7 +21,7 @@ describe('/api/threads/create', () => {
   beforeAll(async () => {
     // Initialize Firebase for testing
     initializeTestFirebase();
-    
+
     // Create test accounts
     await createTestAccount(TEST_USERS.NORMAL);
     await createTestAccount(TEST_USERS.FROZEN, { frozen: true });
@@ -48,7 +48,7 @@ describe('/api/threads/create', () => {
       });
 
       expect(response.status).toBe(401);
-      
+
       const data = await response.json();
       expect(data.success).toBe(false);
       expect(data.error).toBe('Invalid or missing token');
@@ -61,13 +61,13 @@ describe('/api/threads/create', () => {
       const response = await makeApiRequest('/api/threads/create', {
         method: 'POST',
         headers: {
-          'Authorization': 'Bearer invalid-token',
+          Authorization: 'Bearer invalid-token',
         },
         body: formData,
       });
 
       expect(response.status).toBe(401);
-      
+
       const data = await response.json();
       expect(data.success).toBe(false);
       expect(data.error).toBe('Invalid or missing token');
@@ -87,7 +87,7 @@ describe('/api/threads/create', () => {
       });
 
       expect(response.status).toBe(403);
-      
+
       const data = await response.json();
       expect(data.success).toBe(false);
       expect(data.error).toBe('Account suspended');
@@ -97,7 +97,7 @@ describe('/api/threads/create', () => {
   describe('Input Validation', () => {
     it('should return 400 for missing required fields', async () => {
       const headers = await getMultipartAuthHeaders(TEST_USERS.NORMAL);
-      
+
       // Test missing title
       let formData = new FormData();
       formData.append('markdownContent', 'Content');
@@ -162,7 +162,7 @@ describe('/api/threads/create', () => {
 
       // Should still succeed but ignore invalid tags
       expect(response.status).toBe(202);
-      
+
       const data = await response.json();
       expect(data.success).toBe(true);
       expect(data.threadKey).toBeDefined();
@@ -182,7 +182,7 @@ describe('/api/threads/create', () => {
       });
 
       expect(response.status).toBe(202); // Accepted
-      
+
       const data = await response.json();
       expect(data.success).toBe(true);
       expect(data.threadKey).toBeDefined();
@@ -208,7 +208,7 @@ describe('/api/threads/create', () => {
       });
 
       expect(response.status).toBe(202);
-      
+
       const data = await response.json();
       expect(data.success).toBe(true);
       expect(data.threadKey).toBeDefined();
@@ -228,7 +228,7 @@ describe('/api/threads/create', () => {
       });
 
       expect(response.status).toBe(202);
-      
+
       const data = await response.json();
       expect(data.success).toBe(true);
       expect(data.threadKey).toBeDefined();
@@ -248,7 +248,7 @@ describe('/api/threads/create', () => {
       });
 
       expect(response.status).toBe(202);
-      
+
       const data = await response.json();
       expect(data.success).toBe(true);
       expect(data.threadKey).toBeDefined();
@@ -257,19 +257,84 @@ describe('/api/threads/create', () => {
     it('should create a thread with image files', async () => {
       // Create a test image file (1x1 pixel PNG)
       const imageBuffer = Buffer.from([
-        0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, // PNG signature
-        0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52, // IHDR chunk
-        0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, // 1x1 dimensions
-        0x08, 0x02, 0x00, 0x00, 0x00, 0x90, 0x77, 0x53, // bit depth, color type, etc.
-        0xDE, 0x00, 0x00, 0x00, 0x0C, 0x49, 0x44, 0x41, // IDAT chunk
-        0x54, 0x08, 0x99, 0x01, 0x01, 0x00, 0x00, 0x00, // image data
-        0xFF, 0xFF, 0x00, 0x00, 0x00, 0x02, 0x00, 0x01, // more image data
-        0xE2, 0x21, 0xBC, 0x33, 0x00, 0x00, 0x00, 0x00, // end
-        0x49, 0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82  // IEND chunk
+        0x89,
+        0x50,
+        0x4e,
+        0x47,
+        0x0d,
+        0x0a,
+        0x1a,
+        0x0a, // PNG signature
+        0x00,
+        0x00,
+        0x00,
+        0x0d,
+        0x49,
+        0x48,
+        0x44,
+        0x52, // IHDR chunk
+        0x00,
+        0x00,
+        0x00,
+        0x01,
+        0x00,
+        0x00,
+        0x00,
+        0x01, // 1x1 dimensions
+        0x08,
+        0x02,
+        0x00,
+        0x00,
+        0x00,
+        0x90,
+        0x77,
+        0x53, // bit depth, color type, etc.
+        0xde,
+        0x00,
+        0x00,
+        0x00,
+        0x0c,
+        0x49,
+        0x44,
+        0x41, // IDAT chunk
+        0x54,
+        0x08,
+        0x99,
+        0x01,
+        0x01,
+        0x00,
+        0x00,
+        0x00, // image data
+        0xff,
+        0xff,
+        0x00,
+        0x00,
+        0x00,
+        0x02,
+        0x00,
+        0x01, // more image data
+        0xe2,
+        0x21,
+        0xbc,
+        0x33,
+        0x00,
+        0x00,
+        0x00,
+        0x00, // end
+        0x49,
+        0x45,
+        0x4e,
+        0x44,
+        0xae,
+        0x42,
+        0x60,
+        0x82, // IEND chunk
       ]);
-      
-      const testFile = new File([imageBuffer], 'test-image.png', { type: 'image/png' });
-      
+
+      const testFile = new File([imageBuffer], 'test-image.png', {
+        type: 'image/png',
+      });
+
       const threadData = createTestThreadData();
       const formData = createThreadFormData(threadData, [testFile]);
       const headers = await getMultipartAuthHeaders(TEST_USERS.NORMAL);
@@ -286,7 +351,7 @@ describe('/api/threads/create', () => {
       }
 
       expect(response.status).toBe(202);
-      
+
       const data = await response.json();
       expect(data.success).toBe(true);
       expect(data.threadKey).toBeDefined();
@@ -300,7 +365,7 @@ describe('/api/threads/create', () => {
       const headers = await getMultipartAuthHeaders(TEST_USERS.NORMAL);
 
       const startTime = Date.now();
-      
+
       const response = await makeApiRequest('/api/threads/create', {
         method: 'POST',
         headers,
@@ -312,7 +377,7 @@ describe('/api/threads/create', () => {
 
       expect(response.status).toBe(202);
       expect(responseTime).toBeLessThan(1000); // Should respond within 1000ms (early response pattern)
-      
+
       const data = await response.json();
       expect(data.success).toBe(true);
     });
@@ -321,7 +386,7 @@ describe('/api/threads/create', () => {
   describe('Data Persistence', () => {
     it('should create thread document in Firestore', async () => {
       const { serverDB } = initializeTestFirebase();
-      
+
       const threadData = createTestThreadData({
         title: 'Persistence Test Thread',
         markdownContent: 'This thread should be persisted in Firestore',
@@ -336,20 +401,25 @@ describe('/api/threads/create', () => {
       });
 
       expect(response.status).toBe(202);
-      
+
       const data = await response.json();
       expect(data.success).toBe(true);
-      
+
       // Wait a bit for the document to be created
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       // Verify the thread was created in Firestore
-      const threadDoc = await serverDB.collection('stream').doc(data.threadKey).get();
+      const threadDoc = await serverDB
+        .collection('stream')
+        .doc(data.threadKey)
+        .get();
       expect(threadDoc.exists).toBe(true);
-      
+
       const threadDocData = threadDoc.data();
       expect(threadDocData?.title).toBe('Persistence Test Thread');
-      expect(threadDocData?.markdownContent).toBe('This thread should be persisted in Firestore');
+      expect(threadDocData?.markdownContent).toBe(
+        'This thread should be persisted in Firestore',
+      );
       expect(threadDocData?.channel).toBe('test-channel');
       expect(threadDocData?.owners).toEqual([TEST_USERS.NORMAL]);
     }, 5000);
@@ -361,18 +431,18 @@ describe('/api/threads/create', () => {
       // For now, we'll test that our API returns proper error responses
       const threadData = createTestThreadData();
       const formData = createThreadFormData(threadData);
-      
+
       // Use an invalid auth header format to trigger an error path
       const response = await makeApiRequest('/api/threads/create', {
         method: 'POST',
         headers: {
-          'Authorization': 'InvalidFormat',
+          Authorization: 'InvalidFormat',
         },
         body: formData,
       });
 
       expect(response.status).toBe(401);
-      
+
       const data = await response.json();
       expect(data.success).toBe(false);
       expect(data.error).toBeDefined();

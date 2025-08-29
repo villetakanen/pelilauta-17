@@ -5,27 +5,27 @@ test.setTimeout(120000); // Increase timeout for authentication and navigation
 
 test('can create a thread successfully', async ({ page }) => {
   // Listen for console errors and API responses
-  page.on('console', msg => {
+  page.on('console', (msg) => {
     if (msg.type() === 'error') {
       console.log('Browser console error:', msg.text());
     }
   });
-  
-  page.on('response', response => {
+
+  page.on('response', (response) => {
     if (response.url().includes('/api/threads/create')) {
       console.log('API Response:', response.status(), response.url());
     }
   });
-  
+
   await authenticate(page);
   await page.goto('http://localhost:4321/create/thread');
 
   // Wait for the page to load and authentication state to be ready
   await page.waitForLoadState('domcontentloaded');
-  
+
   // Verify user is still authenticated on the create thread page
   await expect(page.getByTestId('setting-navigation-button')).toBeVisible();
-  
+
   // Wait a bit more for auth state to fully propagate
   await page.waitForTimeout(2000);
 
@@ -39,12 +39,15 @@ test('can create a thread successfully', async ({ page }) => {
   await page.fill('input[name="title"]', uniqueThreadTitle);
 
   // Wait for cn-editor to be visible and CodeMirror to load
-  await page.waitForSelector('cn-editor', { state: 'attached', timeout: 15000 });
+  await page.waitForSelector('cn-editor', {
+    state: 'attached',
+    timeout: 15000,
+  });
   await page.waitForSelector('cn-editor .cm-editor', { timeout: 15000 });
 
   // Set cn-editor content using evaluate with proper event triggering
   await page.evaluate((content) => {
-    const editor = document.querySelector('cn-editor') as HTMLElement & { 
+    const editor = document.querySelector('cn-editor') as HTMLElement & {
       value?: string;
       dispatchEvent?: (event: Event) => void;
     };
@@ -62,12 +65,15 @@ test('can create a thread successfully', async ({ page }) => {
 
   // Submit the thread and wait a bit before checking for navigation
   await page.getByTestId('send-thread-button').click();
-  
+
   // Wait a bit to see if any error messages appear
   await page.waitForTimeout(2000);
-  
+
   // Check if there's an error message before waiting for navigation
-  const errorMessage = page.locator('[data-testid="snackbar"]').or(page.locator('.error')).or(page.locator('[role="alert"]'));
+  const errorMessage = page
+    .locator('[data-testid="snackbar"]')
+    .or(page.locator('.error'))
+    .or(page.locator('[role="alert"]'));
   if (await errorMessage.isVisible()) {
     const errorText = await errorMessage.textContent();
     console.log('Error message detected:', errorText);
@@ -75,11 +81,17 @@ test('can create a thread successfully', async ({ page }) => {
   }
 
   // Wait for navigation to the new thread page
-  await page.waitForURL(/\/threads\/[^\/]+$/, { timeout: 15000 });
+  await page.waitForURL(/\/threads\/[^/]+$/, { timeout: 15000 });
 
   // Verify the thread was created successfully
-  await expect(page.getByRole('heading', { name: uniqueThreadTitle, level: 1 })).toBeVisible();
-  
+  await expect(
+    page.getByRole('heading', { name: uniqueThreadTitle, level: 1 }),
+  ).toBeVisible();
+
   // Verify the content is displayed in the thread content (not debug output)
-  await expect(page.locator('article p').getByText('This is a test thread created by the E2E test suite')).toBeVisible();
+  await expect(
+    page
+      .locator('article p')
+      .getByText('This is a test thread created by the E2E test suite'),
+  ).toBeVisible();
 });

@@ -1,16 +1,16 @@
 /**
  * API Test Database Initialization Script
- * 
+ *
  * This script initializes the test database with necessary data for API testing.
  * It should be run before API tests to ensure a clean test environment.
  */
 
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { config } from 'dotenv';
 import { cert, initializeApp } from 'firebase-admin/app';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
-import { readFileSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -23,12 +23,18 @@ config({
 const serviceAccountPath = join(__dirname, '../../server_principal.json');
 const serviceAccount = JSON.parse(readFileSync(serviceAccountPath, 'utf8'));
 
-console.log('Initializing API test database for project:', serviceAccount.project_id);
+console.log(
+  'Initializing API test database for project:',
+  serviceAccount.project_id,
+);
 
-const serverApp = initializeApp({
-  credential: cert(serviceAccount),
-  databaseURL: process.env.PUBLIC_databaseURL,
-}, 'api-test-init');
+const serverApp = initializeApp(
+  {
+    credential: cert(serviceAccount),
+    databaseURL: process.env.PUBLIC_databaseURL,
+  },
+  'api-test-init',
+);
 
 export const serverDB = getFirestore(serverApp);
 
@@ -48,28 +54,30 @@ try {
     .collection('stream')
     .where('channel', '==', 'test-channel')
     .get();
-  
+
   if (!threadsQuery.empty) {
-    console.log(`Deleting ${threadsQuery.docs.length} existing test threads...`);
+    console.log(
+      `Deleting ${threadsQuery.docs.length} existing test threads...`,
+    );
     const batch = serverDB.batch();
-    
+
     for (const doc of threadsQuery.docs) {
       batch.delete(doc.ref);
-      
+
       // Also clean up related collections
       try {
         batch.delete(serverDB.collection('reactions').doc(doc.id));
       } catch {
         // Ignore if doesn't exist
       }
-      
+
       try {
         batch.delete(serverDB.collection('tags').doc(doc.id));
       } catch {
         // Ignore if doesn't exist
       }
     }
-    
+
     await batch.commit();
     console.log('Test threads cleaned up.');
   }
@@ -154,16 +162,18 @@ console.log('Setting up test channels...');
 try {
   const channelsRef = serverDB.collection('meta').doc('threads');
   const channelsDoc = await channelsRef.get();
-  
+
   let channelsData = { topics: [] };
-  
+
   if (channelsDoc.exists) {
     channelsData = channelsDoc.data() || { topics: [] };
   }
-  
+
   // Ensure test-channel exists
-  const testChannelExists = channelsData.topics.some((c) => c.slug === 'test-channel');
-  
+  const testChannelExists = channelsData.topics.some(
+    (c) => c.slug === 'test-channel',
+  );
+
   if (!testChannelExists) {
     channelsData.topics.push({
       slug: 'test-channel',
@@ -172,7 +182,7 @@ try {
       threadCount: 0,
       sortOrder: 999,
     });
-    
+
     await channelsRef.set(channelsData);
     console.log('Added test-channel to meta/threads');
   } else {
@@ -183,7 +193,7 @@ try {
 }
 
 // Wait a bit to ensure all writes are committed
-await new Promise(resolve => setTimeout(resolve, 1000));
+await new Promise((resolve) => setTimeout(resolve, 1000));
 
 console.log('API test database initialization complete!');
 console.log('Test users created:');

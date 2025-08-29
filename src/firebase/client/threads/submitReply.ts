@@ -3,12 +3,12 @@ import { logDebug } from 'src/utils/logHelpers';
 
 /**
  * Submits a reply using the new API endpoint with improved UX
- * 
+ *
  * This function:
  * 1. Creates a FormData object with all reply data and files
  * 2. Sends it to the new /api/threads/add-reply endpoint
  * 3. Returns quickly with 202 Accepted while background tasks continue
- * 
+ *
  * @param thread - The thread to add the reply to
  * @param markdownContent - The reply content in markdown format
  * @param quoteref - Optional reference to quoted message/reply key
@@ -28,7 +28,7 @@ export async function submitReply(
   const formData = new FormData();
   formData.append('threadKey', thread.key);
   formData.append('markdownContent', markdownContent);
-  
+
   if (quoteref) {
     formData.append('quoteref', quoteref);
   }
@@ -41,7 +41,7 @@ export async function submitReply(
   // Get auth token
   const { getAuth } = await import('firebase/auth');
   const user = getAuth().currentUser;
-  
+
   if (!user) {
     throw new Error('User not authenticated');
   }
@@ -52,23 +52,25 @@ export async function submitReply(
   const response = await fetch('/api/threads/add-reply', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
     body: formData,
   });
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+    throw new Error(
+      errorData.error || `HTTP ${response.status}: ${response.statusText}`,
+    );
   }
 
   const result = await response.json();
-  
+
   if (!result.success) {
     throw new Error(result.error || 'Failed to submit reply');
   }
 
   logDebug('submitReply', `Reply submitted successfully: ${result.replyId}`);
-  
+
   return { replyId: result.replyId };
 }

@@ -36,11 +36,11 @@ export default defineConfig({
     { name: 'setup', testMatch: /auth.setup.ts/ },
     {
       name: 'chromium',
-      use: { 
+      use: {
         ...devices['Desktop Chrome'],
         // Add extra timeout for authentication and page loads
         actionTimeout: 30000,
-        navigationTimeout: 60000
+        navigationTimeout: 60000,
       },
     },
 
@@ -56,10 +56,10 @@ export default defineConfig({
       dependencies: ['setup'],
     },*/
   ],
-  
+
   /* Global timeout settings */
   timeout: 60000,
   expect: {
-    timeout: 10000
-  }
+    timeout: 10000,
+  },
 });

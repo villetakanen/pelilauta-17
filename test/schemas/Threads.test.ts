@@ -27,7 +27,7 @@ test('ThreadSchema requires at least one owner', () => {
     ThreadSchema.parse({
       title: 'Test Thread',
       channel: 'general',
-      owners: [] // Empty owners array should fail
+      owners: [], // Empty owners array should fail
     });
   }).toThrow();
 });
@@ -36,9 +36,9 @@ test('ThreadSchema accepts thread with valid owner', () => {
   const validThread = {
     title: 'Test Thread',
     channel: 'general',
-    owners: ['user123']
+    owners: ['user123'],
   };
-  
+
   expect(() => {
     ThreadSchema.parse(validThread);
   }).not.toThrow();
