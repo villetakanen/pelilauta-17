@@ -35,10 +35,11 @@ const snippet = await marked(md.slice(0, 220));
     <div class="downscaled">
       <Fragment set:html={snippet} />
     </div>
+    <CardSubscription thread={thread} client:only="svelte"/>
 
-    <div slot="actions" class="toolbar items-center">
-      <div class="grow downscaled">
-        <p class="m-0 px-1">
+    <div slot="actions" class="toolbar">
+      <div class="grow">
+        <p class="m-0 px-1 text-small">
           <ProfileLink uid={thread.owners?.[0] || ''} client:only="svelte" /> 
           <br />
           {toDisplayString(thread.flowTime)}
@@ -50,18 +51,13 @@ const snippet = await marked(md.slice(0, 220));
         title={thread.title}
         target="thread"
         client:only="svelte" />
-      <CardSubscription thread={thread} client:only="svelte"/>
 
-      <div>
-        <a href={`/threads/${thread.key}#discussion`} class="decoration-none">
-          <div class="flex align-center">
-            <cn-icon noun="send" small />
-            <span class="text-caption decoration-none">
-              {thread.replyCount || 0}
-            </span>
-          </div>
-        </a>
-      </div>
+      <!-- Link to discussion -->
+      <a href={`/threads/${thread.key}#discussion`} class="px-1 no-decoration flex">
+        <cn-icon noun="discussion" small />
+        <span class="text-caption">{thread.replyCount || 0}</span>
+      </a>
+
     </div>
   </cn-card>
 </div>
