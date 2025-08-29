@@ -2,6 +2,11 @@ import { expect, test } from '@playwright/test';
 
 test('test', async ({ page }) => {
   await page.goto('http://localhost:4321/');
-  // Expect the page to be loaded
-  await expect(page).toHaveTitle('Pelilauta 16 Testbed');
+  // Expect the page to be loaded with the correct title from environment
+  // Use the dev environment title for tests
+  const expectedTitle =
+    process.env.NODE_ENV === 'production'
+      ? 'Pelilauta 18 PRE-PRODUCTION'
+      : 'Pelilauta 16 Testbed';
+  await expect(page).toHaveTitle(expectedTitle);
 });

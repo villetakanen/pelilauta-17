@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { CnEditor } from '@11thdeg/cn-editor';
-import { addReply } from 'src/firebase/client/threads/addReply';
+import { submitReply } from 'src/firebase/client/threads/submitReply';
 import { CHANNEL_DEFAULT_SLUG, type Channels } from 'src/schemas/ChannelSchema';
 import type { Reply } from 'src/schemas/ReplySchema';
 import type { Thread } from 'src/schemas/ThreadSchema';
@@ -53,9 +53,8 @@ async function onsubmit(e: Event) {
   try {
     const slug = await submitThreadUpdate(data);
 
-    await addReply(
+    await submitReply(
       thread,
-      $uid,
       `${t('threads:fork.crossPost')} [${title}](/threads/${slug})`,
     );
 

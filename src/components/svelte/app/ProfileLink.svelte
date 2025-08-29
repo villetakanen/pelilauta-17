@@ -1,15 +1,27 @@
 <script lang="ts">
 import { t } from 'src/utils/i18n';
+import { logWarn } from 'src/utils/logHelpers';
 import { getProfileAtom, loading } from '../../../stores/profiles';
 
 interface Props {
-  uid: string;
+  uid?: string;
 }
 const { uid }: Props = $props();
 
-const profileAtom = getProfileAtom(uid);
-const profile = $derived($profileAtom);
-const isLoading = $derived($loading.includes(uid));
+// Defensive check for undefined uid
+if (!uid) {
+  logWarn('ProfileLink: received undefined uid, rendering anonymous');
+}
+
+const profileAtom = uid ? getProfileAtom(uid) : undefined;
+
+const profile = $derived.by(() => {
+  return profileAtom ? $profileAtom : undefined;
+});
+
+const isLoading = $derived.by(() => {
+  return uid ? $loading.includes(uid) : false;
+});
 </script>
 
 {#if isLoading}

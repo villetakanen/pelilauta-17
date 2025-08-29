@@ -29,6 +29,7 @@ const initApp = () => {
   return initializeApp({
     credential: cert(serviceAccount as ServiceAccount),
     databaseURL: import.meta.env.PUBLIC_databaseURL,
+    storageBucket: import.meta.env.PUBLIC_storageBucket,
   });
 };
 

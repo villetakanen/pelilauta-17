@@ -69,7 +69,9 @@ export async function submitThreadUpdate(
   data: Partial<Thread>,
   files?: File[],
 ) {
-  const { addThread } = await import('src/firebase/client/threads/addThread');
+  const { createThreadApi } = await import(
+    '../../../firebase/client/threads/createThreadApi.ts'
+  );
   const { updateThread } = await import(
     'src/firebase/client/threads/updateThread'
   );
@@ -85,9 +87,16 @@ export async function submitThreadUpdate(
     return data.key;
   }
 
-  const posted = await addThread(data, files || [], data.owners[0]);
+  // Create new thread using the API
+  const threadKey = await createThreadApi(data, files || []);
 
-  await syndicateToBsky(posted, data.owners[0]);
+  // Create a thread object for syndication (with the new key)
+  const postedThread: Thread = {
+    ...data,
+    key: threadKey,
+  } as Thread;
 
-  return posted.key;
+  await syndicateToBsky(postedThread, data.owners[0]);
+
+  return threadKey;
 }

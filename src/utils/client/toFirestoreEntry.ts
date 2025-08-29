@@ -50,7 +50,7 @@ export function toFirestoreEntry(
   if (!params.silent)
     return {
       ...entry,
-      author: entry.owners ? entry.owners[0] : '-',
+      author: entry.owners && entry.owners.length > 0 ? entry.owners[0] : '-',
       createdAt: entry.createdAt
         ? new Timestamp(entry.createdAt.getTime() / 1000, 0)
         : serverTimestamp(),
@@ -63,7 +63,7 @@ export function toFirestoreEntry(
 
   return {
     ...rest,
-    author: entry.owners ? [0] : '-',
+    author: entry.owners ? entry.owners[0] : '-',
   };
 }
 

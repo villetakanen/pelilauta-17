@@ -5,26 +5,25 @@
  * of the end-to-end test project.
  */
 
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { config } from 'dotenv';
 import { cert, initializeApp } from 'firebase-admin/app';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 config({
   path: '.env.development',
 });
-const serviceAccount = {
-  type: 'service_account',
-  project_id: process.env.PUBLIC_projectId,
-  private_key_id: process.env.SECRET_private_key_id,
-  private_key: process.env.SECRET_private_key,
-  client_email: process.env.SECRET_client_email,
-  client_id: process.env.SECRET_client_id,
-  auth_uri: process.env.SECRET_auth_uri,
-  token_uri: process.env.SECRET_token_uri,
-  auth_provider_x509_cert_url: process.env.SECRET_auth_provider_x509_cert_url,
-  client_x509_cert_url: process.env.SECRET_client_x509_cert_url,
-  universe_domain: process.env.PUBLIC_universe_domain,
-};
+
+// Use the service account file directly instead of environment variables
+const serviceAccountPath = join(__dirname, '../server_principal.json');
+const serviceAccount = JSON.parse(readFileSync(serviceAccountPath, 'utf8'));
+
+console.log('Using project_id:', serviceAccount.project_id);
 
 const serverApp = initializeApp({
   credential: cert(serviceAccount),
@@ -44,6 +43,7 @@ const testSite = {
     'e2e-test-owner',
     'JatmZFE8X9coxETMz2sUs5YW1r22',
     'vN8RyOYratXr80130A7LqVCLmLn1',
+    'H3evfU7BDmec9KkotRiTV41YECg1', // ville.takanen@iki.fi test user
   ],
   homepage: 'front-page',
   hidden: true,
@@ -64,8 +64,9 @@ const testSite = {
     },
   ],
 };
-serverDB.collection('sites').doc(testSite.key).set(testSite);
+await serverDB.collection('sites').doc(testSite.key).set(testSite);
 console.log('Test site created:', testSite.key);
+console.log('Site owners:', testSite.owners);
 
 const testSitePages = await serverDB
   .collection('sites')
@@ -91,16 +92,19 @@ const testSiteFrontPage = {
   name: 'Front Page',
   createdAt: FieldValue.serverTimestamp(),
   markdownContent: "# Welcome to the E2E Test Site!\n\n here's the front page",
-  owners: ['e2e-test-owner'],
+  owners: ['e2e-test-owner', 'H3evfU7BDmec9KkotRiTV41YECg1'],
   category: 'alpha',
   tags: ['e2e', 'test'],
 };
-serverDB
+await serverDB
   .collection('sites')
   .doc(testSite.key)
   .collection('pages')
   .doc(testSiteFrontPage.key)
   .set(testSiteFrontPage);
 console.log('Test site front page created:', testSiteFrontPage.key);
+
+// Wait a bit to ensure all writes are committed
+await new Promise((resolve) => setTimeout(resolve, 1000));
 
 console.log('Database initialization complete, fire away!');

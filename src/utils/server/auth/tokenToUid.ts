@@ -19,6 +19,11 @@ export async function tokenToUid(request: Request): Promise<string | null> {
   }
 
   // 3. Verify Firebase ID Token
-  const decodedToken = await serverAuth.verifyIdToken(idToken, true);
-  return decodedToken.uid;
+  try {
+    const decodedToken = await serverAuth.verifyIdToken(idToken, true);
+    return decodedToken.uid;
+  } catch (error) {
+    console.warn('Auth failed: Invalid or expired token:', error);
+    return null;
+  }
 }
