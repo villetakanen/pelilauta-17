@@ -27,6 +27,9 @@ export const ThreadSchema = ContentEntrySchema.extend({
   updatedAt: z.any().optional(),
   quoteRef: z.string().optional(),
   author: z.string().optional(),
+  
+  // Override owners to ensure at least one owner (the thread author)
+  owners: z.array(z.string()).min(1, "Thread must have at least one owner"),
 });
 
 export type Thread = z.infer<typeof ThreadSchema>;
@@ -72,6 +75,9 @@ export function createThread(
   source?: Partial<Thread>,
   threadKey?: string,
 ): Thread {
+  // Ensure owners array has at least one entry
+  const owners = source?.owners && source.owners.length > 0 ? source.owners : ['-'];
+  
   const thread = {
     key: threadKey || source?.key || '',
     title: source?.title || '',
@@ -80,8 +86,8 @@ export function createThread(
     youtubeId: source?.youtubeId || undefined,
     poster: source?.poster || '',
     images: source?.images || [],
-    owners: source?.owners || [],
-    author: source?.owners?.[0] || '-',
+    owners,
+    author: owners[0],
     replyCount: 0,
     lovedCount: 0,
     createdAt: new Date(),
@@ -93,13 +99,15 @@ export function createThread(
     tags: source?.tags || undefined,
   };
 
-  // Remove empty fields, empty strings, and empty arrays
+  // Remove empty fields, empty strings, and empty arrays (but keep owners even if it's ['-'])
   for (const key of Object.keys(thread) as (keyof typeof thread)[]) {
     if (
-      thread[key] === undefined ||
-      thread[key] === null ||
-      (typeof thread[key] === 'string' && thread[key] === '') ||
-      (Array.isArray(thread[key]) && thread[key].length === 0)
+      key !== 'owners' && (
+        thread[key] === undefined ||
+        thread[key] === null ||
+        (typeof thread[key] === 'string' && thread[key] === '') ||
+        (Array.isArray(thread[key]) && thread[key].length === 0)
+      )
     ) {
       delete thread[key];
     }

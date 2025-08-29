@@ -21,6 +21,9 @@ export const ReplySchema = ContentEntrySchema.extend({
   // htmlContent: z.string().optional(),
   // owners: z.array(z.string()),
 
+  // Override owners to ensure at least one owner (the reply author)
+  owners: z.array(z.string()).min(1, "Reply must have at least one owner"),
+
   images: ImageArraySchema.optional(), // Array of images in the reply
   quoteref: z.string().optional(), // The key of the reply that this reply is quoting.
   threadKey: z.string(), // The key of the thread that this reply is in.

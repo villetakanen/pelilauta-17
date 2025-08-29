@@ -39,7 +39,7 @@ const snippet = await marked(md.slice(0, 220));
     <div slot="actions" class="toolbar items-center">
       <div class="grow downscaled">
         <p class="m-0 px-1">
-          <ProfileLink uid={thread.owners[0]} client:only="svelte" /> 
+          <ProfileLink uid={thread.owners?.[0] || ''} client:only="svelte" /> 
           <br />
           {toDisplayString(thread.flowTime)}
         </p>

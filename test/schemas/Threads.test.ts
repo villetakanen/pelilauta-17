@@ -19,4 +19,27 @@ test('createThread factory creates a thread object', () => {
 test('createThread factory creates a thread object with public set to true', () => {
   const thread = createThread();
   expect(thread.public).toBe(true);
+  expect(thread.owners).toEqual(['-']); // Should have default owner
+});
+
+test('ThreadSchema requires at least one owner', () => {
+  expect(() => {
+    ThreadSchema.parse({
+      title: 'Test Thread',
+      channel: 'general',
+      owners: [] // Empty owners array should fail
+    });
+  }).toThrow();
+});
+
+test('ThreadSchema accepts thread with valid owner', () => {
+  const validThread = {
+    title: 'Test Thread',
+    channel: 'general',
+    owners: ['user123']
+  };
+  
+  expect(() => {
+    ThreadSchema.parse(validThread);
+  }).not.toThrow();
 });

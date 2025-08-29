@@ -7,9 +7,14 @@ interface Props {
 }
 const { uid }: Props = $props();
 
-const profileAtom = getProfileAtom(uid);
-const profile = $derived($profileAtom);
-const isLoading = $derived($loading.includes(uid));
+// Defensive check for undefined uid
+if (!uid) {
+  console.warn('ProfileLink: received undefined uid, rendering anonymous');
+}
+
+const profileAtom = uid ? getProfileAtom(uid) : undefined;
+const profile = $derived(profileAtom ? $profileAtom : undefined);
+const isLoading = $derived(uid ? $loading.includes(uid) : false);
 </script>
 
 {#if isLoading}

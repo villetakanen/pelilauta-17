@@ -39,7 +39,7 @@ try {
     <p class="text-caption m-0">{t('threads:channel.latest.createdAt')}</p>
     <p class="downscaled m-0 mb-1 no-text-wrap">
       <a href={`/threads/${latestThread.key}}`} >{latestThread?.title}</a><br/>
-      {toDisplayString(latestThread?.createdAt)} - <PofileLink uid={latestThread.owners[0]} client:only="svelte"/>
+      {toDisplayString(latestThread?.createdAt)} - <PofileLink uid={latestThread.owners?.[0] || ''} client:only="svelte"/>
     </p>
   )}
   {latestUpdatedThread && latestUpdatedThread.key !== latestThread?.key && (
@@ -47,7 +47,7 @@ try {
     <p class="text-caption m-0">{t('threads:channel.latest.flowTime')}</p>
     <p class="downscaled m-0 mb-1 no-text-wrap">
       <a href={`/threads/${latestUpdatedThread.key}`}>{latestUpdatedThread?.title}</a><br/>
-      {toDisplayString(latestUpdatedThread?.updatedAt)} - <PofileLink uid={latestUpdatedThread.owners[0]} client:only="svelte"/>
+      {toDisplayString(latestUpdatedThread?.updatedAt)} - <PofileLink uid={latestUpdatedThread.owners?.[0] || ''} client:only="svelte"/>
     </p>
   )}
   {(latestUpdatedThread?.key === latestThread?.key && (

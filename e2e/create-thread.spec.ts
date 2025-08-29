@@ -20,6 +20,15 @@ test('can create a thread successfully', async ({ page }) => {
   await authenticate(page);
   await page.goto('http://localhost:4321/create/thread');
 
+  // Wait for the page to load and authentication state to be ready
+  await page.waitForLoadState('domcontentloaded');
+  
+  // Verify user is still authenticated on the create thread page
+  await expect(page.getByTestId('setting-navigation-button')).toBeVisible();
+  
+  // Wait a bit more for auth state to fully propagate
+  await page.waitForTimeout(2000);
+
   // Expect the save button to exist, and be disabled initially
   await expect(page.getByTestId('send-thread-button')).toBeDisabled();
 
@@ -71,6 +80,6 @@ test('can create a thread successfully', async ({ page }) => {
   // Verify the thread was created successfully
   await expect(page.getByRole('heading', { name: uniqueThreadTitle, level: 1 })).toBeVisible();
   
-  // Verify the content is displayed
-  await expect(page.getByText('This is a test thread created by the E2E test suite')).toBeVisible();
+  // Verify the content is displayed in the thread content (not debug output)
+  await expect(page.locator('article p').getByText('This is a test thread created by the E2E test suite')).toBeVisible();
 });
