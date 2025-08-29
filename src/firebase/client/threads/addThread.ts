@@ -69,6 +69,11 @@ async function addReactionsForThread(thread: Thread) {
 }
 
 /**
+ * @deprecated This function has been replaced by the server-side API endpoint.
+ * Use `createThreadApi` from './createThreadApi' instead.
+ * 
+ * This client-side implementation will be removed in a future version.
+ * 
  * Adds a new thread to the firestore database.
  *
  * @param thread
@@ -80,6 +85,9 @@ export async function addThread(
   files: File[],
   uid: string,
 ): Promise<Thread> {
+  console.warn(
+    'addThread is deprecated. Use createThreadApi from ./createThreadApi instead.'
+  );
   const { updateDoc, addDoc, collection, getFirestore, doc, getDoc } =
     await import('firebase/firestore');
   const { toFirestoreEntry } = await import(

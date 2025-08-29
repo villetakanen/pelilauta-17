@@ -4,6 +4,19 @@ import { authenticate } from './authenticate-e2e';
 test.setTimeout(120000); // Increase timeout for authentication and navigation
 
 test('can create a thread successfully', async ({ page }) => {
+  // Listen for console errors and API responses
+  page.on('console', msg => {
+    if (msg.type() === 'error') {
+      console.log('Browser console error:', msg.text());
+    }
+  });
+  
+  page.on('response', response => {
+    if (response.url().includes('/api/threads/create')) {
+      console.log('API Response:', response.status(), response.url());
+    }
+  });
+  
   await authenticate(page);
   await page.goto('http://localhost:4321/create/thread');
 
@@ -38,8 +51,19 @@ test('can create a thread successfully', async ({ page }) => {
   // Wait for the send button to be enabled (form validation should kick in)
   await expect(page.getByTestId('send-thread-button')).toBeEnabled();
 
-  // Submit the thread
+  // Submit the thread and wait a bit before checking for navigation
   await page.getByTestId('send-thread-button').click();
+  
+  // Wait a bit to see if any error messages appear
+  await page.waitForTimeout(2000);
+  
+  // Check if there's an error message before waiting for navigation
+  const errorMessage = page.locator('[data-testid="snackbar"]').or(page.locator('.error')).or(page.locator('[role="alert"]'));
+  if (await errorMessage.isVisible()) {
+    const errorText = await errorMessage.textContent();
+    console.log('Error message detected:', errorText);
+    throw new Error(`Thread creation failed with error: ${errorText}`);
+  }
 
   // Wait for navigation to the new thread page
   await page.waitForURL(/\/threads\/[^\/]+$/, { timeout: 15000 });
