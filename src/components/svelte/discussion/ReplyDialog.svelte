@@ -1,5 +1,5 @@
 <script lang="ts">
-import { addReply } from 'src/firebase/client/threads/addReply';
+import { submitReply } from 'src/firebase/client/threads/submitReply';
 import type { Thread } from 'src/schemas/ThreadSchema';
 import { t } from 'src/utils/i18n';
 import { logError } from 'src/utils/logHelpers';
@@ -51,11 +51,7 @@ async function onsubmit(e: Event) {
   const markdownContent = formData.get('reply') as string;
 
   try {
-    if (files.length > 0) {
-      await addReply(thread, $uid, markdownContent, '', files);
-    } else {
-      await addReply(thread, $uid, markdownContent);
-    }
+    await submitReply(thread, markdownContent, '', files);
 
     // Only close dialog on successful save
     handleClose();

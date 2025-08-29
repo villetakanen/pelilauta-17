@@ -13,12 +13,13 @@
     "astro": "astro",
     "test": "vitest",
     "check": "biome check --write .",
-    "test:e2e": "node e2e/init-test-db.js && playwright test",
+    "test:e2e": "NODE_ENV=development node e2e/init-test-db.js && NODE_ENV=development npx wait-on http://localhost:4321 && NODE_ENV=development playwright test",
+    "test:e2e:debug": "NODE_ENV=development node e2e/init-test-db.js && NODE_ENV=development npx wait-on http://localhost:4321 && NODE_ENV=development playwright test --debug",
     "generateSW": "SW_DIST_PATH=dist workbox injectManifest workbox.config.cjs",
     "backup:storage": "node tooling/backupStorage.js"
   },
   "dependencies": {
-    "@11thdeg/cn-editor": "4.0.0-beta.11",
+    "@11thdeg/cn-editor": "4.0.0-beta.12",
     "@11thdeg/cyan-css": "4.0.0-beta.15",
     "@11thdeg/cyan-lit": "4.0.0-beta.12",
     "@astrojs/check": "^0.9.4",
@@ -63,6 +64,7 @@
     "vite": "^6.0.11",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^2.1.8",
+    "wait-on": "^8.0.4",
     "workbox-cli": "^7.3.0"
   },
   "pnpm": {

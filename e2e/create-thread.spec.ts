@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 import { authenticate } from './authenticate-e2e';
 
+test.setTimeout(120000); // Increase timeout for authentication and navigation
+
 test('test', async ({ page }) => {
   await authenticate(page);
   await page.goto('http://localhost:4321/create/thread');

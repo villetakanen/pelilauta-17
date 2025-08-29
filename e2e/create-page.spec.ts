@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 import { authenticate } from './authenticate-e2e';
 
+test.setTimeout(120000); // Increase timeout for authentication and navigation
+
 test('Can create a new page with Beta category', async ({ page }) => {
   await authenticate(page);
   await page.goto('http://localhost:4321/sites/e2e-test-site/create/page');
