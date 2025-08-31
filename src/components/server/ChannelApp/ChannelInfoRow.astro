@@ -8,25 +8,19 @@ interface Props {
 }
 const { channel } = Astro.props;
 ---
-
-  <cn-icon class="m-1" noun={channel.icon} ></cn-icon>
-    
-  <div>
-    <h4 class="downscaled m-0">
-      <a href={`/channels/${channel.slug}/1`}>{channel.name}</a>
-    </h4>
-    <p class="m-0 downscaled">{channel.description}</p>
+<article class="cols-2">
+  <div class="surface flex">
+    <cn-icon noun={channel.icon} style="flex: 0 0 auto"></cn-icon>
+    <div>
+      <h3 class="text-h5 m-0">
+        <a href={`/channels/${channel.slug}/1`}>
+          {channel.name}
+        </a>
+      </h3>
+      <p class="text-small">{channel.description}</p>
+    </div>
   </div>
-    
-  <!--div class="downscaled">
-    <p class="m-0 mb-0">
-      {channel.threadCount}&nbsp;
-      <cn-icon xsmall noun="discussion" ></cn-icon>
-      <br />
-      {toDisplayString(channel.flowTime)}
-    </p>
-  </div-->
-
-<ChannelListInfoCell {channel}>
-  <ChannelListInfoCellLoading slot="fallback" />
-</ChannelListInfoCell>  
+  <div class="surface">
+    <ChannelListInfoCell {channel} />
+  </div>
+</article>

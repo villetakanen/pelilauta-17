@@ -1,13 +1,28 @@
 ---
-import { ChannelsSchema } from 'src/schemas/ChannelSchema';
+import { logError } from '@utils/logHelpers';
+import { type Channel, ChannelsSchema } from 'src/schemas/ChannelSchema';
 import ChannelsList from './ChannelsList.astro';
 
-// Lets fetch the channels from the API
-const origin = new URL(Astro.request.url).origin;
-// Fetch site data from the api
-const channelsResponse = await fetch(`${origin}/api/meta/channels.json`);
-const channelsData = await channelsResponse.json();
+let channels: Channel[] = [];
 
-const channels = ChannelsSchema.parse(channelsData);
+try {
+  const origin = new URL(Astro.request.url).origin;
+  const channelsResponse = await fetch(`${origin}/api/meta/channels.json`);
+
+  if (channelsResponse.ok) {
+    const channelsData = await channelsResponse.json();
+    // The API already validates the data, so we can parse it with confidence.
+    // This also protects against unexpected response formats.
+    channels = ChannelsSchema.parse(channelsData);
+  } else {
+    logError(
+      'ChannelsApp',
+      `Failed to fetch channels, status: ${channelsResponse.status}`,
+    );
+  }
+} catch (error) {
+  logError('ChannelsApp', 'Error fetching or parsing channels data:', error);
+  // On error, channels will remain an empty array, preventing a crash.
+}
 ---
 <ChannelsList channels={channels} />
