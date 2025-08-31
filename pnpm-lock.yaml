@@ -12,8 +12,8 @@ importers:
         specifier: 4.0.0-beta.13
         version: 4.0.0-beta.13
       '@11thdeg/cyan-css':
-        specifier: 4.0.0-beta.17
-        version: 4.0.0-beta.17(@fontsource/open-sans@5.2.6)(lato-font@3.0.0)
+        specifier: 4.0.0-beta.18
+        version: 4.0.0-beta.18(@fontsource/open-sans@5.2.6)(lato-font@3.0.0)
       '@11thdeg/cyan-lit':
         specifier: 4.0.0-beta.14
         version: 4.0.0-beta.14
@@ -150,8 +150,8 @@ packages:
   '@11thdeg/cn-editor@4.0.0-beta.13':
     resolution: {integrity: sha512-5VZr3Y2cbOBA1J/qJnX7/HwHzVNbnkAe5sc5dLsjGZT5kklDN0LDzSJjzy109rw/KzzdkOeIM1DTWMNkgi10/A==}
 
-  '@11thdeg/cyan-css@4.0.0-beta.17':
-    resolution: {integrity: sha512-kyMop/TVmOT01O8p011res2Xx+EMIoWDhkF+H64c+L/ichmzpNn4laobqjqCDFAJQ1BmJCziO/wobdOXQ/UaxQ==}
+  '@11thdeg/cyan-css@4.0.0-beta.18':
+    resolution: {integrity: sha512-byYXviXDcFdZWoiuItXkrXziRm3DiKuSDwPpIlBGijzHLREyhcdKASjkw1xok1j2YvTL6ZizXipxaPubVyBT3A==}
     peerDependencies:
       '@fontsource/open-sans': '*'
       lato-font: '*'
@@ -7396,7 +7396,7 @@ snapshots:
       turndown: 7.2.0
       turndown-plugin-gfm: 1.0.2
 
-  '@11thdeg/cyan-css@4.0.0-beta.17(@fontsource/open-sans@5.2.6)(lato-font@3.0.0)':
+  '@11thdeg/cyan-css@4.0.0-beta.18(@fontsource/open-sans@5.2.6)(lato-font@3.0.0)':
     dependencies:
       '@fontsource/open-sans': 5.2.6
       lato-font: 3.0.0
