@@ -34,7 +34,6 @@ try {
   logError('Error fetching latest thread:', error);
 }
 ---
-<div style="min-width: 0; overflow-x: hidden;" class="p-1">
   {latestThread && (
     <p class="text-caption m-0">{t('threads:channel.latest.createdAt')}</p>
     <p class="downscaled m-0 mb-1 no-text-wrap">
@@ -53,4 +52,3 @@ try {
   {(latestUpdatedThread?.key === latestThread?.key && (
     <p class="text-caption m-0">{t('threads:channel.latest.latestIsNewest')}</p>
   )) }
-</div>

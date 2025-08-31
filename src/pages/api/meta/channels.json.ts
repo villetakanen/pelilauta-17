@@ -1,28 +1,59 @@
-import { type Channel, parseChannel } from 'src/schemas/ChannelSchema';
+import { logError } from '@utils/logHelpers';
+import { ChannelSchema } from 'src/schemas/ChannelSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
+import { ZodError, z } from 'zod';
 import { serverDB } from '../../../firebase/server';
 
 export async function GET(): Promise<Response> {
-  const channels: Channel[] = [];
+  try {
+    const channelsRef = serverDB.collection('meta').doc('threads');
+    const doc = await channelsRef.get();
 
-  const channelsRef = serverDB.collection('meta').doc('threads');
-  const doc = await channelsRef.get();
+    const channelsData = doc.data()?.topics;
 
-  const channelsArray = doc.data()?.topics;
+    if (!Array.isArray(channelsData)) {
+      logError(
+        'api/meta/channels',
+        'Firestore document meta/threads does not contain a topics array.',
+      );
+      return new Response(
+        JSON.stringify({ error: 'Channels data is missing or not an array' }),
+        { status: 500 },
+      );
+    }
 
-  if (!channelsArray) {
-    return new Response('No channels found', { status: 500 });
+    const ChannelsArraySchema = z.array(ChannelSchema);
+    const clientEntries = channelsData.map(toClientEntry);
+    const channels = ChannelsArraySchema.parse(clientEntries);
+
+    return new Response(JSON.stringify(channels), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        // Cache for 1 hour on the CDN, serve stale content while revalidating
+        'Cache-Control': 's-maxage=3600, stale-while-revalidate',
+      },
+    });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      logError(
+        'api/meta/channels',
+        'Failed to parse channels array:',
+        error.issues,
+      );
+    } else {
+      logError(
+        'api/meta/channels',
+        'Failed to fetch channels from Firestore:',
+        error,
+      );
+    }
+    return new Response(
+      JSON.stringify({ error: 'Could not fetch or parse channels' }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
   }
-
-  for (const channel of channelsArray) {
-    channels.push(parseChannel(toClientEntry(channel)));
-  }
-
-  return new Response(JSON.stringify(channels), {
-    status: 200,
-    headers: {
-      'Content-Type': 'application/json',
-      'Cache-Control': 's-maxage=60, stale-while-revalidate',
-    },
-  });
 }
