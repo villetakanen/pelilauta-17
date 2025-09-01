@@ -76,4 +76,19 @@ const ogImage = image || `${Astro.url.origin}favicons/fox-ico-512.png`;
   <script>
     import "@11thdeg/cyan-lit"
   </script>
+
+  <!-- Client-side Sentry initialization -->
+  <script>
+    import { initSentry } from '@utils/client/sentry';
+    
+    // Initialize Sentry when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      initSentry();
+    });
+    
+    // Also initialize on Astro view transitions
+    document.addEventListener('astro:page-load', () => {
+      initSentry();
+    });
+  </script>
 </head>
