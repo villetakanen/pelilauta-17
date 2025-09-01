@@ -1,7 +1,7 @@
 {
   "name": "Pelilauta",
   "type": "module",
-  "version": "18.0.0-beta.4",
+  "version": "18.0.0-beta.6",
   "engines": {
     "node": ">=20.0.0"
   },
@@ -29,7 +29,7 @@
     "@astrojs/svelte": "^7.1.0",
     "@atproto/api": "^0.15.14",
     "@nanostores/persistent": "^1.1.0",
-    "@sentry/astro": "^9.27.0",
+    "@sentry/browser": "^10.8.0",
     "@vercel/analytics": "^1.5.0",
     "astro": "^5.9.2",
     "diff": "^8.0.2",
