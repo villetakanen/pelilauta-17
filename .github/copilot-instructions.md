@@ -203,3 +203,38 @@ We have 4 page layouts for different use cases:
 Choose based on: public vs authenticated, static vs interactive, full-page vs modal context.
 
 Routes with editors and modals should check if the user is authenticated before rendering.
+
+## SEO Best Practices
+
+### The `noSharing` Prop
+
+The `noSharing` prop on page layouts controls SEO indexing behavior:
+
+- **When `noSharing={true}`**: Adds `<meta name="robots" content="noindex, nofollow" />` to prevent search engine indexing
+- **When `noSharing` is omitted or `false`**: Page is indexable by search engines
+
+**Important:** Never use `noSharing` on public pages that should be discoverable:
+
+```astro
+// ❌ Bad - Front page won't be indexed by search engines
+<Page title="My Site" noSharing>
+
+// ✅ Good - Front page is indexable
+<Page title="My Site">
+
+// ✅ Good - Private admin page shouldn't be indexed  
+<AdminPage title="Admin Dashboard" noSharing>
+```
+
+**Use `noSharing={true}` only for:**
+- Private user dashboards and settings
+- Admin interfaces
+- Authentication pages
+- Development/testing pages
+- Any page that should not appear in search results
+
+**Never use `noSharing` on:**
+- Front page (`src/pages/index.astro`)
+- Public content pages
+- Library/community pages
+- Any page you want users to discover via search engines
