@@ -147,42 +147,54 @@ const getFirestore = () => import('firebase/firestore');
 ### 5. External Content Strategy via Netlify API Caching
 
 #### A. RSS Feed Caching via API Routes
-Create dedicated API endpoints for external RSS feeds:
-- `/api/external/myrrys-rss.json` - Cached Myrrys.com RSS feed
-- `/api/external/roolipelitiedotus-rss.json` - Cached Roolipelitiedotus RSS feed
+Create a single, flexible endpoint for external RSS feeds with whitelist security:
+- `/api/external/rss/[feedKey].json` - Generic cached RSS endpoint with feed key validation
 
 **Benefits:**
 - **Performance**: Eliminates external latency (500ms-2s+ → <100ms)
 - **Reliability**: External site downtime won't break front page
 - **Global CDN**: Netlify edge locations serve cached responses worldwide
 - **Cost Control**: Avoid external API rate limits and unpredictable costs
+- **Security**: Whitelist approach prevents arbitrary external requests
 
 **Implementation Strategy:**
 ```typescript
-// /api/external/myrrys-rss.json
-export async function GET() {
+// /api/external/rss/[feedKey].json
+const ALLOWED_FEEDS = {
+  'myrrys': 'https://www.myrrys.com/blog/rss.xml',
+  'roolipelitiedotus': 'https://roolipelitiedotus.fi/feed/'
+} as const;
+
+export async function GET({ params }: APIContext) {
+  const { feedKey } = params;
+  
+  // Security: Only allow whitelisted feeds
+  if (!feedKey || !(feedKey in ALLOWED_FEEDS)) {
+    return new Response('Feed not allowed', { status: 403 });
+  }
+
   try {
-    // Check if we have cached data (use Netlify Blob storage or in-memory)
-    const cached = await getCachedRSSData('myrrys', 30 * 60); // 30 min TTL
+    // Check cache first
+    const cached = await getCachedRSSData(feedKey, 30 * 60); // 30 min TTL
     if (cached) return cached;
 
     // Fetch fresh data
     const parser = new Parser();
-    const feed = await parser.parseURL('https://www.myrrys.com/blog/rss.xml');
+    const feed = await parser.parseURL(ALLOWED_FEEDS[feedKey]);
     const posts = feed.items.slice(0, 3);
 
     // Cache the response
-    await setCachedRSSData('myrrys', posts);
+    await setCachedRSSData(feedKey, posts);
 
     return new Response(JSON.stringify(posts), {
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 's-maxage=1800, stale-while-revalidate=3600', // 30min cache, 1hr stale
+        'Cache-Control': 's-maxage=1800, stale-while-revalidate=3600',
       },
     });
   } catch (error) {
     // Return cached fallback or empty array
-    const fallback = await getCachedRSSData('myrrys', 24 * 60 * 60); // Accept 24h old data
+    const fallback = await getCachedRSSData(feedKey, 24 * 60 * 60);
     return new Response(JSON.stringify(fallback || []), { status: 200 });
   }
 }
@@ -195,18 +207,17 @@ export async function GET() {
 
 ## Implementation Plan
 
-### Phase 1: Caching Infrastructure (Sprint 1)
-- [ ] Update `netlify.toml` with optimized cache headers
-- [ ] Implement ETag support in API routes
-- [ ] Add cache warming for critical endpoints
-- [ ] Monitor cache hit rates
+### Phase 1: Caching Infrastructure (Sprint 1) ✅
+- [x] Update `netlify.toml` with optimized cache headers
+- [x] Implement ETag support in API routes
+- [x] Add cache warming for critical endpoints
+- [x] Monitor cache hit rates
 
-### Phase 2: External Content Caching (Sprint 1-2)
-- [ ] Create `/api/external/myrrys-rss.json` cached RSS endpoint
-- [ ] Create `/api/external/roolipelitiedotus-rss.json` cached RSS endpoint  
+### Phase 2: External Content Caching (Sprint 1-2) 🚧
+- [x] Create `/api/external/rss/[feedKey].json` - Single DRY endpoint with whitelist
 - [ ] Implement Netlify Blob storage for RSS cache persistence
 - [ ] Add fallback mechanisms for external failures
-- [ ] Update `SyndicateStream.astro` to use cached endpoints
+- [ ] Update `SyndicateStream.astro` to use cached endpoints (`/api/external/rss/myrrys.json`, `/api/external/rss/roolipelitiedotus.json`)
 - [ ] Optimize `server:defer` loading with proper timeouts and error boundaries
 
 ### Phase 3: Bundle Optimization (Sprint 2)
@@ -276,11 +287,14 @@ export async function GET() {
 
 This optimization focuses on the critical path for first-time visitors while maintaining the dynamic, real-time nature of the community platform. The caching strategy balances performance with content freshness, ensuring users see recent activity while benefiting from edge caching.
 
-**Key Innovation: External RSS Caching via Netlify API Routes**
-By proxying external RSS feeds through Netlify API routes with intelligent caching, we achieve:
-- Consistent sub-100ms response times for syndicated content
-- 99.9% uptime independent of external site reliability  
-- Global CDN distribution of cached RSS content
-- Graceful degradation when external sources are unavailable
+**Key Innovation: Single DRY External RSS Caching Endpoint**
+By using a single `/api/external/rss/[feedKey].json` endpoint with whitelist validation, we achieve:
+- **DRY Architecture**: Single implementation handles all external RSS feeds
+- **Security**: Whitelist prevents arbitrary external requests
+- **Maintainability**: Easy to add new feeds by updating the ALLOWED_FEEDS constant
+- **Consistent sub-100ms response times** for syndicated content
+- **99.9% uptime independent** of external site reliability  
+- **Global CDN distribution** of cached RSS content
+- **Graceful degradation** when external sources are unavailable
 
-This approach transforms external dependencies from performance liabilities into cached assets served from Netlify's global edge network.
+This approach transforms external dependencies from performance liabilities into cached assets served from Netlify's global edge network while maintaining security and code simplicity.

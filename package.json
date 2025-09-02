@@ -17,7 +17,8 @@
     "test:e2e": "NODE_ENV=development node e2e/init-test-db.js && NODE_ENV=development npx wait-on http://localhost:4321 && NODE_ENV=development playwright test",
     "test:e2e:debug": "NODE_ENV=development node e2e/init-test-db.js && NODE_ENV=development npx wait-on http://localhost:4321 && NODE_ENV=development playwright test --debug",
     "generateSW": "SW_DIST_PATH=dist workbox injectManifest workbox.config.cjs",
-    "backup:storage": "node tooling/backupStorage.js"
+    "backup:storage": "node tooling/backupStorage.js",
+    "postbuild": "node tooling/warm-cache.mjs"
   },
   "dependencies": {
     "@11thdeg/cn-editor": "4.0.0-beta.13",

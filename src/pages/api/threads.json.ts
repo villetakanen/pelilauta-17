@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import type { APIContext } from 'astro';
 import { Timestamp } from 'firebase-admin/firestore';
 import { CHANNEL_DEFAULT_SLUG } from 'src/schemas/ChannelSchema';
@@ -75,11 +76,21 @@ export async function GET({ request }: APIContext) {
     });
   }
 
-  return new Response(JSON.stringify(publicThreads), {
+  const body = JSON.stringify(publicThreads);
+  const etag = crypto.createHash('sha1').update(body).digest('hex');
+
+  const ifNoneMatch = request.headers.get('if-none-match');
+
+  if (ifNoneMatch === etag) {
+    return new Response(null, { status: 304 });
+  }
+
+  return new Response(body, {
     status: 200,
     headers: {
       'Content-Type': 'application/json',
-      'Cache-Control': 's-maxage=1, stale-while-revalidate',
+      'Cache-Control': 's-maxage=60, stale-while-revalidate=300',
+      ETag: etag,
     },
   });
 }

@@ -1,10 +1,12 @@
+import crypto from 'node:crypto';
 import { logError } from '@utils/logHelpers';
+import type { APIContext } from 'astro';
 import { ChannelSchema } from 'src/schemas/ChannelSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { ZodError, z } from 'zod';
 import { serverDB } from '../../../firebase/server';
 
-export async function GET(): Promise<Response> {
+export async function GET({ request }: APIContext): Promise<Response> {
   try {
     const channelsRef = serverDB.collection('meta').doc('threads');
     const doc = await channelsRef.get();
@@ -26,12 +28,22 @@ export async function GET(): Promise<Response> {
     const clientEntries = channelsData.map(toClientEntry);
     const channels = ChannelsArraySchema.parse(clientEntries);
 
-    return new Response(JSON.stringify(channels), {
+    const body = JSON.stringify(channels);
+    const etag = crypto.createHash('sha1').update(body).digest('hex');
+
+    const ifNoneMatch = request.headers.get('if-none-match');
+
+    if (ifNoneMatch === etag) {
+      return new Response(null, { status: 304 });
+    }
+
+    return new Response(body, {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
         // Cache for 1 hour on the CDN, serve stale content while revalidating
         'Cache-Control': 's-maxage=3600, stale-while-revalidate',
+        ETag: etag,
       },
     });
   } catch (error) {

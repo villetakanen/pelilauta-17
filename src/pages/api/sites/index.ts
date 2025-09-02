@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import type { APIContext } from 'astro';
 import { type Site, siteFrom } from 'src/schemas/SiteSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
@@ -34,10 +35,21 @@ export async function GET({ request }: APIContext) {
       return b.flowTime - a.flowTime;
     });
 
-    return new Response(JSON.stringify(publicSites), {
+    const body = JSON.stringify(publicSites);
+    const etag = crypto.createHash('sha1').update(body).digest('hex');
+
+    const ifNoneMatch = request.headers.get('if-none-match');
+
+    if (ifNoneMatch === etag) {
+      return new Response(null, { status: 304 });
+    }
+
+    return new Response(body, {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
+        'Cache-Control': 's-maxage=180, stale-while-revalidate=600',
+        ETag: etag,
       },
     });
   } catch (e: unknown) {
