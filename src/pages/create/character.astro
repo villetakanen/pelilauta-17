@@ -1,13 +1,15 @@
 ---
+import CreateCharacterForm from '@components/svelte/characters/CreateCharacterForm.svelte';
 import { t } from 'src/utils/i18n';
-import CreateCharacterForm from '../../components/svelte/characters/CreateCharacterForm.svelte';
 import ModalPage from '../../layouts/ModalPage.astro';
 
+// Authentication is handled client-side within the CreateCharacterForm component,
+// as it's rendered with client:only.
 const title = `${t('app:shortname')} – ${t('characters:create.title')}`;
-const shortTitle = t('site:create.title');
+const shortTitle = t('characters:create.title');
 const siteKey = Astro.url.searchParams.get('siteKey') || '';
 ---
 
-<ModalPage title={title} shortTitle={shortTitle}>
+<ModalPage title={title} shortTitle={shortTitle} noSharing={true}>
   <CreateCharacterForm siteKey={siteKey} client:only="svelte" />
 </ModalPage>

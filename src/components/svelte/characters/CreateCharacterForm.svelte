@@ -96,13 +96,13 @@ async function onsubmit(e: Event) {
 
 <WithAuth {allow}>
   <div class="content-columns">
-    <section class="column">
+    <section class="column surface">
       <h1>{t('characters:create.title')}</h1>
       <p class="downscaled">
         {t('characters:create.description')}
         <a href="/docs/characters">{t('actions:learnMore')}</a>
       </p>
-      <form onsubmit={onsubmit}>
+      <form onsubmit={onsubmit} class="flex flex-col">
 
         <label>
           {t('entries:character.name')}

@@ -6,6 +6,7 @@ export const site: Locale = {
   },
   characters: {
     title: 'Characters',
+    empty: 'No characters have been added to the site',
   },
   handouts: {
     title: 'Secrets',

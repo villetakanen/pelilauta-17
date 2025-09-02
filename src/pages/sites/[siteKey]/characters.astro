@@ -81,10 +81,10 @@ const image = site.avatarURL || site.posterURL || site.backgroundURL;
         <CharacterCard character={character} client:only="svelte" />
       ))
     ) : (
-      <section class="secondary border-radius p-2 flex flex-column">
+      <section style="grid-column: 1/-1;" class="secondary surface flex items-center">
         <cn-icon noun="adventurer" xlarge></cn-icon>
         <p class="downscaled">
-          {t('entries:character.empty') || 'No characters found for this site.'}
+          {t('site:characters.empty') || 'No characters found for this site.'}
         </p>
       </section>
     )}

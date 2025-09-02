@@ -23,7 +23,7 @@ const visible = $derived.by(() => {
 {#if visible}
   <a
     href="/create/character?siteKey={site.key}"
-    class="fab"
+    class="fab button"
     aria-label={t('actions:create.character')}
   >
     <cn-icon noun="add" small></cn-icon>

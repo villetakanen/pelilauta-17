@@ -20,14 +20,14 @@ const visible = $derived.by(() => {
 {#if visible}
   <a
     href={`/sites/${site.key}/create/page`}
-    class="fab secondary small"
+    class="fab button small"
   >
     <cn-icon noun="add" small></cn-icon>
     <span class="sm-hidden">{t('actions:create.page')}</span>
   </a>
   <a
     href={`/sites/${site.key}/${pageKey}/edit`}
-    class="fab"
+    class="fab button"
   >
     <cn-icon noun="edit" small></cn-icon>
     <span class="sm-hidden">{t('actions:edit')}</span>
