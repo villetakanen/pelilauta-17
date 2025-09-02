@@ -1,6 +1,6 @@
+import crypto from 'node:crypto';
 import { getStore } from '@netlify/blobs';
 import type { APIContext } from 'astro';
-import crypto from 'crypto';
 import Parser from 'rss-parser';
 
 const ALLOWED_FEEDS = {
@@ -8,12 +8,17 @@ const ALLOWED_FEEDS = {
   roolipelitiedotus: 'https://roolipelitiedotus.fi/feed/',
 } as const;
 
+interface CachedRssData {
+  timestamp: number;
+  data: Parser.Item[];
+}
+
 async function getFromCache(feedKey: string) {
   const store = getStore('rss-cache');
   return await store.get(feedKey, { type: 'json' });
 }
 
-async function saveToCache(feedKey: string, data: any) {
+async function saveToCache(feedKey: string, data: Parser.Item[]) {
   const store = getStore('rss-cache');
   await store.setJSON(feedKey, {
     timestamp: Date.now(),
@@ -31,7 +36,7 @@ export async function GET({ params, request }: APIContext) {
   try {
     const cached = await getFromCache(feedKey);
     if (cached) {
-      const { timestamp, data } = cached as { timestamp: number; data: any };
+      const { timestamp, data } = cached as CachedRssData;
       const age = (Date.now() - timestamp) / 1000; // in seconds
       if (age < 1800) {
         // 30 minutes TTL
@@ -78,7 +83,7 @@ export async function GET({ params, request }: APIContext) {
 
     const cached = await getFromCache(feedKey);
     if (cached) {
-      const { data } = cached as { timestamp: number; data: any };
+      const { data } = cached as CachedRssData;
       return new Response(JSON.stringify(data), {
         status: 200, // Serve stale data with a 200
         headers: {
