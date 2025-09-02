@@ -69,24 +69,59 @@ Optimize the front page (`/`) performance on Netlify deployment with focus on re
 
 ### 2. Front Page Data Optimization
 
-#### A. Leverage Astro's server:defer for Independent Content Blocks
-Instead of consolidating APIs, optimize each content section independently:
-- **TopThreadsStream**: Core content, loads immediately 
-- **SyndicateStream**: Uses `server:defer` with cached RSS endpoints
-- **TopSitesStream**: Uses `server:defer` for better perceived performance
+#### A. Direct SSR for Core Content + Shared Libraries (Phase 3)
+**Priority: High** - Eliminate unnecessary API calls for SSR content
+
+Create shared server libraries that both SSR components and API routes can use:
+
+```typescript
+// src/lib/server/threads.ts
+export async function getRecentThreads(limit: number = 5): Promise<Thread[]> {
+  try {
+    const threadsRef = serverDB
+      .collection('threads')
+      .where('public', '==', true)
+      .orderBy('flowTime', 'desc')
+      .limit(limit);
+    
+    const snapshot = await threadsRef.get();
+    return snapshot.docs.map(doc => parseThread(toClientEntry(doc.data()), doc.id));
+  } catch (error) {
+    logError('getRecentThreads', 'Failed to fetch threads:', error);
+    return [];
+  }
+}
+
+// Frontend SSR: Direct Firebase access (faster)
+const threads = await getRecentThreads(5);
+
+// API routes: Use same library (consistency)
+export const GET = () => getRecentThreads(limit);
+```
+
+**Benefits:**
+- **Performance**: Eliminates HTTP round-trip overhead for SSR content
+- **Consistency**: Shared logic between SSR components and API routes  
+- **Maintainability**: Single source of truth for database queries
+- **Reliability**: Fewer network dependencies for core content
+
+#### B. Leverage Astro's server:defer for Secondary Content
+#### B. Leverage Astro's server:defer for Secondary Content
+Optimize each content section independently with the right loading strategy:
+- **TopThreadsStream**: Direct SSR with shared library (core content, loads immediately)
+- **SyndicateStream**: Uses `server:defer` with cached RSS endpoints  
+- **TopSitesStream**: Direct SSR with shared library (or `server:defer` based on priority)
 
 ```astro
-<!-- Optimized approach with independent caching -->
-<TopThreadsStream /> <!-- Critical, loads immediately -->
+<!-- Optimized approach with direct SSR for core content -->
+<TopThreadsStream /> <!-- Direct Firebase SSR, no API call -->
 
 <SyndicateStream server:defer>
   <OptimizedFallback slot="fallback" />
   <ErrorBoundary slot="error" />
 </SyndicateStream>
 
-<TopSitesStream server:defer>
-  <SitesLoadingSkeleton slot="fallback" />
-</TopSitesStream>
+<TopSitesStream /> <!-- Direct Firebase SSR, no API call -->
 ```
 
 **Benefits:**
@@ -216,17 +251,25 @@ export async function GET({ params }: APIContext) {
 ### Phase 2: External Content Caching (Sprint 1-2) 🚧
 - [x] Create `/api/external/rss/[feedKey].json` - Single DRY endpoint with whitelist
 - [ ] Implement Netlify Blob storage for RSS cache persistence
-- [ ] Add fallback mechanisms for external failures
+- [x] Add fallback mechanisms for external failures
 - [ ] Update `SyndicateStream.astro` to use cached endpoints (`/api/external/rss/myrrys.json`, `/api/external/rss/roolipelitiedotus.json`)
 - [ ] Optimize `server:defer` loading with proper timeouts and error boundaries
 
-### Phase 3: Bundle Optimization (Sprint 2)
+### Phase 3: Direct SSR + Shared Libraries (Sprint 2)
+- [ ] Create shared server libraries for data fetching (`src/lib/server/threads.ts`, `sites.ts`, `channels.ts`)
+- [ ] Update `TopThreadsStream.astro` to use direct Firebase SSR instead of API calls
+- [ ] Update `TopSitesStream.astro` to use direct Firebase SSR instead of API calls  
+- [ ] Refactor API routes to use shared libraries for consistency
+- [ ] Optimize database queries and add proper indexing
+- [ ] Add comprehensive error handling and logging to shared libraries
+
+### Phase 4: Bundle Optimization (Sprint 2)
 - [ ] Optimize Firebase SDK imports (target 310kB+ chunks)
 - [ ] Implement dynamic imports for non-critical Svelte components
 - [ ] Audit and remove unused dependencies from front page bundle
 - [ ] Optimize `FrontpageFabs.svelte` loading strategy
 
-### Phase 4: Progressive Enhancement (Sprint 2-3)
+### Phase 5: Progressive Enhancement (Sprint 2-3)
 - [ ] Enhance `server:defer` components with intelligent loading strategies
 - [ ] Implement timeout handling for deferred content blocks
 - [ ] Add performance monitoring for individual content sections
