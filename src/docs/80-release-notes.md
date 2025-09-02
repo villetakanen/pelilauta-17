@@ -8,6 +8,7 @@ noun: 'monsters'
 ### 18.0.x (ongoing)
 
 #### 18.0.1 (01.09.2025)
+- fix: font page caching and loading strategies updated for better UX and ADIT
 - fix: Move Sentry initialization to client-side and guard it for SSR/dev; uses dynamic import to avoid edge/deno conflicts
 - fix: Updated some FABs to use the 4.0+ design system classes
 - fix: Add and update some English and Finnish locale strings related to characters, tools and page UI
