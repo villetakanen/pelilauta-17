@@ -26,7 +26,18 @@ export async function GET({ request }: APIContext): Promise<Response> {
 
     const ChannelsArraySchema = z.array(ChannelSchema);
     const clientEntries = channelsData.map(toClientEntry);
-    const channels = ChannelsArraySchema.parse(clientEntries);
+
+    // Apply defaults for missing fields before parsing
+    const channelsWithDefaults = clientEntries.map((channel: unknown) => ({
+      ...(channel as Record<string, unknown>),
+      icon: (channel as Record<string, unknown>).icon || 'discussion',
+      description: (channel as Record<string, unknown>).description || '',
+      threadCount: (channel as Record<string, unknown>).threadCount || 0,
+      category: (channel as Record<string, unknown>).category || 'Pelilauta',
+      flowTime: (channel as Record<string, unknown>).flowTime || 0,
+    }));
+
+    const channels = ChannelsArraySchema.parse(channelsWithDefaults);
 
     const body = JSON.stringify(channels);
     const etag = crypto.createHash('sha1').update(body).digest('hex');
