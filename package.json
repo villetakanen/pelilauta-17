@@ -1,7 +1,7 @@
 {
   "name": "Pelilauta",
   "type": "module",
-  "version": "18.0.1",
+  "version": "18.0.2",
   "engines": {
     "node": ">=20.0.0"
   },
@@ -17,7 +17,8 @@
     "test:e2e": "NODE_ENV=development node e2e/init-test-db.js && NODE_ENV=development npx wait-on http://localhost:4321 && NODE_ENV=development playwright test",
     "test:e2e:debug": "NODE_ENV=development node e2e/init-test-db.js && NODE_ENV=development npx wait-on http://localhost:4321 && NODE_ENV=development playwright test --debug",
     "generateSW": "SW_DIST_PATH=dist workbox injectManifest workbox.config.cjs",
-    "backup:storage": "node tooling/backupStorage.js"
+    "backup:storage": "node tooling/backupStorage.js",
+    "postbuild": "node tooling/warm-cache.mjs"
   },
   "dependencies": {
     "@11thdeg/cn-editor": "4.0.0-beta.13",
@@ -29,6 +30,7 @@
     "@astrojs/svelte": "^7.1.0",
     "@atproto/api": "^0.15.14",
     "@nanostores/persistent": "^1.1.0",
+    "@netlify/blobs": "^10.0.10",
     "@sentry/browser": "^10.8.0",
     "@vercel/analytics": "^1.5.0",
     "astro": "^5.9.2",

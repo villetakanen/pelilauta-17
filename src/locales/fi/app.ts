@@ -8,6 +8,10 @@ export const app = {
   title: 'Pelilauta 2 - Versio 16',
   shortname: 'Pelilauta 2',
   mekanismi: 'Mekanismi',
+  errors: {
+    fetchingThreads:
+      'Keskustelujen lataaminen epäonnistui. Yritä päivittää sivu.',
+  },
   meta: {
     title: 'Pelilauta 2',
     description:

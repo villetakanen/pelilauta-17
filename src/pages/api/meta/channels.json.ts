@@ -1,10 +1,12 @@
+import crypto from 'node:crypto';
 import { logError } from '@utils/logHelpers';
+import type { APIContext } from 'astro';
 import { ChannelSchema } from 'src/schemas/ChannelSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { ZodError, z } from 'zod';
 import { serverDB } from '../../../firebase/server';
 
-export async function GET(): Promise<Response> {
+export async function GET({ request }: APIContext): Promise<Response> {
   try {
     const channelsRef = serverDB.collection('meta').doc('threads');
     const doc = await channelsRef.get();
@@ -24,14 +26,35 @@ export async function GET(): Promise<Response> {
 
     const ChannelsArraySchema = z.array(ChannelSchema);
     const clientEntries = channelsData.map(toClientEntry);
-    const channels = ChannelsArraySchema.parse(clientEntries);
 
-    return new Response(JSON.stringify(channels), {
+    // Apply defaults for missing fields before parsing
+    const channelsWithDefaults = clientEntries.map((channel: unknown) => ({
+      ...(channel as Record<string, unknown>),
+      icon: (channel as Record<string, unknown>).icon || 'discussion',
+      description: (channel as Record<string, unknown>).description || '',
+      threadCount: (channel as Record<string, unknown>).threadCount || 0,
+      category: (channel as Record<string, unknown>).category || 'Pelilauta',
+      flowTime: (channel as Record<string, unknown>).flowTime || 0,
+    }));
+
+    const channels = ChannelsArraySchema.parse(channelsWithDefaults);
+
+    const body = JSON.stringify(channels);
+    const etag = crypto.createHash('sha1').update(body).digest('hex');
+
+    const ifNoneMatch = request.headers.get('if-none-match');
+
+    if (ifNoneMatch === etag) {
+      return new Response(null, { status: 304 });
+    }
+
+    return new Response(body, {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
         // Cache for 1 hour on the CDN, serve stale content while revalidating
         'Cache-Control': 's-maxage=3600, stale-while-revalidate',
+        ETag: etag,
       },
     });
   } catch (error) {

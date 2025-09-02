@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { authenticate } from './authenticate-e2e';
+import { waitForAuthState } from './wait-for-auth';
 
 test.setTimeout(120000); // Increase timeout for authentication and navigation
 
@@ -12,22 +13,30 @@ test('can create a thread successfully', async ({ page }) => {
   });
 
   page.on('response', (response) => {
-    if (response.url().includes('/api/threads/create')) {
-      console.log('API Response:', response.status(), response.url());
+    const url = response.url();
+    const status = response.status();
+
+    if (status >= 400) {
+      console.log(`HTTP Error: ${status} - ${url}`);
+    }
+
+    if (url.includes('/api/threads/create')) {
+      console.log('API Response:', status, url);
+    }
+  });
+
+  // Monitor all network requests to see what's failing
+  page.on('request', (request) => {
+    if (request.url().includes('/api/')) {
+      console.log(`API Request: ${request.method()} ${request.url()}`);
     }
   });
 
   await authenticate(page);
   await page.goto('http://localhost:4321/create/thread');
 
-  // Wait for the page to load and authentication state to be ready
-  await page.waitForLoadState('domcontentloaded');
-
-  // Verify user is still authenticated on the create thread page
-  await expect(page.getByTestId('setting-navigation-button')).toBeVisible();
-
-  // Wait a bit more for auth state to fully propagate
-  await page.waitForTimeout(2000);
+  // Use the robust auth state waiting mechanism
+  await waitForAuthState(page, 15000);
 
   // Expect the save button to exist, and be disabled initially
   await expect(page.getByTestId('send-thread-button')).toBeDisabled();

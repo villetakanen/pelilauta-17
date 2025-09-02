@@ -22,7 +22,24 @@ const channel = Astro.url.searchParams.get('channel') || undefined;
 const channelsResponse = await fetch(
   `${Astro.url.origin}/api/meta/channels.json`,
 );
+
+if (!channelsResponse.ok) {
+  console.error(
+    'Failed to fetch channels:',
+    channelsResponse.status,
+    channelsResponse.statusText,
+  );
+  return Astro.redirect('/channels?error=channels-unavailable');
+}
+
 const channelsData = await channelsResponse.json();
+
+// Validate that we received an array
+if (!Array.isArray(channelsData)) {
+  console.error('Channels API returned non-array data:', channelsData);
+  return Astro.redirect('/channels?error=channels-invalid');
+}
+
 const channels = channelsData.map((channel: Partial<Channel>) =>
   ChannelSchema.parse(channel),
 );

@@ -72,6 +72,7 @@ try {
 }
 ---
 
+{!hasError && (
 <section class="content-listing surface">
   <header>
     <nav>
@@ -97,7 +98,7 @@ try {
   </header>
 
   <div class="listing-items">
-    { threads.map((thread: Thread) => <ThreadListItem thread={thread} />)}
+    {threads.map((thread: Thread) => <ThreadListItem thread={thread} />)}
   </div>
 
   <aside>
@@ -111,5 +112,5 @@ try {
         hasNextPage={hasNextPage}
       />
   </footer>
-
 </section>
+)}
