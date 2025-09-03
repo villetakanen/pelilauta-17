@@ -28,8 +28,19 @@ export const ChannelSchema = z.object({
 
 export const ChannelsSchema = z.array(ChannelSchema);
 
+// Channel with additional statistics about latest threads
+export const ChannelWithStatsSchema = ChannelSchema.extend({
+  stats: z.object({
+    latestThread: z.nullable(z.any()), // Using any for Thread to avoid circular dependency
+    latestUpdatedThread: z.nullable(z.any()), // Same as above
+  }),
+});
+
+export const ChannelsWithStatsSchema = z.array(ChannelWithStatsSchema);
+
 export type Channel = z.infer<typeof ChannelSchema>;
 export type Channels = z.infer<typeof ChannelsSchema>;
+export type ChannelWithStats = z.infer<typeof ChannelWithStatsSchema>;
 
 export function parseChannel(c: Partial<Channel>) {
   return ChannelSchema.parse({

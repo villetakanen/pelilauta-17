@@ -1,25 +1,25 @@
 ---
-import type { Channel } from 'src/schemas/ChannelSchema';
+import type { ChannelWithStats } from 'src/schemas/ChannelSchema';
 import ChannelListInfoCell from './channelList/ChannelListInfoCell.astro';
 
 interface Props {
-  channel: Channel;
+  channelWithStats: ChannelWithStats;
 }
-const { channel } = Astro.props;
+const { channelWithStats } = Astro.props;
 ---
 <article class="cols-2">
   <div class="surface flex">
-    <cn-icon noun={channel.icon} style="flex: 0 0 auto"></cn-icon>
+    <cn-icon noun={channelWithStats.icon} style="flex: 0 0 auto"></cn-icon>
     <div>
       <h3 class="text-h5 m-0">
-        <a href={`/channels/${channel.slug}/1`}>
-          {channel.name}
+        <a href={`/channels/${channelWithStats.slug}/1`}>
+          {channelWithStats.name}
         </a>
       </h3>
-      <p class="text-small">{channel.description}</p>
+      <p class="text-small">{channelWithStats.description}</p>
     </div>
   </div>
   <div class="surface">
-    <ChannelListInfoCell {channel} />
+    <ChannelListInfoCell channelWithStats={channelWithStats} />
   </div>
 </article>
