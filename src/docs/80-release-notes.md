@@ -6,6 +6,10 @@ noun: 'monsters'
 ## Version 18
 
 ### 18.0.x (ongoing)
+- fix: Optimized font loading for better load-times.
+- fix: Eliminated N+1 query problem on channels page by implementing aggregated API endpoint
+- fix: Added E2E tests covering channels page functionality, performance, and error scenarios
+
 
 #### 18.0.1 (01.09.2025)
 - fix: font page caching and loading strategies updated for better UX and ADIT
