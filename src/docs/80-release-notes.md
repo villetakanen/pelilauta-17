@@ -6,6 +6,7 @@ noun: 'monsters'
 ## Version 18
 
 ### 18.0.x (ongoing)
+- fix: Cyan Design System beta updates and fixes
 - fix: Optimized font loading for better load-times.
 - fix: Eliminated N+1 query problem on channels page by implementing aggregated API endpoint
 - fix: Added E2E tests covering channels page functionality, performance, and error scenarios
