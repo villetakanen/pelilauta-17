@@ -1,36 +1,32 @@
 import type { APIContext } from 'astro';
-import { parseSite, SITES_COLLECTION_NAME } from 'src/schemas/SiteSchema';
-import { toClientEntry } from 'src/utils/client/entryUtils';
-import { serverDB } from '../../../../firebase/server';
+import { getSiteData } from '../../../../firebase/server/sites';
 
-export async function GET({ params }: APIContext): Promise<Response> {
+export async function GET({ params, request }: APIContext): Promise<Response> {
   const { siteKey } = params;
-
   if (!siteKey) {
     return new Response('Invalid request', { status: 400 });
   }
 
-  const siteDoc = await serverDB
-    .collection(SITES_COLLECTION_NAME)
-    .doc(siteKey)
-    .get();
-  const data = siteDoc.data();
+  const site = await getSiteData(siteKey);
 
-  if (!siteDoc.exists || !data) {
+  if (!site) {
     return new Response('Site not found', { status: 404 });
   }
 
-  try {
-    const page = parseSite(toClientEntry(data), siteKey);
-    return new Response(JSON.stringify(page), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        // Vercel cache control, 5 seconds
-        // 'Cache-Control': 's-maxage=5, stale-while-revalidate',
-      },
-    });
-  } catch (_err: unknown) {
-    return new Response('Invalid site data', { status: 500 });
+  // Generate ETag based on site's updatedAt timestamp
+  const etag = `"${site.updatedAt}"`;
+
+  // Check if client has current version
+  if (request.headers.get('If-None-Match') === etag) {
+    return new Response(null, { status: 304 });
   }
+
+  return new Response(JSON.stringify(site), {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json',
+      ETag: etag,
+      'Cache-Control': 's-maxage=300, stale-while-revalidate=1800', // 5min cache
+    },
+  });
 }

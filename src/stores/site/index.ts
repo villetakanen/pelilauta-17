@@ -1,33 +1,135 @@
-import { atom, onMount } from 'nanostores';
+import { parseSite, type Site } from '@schemas/SiteSchema';
+import { uid } from '@stores/session';
+import { toClientEntry } from '@utils/client/entryUtils';
+import { logDebug, logError, logWarn } from '@utils/logHelpers';
+import { atom, onMount, onSet } from 'nanostores';
 import { updateSite } from 'src/firebase/client/site/updateSite';
-import {
-  parseSite,
-  SITES_COLLECTION_NAME,
-  type Site,
-} from 'src/schemas/SiteSchema';
-import { toClientEntry } from 'src/utils/client/entryUtils';
-import { logDebug, logWarn } from 'src/utils/logHelpers';
 
 export const site = atom<Site | null>(null);
+export const isPreSeeded = atom<boolean>(false);
 
+let unsubscribe: (() => void) | null = null;
+let currentSubscriptionKey: string | null = null;
+
+// Runs when the store gets its first subscriber on the client
 onMount(site, () => {
-  const key = site.get()?.key;
-  if (!key) {
-    return;
-  }
-  subscribe(key);
-});
+  logDebug('siteStore:onMount', 'Site store is now active on the client.');
 
-async function subscribe(key: string) {
-  const { db } = await import('../../firebase/client');
-  const { doc, onSnapshot } = await import('firebase/firestore');
-  onSnapshot(doc(db, SITES_COLLECTION_NAME, key), (doc) => {
-    if (doc.exists()) {
-      site.set(parseSite(toClientEntry(doc.data()), key));
-    } else {
-      site.set(null);
+  // Subscribe to auth changes to dynamically manage real-time updates
+  const unbindUid = uid.subscribe((currentUid) => {
+    const currentSite = site.get();
+    if (currentSite) {
+      handleSubscription(currentSite, !!currentUid);
     }
   });
+
+  // Cleanup when the store is no longer used
+  return () => {
+    logDebug('siteStore:onMount', 'Site store cleanup initiated.');
+    unbindUid();
+    cleanupSubscription();
+  };
+});
+
+// Runs every time `site.set()` is called
+onSet(site, ({ newValue }) => {
+  const currentUid = uid.get();
+  handleSubscription(newValue, !!currentUid);
+});
+
+async function handleSubscription(
+  currentSite: Site | null,
+  isAuthenticated: boolean,
+) {
+  // Clean up previous subscription if site changed or user logged out
+  if (
+    currentSubscriptionKey &&
+    (!currentSite || currentSite.key !== currentSubscriptionKey)
+  ) {
+    cleanupSubscription();
+  }
+
+  // Only subscribe if authenticated, site exists, and not already subscribed
+  if (
+    !isAuthenticated ||
+    !currentSite ||
+    currentSubscriptionKey === currentSite.key
+  ) {
+    return;
+  }
+
+  try {
+    logDebug(
+      'siteStore:handleSubscription',
+      'Starting real-time subscription for site:',
+      currentSite.key,
+    );
+
+    // Dynamic Firebase imports per coding guidelines
+    const [{ db }, { doc, onSnapshot }] = await Promise.all([
+      import('@firebase/client'),
+      import('firebase/firestore'),
+    ]);
+
+    currentSubscriptionKey = currentSite.key;
+
+    unsubscribe = onSnapshot(
+      doc(db, 'sites', currentSite.key),
+      (doc) => {
+        if (doc.exists()) {
+          const updatedSite = parseSite(
+            toClientEntry(doc.data()),
+            currentSite.key,
+          );
+
+          // Prevent infinite loops by checking for actual changes
+          const currentSiteData = site.get();
+          if (
+            !currentSiteData ||
+            JSON.stringify(currentSiteData) !== JSON.stringify(updatedSite)
+          ) {
+            logDebug(
+              'siteStore',
+              'Real-time update received for site:',
+              currentSite.key,
+            );
+            site.set(updatedSite);
+          }
+        } else {
+          logDebug('siteStore', 'Site document deleted:', currentSite.key);
+          site.set(null);
+        }
+      },
+      (error) => {
+        logError(
+          'siteStore:subscription',
+          'Firestore subscription error:',
+          error,
+        );
+        cleanupSubscription();
+      },
+    );
+  } catch (error) {
+    logError(
+      'siteStore:handleSubscription',
+      'Failed to setup subscription:',
+      error,
+    );
+    cleanupSubscription();
+  }
+}
+
+function cleanupSubscription() {
+  if (unsubscribe) {
+    logDebug(
+      'siteStore:cleanup',
+      'Cleaning up subscription for:',
+      currentSubscriptionKey,
+    );
+    unsubscribe();
+    unsubscribe = null;
+  }
+  currentSubscriptionKey = null;
 }
 
 export async function update(data: Partial<Site>) {
