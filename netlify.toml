@@ -20,6 +20,13 @@
 # More specific API routes first
 
 [[headers]]
+  for = "/sites/*"
+  [headers.values]
+    Cache-Control = "s-maxage=120, stale-while-revalidate=600"
+    # 2 min cache, 10 min stale-while-revalidate for site pages
+    # Short cache for authenticated users with real-time updates
+
+[[headers]]
   for = "/api/meta/*"
   [headers.values]
     Cache-Control = "s-maxage=3600, stale-while-revalidate=86400"

@@ -1,5 +1,4 @@
 ---
-import Fonts from './Fonts.astro';
 import '../../../overrides.css'; // Import your custom CSS
 import '@11thdeg/cyan-css';
 
@@ -25,8 +24,6 @@ const canonicalURL = Astro.url.origin;
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{metaTitle}</title>
-
-  <Fonts />
 
   <link rel="manifest" href="/manifest.webmanifest" />
   <link rel="canonical" href={canonicalURL} />

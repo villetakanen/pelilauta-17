@@ -43,6 +43,13 @@ const page = PageSchema.parse(await pageResponse.json());
 const title = `${page.name || pageKey} – ${site.name}`;
 const noun = systemToNoun(site.system);
 const image = site.avatarURL || site.posterURL || site.backgroundURL;
+
+// Set cache headers for optimal performance
+// Similar to site frontpage - short cache for real-time updates
+Astro.response.headers.set(
+  'Cache-Control',
+  's-maxage=120, stale-while-revalidate=600',
+); // 2 min cache, 10 min stale-while-revalidate
 ---
 <PageWithTray title={title} description={site.description} noun={noun} image={image}>
   <SiteTray slot="app-tray" site={site}/>

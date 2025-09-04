@@ -1,20 +1,9 @@
 <script lang="ts">
-import type { Site } from 'src/schemas/SiteSchema';
-import { site } from '../../../../stores/site';
 import PreviewImport from './PreviewImport.svelte';
 import UploadFilesForm from './UploadFilesForm.svelte';
 
-interface Props {
-  site: Site;
-}
-
-const { site: initialSite }: Props = $props();
-
-$effect(() => {
-  // Ensure the site store is set with the initial site data
-  // when the component is mounted
-  site.set(initialSite);
-});
+// The site store is now initialized by the SiteStoreInitializer component
+// on the page level. This component's children will react to the store.
 </script>
 <div class="content-columns">
   <UploadFilesForm />
