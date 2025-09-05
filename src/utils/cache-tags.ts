@@ -16,16 +16,16 @@ export interface CacheTagsOptions {
  */
 export function generatePageCacheTags(options: CacheTagsOptions): string[] {
   const { siteKey, pageKey, isHomepage = false } = options;
-  
+
   const tags = [
-    `page-${siteKey}-${pageKey}`,  // Page-specific tag
-    `site-${siteKey}`,             // Site-wide tag
+    `page-${siteKey}-${pageKey}`, // Page-specific tag
+    `site-${siteKey}`, // Site-wide tag
   ];
-  
+
   if (isHomepage) {
-    tags.push(`homepage-${siteKey}`);  // Homepage-specific tag
+    tags.push(`homepage-${siteKey}`); // Homepage-specific tag
   }
-  
+
   return tags;
 }
 
@@ -35,7 +35,10 @@ export function generatePageCacheTags(options: CacheTagsOptions): string[] {
  * @param homepageKey Homepage page key
  * @returns Array of cache tags for the site homepage
  */
-export function generateSiteHomepageCacheTags(siteKey: string, homepageKey: string): string[] {
+export function generateSiteHomepageCacheTags(
+  siteKey: string,
+  homepageKey: string,
+): string[] {
   return generatePageCacheTags({
     siteKey,
     pageKey: homepageKey,
@@ -56,14 +59,17 @@ export function setCacheTagHeaders(response: Response, tags: string[]): void {
 
 /**
  * Set optimized cache control headers based on content type
- * @param response Astro response object  
+ * @param response Astro response object
  * @param isHomepage Whether this is homepage content (gets shorter cache)
  */
-export function setCacheControlHeaders(response: Response, isHomepage: boolean = false): void {
-  const cacheControl = isHomepage 
-    ? 's-maxage=60, stale-while-revalidate=300'    // 1min cache for homepage
+export function setCacheControlHeaders(
+  response: Response,
+  isHomepage: boolean = false,
+): void {
+  const cacheControl = isHomepage
+    ? 's-maxage=60, stale-while-revalidate=300' // 1min cache for homepage
     : 's-maxage=300, stale-while-revalidate=1800'; // 5min cache for regular pages
-  
+
   response.headers.set('Cache-Control', cacheControl);
 }
 
@@ -72,7 +78,10 @@ export function setCacheControlHeaders(response: Response, isHomepage: boolean =
  * @param response Astro response object
  * @param options Cache tag options
  */
-export function applyCacheStrategy(response: Response, options: CacheTagsOptions): void {
+export function applyCacheStrategy(
+  response: Response,
+  options: CacheTagsOptions,
+): void {
   const tags = generatePageCacheTags(options);
   setCacheTagHeaders(response, tags);
   setCacheControlHeaders(response, options.isHomepage);

@@ -6,9 +6,9 @@ import PageFabs from '../../../components/svelte/sites/PageFabs.svelte';
 import SiteStoreInitializer from '../../../components/svelte/sites/SiteStoreInitializer.svelte';
 import { getPageData, getSiteData } from '../../../firebase/server/sites';
 import PageWithTray from '../../../layouts/PageWithTray.astro';
+import { setPageCacheHeaders } from '../../../utils/cache/netlify-cache-tags';
 import { logError } from '../../../utils/logHelpers';
 import { systemToNoun } from '../../../utils/schemaHelpers';
-import { setPageCacheHeaders } from '../../../utils/cache/netlify-cache-tags';
 
 const { siteKey: siteKeyParam } = Astro.params;
 const siteKey = siteKeyParam || 'mekanismi'; // This should not happen, but just in case

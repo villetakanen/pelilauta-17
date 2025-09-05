@@ -73,7 +73,12 @@ async function handleSubmission(event: Event) {
   try {
     await submitPageUpdate(page, changes);
     pushSessionSnack(t('site:snacks.pageUpdated'));
-    window.location.href = `/sites/${site.key}/${page.key}`;
+    const slug = `/sites/${site.key}/${page.key}`;
+    const flowtime = Date.now();
+
+    // We have updated the page, asking to update subscriber
+    // flowtime on next load (and bypass cache)
+    window.location.href = `${slug}?flowtime=${flowtime}`;
   } catch (error) {
     pushSnack(t('snacks:pageUpdateError'));
     logError('Error updating page', error);

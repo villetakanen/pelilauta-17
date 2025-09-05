@@ -1,6 +1,6 @@
 /**
  * Netlify Cache Purging Service
- * 
+ *
  * Provides automatic cache invalidation for Netlify CDN using cache tags and URLs.
  * This service integrates with content update workflows to ensure users always
  * see fresh content immediately after changes.
@@ -36,19 +36,27 @@ export class NetlifyCachePurger {
     this.apiToken = import.meta.env.NETLIFY_PURGE_TOKEN;
 
     if (!this.siteId) {
-      throw new Error('NETLIFY_SITE_ID environment variable is required for cache purging');
+      throw new Error(
+        'NETLIFY_SITE_ID environment variable is required for cache purging',
+      );
     }
 
     if (!this.apiToken) {
-      throw new Error('NETLIFY_PURGE_TOKEN environment variable is required for cache purging');
+      throw new Error(
+        'NETLIFY_PURGE_TOKEN environment variable is required for cache purging',
+      );
     }
 
-    logDebug('NetlifyCachePurger', 'Initialized with site ID:', this.siteId.substring(0, 8) + '...');
+    logDebug(
+      'NetlifyCachePurger',
+      'Initialized with site ID:',
+      `${this.siteId.substring(0, 8)}...`,
+    );
   }
 
   /**
    * Purge cache by tags
-   * 
+   *
    * @param tags Array of cache tags to purge
    * @returns Promise<PurgeResult> Result of the purge operation
    */
@@ -67,7 +75,7 @@ export class NetlifyCachePurger {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiToken}`,
+          Authorization: `Bearer ${this.apiToken}`,
         },
         body: JSON.stringify({
           site_id: this.siteId,
@@ -80,7 +88,7 @@ export class NetlifyCachePurger {
       if (!response.ok) {
         const errorMessage = `Failed to purge cache tags (${response.status}): ${responseText}`;
         logError('NetlifyCachePurger', errorMessage);
-        
+
         return {
           success: false,
           message: errorMessage,
@@ -88,8 +96,12 @@ export class NetlifyCachePurger {
         };
       }
 
-      logDebug('NetlifyCachePurger', 'Successfully purged cache for tags:', tags);
-      
+      logDebug(
+        'NetlifyCachePurger',
+        'Successfully purged cache for tags:',
+        tags,
+      );
+
       return {
         success: true,
         message: 'Cache purged successfully',
@@ -98,7 +110,7 @@ export class NetlifyCachePurger {
     } catch (error) {
       const errorMessage = `Cache purge error: ${error instanceof Error ? error.message : String(error)}`;
       logError('NetlifyCachePurger', errorMessage, error);
-      
+
       return {
         success: false,
         message: errorMessage,
@@ -109,7 +121,7 @@ export class NetlifyCachePurger {
 
   /**
    * Purge cache by URLs
-   * 
+   *
    * @param urls Array of URLs to purge from cache
    * @returns Promise<PurgeResult> Result of the purge operation
    */
@@ -128,7 +140,7 @@ export class NetlifyCachePurger {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiToken}`,
+          Authorization: `Bearer ${this.apiToken}`,
         },
         body: JSON.stringify({
           site_id: this.siteId,
@@ -141,7 +153,7 @@ export class NetlifyCachePurger {
       if (!response.ok) {
         const errorMessage = `Failed to purge cache URLs (${response.status}): ${responseText}`;
         logError('NetlifyCachePurger', errorMessage);
-        
+
         return {
           success: false,
           message: errorMessage,
@@ -149,8 +161,12 @@ export class NetlifyCachePurger {
         };
       }
 
-      logDebug('NetlifyCachePurger', 'Successfully purged cache for URLs:', urls);
-      
+      logDebug(
+        'NetlifyCachePurger',
+        'Successfully purged cache for URLs:',
+        urls,
+      );
+
       return {
         success: true,
         message: 'Cache purged successfully',
@@ -159,7 +175,7 @@ export class NetlifyCachePurger {
     } catch (error) {
       const errorMessage = `URL cache purge error: ${error instanceof Error ? error.message : String(error)}`;
       logError('NetlifyCachePurger', errorMessage, error);
-      
+
       return {
         success: false,
         message: errorMessage,
@@ -170,16 +186,20 @@ export class NetlifyCachePurger {
 
   /**
    * Purge cache for a specific page update
-   * 
+   *
    * This is a convenience method that handles both tag-based and URL-based purging
    * for page content updates, with special handling for homepage changes.
-   * 
+   *
    * @param siteKey The site key
    * @param pageKey The page key
    * @param isHomepage Whether this page is the site homepage
    * @returns Promise<PurgeResult[]> Results of all purge operations
    */
-  async purgePageCache(siteKey: string, pageKey: string, isHomepage: boolean = false): Promise<PurgeResult[]> {
+  async purgePageCache(
+    siteKey: string,
+    pageKey: string,
+    isHomepage: boolean = false,
+  ): Promise<PurgeResult[]> {
     const results: PurgeResult[] = [];
 
     // Build cache tags for this page
@@ -204,12 +224,13 @@ export class NetlifyCachePurger {
     results.push(urlResult);
 
     // Log summary
-    const successfulOperations = results.filter(r => r.success).length;
+    const successfulOperations = results.filter((r) => r.success).length;
     const totalOperations = results.length;
-    
-    logDebug('NetlifyCachePurger', 
-      `Page cache purge completed: ${successfulOperations}/${totalOperations} operations successful`, 
-      { siteKey, pageKey, isHomepage, tags, urls }
+
+    logDebug(
+      'NetlifyCachePurger',
+      `Page cache purge completed: ${successfulOperations}/${totalOperations} operations successful`,
+      { siteKey, pageKey, isHomepage, tags, urls },
     );
 
     return results;
@@ -217,7 +238,7 @@ export class NetlifyCachePurger {
 
   /**
    * Check if the cache purger is properly configured
-   * 
+   *
    * @returns boolean True if properly configured
    */
   isConfigured(): boolean {
@@ -226,10 +247,14 @@ export class NetlifyCachePurger {
 
   /**
    * Get configuration status for debugging
-   * 
+   *
    * @returns object Configuration status
    */
-  getConfigStatus(): { configured: boolean; siteId: boolean; apiToken: boolean } {
+  getConfigStatus(): {
+    configured: boolean;
+    siteId: boolean;
+    apiToken: boolean;
+  } {
     return {
       configured: this.isConfigured(),
       siteId: !!this.siteId,

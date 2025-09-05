@@ -37,7 +37,11 @@ export async function updateSite(
     } catch (error) {
       // Cache purging failures should not block site updates
       const { logDebug } = await import('../../../utils/logHelpers');
-      logDebug('updateSite', 'Cache purging failed but site update succeeded', error);
+      logDebug(
+        'updateSite',
+        'Cache purging failed but site update succeeded',
+        error,
+      );
     }
   }
 

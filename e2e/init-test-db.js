@@ -110,7 +110,8 @@ const testPage = {
   siteKey: testSite.key,
   name: 'Test Page',
   createdAt: FieldValue.serverTimestamp(),
-  markdownContent: "# Test Page\n\nThis is a regular test page for cache header testing.",
+  markdownContent:
+    '# Test Page\n\nThis is a regular test page for cache header testing.',
   owners: ['e2e-test-owner', 'H3evfU7BDmec9KkotRiTV41YECg1'],
   category: 'alpha',
   tags: ['e2e', 'test', 'cache'],

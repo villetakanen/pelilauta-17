@@ -4,10 +4,13 @@ import { logDebug, logWarn } from '../../../utils/logHelpers';
  * Client-side helper for triggering server-side cache purging
  * when page content is updated.
  */
-export async function purgeCacheForPage(siteKey: string, pageKey: string): Promise<void> {
+export async function purgeCacheForPage(
+  siteKey: string,
+  pageKey: string,
+): Promise<void> {
   try {
     const { authedPost } = await import('../apiClient');
-    
+
     logDebug('purgeCacheForPage', 'Requesting cache purge', {
       siteKey,
       pageKey,
@@ -41,7 +44,7 @@ export async function purgeCacheForPage(siteKey: string, pageKey: string): Promi
 export async function purgeCacheForSite(siteKey: string): Promise<void> {
   try {
     const { authedPost } = await import('../apiClient');
-    
+
     logDebug('purgeCacheForSite', 'Requesting site-wide cache purge', {
       siteKey,
     });

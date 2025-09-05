@@ -84,6 +84,10 @@ export async function updatePage(
     await purgeCacheForPage(siteKey, pageKey);
   } catch (error) {
     // Cache purging failures should not block page updates
-    logDebug('updatePage', 'Cache purging failed but page update succeeded', error);
+    logDebug(
+      'updatePage',
+      'Cache purging failed but page update succeeded',
+      error,
+    );
   }
 }
