@@ -4,7 +4,7 @@ import { authenticate } from './authenticate-e2e';
 test.setTimeout(120000); // Increase timeout for authentication and navigation
 
 test.describe('Site Page Loading and Performance', () => {
-  test('Site page has proper cache headers for hybrid model', async ({
+  test('Site page has proper cache headers and tags for Netlify purging', async ({
     page,
   }) => {
     // Navigate to the e2e test site home page and check response headers
@@ -12,13 +12,44 @@ test.describe('Site Page Loading and Performance', () => {
       'http://localhost:4321/sites/e2e-test-site',
     );
 
-    // Verify cache headers are set appropriately for hybrid SSR + real-time model
+    // Verify cache headers are set appropriately for homepage
     const cacheControl = response?.headers()['cache-control'];
-    expect(cacheControl).toContain('s-maxage=120'); // 2 minute cache
-    expect(cacheControl).toContain('stale-while-revalidate=600'); // 10 minute stale
+    expect(cacheControl).toContain('s-maxage=60'); // 1 minute cache for homepage
+    expect(cacheControl).toContain('stale-while-revalidate=300'); // 5 minute stale
+
+    // Verify cache tags are present for Netlify cache purging
+    const cacheTag = response?.headers()['cache-tag'];
+    expect(cacheTag).toBeTruthy();
+    expect(cacheTag).toContain('site-e2e-test-site'); // Site-wide tag
+    expect(cacheTag).toContain('homepage-e2e-test-site'); // Homepage-specific tag
+    expect(cacheTag).toMatch(/page-e2e-test-site-[\w\-]+/); // Page-specific tag pattern
 
     // Verify the page loads successfully
     await expect(page.locator('main')).toBeVisible();
+  });
+
+  test('Site page cache tags for regular pages', async ({ page }) => {
+    // Navigate to a specific page (not homepage)
+    const response = await page.goto(
+      'http://localhost:4321/sites/e2e-test-site/test-page',
+    );
+
+    // Verify the page exists and loads successfully
+    expect(response?.status()).toBe(200);
+    
+    // Verify cache headers for regular pages
+    const cacheControl = response?.headers()['cache-control'];
+    expect(cacheControl).toContain('s-maxage=300'); // 5 minute cache for regular pages
+    expect(cacheControl).toContain('stale-while-revalidate=1800'); // 30 minute stale
+
+    // Verify cache tags for regular pages
+    const cacheTag = response?.headers()['cache-tag'];
+    expect(cacheTag).toBeTruthy();
+    expect(cacheTag).toContain('page-e2e-test-site-test-page'); // Page-specific tag
+    expect(cacheTag).toContain('site-e2e-test-site'); // Site-wide tag
+    
+    // Regular pages should NOT have homepage tag
+    expect(cacheTag).not.toContain('homepage-e2e-test-site');
   });
 
   test('Site page loads with SSR data and initializes store', async ({
@@ -149,9 +180,14 @@ test.describe('Site Page Loading and Performance', () => {
 
     // Verify store was initialized (should see debug messages if logging is enabled)
     // This is mainly to ensure the SiteStoreInitializer component executed
-    // Note: This assertion might not always pass if debug logging is disabled
-    // The key is that the page loads without errors, indicating proper store initialization
-    expect(page.locator('main')).toBeVisible();
+    // Note: The key is that the page loads without errors, indicating proper store initialization
+    
+    // Test passes if main content is visible (store initialization succeeded)
+    const mainContent = page.locator('main');
+    await expect(mainContent).toBeVisible();
+    
+    // Optionally verify some content is present
+    await expect(mainContent).toContainText(/\w+/); // Should contain some text content
   });
 
   test('Site navigation preserves store state', async ({ page }) => {

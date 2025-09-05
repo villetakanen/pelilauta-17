@@ -43,4 +43,15 @@ export async function setPage(
   );
   await updatePageRef(updatedPage);
   await updatePageTags(updatedPage);
+
+  // Trigger cache purging for the SSR page routes
+  // This is done asynchronously to avoid blocking the update operation
+  try {
+    const { purgeCacheForPage } = await import('../cache/purgeCacheHelpers');
+    await purgeCacheForPage(siteKey, key);
+  } catch (error) {
+    // Cache purging failures should not block page updates
+    const { logDebug } = await import('../../../utils/logHelpers');
+    logDebug('setPage', 'Cache purging failed but page update succeeded', error);
+  }
 }

@@ -26,5 +26,20 @@ export async function updateSite(
   const updateData = toFirestoreEntry(site, { silent });
 
   // Update the site doc
-  return updateDoc(siteDoc, updateData);
+  const updateResult = updateDoc(siteDoc, updateData);
+
+  // Trigger site-wide cache purging for the SSR pages
+  // This is done asynchronously to avoid blocking the update operation
+  if (!silent) {
+    try {
+      const { purgeCacheForSite } = await import('../cache/purgeCacheHelpers');
+      await purgeCacheForSite(site.key);
+    } catch (error) {
+      // Cache purging failures should not block site updates
+      const { logDebug } = await import('../../../utils/logHelpers');
+      logDebug('updateSite', 'Cache purging failed but site update succeeded', error);
+    }
+  }
+
+  return updateResult;
 }

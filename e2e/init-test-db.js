@@ -104,6 +104,25 @@ await serverDB
   .set(testSiteFrontPage);
 console.log('Test site front page created:', testSiteFrontPage.key);
 
+// Create a regular test page for cache testing
+const testPage = {
+  key: 'test-page',
+  siteKey: testSite.key,
+  name: 'Test Page',
+  createdAt: FieldValue.serverTimestamp(),
+  markdownContent: "# Test Page\n\nThis is a regular test page for cache header testing.",
+  owners: ['e2e-test-owner', 'H3evfU7BDmec9KkotRiTV41YECg1'],
+  category: 'alpha',
+  tags: ['e2e', 'test', 'cache'],
+};
+await serverDB
+  .collection('sites')
+  .doc(testSite.key)
+  .collection('pages')
+  .doc(testPage.key)
+  .set(testPage);
+console.log('Test page created:', testPage.key);
+
 // Wait a bit to ensure all writes are committed
 await new Promise((resolve) => setTimeout(resolve, 1000));
 
