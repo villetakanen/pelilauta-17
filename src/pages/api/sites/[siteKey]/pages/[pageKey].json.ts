@@ -1,12 +1,12 @@
 import type { APIContext } from 'astro';
-import { PAGES_COLLECTION_NAME, parsePage } from 'src/schemas/PageSchema';
-import { SITES_COLLECTION_NAME, siteFrom } from 'src/schemas/SiteSchema';
-import { toClientEntry } from 'src/utils/client/entryUtils';
-import { logError } from 'src/utils/logHelpers';
-import { renderWikiContent } from 'src/utils/server/wiki/renderWikiContent';
-import { serverDB } from '../../../../../firebase/server';
+import { getPageData } from '../../../../../firebase/server/sites';
+import { logError } from '../../../../../utils/logHelpers';
 
-export async function GET({ params, url }: APIContext): Promise<Response> {
+export async function GET({
+  params,
+  url,
+  request,
+}: APIContext): Promise<Response> {
   const { siteKey, pageKey } = params;
 
   if (!siteKey || !pageKey) {
@@ -14,43 +14,31 @@ export async function GET({ params, url }: APIContext): Promise<Response> {
   }
 
   try {
-    // We want to get the site and page data from the server
-    const siteRef = serverDB.collection(SITES_COLLECTION_NAME).doc(siteKey);
-    const pageRef = siteRef.collection(PAGES_COLLECTION_NAME).doc(pageKey);
+    const page = await getPageData(siteKey, pageKey, url);
 
-    // Get the docs
-    const siteDoc = await siteRef.get();
-    const pageDoc = await pageRef.get();
-
-    // Get the data
-    const siteData = siteDoc.data();
-    const pageData = pageDoc.data();
-
-    // Return 404 if the site or page does not exist
-    if (!siteDoc.exists || !siteData || !pageDoc.exists || !pageData) {
-      return new Response('Site or page not found', { status: 404 });
+    if (!page) {
+      return new Response('Page not found', { status: 404 });
     }
 
-    // Convert the firestore data to client side objects
-    const site = siteFrom(toClientEntry(siteData), siteDoc.id);
-    const page = parsePage(toClientEntry(pageData), pageKey, siteKey);
+    // Generate ETag based on page's updatedAt timestamp
+    const etag = `"${page.updatedAt}"`;
 
-    // page html content is either rendered at SSR, or privided from a legacy
-    // data. This is handled in the renderWikiContent utility
-    page.htmlContent = await renderWikiContent(page, site, url);
+    // Check if client has current version
+    if (request.headers.get('If-None-Match') === etag) {
+      return new Response(null, { status: 304 });
+    }
 
     // Return the page data and 200 OK
     return new Response(JSON.stringify(page), {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        // No cache, as pages can be edited
-        'Cache-Control':
-          'no-store, no-cache, must-revalidate, proxy-revalidate',
+        ETag: etag,
+        'Cache-Control': 's-maxage=60, stale-while-revalidate=300', // 1min/5min
       },
     });
   } catch (err: unknown) {
-    logError(err);
+    logError('pages.json.ts', err);
     return new Response('Internal server error', { status: 500 });
   }
 }

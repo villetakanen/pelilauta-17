@@ -68,9 +68,94 @@ logDebug('uid', $uid);
 
 We use shorthands for library paths. E.g. `import SectionComponent from '@svelte/app/SectionComponent.svelte'`
 
+## Cyan Design System
+
+We use the Cyan Design System v4.0.0 for UI components and styling. It's a modern, scalable toolkit distributed as npm packages.
+
+### Core Packages
+
+- **`@11thdeg/cyan-lit`**: Web components library built with Lit
+- **`@11thdeg/cyan-css`**: CSS framework with styles, design tokens, and utilities (required peer dependency)
+- **`@11thdeg/cn-editor`**: Rich text editor component
+- **`@11thdeg/cn-story-clock`**: Progress tracking for tabletop RPGs
+- **`@11thdeg/cn-dice`**: Dice rolling component
+
+Always import CSS framework in your application entry point:
+```ts
+import '@11thdeg/cyan-css';
+```
+
+### Available Web Components
+
+Import components as needed:
+```ts
+import '@11thdeg/cyan-lit/dist/components/cn-card.js';
+```
+
+**Core Components:**
+- `<cn-app-bar>`: Top-level navigation container
+- `<cn-avatar>`: User profile picture or initials
+- `<cn-avatar-button>`: Clickable avatar
+- `<cn-bubble>`: Dismissible information element
+- `<cn-card>`: Flexible content container
+- `<cn-icon>`: SVG icon renderer
+- `<cn-lightbox>`: Modal overlay for images/content
+- `<cn-loader>`: Animated loading indicator
+- `<cn-menu>`: Dropdown options/actions
+- `<cn-navigation-icon>`: Navigation-specific icons
+- `<cn-reaction-button>`: Content reaction button
+- `<cn-share-button>`: Content sharing button
+- `<cn-snackbar>`: Temporary bottom messages
+- `<cn-sortable-list>`: Drag-and-drop reorderable list
+- `<cn-toggle-button>`: Two-state toggle button
+- `<cn-tray-button>`: Panel/tray control button
+
+### CSS Framework Structure
+
+- **`core`**: Base HTML element styles
+- **`utilities`**: High-level layout and composition classes
+- **`atomics`**: Single-purpose utility classes
+- **`components`**: Light-dom component styles
+- **`typography`**: Text styling classes and variables
+- **`tokens`**: CSS custom properties for theming
+
+### Design Tokens
+
+Use CSS variables for consistency:
+- Core tokens: `--cn-[selector]-[token]` (e.g., `--cn-button-background-color`)
+- Theme tokens: `--color-[token]` and `--background-[token]`
+
+### Key Atomic Classes
+
+**Layout:**
+- `.flex`, `.flex-col`, `.grid`, `.two-col`, `.four-col`
+- `.items-center`, `.items-start`, `.grow`, `.shrink`
+
+**Spacing:**
+- `.p-1`, `.p-2`, `.px-1`, `.py-1`, `.m-1`, `.mx-1`, etc.
+
+**Visual:**
+- `.radius-s`, `.radius-m`, `.radius-l`, `.radius-round`
+- `.border`, `.border-t`, `.border-between`
+- `.text-center`, `.text-high`, `.text-low`
+
+**Responsive:**
+- `.sm-hidden`, `.md-hidden`, `.lg-hidden`
+- `.sm-only`, `.md-only`, `.lg-only`
+
+### Content Layout Utilities
+
+- `.content-cards`: Responsive card container
+- `.content-columns`: Multi-column layout with `.column-s`, `.column-m`, `.column-l`
+- `.content-editor`: Full-height editor interface
+- `.content-listing`: List layout with optional sidebar
+- `.toolbar`: Action and control container
+- `nav#rail`: Primary navigation rail
+- `nav#fab-tray`: Floating action button container
+
 ## Lit
 
-The Lit components, for now, are installed via NPM or Git Submodules. 
+Legacy Lit components are installed via NPM or Git Submodules, but prefer Cyan Design System components. 
 
 ## Google Firebase
 
