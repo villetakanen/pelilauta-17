@@ -8,6 +8,7 @@ import { getPageData, getSiteData } from '../../../firebase/server/sites';
 import PageWithTray from '../../../layouts/PageWithTray.astro';
 import { logError } from '../../../utils/logHelpers';
 import { systemToNoun } from '../../../utils/schemaHelpers';
+import { setPageCacheHeaders } from '../../../utils/cache/netlify-cache-tags';
 
 const { siteKey: siteKeyParam } = Astro.params;
 const siteKey = siteKeyParam || 'mekanismi'; // This should not happen, but just in case
@@ -29,13 +30,8 @@ if (!page) {
 const noun = systemToNoun(site.system);
 const image = site.avatarURL || site.posterURL || site.backgroundURL;
 
-// Set cache headers for optimal performance
-// - Short cache time since authenticated users get real-time updates
-// - Longer stale-while-revalidate for anonymous users
-Astro.response.headers.set(
-  'Cache-Control',
-  's-maxage=120, stale-while-revalidate=600',
-); // 2 min cache, 10 min stale-while-revalidate
+// Set cache headers with Netlify cache tags (homepage)
+setPageCacheHeaders(Astro.response, siteKey, homePageKey, true);
 ---
 
 <PageWithTray

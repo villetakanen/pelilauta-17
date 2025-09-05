@@ -1,57 +1,49 @@
 ---
-import { PageSchema } from 'src/schemas/PageSchema';
-import { SiteSchema } from 'src/schemas/SiteSchema';
+import { getSiteData, getPageData } from '../../../../firebase/server/sites';
 import { systemToNoun } from 'src/utils/schemaHelpers';
 import PageApp from '../../../../components/server/SiteApp/PageApp.astro';
 import SiteTray from '../../../../components/server/SiteApp/SiteTray.astro';
 import BackgroundPoster from '../../../../components/server/ui/BackgroundPoster.astro';
 import PageFabs from '../../../../components/svelte/sites/PageFabs.svelte';
+import SiteStoreInitializer from '../../../../components/svelte/sites/SiteStoreInitializer.svelte';
 import PageWithTray from '../../../../layouts/PageWithTray.astro';
-
-interface Props {
-  siteKey: string;
-  pageKey: string;
-}
+import { logError } from '../../../../utils/logHelpers';
+import { setPageCacheHeaders } from '../../../../utils/cache/netlify-cache-tags';
 
 const { siteKey, pageKey } = Astro.params;
 
-// Fetch site data from the api
-const origin = new URL(Astro.request.url).origin;
-
-// Fetch site data from the api
-const siteResponse = await fetch(`${origin}/api/sites/${siteKey}`);
-// Fetch page data from the api
-const pageResponse = await fetch(
-  `${origin}/api/sites/${siteKey}/pages/${pageKey}.json`,
-);
-
-if (!siteResponse.ok) {
+if (!siteKey || !pageKey) {
   return Astro.redirect('/404');
 }
-if (!pageResponse.ok) {
+
+// Direct Firebase access - no API waterfall
+const [site, page] = await Promise.all([
+  getSiteData(siteKey),
+  getPageData(siteKey, pageKey, Astro.url)
+]);
+
+if (!site) {
+  return Astro.redirect('/404');
+}
+
+if (!page) {
+  logError(`Page ${pageKey} not found for site ${siteKey}`);
   return Astro.redirect(
     `/sites/${siteKey}/create/page?name=${encodeURIComponent(pageKey)}`,
   );
 }
-
-// These come from the API, so no need to transform them to client
-// side Entries
-const site = SiteSchema.parse(await siteResponse.json());
-const page = PageSchema.parse(await pageResponse.json());
 
 // Helpers
 const title = `${page.name || pageKey} – ${site.name}`;
 const noun = systemToNoun(site.system);
 const image = site.avatarURL || site.posterURL || site.backgroundURL;
 
-// Set cache headers for optimal performance
-// Similar to site frontpage - short cache for real-time updates
-Astro.response.headers.set(
-  'Cache-Control',
-  's-maxage=120, stale-while-revalidate=600',
-); // 2 min cache, 10 min stale-while-revalidate
+// Set cache headers with Netlify cache tags
+const isHomepage = pageKey === site.homepage;
+setPageCacheHeaders(Astro.response, siteKey, pageKey, isHomepage);
 ---
 <PageWithTray title={title} description={site.description} noun={noun} image={image}>
+  <SiteStoreInitializer {site} client:only="svelte" />
   <SiteTray slot="app-tray" site={site}/>
   <PageApp site={site} page={page} />
   <PageFabs pageKey={pageKey} site={site} client:only="svelte" slot="fab-tray" />
