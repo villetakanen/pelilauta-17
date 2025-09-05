@@ -22,7 +22,7 @@ test.describe('Site Page Loading and Performance', () => {
     expect(cacheTag).toBeTruthy();
     expect(cacheTag).toContain('site-e2e-test-site'); // Site-wide tag
     expect(cacheTag).toContain('homepage-e2e-test-site'); // Homepage-specific tag
-    expect(cacheTag).toMatch(/page-e2e-test-site-[\w\-]+/); // Page-specific tag pattern
+    expect(cacheTag).toMatch(/page-e2e-test-site-[\w-]+/); // Page-specific tag pattern
 
     // Verify the page loads successfully
     await expect(page.locator('main')).toBeVisible();
@@ -36,7 +36,7 @@ test.describe('Site Page Loading and Performance', () => {
 
     // Verify the page exists and loads successfully
     expect(response?.status()).toBe(200);
-    
+
     // Verify cache headers for regular pages
     const cacheControl = response?.headers()['cache-control'];
     expect(cacheControl).toContain('s-maxage=300'); // 5 minute cache for regular pages
@@ -47,7 +47,7 @@ test.describe('Site Page Loading and Performance', () => {
     expect(cacheTag).toBeTruthy();
     expect(cacheTag).toContain('page-e2e-test-site-test-page'); // Page-specific tag
     expect(cacheTag).toContain('site-e2e-test-site'); // Site-wide tag
-    
+
     // Regular pages should NOT have homepage tag
     expect(cacheTag).not.toContain('homepage-e2e-test-site');
   });
@@ -181,11 +181,11 @@ test.describe('Site Page Loading and Performance', () => {
     // Verify store was initialized (should see debug messages if logging is enabled)
     // This is mainly to ensure the SiteStoreInitializer component executed
     // Note: The key is that the page loads without errors, indicating proper store initialization
-    
+
     // Test passes if main content is visible (store initialization succeeded)
     const mainContent = page.locator('main');
     await expect(mainContent).toBeVisible();
-    
+
     // Optionally verify some content is present
     await expect(mainContent).toContainText(/\w+/); // Should contain some text content
   });

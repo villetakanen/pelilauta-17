@@ -6,6 +6,7 @@ noun: 'monsters'
 ## Version 18
 
 ### 18.0.x (ongoing)
+- fix: Page edit bypasses cache by adding `flowtime` query param to URL 
 - fix: Cyan Design System BREAKING CHANGES: remove `Open sans` font usage, replace with `Lato` font universally.
 - fix: Cyan Design System beta updates and fixes
 - fix: Optimized font loading for better load-times.

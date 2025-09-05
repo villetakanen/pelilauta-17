@@ -1,8 +1,8 @@
 import type { APIContext } from 'astro';
-import { handleSiteUpdate } from '../../../lib/server/content-hooks';
-import { tokenToUid } from '../../../utils/server/auth/tokenToUid';
 import { getSiteData } from '../../../firebase/server/sites';
+import { handleSiteUpdate } from '../../../lib/server/content-hooks';
 import { logDebug, logError } from '../../../utils/logHelpers';
+import { tokenToUid } from '../../../utils/server/auth/tokenToUid';
 
 /**
  * API route for purging site-wide cache when site metadata is updated.
@@ -31,7 +31,7 @@ export async function POST({ request }: APIContext): Promise<Response> {
 
     // Get site data to check user authorization
     const site = await getSiteData(siteKey);
-    
+
     if (!site) {
       return new Response('Site not found', { status: 404 });
     }
@@ -50,18 +50,20 @@ export async function POST({ request }: APIContext): Promise<Response> {
     // Trigger the site-wide cache purging workflow
     await handleSiteUpdate(siteKey, site);
 
-    return new Response(JSON.stringify({
-      success: true,
-      message: 'Site-wide cache purge initiated',
-      siteKey,
-      homepage: site.homepage,
-    }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
+    return new Response(
+      JSON.stringify({
+        success: true,
+        message: 'Site-wide cache purge initiated',
+        siteKey,
+        homepage: site.homepage,
+      }),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
-    });
-
+    );
   } catch (error) {
     logError('purge-site API', 'Failed to purge site cache', error);
     return new Response('Internal Server Error', { status: 500 });

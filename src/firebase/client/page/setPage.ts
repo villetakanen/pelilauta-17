@@ -52,6 +52,10 @@ export async function setPage(
   } catch (error) {
     // Cache purging failures should not block page updates
     const { logDebug } = await import('../../../utils/logHelpers');
-    logDebug('setPage', 'Cache purging failed but page update succeeded', error);
+    logDebug(
+      'setPage',
+      'Cache purging failed but page update succeeded',
+      error,
+    );
   }
 }

@@ -1,6 +1,6 @@
 /**
  * Netlify Cache Tag Generation Utilities
- * 
+ *
  * Provides consistent cache tag generation for different content types
  * to enable targeted cache purging when content is updated.
  */
@@ -17,32 +17,35 @@ export interface CacheTagOptions {
  */
 export function generatePageCacheTags(options: CacheTagOptions): string[] {
   const { siteKey, pageKey, isHomepage = false, additionalTags = [] } = options;
-  
+
   const tags: string[] = [];
-  
+
   // Always include site-wide tag
   tags.push(`site-${siteKey}`);
-  
+
   // Add page-specific tag if pageKey is provided
   if (pageKey) {
     tags.push(`page-${siteKey}-${pageKey}`);
   }
-  
+
   // Add homepage-specific tag if this is the homepage
   if (isHomepage) {
     tags.push(`homepage-${siteKey}`);
   }
-  
+
   // Add any additional custom tags
   tags.push(...additionalTags);
-  
+
   return tags;
 }
 
 /**
  * Generate cache tags for site homepage
  */
-export function generateHomepageCacheTags(siteKey: string, pageKey: string): string[] {
+export function generateHomepageCacheTags(
+  siteKey: string,
+  pageKey: string,
+): string[] {
   return generatePageCacheTags({
     siteKey,
     pageKey,
@@ -53,7 +56,10 @@ export function generateHomepageCacheTags(siteKey: string, pageKey: string): str
 /**
  * Generate cache tags for regular site page
  */
-export function generateSitePageCacheTags(siteKey: string, pageKey: string): string[] {
+export function generateSitePageCacheTags(
+  siteKey: string,
+  pageKey: string,
+): string[] {
   return generatePageCacheTags({
     siteKey,
     pageKey,
@@ -64,7 +70,9 @@ export function generateSitePageCacheTags(siteKey: string, pageKey: string): str
 /**
  * Generate cache control headers based on content type
  */
-export function generateCacheControlHeader(isHomepage: boolean = false): string {
+export function generateCacheControlHeader(
+  isHomepage: boolean = false,
+): string {
   if (isHomepage) {
     // Shorter cache for homepage - gets updated more frequently
     return 's-maxage=60, stale-while-revalidate=300'; // 1min cache, 5min stale
@@ -80,7 +88,7 @@ export function generateCacheControlHeader(isHomepage: boolean = false): string 
 export function setCacheHeaders(
   response: { headers: Headers },
   tags: string[],
-  isHomepage: boolean = false
+  isHomepage: boolean = false,
 ): void {
   response.headers.set('Cache-Tag', tags.join(','));
   response.headers.set('Cache-Control', generateCacheControlHeader(isHomepage));
@@ -93,13 +101,13 @@ export function setPageCacheHeaders(
   response: { headers: Headers },
   siteKey: string,
   pageKey: string,
-  isHomepage: boolean = false
+  isHomepage: boolean = false,
 ): void {
   const tags = generatePageCacheTags({
     siteKey,
     pageKey,
     isHomepage,
   });
-  
+
   setCacheHeaders(response, tags, isHomepage);
 }

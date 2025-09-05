@@ -1,16 +1,16 @@
 /**
  * Unit tests for content update hooks
- * 
+ *
  * Tests the cache purging hooks that integrate with content update workflows.
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  getCachePurgingStatus,
+  handleBulkPageUpdate,
   handlePageUpdate,
   handleSiteUpdate,
-  handleBulkPageUpdate,
   isCachePurgingConfigured,
-  getCachePurgingStatus,
 } from '../../../src/lib/server/content-hooks';
 import type { Site } from '../../../src/schemas/SiteSchema';
 
@@ -61,7 +61,11 @@ describe('Content Update Hooks', () => {
 
       await handlePageUpdate('test-site', 'some-page', mockSite);
 
-      expect(mockPurgePageCache).toHaveBeenCalledWith('test-site', 'some-page', false);
+      expect(mockPurgePageCache).toHaveBeenCalledWith(
+        'test-site',
+        'some-page',
+        false,
+      );
     });
 
     it('should purge cache for homepage update', async () => {
@@ -72,7 +76,11 @@ describe('Content Update Hooks', () => {
 
       await handlePageUpdate('test-site', 'front-page', mockSite);
 
-      expect(mockPurgePageCache).toHaveBeenCalledWith('test-site', 'front-page', true);
+      expect(mockPurgePageCache).toHaveBeenCalledWith(
+        'test-site',
+        'front-page',
+        true,
+      );
     });
 
     it('should skip purging when not configured', async () => {

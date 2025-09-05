@@ -1,14 +1,14 @@
 ---
-import { getSiteData, getPageData } from '../../../../firebase/server/sites';
 import { systemToNoun } from 'src/utils/schemaHelpers';
 import PageApp from '../../../../components/server/SiteApp/PageApp.astro';
 import SiteTray from '../../../../components/server/SiteApp/SiteTray.astro';
 import BackgroundPoster from '../../../../components/server/ui/BackgroundPoster.astro';
 import PageFabs from '../../../../components/svelte/sites/PageFabs.svelte';
 import SiteStoreInitializer from '../../../../components/svelte/sites/SiteStoreInitializer.svelte';
+import { getPageData, getSiteData } from '../../../../firebase/server/sites';
 import PageWithTray from '../../../../layouts/PageWithTray.astro';
-import { logError } from '../../../../utils/logHelpers';
 import { setPageCacheHeaders } from '../../../../utils/cache/netlify-cache-tags';
+import { logError } from '../../../../utils/logHelpers';
 
 const { siteKey, pageKey } = Astro.params;
 
@@ -19,7 +19,7 @@ if (!siteKey || !pageKey) {
 // Direct Firebase access - no API waterfall
 const [site, page] = await Promise.all([
   getSiteData(siteKey),
-  getPageData(siteKey, pageKey, Astro.url)
+  getPageData(siteKey, pageKey, Astro.url),
 ]);
 
 if (!site) {

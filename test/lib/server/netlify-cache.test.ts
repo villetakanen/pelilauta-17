@@ -1,10 +1,10 @@
 /**
  * Simplified unit tests for NetlifyCachePurger service
- * 
+ *
  * Tests the cache purging functionality with a working mock setup.
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // We'll test the core functionality by mocking the imports
 const mockFetch = vi.fn();
@@ -38,14 +38,17 @@ class MockNetlifyCachePurger {
     }
 
     try {
-      const response = await fetch(`https://api.netlify.com/api/v1/sites/${this.siteId}/purge`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiToken}`,
+      const response = await fetch(
+        `https://api.netlify.com/api/v1/sites/${this.siteId}/purge`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.apiToken}`,
+          },
+          body: JSON.stringify({ tags }),
         },
-        body: JSON.stringify({ tags }),
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -66,14 +69,17 @@ class MockNetlifyCachePurger {
     }
 
     try {
-      const response = await fetch(`https://api.netlify.com/api/v1/sites/${this.siteId}/purge`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiToken}`,
+      const response = await fetch(
+        `https://api.netlify.com/api/v1/sites/${this.siteId}/purge`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.apiToken}`,
+          },
+          body: JSON.stringify({ files: urls }),
         },
-        body: JSON.stringify({ files: urls }),
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -114,7 +120,7 @@ describe('NetlifyCachePurger (Simplified)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     purger = new MockNetlifyCachePurger();
-    
+
     // Default successful response
     mockFetch.mockResolvedValue({
       ok: true,
@@ -141,7 +147,7 @@ describe('NetlifyCachePurger (Simplified)', () => {
   describe('purgeTags', () => {
     it('should successfully purge cache tags', async () => {
       const tags = ['page-test-site-test-page', 'site-test-site'];
-      
+
       const result = await purger.purgeTags(tags);
 
       expect(result.success).toBe(true);
@@ -152,10 +158,10 @@ describe('NetlifyCachePurger (Simplified)', () => {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer test-token',
+            Authorization: 'Bearer test-token',
           },
           body: JSON.stringify({ tags }),
-        }
+        },
       );
     });
 
@@ -184,7 +190,7 @@ describe('NetlifyCachePurger (Simplified)', () => {
   describe('purgeUrls', () => {
     it('should successfully purge cache URLs', async () => {
       const urls = ['/sites/test-site/test-page'];
-      
+
       const result = await purger.purgeUrls(urls);
 
       expect(result.success).toBe(true);
@@ -193,7 +199,7 @@ describe('NetlifyCachePurger (Simplified)', () => {
         'https://api.netlify.com/api/v1/sites/test-site-id/purge',
         expect.objectContaining({
           body: JSON.stringify({ files: urls }),
-        })
+        }),
       );
     });
 
@@ -213,7 +219,7 @@ describe('NetlifyCachePurger (Simplified)', () => {
       expect(results).toHaveLength(2);
       expect(results[0].success).toBe(true); // Tag purge result
       expect(results[1].success).toBe(true); // URL purge result
-      
+
       // Should have been called twice - once for tags, once for URLs
       expect(mockFetch).toHaveBeenCalledTimes(2);
     });
@@ -222,12 +228,12 @@ describe('NetlifyCachePurger (Simplified)', () => {
       await purger.purgePageCache('test-site', 'front-page', true);
 
       expect(mockFetch).toHaveBeenCalledTimes(2);
-      
+
       // Check that homepage tags were included
       const tagCall = mockFetch.mock.calls[0];
       const tagBody = JSON.parse(tagCall[1].body);
       expect(tagBody.tags).toContain('homepage-test-site');
-      
+
       // Check that homepage URL was included
       const urlCall = mockFetch.mock.calls[1];
       const urlBody = JSON.parse(urlCall[1].body);
@@ -251,7 +257,7 @@ describe('NetlifyCachePurger (Simplified)', () => {
       const results = await purger.purgePageCache('test-site', 'test-page');
 
       expect(results[0].success).toBe(false); // Tag purge failed
-      expect(results[1].success).toBe(true);  // URL purge succeeded
+      expect(results[1].success).toBe(true); // URL purge succeeded
     });
   });
 });
