@@ -34,6 +34,7 @@ const { title, description, image, shortTitle, noSharing } = Astro.props;
       <slot name="fab-tray"></slot>
     </nav>
     <slot name="app-background-poster" />
+    <AuthManager client:only="svelte" />
     <BaseTail />
   </body>
 </html>

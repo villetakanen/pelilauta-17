@@ -4,6 +4,7 @@ import AppRail from '../components/server/AppRail.astro';
 import AppFooter from '../components/server/app/AppFooter.astro';
 import BaseHead from '../components/server/BaseHead/BaseHead.astro';
 import BaseTail from '../components/server/BaseTail.astro';
+import AuthManager from '@components/svelte/AuthManager.svelte';
 
 type Props = {
   title?: string;
@@ -42,6 +43,7 @@ const { title, description, image, noun, shortTitle, noSharing } = Astro.props;
       style="container: tray / inline-size"
     ><slot name="fab-tray"></slot></nav>
     <slot name="app-background-poster" />
+    <AuthManager client:only="svelte" />
     <BaseTail />
   </body>
 </html>

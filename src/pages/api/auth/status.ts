@@ -1,13 +1,15 @@
 import type { APIRoute } from 'astro'
-import { serverAuth } from '@firebase/server'
-import { logError } from '@utils/logHelpers'
-import { tokenToUid } from '@utils/server/auth/tokenToUid'
+import { serverAuth, serverDB } from '@firebase/server'
+import { logError, logDebug } from '@utils/logHelpers'
+import { verifySession } from '@utils/server/auth/verifySession'
+import { ACCOUNTS_COLLECTION_NAME } from '@schemas/AccountSchema'
+import { PROFILES_COLLECTION_NAME } from '@schemas/ProfileSchema'
 
-export const GET: APIRoute = async ({ request }) => {
+export const GET: APIRoute = async (context) => {
   try {
-    const uid = await tokenToUid(request)
+    const decodedToken = await verifySession(context)
 
-    if (!uid) {
+    if (!decodedToken) {
       return new Response(
         JSON.stringify({
           loggedIn: false,
@@ -18,10 +20,46 @@ export const GET: APIRoute = async ({ request }) => {
       )
     }
 
+    const uid = decodedToken.uid
+
     const user = await serverAuth.getUser(uid)
     const claims = user.customClaims || {}
 
-    const { eula_accepted = false, account_created = false } = claims
+    let { eula_accepted = false, account_created = false } = claims
+
+    // Check for legacy users who have data but no claims set
+    if (!eula_accepted || !account_created) {
+      logDebug('api/auth/status', `Checking legacy data for user ${uid}`)
+      
+      // Check if user has account document (EULA acceptance)
+      if (!eula_accepted) {
+        const accountDoc = await serverDB.collection(ACCOUNTS_COLLECTION_NAME).doc(uid).get()
+        if (accountDoc.exists) {
+          eula_accepted = true
+          logDebug('api/auth/status', `Found existing account document for ${uid}, setting eula_accepted: true`)
+        }
+      }
+
+      // Check if user has profile document (profile creation)
+      if (!account_created) {
+        const profileDoc = await serverDB.collection(PROFILES_COLLECTION_NAME).doc(uid).get()
+        if (profileDoc.exists) {
+          account_created = true
+          logDebug('api/auth/status', `Found existing profile document for ${uid}, setting account_created: true`)
+        }
+      }
+
+      // If we found legacy data, update the claims
+      if (eula_accepted !== claims.eula_accepted || account_created !== claims.account_created) {
+        const newClaims = {
+          ...claims,
+          eula_accepted,
+          account_created
+        }
+        await serverAuth.setCustomUserClaims(uid, newClaims)
+        logDebug('api/auth/status', `Updated claims for legacy user ${uid}:`, newClaims)
+      }
+    }
 
     return new Response(
       JSON.stringify({
