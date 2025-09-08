@@ -10,8 +10,8 @@ test.describe('Account Creation Flow', () => {
     // The init script has already cleaned up the user data and claims
     // So we start with a clean slate
 
-    // 1. Authenticate the user
-    await authenticate(page);
+    // 1. Authenticate the new user (will need separate credentials later)
+    await authenticate(page, true); // true = use new user account
 
     // After authentication, the AuthManager should kick in.
     // As the user has no EULA claim, they should be redirected to /onboarding
@@ -21,7 +21,7 @@ test.describe('Account Creation Flow', () => {
     await expect(page).toHaveURL(`${BASE_URL}/onboarding`);
 
     // 2. Fill in the nickname and accept the EULA (now done in one step)
-    await page.getByLabel(/nickname/i).fill('Test Nickname');
+    await page.getByLabel(/nickname/i).fill('Test Nickname New User');
     await page.getByRole('button', { name: 'Accept & Create Profile' }).click();
 
     // 3. Should be redirected directly to the home page (no separate profile creation)
