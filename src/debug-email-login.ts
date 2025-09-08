@@ -20,7 +20,7 @@ const auth = getAuth(app);
 const testUrls = [
   'https://skaldbase-test.firebaseapp.com/__/auth/action?apiKey=AIzaSyBkvavPZKGp-pJE-xI0tZT20npQ3koBh-s&mode=signIn&oobCode=r1jEs_rBP80vt_7IsYu1KxJPEQZa6CziFs35NuUMGEQAAAGZKQiDdQ&continueUrl=http://localhost:4321/&lang=en',
   'http://localhost:4321/?apiKey=AIzaSyBkvavPZKGp-pJE-xI0tZT20npQ3koBh-s&mode=signIn&oobCode=r1jEs_rBP80vt_7IsYu1KxJPEQZa6CziFs35NuUMGEQAAAGZKQiDdQ&continueUrl=http://localhost:4321/&lang=en',
-  window.location.href
+  window.location.href,
 ];
 
 console.log('Testing email link detection:');
@@ -29,5 +29,3 @@ testUrls.forEach((url, index) => {
   console.log(`Is sign-in link: ${isSignInWithEmailLink(auth, url)}`);
   console.log('---');
 });
-
-export {};

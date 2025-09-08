@@ -84,9 +84,9 @@ async function handleSubmit(event: Event) {
 
 async function handleCancel(event: Event) {
   event.preventDefault();
-  
+
   logDebug('EulaForm', 'User cancelled onboarding, logging out');
-  
+
   try {
     const { logout } = await import('../../../stores/session');
     await logout();

@@ -23,7 +23,7 @@ let sent = $state(false); // Indicates the link has been sent
 const verifyLink = async () => {
   suspend = true; // Indicate verification is in progress
   logDebug('EmailLoginSection', 'Starting email link verification...');
-  
+
   try {
     // Dynamically import Firebase Auth functions and instance
     const { signInWithEmailLink } = await import('firebase/auth');
@@ -33,10 +33,16 @@ const verifyLink = async () => {
     const loginRedirectRoute =
       window.localStorage.getItem('loginRedirectRoute');
 
-    logDebug('EmailLoginSection', 'Retrieved from storage:', { emailFromStorage, loginRedirectRoute });
+    logDebug('EmailLoginSection', 'Retrieved from storage:', {
+      emailFromStorage,
+      loginRedirectRoute,
+    });
 
     if (!emailFromStorage) {
-      logError('EmailLoginSection', 'No email found in local storage - aborting verification.');
+      logError(
+        'EmailLoginSection',
+        'No email found in local storage - aborting verification.',
+      );
       pushSessionSnack(t('login:error.noEmailStorage'), { type: 'error' }); // User feedback
       suspend = false;
       return;
@@ -63,13 +69,16 @@ const verifyLink = async () => {
     // No need to set suspend = false due to redirect
   } catch (error) {
     logError('EmailLoginSection', 'Error verifying email link:', error);
-    
+
     // Provide more specific error messages based on the error type
     if (error instanceof Error) {
       if (error.message.includes('auth/invalid-action-code')) {
-        pushSessionSnack('The email link has expired or been used already. Please request a new one.', {
-          type: 'error',
-        });
+        pushSessionSnack(
+          'The email link has expired or been used already. Please request a new one.',
+          {
+            type: 'error',
+          },
+        );
       } else if (error.message.includes('auth/invalid-email')) {
         pushSessionSnack('Invalid email address. Please try again.', {
           type: 'error',
@@ -84,7 +93,7 @@ const verifyLink = async () => {
         type: 'error',
       }); // User feedback
     }
-    
+
     suspend = false; // Reset suspend state on error
   }
 };
@@ -107,7 +116,11 @@ const sendLink = async (e: SubmitEvent) => {
     handleCodeInApp: true,
   };
 
-  logDebug('EmailLoginSection', 'Sending email link with settings:', actionCodeSettings);
+  logDebug(
+    'EmailLoginSection',
+    'Sending email link with settings:',
+    actionCodeSettings,
+  );
 
   try {
     // Dynamically import Firebase Auth functions and instance
@@ -131,14 +144,16 @@ const sendLink = async (e: SubmitEvent) => {
     pushSessionSnack(t('login:withEmail.sent')); // Success feedback
   } catch (error) {
     logError('EmailLoginSection', 'Error sending email link:', error);
-    
+
     // Provide more specific error messages
     if (error instanceof Error) {
-      pushSessionSnack(`Error sending email: ${error.message}`, { type: 'error' });
+      pushSessionSnack(`Error sending email: ${error.message}`, {
+        type: 'error',
+      });
     } else {
       pushSessionSnack(t('login:error.sendLinkFailed'), { type: 'error' });
     }
-    
+
     sent = false; // Reset sent state on error
   } finally {
     suspend = false; // Ensure suspend state is reset
@@ -155,15 +170,23 @@ onMount(async () => {
   // Debug logging to understand what's happening
   logDebug('EmailLoginSection', 'Current URL:', window.location.href);
   logDebug('EmailLoginSection', 'URL search params:', window.location.search);
-  logDebug('EmailLoginSection', 'Is sign-in link?', isSignInWithEmailLink(auth, window.location.href));
-  
+  logDebug(
+    'EmailLoginSection',
+    'Is sign-in link?',
+    isSignInWithEmailLink(auth, window.location.href),
+  );
+
   // Also check for specific parameters that indicate this is an email link
   const urlParams = new URLSearchParams(window.location.search);
   const hasOobCode = urlParams.has('oobCode');
   const hasMode = urlParams.get('mode') === 'signIn';
   const hasApiKey = urlParams.has('apiKey');
-  
-  logDebug('EmailLoginSection', 'URL params check:', { hasOobCode, hasMode, hasApiKey });
+
+  logDebug('EmailLoginSection', 'URL params check:', {
+    hasOobCode,
+    hasMode,
+    hasApiKey,
+  });
 
   if (isSignInWithEmailLink(auth, window.location.href)) {
     logDebug('EmailLoginSection', 'Verifying email link...');
@@ -171,7 +194,10 @@ onMount(async () => {
   } else if (hasOobCode && hasMode && hasApiKey) {
     // Fallback: if we have the right parameters but isSignInWithEmailLink returns false
     // this might be a domain mismatch issue
-    logDebug('EmailLoginSection', 'Parameters suggest email link but Firebase detection failed - attempting verification anyway');
+    logDebug(
+      'EmailLoginSection',
+      'Parameters suggest email link but Firebase detection failed - attempting verification anyway',
+    );
     verifyLink();
   }
 });

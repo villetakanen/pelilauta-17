@@ -2,10 +2,10 @@ import type { Locale } from 'src/utils/i18n';
 
 export const login: Locale = {
   title: 'Sign In',
-  info: 'If you haven\'t signed in to Pelilauta before, we\'ll automatically create a new account for you.',
+  info: "If you haven't signed in to Pelilauta before, we'll automatically create a new account for you.",
   withEmail: {
     title: 'With Link',
-    info: 'You can sign in to the application using your email address. Enter your email in the field below and click sign in. We\'ll send a magic link to your email that you can use to sign in to Pelilauta.',
+    info: "You can sign in to the application using your email address. Enter your email in the field below and click sign in. We'll send a magic link to your email that you can use to sign in to Pelilauta.",
     placeholder: 'Email address',
     sent: 'Link sent to your email. Sign in by clicking the link.',
     label: 'Sign in with your email address',
@@ -22,7 +22,7 @@ export const login: Locale = {
     title: 'Welcome!',
     nickTaken: 'Username is already taken. Choose another.',
     profileInfo:
-      'When you sign in to Pelilauta for the first time, we\'ll create a profile for you. With your profile, you can participate in discussions and share content with other users.',
+      "When you sign in to Pelilauta for the first time, we'll create a profile for you. With your profile, you can participate in discussions and share content with other users.",
     decline: 'Cancel and sign out',
     accept: 'Accept and continue',
     updateNotice: {

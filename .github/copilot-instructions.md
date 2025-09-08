@@ -187,6 +187,39 @@ const doc = await serverDB.collection('sites').doc(id).get();
 
 ### Authentication Patterns
 
+We have two main server-side authentication utilities:
+
+#### For Astro Pages (Cookie-based Authentication)
+Use `verifySession` for Astro pages that need authentication. This reads the session cookie:
+
+```ts
+import { verifySession } from '@utils/server/auth/verifySession';
+
+// In Astro pages (.astro files)
+const session = await verifySession(Astro);
+if (!session?.uid) {
+  return Astro.redirect('/login?redirect=' + encodeURIComponent(Astro.url.pathname));
+}
+
+// Use session.uid for the authenticated user ID
+```
+
+#### For API Routes (Token-based Authentication) 
+Use `tokenToUid` for API endpoints that receive Authorization headers with Bearer tokens:
+
+```ts
+import { tokenToUid } from '@utils/server/auth/tokenToUid';
+
+// In API routes (src/pages/api/*)
+const uid = await tokenToUid(request);
+if (!uid) {
+  return new Response('Unauthorized', { status: 401 });
+}
+```
+
+#### Client-side Authentication
+For client-side components, use the session store:
+
 ```ts
 // Client-side auth checking
 import { uid } from '@stores/session';
@@ -195,15 +228,11 @@ if (!$uid) {
   // Handle unauthenticated state
   return;
 }
-
-// Server-side auth (API routes)
-import { tokenToUid } from '@utils/server/auth/tokenToUid';
-
-const uid = await tokenToUid(request);
-if (!uid) {
-  return new Response('Unauthorized', { status: 401 });
-}
 ```
+
+**Key Differences:**
+- **`verifySession`**: Reads session cookies, returns session object with `uid` property, used in Astro pages
+- **`tokenToUid`**: Reads Authorization header with Bearer token, returns uid string directly, used in API routes
 
 ## Biome
 
