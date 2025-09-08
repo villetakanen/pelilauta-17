@@ -81,6 +81,21 @@ async function handleSubmit(event: Event) {
     // TODO: Show error snackbar
   }
 }
+
+async function handleCancel(event: Event) {
+  event.preventDefault();
+  
+  logDebug('EulaForm', 'User cancelled onboarding, logging out');
+  
+  try {
+    const { logout } = await import('../../../stores/session');
+    await logout();
+    // Redirect to home page after logout
+    window.location.href = '/';
+  } catch (error) {
+    logError('EulaForm', 'Error during logout', error);
+  }
+}
 </script>
 
 <div class="content-columns">
@@ -106,9 +121,12 @@ async function handleSubmit(event: Event) {
         {/if}
       </div>
 
-      <div class="flex justify-end pt-4 border-t mt-4">
+      <div class="flex justify-end gap-2 pt-4 border-t mt-4">
+        <button type="button" class="cyan-button text" onclick={handleCancel}>
+          {t('login:eula.decline')}
+        </button>
         <button type="submit" class="cyan-button primary" disabled={!valid}>
-          Accept & Create Profile
+          {t('login:eula.accept')}
         </button>
       </div>
     </form>

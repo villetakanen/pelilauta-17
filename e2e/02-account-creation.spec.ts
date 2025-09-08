@@ -3,7 +3,7 @@ import { authenticate } from './authenticate-e2e';
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:4321';
 
-test.describe.serial('Account Creation Flow', () => {
+test.describe.serial('02 - Account Creation Flow', () => {
   test.beforeEach(async () => {
     // Ensure test user is clean before each test
     console.log('Cleaning up test user before account creation test...');
