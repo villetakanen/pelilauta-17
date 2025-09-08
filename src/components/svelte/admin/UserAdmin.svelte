@@ -1,17 +1,19 @@
 <script lang="ts">
+import { pushSnack } from '@utils/client/snackUtils';
 import { logError } from '@utils/logHelpers';
 import { getAllAccounts } from 'src/firebase/client/admin/getAllAccounts';
+import { authedPost } from 'src/firebase/client/apiClient';
 import { appMeta } from 'src/stores/metaStore/metaStore';
 import { uid as adminUid } from '../../../stores/session';
 import WithAuth from '../app/WithAuth.svelte';
 import User from './User.svelte';
-import { pushSnack } from '@utils/client/snackUtils';
-import { authedPost } from 'src/firebase/client/apiClient';
 
 const allow = $derived.by(() => $appMeta.admins.includes($adminUid));
 
 async function purgeUser(uid: string) {
-  if (confirm(`Are you sure you want to purge user ${uid}? This is irreversible.`)) {
+  if (
+    confirm(`Are you sure you want to purge user ${uid}? This is irreversible.`)
+  ) {
     try {
       const response = await authedPost('/api/admin/purge-user', { uid });
       if (response.ok) {

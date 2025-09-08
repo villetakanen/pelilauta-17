@@ -150,4 +150,3 @@ await profileRef.delete();
 console.log('Profile document deleted.');
 
 console.log('User cleanup complete.');
-

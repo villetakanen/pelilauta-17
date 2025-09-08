@@ -2,9 +2,11 @@
 name: 'Käyttöehdot'
 noun: 'fox'
 ---
-**Rekisteröityessäsi saat tilin ja profiilin.** 
+**Luomme sinulle tilin ja profiilin.** 
 - Tilisi tiedot ovat vain sinun ja hallinnon nähtävillä. 
 - Profiilisi ja julkaisusi ovat kaikkien käyttäjien nähtävillä.
+
+_Huomaathan, että näytämme tämän sivun myös niille vanhoille käyttäjille, joiden profiili tai tilitiedot on päivitettävä kirjautumisen yhteydessä!_
 
 **Tietosuojakäytäntö**
 - Olet vastuussa julkaisuistasi. Hallinto voi poistaa [sääntöjen](/docs/fi/coc). tai lain vastaista sisältöä.

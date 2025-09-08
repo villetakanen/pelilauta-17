@@ -1,10 +1,12 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { authenticate } from './authenticate-e2e';
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:4321';
 
 test.describe('Account Creation Flow', () => {
-  test('should allow a new user to accept EULA and create a profile', async ({ page }) => {
+  test('should allow a new user to accept EULA and create a profile', async ({
+    page,
+  }) => {
     // The init script has already cleaned up the user data and claims
     // So we start with a clean slate
 
@@ -12,28 +14,24 @@ test.describe('Account Creation Flow', () => {
     await authenticate(page);
 
     // After authentication, the AuthManager should kick in.
-    // As the user has no EULA claim, they should be redirected to /eula
-    await expect(page.getByRole('heading', { name: 'End-User License Agreement' })).toBeVisible();
-    await expect(page).toHaveURL(`${BASE_URL}/eula`);
+    // As the user has no EULA claim, they should be redirected to /onboarding
+    await expect(
+      page.getByRole('heading', { name: 'Welcome to Pelilauta' }),
+    ).toBeVisible();
+    await expect(page).toHaveURL(`${BASE_URL}/onboarding`);
 
-    // 2. Accept the EULA
-    await page.getByRole('button', { name: 'Accept' }).click();
+    // 2. Fill in the nickname and accept the EULA (now done in one step)
+    await page.getByLabel(/nickname/i).fill('Test Nickname');
+    await page.getByRole('button', { name: 'Accept & Create Profile' }).click();
 
-    // 3. Should be redirected to create-profile
-    await page.waitForURL(`${BASE_URL}/create-profile`);
-    await expect(page).toHaveURL(`${BASE_URL}/create-profile`);
-
-    // 4. Fill in the profile
-    await page.getByLabel('Nickname').fill('Test Nickname');
-    await page.getByLabel('Bio').fill('This is a test bio.');
-    await page.getByRole('button', { name: 'Save Profile' }).click();
-
-    // 5. Should be redirected to the home page
+    // 3. Should be redirected directly to the home page (no separate profile creation)
     await page.waitForURL(`${BASE_URL}/`);
     await expect(page).toHaveURL(`${BASE_URL}/`);
 
-    // 6. Verify that the user is now fully logged in
+    // 4. Verify that the user is now fully logged in
     // We can check for an element that is only visible to logged-in users
-    await expect(page.locator('[data-testid="setting-navigation-button"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="setting-navigation-button"]'),
+    ).toBeVisible();
   });
 });

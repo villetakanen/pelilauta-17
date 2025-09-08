@@ -1,29 +1,29 @@
 <script lang="ts">
-  import { logDebug } from '@utils/logHelpers';
+import { logDebug } from '@utils/logHelpers';
 
-  let nick = '';
-  let bio = '';
+let nick = '';
+let bio = '';
 
-  async function handleSubmit(event: Event) {
-    event.preventDefault();
-    logDebug('CreateProfileForm', 'Submitting profile', { nick, bio });
+async function handleSubmit(event: Event) {
+  event.preventDefault();
+  logDebug('CreateProfileForm', 'Submitting profile', { nick, bio });
 
-    const response = await fetch('/api/onboarding/complete-profile', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ nick, bio }),
-    });
+  const response = await fetch('/api/onboarding/complete-profile', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ nick, bio }),
+  });
 
-    if (response.ok) {
-      logDebug('CreateProfileForm', 'Profile created, redirecting to home');
-      window.location.href = '/';
-    } else {
-      logDebug('CreateProfileForm', 'Profile creation failed', response);
-      // Handle error
-    }
+  if (response.ok) {
+    logDebug('CreateProfileForm', 'Profile created, redirecting to home');
+    window.location.href = '/';
+  } else {
+    logDebug('CreateProfileForm', 'Profile creation failed', response);
+    // Handle error
   }
+}
 </script>
 
 <form on:submit={handleSubmit}>
