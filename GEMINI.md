@@ -1,4 +1,4 @@
-# Gemini instructions
+# Copilot instructions
 
 We are creating a role playing games community site with Astro, Lit and Svelte. The application
 will be deployed to Netlify using a Github integration.
@@ -161,6 +161,39 @@ Legacy Lit components are installed via NPM or Git Submodules, but prefer Cyan D
 
 The backend is Google Firebase, using Auth, Firestore and Storage services.
 
+### Collection Names
+
+**Always use schema exported collection name constants** instead of hardcoded strings when referring to Firestore collections:
+
+```ts
+// ✅ Correct - Use exported constants
+import { SITES_COLLECTION_NAME } from '@schemas/SiteSchema';
+import { THREADS_COLLECTION_NAME } from '@schemas/ThreadSchema';
+import { PROFILES_COLLECTION_NAME } from '@schemas/ProfileSchema';
+
+const sitesRef = db.collection(SITES_COLLECTION_NAME);
+const threadsRef = db.collection(THREADS_COLLECTION_NAME);
+
+// ❌ Incorrect - Never hardcode collection names
+const sitesRef = db.collection('sites'); // Don't do this!
+```
+
+**Available collection name constants:**
+- `SITES_COLLECTION_NAME` from `@schemas/SiteSchema`
+- `THREADS_COLLECTION_NAME` from `@schemas/ThreadSchema`
+- `PROFILES_COLLECTION_NAME` from `@schemas/ProfileSchema`
+- `PAGES_COLLECTION_NAME` from `@schemas/PageSchema`
+- `ACCOUNTS_COLLECTION_NAME` from `@schemas/AccountSchema`
+- `REACTIONS_COLLECTION_NAME` from `@schemas/ReactionsSchema`
+- `ASSETS_COLLECTION_NAME` from `@schemas/AssetSchema`
+- `CHARACTERS_COLLECTION_NAME` from `@schemas/CharacterSchema`
+- `CHARACTER_SHEETS_COLLECTION_NAME` from `@schemas/CharacterSheetSchema`
+- `HANDOUTS_COLLECTION_NAME` from `@schemas/HandoutSchema`
+- `CLOCKS_COLLECTION_NAME` from `@schemas/ClockSchema`
+- `PAGE_HISTORY_COLLECTION_NAME` from `@schemas/PageHistorySchema`
+
+This ensures consistency and makes refactoring collection names easier if needed.
+
 ### Client-side Firebase
 
 Firestore and storage methods should **always** be imported dynamically for code splitting:
@@ -187,6 +220,39 @@ const doc = await serverDB.collection('sites').doc(id).get();
 
 ### Authentication Patterns
 
+We have two main server-side authentication utilities:
+
+#### For Astro Pages (Cookie-based Authentication)
+Use `verifySession` for Astro pages that need authentication. This reads the session cookie:
+
+```ts
+import { verifySession } from '@utils/server/auth/verifySession';
+
+// In Astro pages (.astro files)
+const session = await verifySession(Astro);
+if (!session?.uid) {
+  return Astro.redirect('/login?redirect=' + encodeURIComponent(Astro.url.pathname));
+}
+
+// Use session.uid for the authenticated user ID
+```
+
+#### For API Routes (Token-based Authentication) 
+Use `tokenToUid` for API endpoints that receive Authorization headers with Bearer tokens:
+
+```ts
+import { tokenToUid } from '@utils/server/auth/tokenToUid';
+
+// In API routes (src/pages/api/*)
+const uid = await tokenToUid(request);
+if (!uid) {
+  return new Response('Unauthorized', { status: 401 });
+}
+```
+
+#### Client-side Authentication
+For client-side components, use the session store:
+
 ```ts
 // Client-side auth checking
 import { uid } from '@stores/session';
@@ -195,15 +261,11 @@ if (!$uid) {
   // Handle unauthenticated state
   return;
 }
-
-// Server-side auth (API routes)
-import { tokenToUid } from '@utils/server/auth/tokenToUid';
-
-const uid = await tokenToUid(request);
-if (!uid) {
-  return new Response('Unauthorized', { status: 401 });
-}
 ```
+
+**Key Differences:**
+- **`verifySession`**: Reads session cookies, returns session object with `uid` property, used in Astro pages
+- **`tokenToUid`**: Reads Authorization header with Bearer token, returns uid string directly, used in API routes
 
 ## Biome
 
