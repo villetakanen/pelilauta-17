@@ -31,7 +31,7 @@ This architecture prioritizes CDN performance by serving static HTML to all user
     
 - [ ] It must handle `GET` requests and use server-side Firebase helpers (`@firebase/server`).
     
-- [ ] It must verify the `session` cookie and return a JSON response with the user's status derived from their custom claims (which may be `undefined` for new users). A missing `eula_accepted` claim should be returned as `false` in the JSON payload for client convenience.
+- [x] It must verify the `session` cookie and return a JSON response with the user's status derived from their custom claims (which may be `undefined` for new users). A missing `eula_accepted` claim should be returned as `false` in the JSON payload for client convenience.
     
     ```
     // Example for a new user with no claims set yet

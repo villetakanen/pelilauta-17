@@ -1,0 +1,8 @@
+--- 
+import ModalPage from '@layouts/ModalPage.astro';
+import EulaForm from '@components/svelte/EulaForm.svelte';
+---
+
+<ModalPage title="End-User License Agreement">
+  <EulaForm client:only="svelte" />
+</ModalPage>

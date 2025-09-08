@@ -14,8 +14,8 @@ test.describe('Cache Purging APIs', () => {
     // Authenticate the user first
     await authenticate(page);
 
-    // Navigate to a test site that should exist
-    await page.goto('/sites/test-site');
+    // We don't need to navigate to a specific site page for API testing
+    // Just test the API endpoints directly
 
     // Try to access the cache purging API via browser console
     // This simulates what our client-side functions do
@@ -27,7 +27,7 @@ test.describe('Cache Purging APIs', () => {
           Authorization: `Bearer ${localStorage.getItem('session')}`,
         },
         body: JSON.stringify({
-          siteKey: 'test-site',
+          siteKey: 'e2e-test-site',
           pageKey: 'test-page',
         }),
       });
@@ -52,7 +52,7 @@ test.describe('Cache Purging APIs', () => {
           Authorization: `Bearer ${localStorage.getItem('session')}`,
         },
         body: JSON.stringify({
-          siteKey: 'test-site',
+          siteKey: 'e2e-test-site',
         }),
       });
 
@@ -70,15 +70,19 @@ test.describe('Cache Purging APIs', () => {
   });
 
   test('cache purging API should reject invalid requests', async ({ page }) => {
-    // Test without authentication
-    const noAuth = await page.evaluate(async () => {
+    // Authenticate first to establish proper page context
+    await authenticate(page);
+
+    // Test with invalid authentication token
+    const invalidAuth = await page.evaluate(async () => {
       const response = await fetch('/api/cache/purge-page', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: 'Bearer invalid-token',
         },
         body: JSON.stringify({
-          siteKey: 'test-site',
+          siteKey: 'e2e-test-site',
           pageKey: 'test-page',
         }),
       });
@@ -86,10 +90,9 @@ test.describe('Cache Purging APIs', () => {
       return response.status;
     });
 
-    expect(noAuth).toBe(401); // Should require authentication
+    expect(invalidAuth).toBe(401); // Should reject invalid token
 
     // Test with missing data
-    await authenticate(page);
 
     const missingData = await page.evaluate(async () => {
       const response = await fetch('/api/cache/purge-page', {
