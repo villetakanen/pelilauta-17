@@ -161,6 +161,39 @@ Legacy Lit components are installed via NPM or Git Submodules, but prefer Cyan D
 
 The backend is Google Firebase, using Auth, Firestore and Storage services.
 
+### Collection Names
+
+**Always use schema exported collection name constants** instead of hardcoded strings when referring to Firestore collections:
+
+```ts
+// ✅ Correct - Use exported constants
+import { SITES_COLLECTION_NAME } from '@schemas/SiteSchema';
+import { THREADS_COLLECTION_NAME } from '@schemas/ThreadSchema';
+import { PROFILES_COLLECTION_NAME } from '@schemas/ProfileSchema';
+
+const sitesRef = db.collection(SITES_COLLECTION_NAME);
+const threadsRef = db.collection(THREADS_COLLECTION_NAME);
+
+// ❌ Incorrect - Never hardcode collection names
+const sitesRef = db.collection('sites'); // Don't do this!
+```
+
+**Available collection name constants:**
+- `SITES_COLLECTION_NAME` from `@schemas/SiteSchema`
+- `THREADS_COLLECTION_NAME` from `@schemas/ThreadSchema`
+- `PROFILES_COLLECTION_NAME` from `@schemas/ProfileSchema`
+- `PAGES_COLLECTION_NAME` from `@schemas/PageSchema`
+- `ACCOUNTS_COLLECTION_NAME` from `@schemas/AccountSchema`
+- `REACTIONS_COLLECTION_NAME` from `@schemas/ReactionsSchema`
+- `ASSETS_COLLECTION_NAME` from `@schemas/AssetSchema`
+- `CHARACTERS_COLLECTION_NAME` from `@schemas/CharacterSchema`
+- `CHARACTER_SHEETS_COLLECTION_NAME` from `@schemas/CharacterSheetSchema`
+- `HANDOUTS_COLLECTION_NAME` from `@schemas/HandoutSchema`
+- `CLOCKS_COLLECTION_NAME` from `@schemas/ClockSchema`
+- `PAGE_HISTORY_COLLECTION_NAME` from `@schemas/PageHistorySchema`
+
+This ensures consistency and makes refactoring collection names easier if needed.
+
 ### Client-side Firebase
 
 Firestore and storage methods should **always** be imported dynamically for code splitting:

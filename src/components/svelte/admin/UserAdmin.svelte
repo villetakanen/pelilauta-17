@@ -56,7 +56,7 @@ async function purgeUser(uid: string) {
         {#each accounts as account}
           <User {account} />
           {#if import.meta.env.DEV}
-            <button on:click={() => purgeUser(account.uid)}>Purge</button>
+            <button onclick={() => purgeUser(account.uid)}>Purge</button>
           {/if}
         {/each}
         </div>

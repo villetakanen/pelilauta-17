@@ -1,4 +1,5 @@
 import { serverAuth, serverDB } from '@firebase/server';
+import { ACCOUNTS_COLLECTION_NAME } from '@schemas/AccountSchema';
 import { logDebug, logError } from '@utils/logHelpers';
 import { tokenToUid } from '@utils/server/auth/tokenToUid';
 import { toFid } from '@utils/toFid';
@@ -35,7 +36,7 @@ export const POST: APIRoute = async ({ request }) => {
     const batch = serverDB.batch();
 
     // Create account document
-    const accountRef = serverDB.collection('account').doc(uid);
+    const accountRef = serverDB.collection(ACCOUNTS_COLLECTION_NAME).doc(uid);
     batch.set(accountRef, {
       uid,
       eulaAccepted: true,
