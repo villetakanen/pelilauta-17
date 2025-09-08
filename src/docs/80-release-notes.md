@@ -7,6 +7,7 @@ noun: 'monsters'
 
 ### 18.1.0 (9.9.2025)
 - feat: Onboarding flow moved to server-side rendering for better performance and UX
+- fix: Email login flow could hang to a state machine fail due to race condition. Simplified the flow and flow states to avert the issue.
 - fix: User settings page uses SSR guard to hide the page from unauthenticated users (more of an aesthetic fix, as you can't have settings to access without being logged in)
 
 ### 18.0.8 (8.9.2025)
