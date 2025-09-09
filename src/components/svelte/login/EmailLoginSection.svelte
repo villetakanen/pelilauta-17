@@ -135,7 +135,7 @@ const sendLink = async (e: SubmitEvent) => {
 
   // Define action code settings here to capture current URL
   const actionCodeSettings = {
-    url: window.location.href, // Send user back to this exact URL
+    url: window.location.origin + window.location.pathname, // Avoid query params in redirect
     handleCodeInApp: true,
   };
 
