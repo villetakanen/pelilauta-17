@@ -3,7 +3,9 @@ import { captureError } from '@utils/client/sentry';
 import { logDebug, logError } from '@utils/logHelpers';
 
 // Component state
-let feedback = $state<{ message: string; type: 'success' | 'error' } | null>(null);
+let feedback = $state<{ message: string; type: 'success' | 'error' } | null>(
+  null,
+);
 let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
 async function handleTestError() {
@@ -15,13 +17,13 @@ async function handleTestError() {
 
     // Create a test error with rich context
     const testError = new Error('This is a test error from SentryTestButton');
-    
+
     const context = {
       component: 'SentryTestButton',
       action: 'test_sentry_integration',
       timestamp: new Date().toISOString(),
       userAgent: navigator.userAgent,
-      url: window.location.href
+      url: window.location.href,
     };
 
     logDebug('SentryTestButton', 'Sending test error to Sentry', context);
@@ -32,17 +34,17 @@ async function handleTestError() {
     // Show success feedback
     feedback = {
       message: 'Test error sent to Sentry successfully!',
-      type: 'success'
+      type: 'success',
     };
 
     logDebug('SentryTestButton', 'Test error sent successfully');
   } catch (error) {
     logError('SentryTestButton', 'Failed to send test error:', error);
-    
+
     // Show error feedback
     feedback = {
       message: 'Failed to send test error to Sentry',
-      type: 'error'
+      type: 'error',
     };
   }
 
