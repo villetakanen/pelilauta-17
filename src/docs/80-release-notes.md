@@ -5,15 +5,18 @@ noun: 'monsters'
 ---
 ## Version 18
 
-### 18.0.x (ongoing)
+### 18.1.0 (9.9.2025)
+- feat: Onboarding flow moved to server-side rendering for better performance and UX
+- fix: Email login flow could hang to a state machine fail due to race condition. Simplified the flow and flow states to avert the issue.
+- fix: User settings page uses SSR guard to hide the page from unauthenticated users (more of an aesthetic fix, as you can't have settings to access without being logged in)
+
+### 18.0.8 (8.9.2025)
 - fix: Page edit bypasses cache by adding `flowtime` query param to URL 
 - fix: Cyan Design System BREAKING CHANGES: remove `Open sans` font usage, replace with `Lato` font universally.
 - fix: Cyan Design System beta updates and fixes
 - fix: Optimized font loading for better load-times.
 - fix: Eliminated N+1 query problem on channels page by implementing aggregated API endpoint
 - fix: Added E2E tests covering channels page functionality, performance, and error scenarios
-
-#### 18.0.1 (01.09.2025)
 - fix: font page caching and loading strategies updated for better UX and ADIT
 - fix: Move Sentry initialization to client-side and guard it for SSR/dev; uses dynamic import to avoid edge/deno conflicts
 - fix: Updated some FABs to use the 4.0+ design system classes

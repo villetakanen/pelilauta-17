@@ -1,4 +1,5 @@
 ---
+import AuthManager from '@components/svelte/AuthManager.svelte';
 import AppBar from '../components/server/AppBar.astro';
 import AppRail from '../components/server/AppRail.astro';
 import AppFooter from '../components/server/app/AppFooter.astro';
@@ -33,6 +34,7 @@ const { title, description, image, shortTitle, noSharing } = Astro.props;
       <slot name="fab-tray"></slot>
     </nav>
     <slot name="app-background-poster" />
+    <AuthManager client:only="svelte" />
     <BaseTail />
   </body>
 </html>

@@ -4,7 +4,7 @@ import { authenticate } from './authenticate-e2e';
 test.setTimeout(120000); // Increase timeout for authentication and navigation
 
 test('Page name can be changed', async ({ page }) => {
-  await authenticate(page);
+  await authenticate(page); // Use default existing user
   await page.goto('http://localhost:4321/sites/e2e-test-site/front-page/edit');
 
   // Expect the user to be authenticated

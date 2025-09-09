@@ -10,6 +10,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { config } from 'dotenv';
 import { cert, initializeApp } from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -31,6 +32,7 @@ const serverApp = initializeApp({
 });
 
 export const serverDB = getFirestore(serverApp);
+export const serverAuth = getAuth(serverApp);
 
 // Create a test site
 const testSite = {
@@ -128,3 +130,23 @@ console.log('Test page created:', testPage.key);
 await new Promise((resolve) => setTimeout(resolve, 1000));
 
 console.log('Database initialization complete, fire away!');
+
+// Cleanup test user for account creation flow test
+const testUserUid = 'H3evfU7BDmec9KkotRiTV41YECg1';
+console.log(`Cleaning up user ${testUserUid} for account creation test...`);
+
+// 1. Clear custom claims
+await serverAuth.setCustomUserClaims(testUserUid, {});
+console.log('Custom claims cleared.');
+
+// 2. Delete account document
+const accountRef = serverDB.collection('accounts').doc(testUserUid);
+await accountRef.delete();
+console.log('Account document deleted.');
+
+// 3. Delete profile document
+const profileRef = serverDB.collection('profiles').doc(testUserUid);
+await profileRef.delete();
+console.log('Profile document deleted.');
+
+console.log('User cleanup complete.');

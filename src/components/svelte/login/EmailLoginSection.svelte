@@ -3,7 +3,7 @@
 import { completeAuthFlow } from 'src/utils/client/authUtils';
 import { pushSessionSnack } from 'src/utils/client/snackUtils';
 import { t } from 'src/utils/i18n';
-import { logError } from 'src/utils/logHelpers';
+import { logDebug, logError } from 'src/utils/logHelpers';
 import { onMount } from 'svelte';
 
 interface Props {
@@ -12,16 +12,19 @@ interface Props {
 const { redirect = '/' }: Props = $props();
 
 // Component state using Svelte runes
+type View = 'send' | 'sent' | 'verifyWithEmail';
+let view = $state<View>('send');
 let email = $state('');
 let suspend = $state(false); // Indicates an operation is in progress (sending link or verifying)
-let sent = $state(false); // Indicates the link has been sent
 
 /**
  * Verifies the sign-in link when the user returns to the app.
  * Dynamically imports Firebase Auth functions.
  */
-const verifyLink = async () => {
+const verifyLink = async (emailToUse?: string) => {
   suspend = true; // Indicate verification is in progress
+  logDebug('EmailLoginSection', 'Starting email link verification...');
+
   try {
     // Dynamically import Firebase Auth functions and instance
     const { signInWithEmailLink } = await import('firebase/auth');
@@ -31,18 +34,38 @@ const verifyLink = async () => {
     const loginRedirectRoute =
       window.localStorage.getItem('loginRedirectRoute');
 
-    if (!emailFromStorage) {
-      logError('No email found in local storage - aborting verification.');
-      pushSessionSnack(t('login:error.noEmailStorage'), { type: 'error' }); // User feedback
+    // Use provided email, storage email, or component state email as fallback
+    const emailForVerification = emailToUse || emailFromStorage || email;
+
+    logDebug('EmailLoginSection', 'Retrieved from storage:', {
+      emailFromStorage,
+      loginRedirectRoute,
+      emailToUse,
+      emailForVerification,
+    });
+
+    if (!emailForVerification) {
+      logError(
+        'EmailLoginSection',
+        'No email available for verification - requesting user input.',
+      );
+      // Instead of aborting, ask user to enter their email
+      view = 'verifyWithEmail';
       suspend = false;
       return;
     }
 
+    logDebug('EmailLoginSection', 'Attempting to sign in with email link...');
+    logDebug('EmailLoginSection', 'Email:', emailForVerification);
+    logDebug('EmailLoginSection', 'URL:', window.location.href);
+
     const userCredential = await signInWithEmailLink(
       auth,
-      emailFromStorage,
+      emailForVerification,
       window.location.href,
     );
+
+    logDebug('EmailLoginSection', 'Sign in successful:', userCredential.user);
 
     // Clear email from storage on success
     window.localStorage.removeItem('emailForSignIn');
@@ -52,12 +75,50 @@ const verifyLink = async () => {
     await completeAuthFlow(userCredential.user, loginRedirectRoute || redirect);
     // No need to set suspend = false due to redirect
   } catch (error) {
-    logError('Error verifying email link:', error);
-    pushSessionSnack(t('login:error.linkVerificationFailed'), {
-      type: 'error',
-    }); // User feedback
+    logError('EmailLoginSection', 'Error verifying email link:', error);
+
+    // Provide more specific error messages based on the error type
+    if (error instanceof Error) {
+      if (error.message.includes('auth/invalid-action-code')) {
+        pushSessionSnack(
+          'The email link has expired or been used already. Please request a new one.',
+          {
+            type: 'error',
+          },
+        );
+      } else if (error.message.includes('auth/invalid-email')) {
+        pushSessionSnack('Invalid email address. Please try again.', {
+          type: 'error',
+        });
+        // Ask user to re-enter email
+        view = 'verifyWithEmail';
+      } else {
+        pushSessionSnack(`Error: ${error.message}`, {
+          type: 'error',
+        });
+      }
+    } else {
+      pushSessionSnack(t('login:error.linkVerificationFailed'), {
+        type: 'error',
+      }); // User feedback
+    }
+
     suspend = false; // Reset suspend state on error
   }
+};
+
+/**
+ * Handles verification when user needs to re-enter email for the link
+ */
+const verifyWithEmail = async (e: SubmitEvent) => {
+  e.preventDefault();
+  if (!email) {
+    pushSessionSnack(t('login:error.emailRequired'), { type: 'error' });
+    return;
+  }
+
+  view = 'send';
+  await verifyLink(email);
 };
 
 /**
@@ -74,30 +135,49 @@ const sendLink = async (e: SubmitEvent) => {
 
   // Define action code settings here to capture current URL
   const actionCodeSettings = {
-    url: `${window.location.origin}/`, // Send user back to the root after verification
+    url: window.location.origin + window.location.pathname, // Avoid query params in redirect
     handleCodeInApp: true,
   };
+
+  logDebug(
+    'EmailLoginSection',
+    'Sending email link with settings:',
+    actionCodeSettings,
+  );
 
   try {
     // Dynamically import Firebase Auth functions and instance
     const { sendSignInLinkToEmail } = await import('firebase/auth');
     const { auth } = await import('../../../firebase/client');
 
+    logDebug('EmailLoginSection', 'Storing email in localStorage:', email);
     window.localStorage.setItem('emailForSignIn', email);
     // Optionally store the intended redirect route if needed after login
     if (redirect) {
       window.localStorage.setItem('loginRedirectRoute', redirect);
     }
 
+    logDebug('EmailLoginSection', 'Sending sign-in link to email:', email);
     await sendSignInLinkToEmail(auth, email, actionCodeSettings);
 
+    logDebug('EmailLoginSection', 'Email link sent successfully');
+
     // Inform the user to check their email
-    sent = true;
+    view = 'sent';
     pushSessionSnack(t('login:withEmail.sent')); // Success feedback
   } catch (error) {
-    logError('Error sending email link:', error);
-    pushSessionSnack(t('login:error.sendLinkFailed'), { type: 'error' }); // User feedback
-    sent = false; // Reset sent state on error
+    logError('EmailLoginSection', 'Error sending email link:', error);
+
+    // Provide more specific error messages
+    if (error instanceof Error) {
+      pushSessionSnack(`Error sending email: ${error.message}`, {
+        type: 'error',
+      });
+    } else {
+      pushSessionSnack(t('login:error.sendLinkFailed'), { type: 'error' });
+    }
+
+    view = 'send'; // Reset sent state on error
   } finally {
     suspend = false; // Ensure suspend state is reset
   }
@@ -111,6 +191,7 @@ onMount(async () => {
   const { auth } = await import('../../../firebase/client');
 
   if (isSignInWithEmailLink(auth, window.location.href)) {
+    logDebug('EmailLoginSection', 'Verifying email link...');
     verifyLink();
   }
 });
@@ -119,13 +200,31 @@ onMount(async () => {
   <section class="elevation-1 border-radius p-2" style="position: relative">
     <h2>{t('login:withEmail.title')}</h2>
   
-    {#if suspend && !sent}
-      <!-- Show loader only during initial link sending, not during verification redirect -->
-      <div class="flex justify-center p-4">
-        <cn-loader></cn-loader>
-      </div>
-    {:else if sent}
+    {#if view === 'sent'}
       <p>{t('login:withEmail.sent')}</p> 
+    {:else if view === 'verifyWithEmail'}
+      <!-- User needs to re-enter email for link verification -->
+      <p>Please enter the email address you used to request the login link:</p>
+      <form onsubmit={verifyWithEmail}>
+        <div class="form-field"> 
+          <label for="email-verify">{t('login:withEmail.label')}</label>
+          <input
+            id="email-verify"
+            type="email"
+            placeholder={t('login:withEmail.placeholder')}
+            bind:value={email}
+            required
+          />
+        </div>
+        <div class="toolbar justify-end">
+          <button type="submit" disabled={suspend}>
+            {#if suspend}
+              <cn-loader></cn-loader>
+            {/if}
+            <span>Verify Login Link</span>
+          </button>
+        </div>
+      </form>
     {:else}
       <p>{t('login:withEmail.info')}</p>
       <form onsubmit={sendLink}>
@@ -143,6 +242,8 @@ onMount(async () => {
           <button type="submit" disabled={suspend}>
             {#if suspend}
               <cn-loader></cn-loader>
+            {:else}
+              <cn-icon noun="send"></cn-icon>
             {/if}
             <span>{t('login:withEmail.sendAction')}</span>
           </button>

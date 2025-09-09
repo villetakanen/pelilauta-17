@@ -30,6 +30,62 @@ A role-playing games community platform built with modern web technologies. Peli
 - Cloud Storage for file uploads
 - Server-side Firebase Admin SDK for API routes
 
+## Updated Architecture
+
+### Project Structure
+
+The project is organized as follows:
+
+- **Root Directory**:
+  - `astro.config.mjs`: Astro configuration.
+  - `biome.json`: Biome linting and formatting configuration.
+  - `netlify.toml`: Netlify deployment configuration.
+  - `package.json`: Dependencies and scripts.
+  - `tsconfig.json`: TypeScript configuration.
+  - `vitest.config.js`: Vitest testing framework configuration.
+
+- **Directories**:
+  - `docs/`: Documentation files.
+  - `e2e/`: End-to-end test specifications.
+  - `public/`: Static assets.
+  - `src/`: Main source code directory.
+  - `test/`: Unit and integration tests.
+  - `tooling/`: Utility scripts.
+
+- **Special Directories**:
+  - `playwright/`: Playwright configurations.
+  - `playwright-report/`: Playwright test reports.
+
+### `src/` Directory
+
+The `src/` directory is structured as follows:
+
+- **`components/`**: Reusable UI components, divided into:
+  - `server/`: Astro components for server-side rendering.
+    - **`[app-name]/`**: Components specific to each microfrontend or application (e.g., `threads`, `sites`).
+  - `shared/`: Shared components.
+    - **`[app-name]/`**: Shared components specific to each microfrontend or application, named accordingly (e.g., `threads`, `sites`).
+  - `client/`: Svelte components for client-side interactivity.
+    - **`[app-name]/`**: Components specific to each microfrontend or application (e.g., `threads`, `sites`).
+- **`firebase/`**: Firebase utilities, divided into:
+  - `server/`: Server-side Firebase utilities.
+  - `client/`: Client-side Firebase utilities.
+- **`layouts/`**: Page layout components.
+- **`schemas/`**: Zod schemas for validation.
+- **`stores/`**: Nanostores for state management.
+- **`utils/`**: General utilities.
+
+This structure ensures modularity and scalability.
+
+### Authentication Patterns
+
+The application employs a multi-layered approach to authentication:
+
+- **Client-Side Authentication**: Nanostores manage the user's authentication state for UI updates.
+- **Server-Side Authentication**: Cookie-based session verification for Astro pages and token-based authentication for API routes.
+
+For detailed examples, refer to the [Architecture Documentation](src/docs/70-architecture.md).
+
 ## Environment Variables
 
 Create a `.env` file with the following Firebase configuration:

@@ -1,5 +1,8 @@
 <script lang="ts">
+import { toMekanismiURI } from '@utils/mekanismiUtils';
+import { toFid } from '@utils/toFid';
 import { t } from 'src/utils/i18n';
+import { onMount } from 'svelte';
 
 interface NickNameInputProps {
   nick: string;
@@ -8,6 +11,23 @@ interface NickNameInputProps {
 const { nick, onNickChange }: NickNameInputProps = $props();
 let exists = $state(false);
 let currentNick = $state(nick);
+let avatarUrl = $state('');
+
+onMount(async () => {
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+  getUserInfo();
+});
+
+async function getUserInfo() {
+  const { auth } = await import('../../../firebase/client');
+  const user = auth.currentUser;
+  if (!user) return;
+  avatarUrl = user.photoURL || '';
+  const dpn = user.displayName;
+  const username = dpn ?? user.email?.split('@')[0];
+  currentNick = toMekanismiURI(username || '');
+  onNickChange(currentNick, exists);
+}
 
 // Keep currentNick in sync with prop changes
 $effect(() => {
@@ -36,6 +56,10 @@ async function onBlur(event: Event) {
   exists = hasDuplicate;
   onNickChange(nickValue, hasDuplicate);
 }
+const handle = $derived.by(() => {
+  if (currentNick) return toFid(currentNick);
+  return '–';
+});
 
 async function checkForDuplicate(nickname: string): Promise<boolean> {
   if (!nickname) return false;
@@ -51,8 +75,10 @@ async function checkForDuplicate(nickname: string): Promise<boolean> {
 }
 </script>
 
-<div>
-  <label>
+<div class="flex flex-no-wrap">
+  <cn-avatar nick={nick} src={avatarUrl}></cn-avatar>
+  <fieldset class="grow">
+            <label>
     {t('entries:profile.nick')}
     <input
       type="text"
@@ -65,4 +91,9 @@ async function checkForDuplicate(nickname: string): Promise<boolean> {
   {#if exists} 
     <p class="alert p-0 m-0">{t('login:eula.nickTaken')}</p>
   {/if}
-</div>
+          <p>
+            <strong>{t('entries:profile.username')}: </strong>
+            <span>{handle}</span>
+          </p>
+        </fieldset>
+      </div>

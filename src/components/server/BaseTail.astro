@@ -1,11 +1,4 @@
----
-import EulaContent from '../../docs/03-eula.md';
-import EulaDialog from '../svelte/eula/EulaDialog.svelte';
-/**
- * All the scripts and elements that should be included in the very end of the document
- */
----
-<cn-snackbar />
+ <cn-snackbar />
 
 <script is:inline>
 // On load, we want to see, if there is a snackbar message in session storage for the MPA
@@ -22,7 +15,3 @@ window.addEventListener('load', () => {
 <div id="base-tail">
   <slot />
 </div>
-
-<EulaDialog client:only="svelte">
-  <EulaContent />
-</EulaDialog>

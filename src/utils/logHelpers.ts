@@ -19,5 +19,8 @@ export function logWarn(...args: unknown[]) {
   console.warn('⚠️', ...args);
 }
 export function logDebug(...args: unknown[]) {
-  console.debug('🐛', ...args);
+  // Only log debug messages if the debug feature flag is enabled
+  if (import.meta.env.PUBLIC_FEATURE_FLAG_DEBUG === 'true') {
+    console.debug('🐛', ...args);
+  }
 }

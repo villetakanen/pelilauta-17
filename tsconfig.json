@@ -5,6 +5,7 @@
     "baseUrl": ".",
     "paths": {
       "@components/*": ["src/components/*"],
+      "@svelte/*": ["src/components/svelte/*"],
       "@layouts/*": ["src/layouts/*"],
       "@pages/*": ["src/pages/*"],
       "@schemas/*": ["src/schemas/*"],

@@ -79,6 +79,9 @@ async function handleFirebaseAuthChange(user: User | null) {
       // We need to subscribe to the account data
       await subscribeToAccount(user.uid);
       subscribeToProfile(user.uid);
+
+      // Mark session as active after successful subscription
+      sessionState.set('active');
     } catch (error) {
       logWarn(
         'sessionStore',
@@ -126,11 +129,11 @@ async function clear() {
 
 export async function logout() {
   // As we are logging out, we need to set the loading state
-  $loadingState.set('loading');
+  sessionState.set('loading');
 
   // Clear the session
   await clear();
-  $loadingState.set('initial');
+  sessionState.set('initial');
 
   // Sign out from Firebase
   auth.signOut();

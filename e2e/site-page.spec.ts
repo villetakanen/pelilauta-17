@@ -105,7 +105,7 @@ test.describe('Site Page Loading and Performance', () => {
   test('Site page enables real-time updates for authenticated users', async ({
     page,
   }) => {
-    await authenticate(page);
+    await authenticate(page); // Use default existing user
     await page.goto('http://localhost:4321/sites/e2e-test-site');
 
     // Verify authenticated user sees additional functionality
