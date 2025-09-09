@@ -4,6 +4,7 @@ import { appMeta } from 'src/stores/metaStore/metaStore';
 import { logDebug } from 'src/utils/logHelpers';
 import { uid } from '../../../stores/session';
 import WithAuth from '../app/WithAuth.svelte';
+import SentryTestButton from './SentryTestButton.svelte';
 
 type Props = {
   showLocalTools: boolean;
@@ -85,13 +86,7 @@ async function testSSRNoAuth() {
       </button>
     </li>
     <li>
-      <button id="error-button">Throw test error</button>
-<script>
-  function handleClick () {
-    throw new Error('This is a test error');
-  }
-  document.querySelector("#error-button").addEventListener("click", handleClick);
-</script>
+      <SentryTestButton />
     </li>
   </ul>
 </WithAuth>

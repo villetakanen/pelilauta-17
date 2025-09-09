@@ -5,6 +5,11 @@ noun: 'monsters'
 ---
 ## Version 18
 
+### 18.1.x (ongoing)
+ - fix: Library page auth redirect moved to server-side to prevent content flash for unauthenticated users (PBI 011)
+ - fix: Restored and simplified lefthook commit hooks and commitlint configuration for faster local checks (PBI 012)
+ - fix: Added reusable Sentry test button component with user feedback and rich context for admin debugging (PBI 013)
+
 ### 18.1.0 (9.9.2025)
 - feat: Onboarding flow moved to server-side rendering for better performance and UX
 - fix: Email login flow could hang to a state machine fail due to race condition. Simplified the flow and flow states to avert the issue.

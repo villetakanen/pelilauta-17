@@ -1,14 +1,14 @@
-# PBI: Improve Sentry Test Error Button in Admin Tray
+# PBI: Improve Sentry Test Error Button (Bespoke Component)
 
-**Title:** Fix and Improve Sentry Test Error Button in Admin Tray
+**Title:** Fix and Improve Sentry Test Error Button as a Bespoke Component
 
-**As an** admin, **I want** a properly working test error button in the admin tray that sends errors to Sentry monitoring, **so that** I can verify that error tracking is working correctly in different environments.
+**As an** admin, **I want** a properly working test error button provided as a small, reusable Svelte component that sends errors to Sentry monitoring, **so that** I can verify that error tracking is working correctly in different environments without complicating the `AdminTray` implementation.
 
 ---
 
 ### Description
 
-The admin tray currently has a test error button, but it has several implementation issues:
+The current admin tooling includes a test error button, but embedding the button directly inside the `AdminTray` creates complexity and introduced bad patterns. Instead, we'll supply a small, focused Svelte component that the tray (or any admin UI) can import and use. The component will encapsulate Sentry integration, error context, and user feedback.
 
 1. **Mixed paradigms**: Uses vanilla JavaScript event listeners inside a Svelte component
 2. **Poor error handling**: Doesn't properly integrate with our Sentry error capture utility
@@ -17,76 +17,34 @@ The admin tray currently has a test error button, but it has several implementat
 
 The button should be properly implemented using Svelte patterns and integrate with our existing Sentry utilities to provide comprehensive error testing capabilities.
 
-#### Current Implementation Issues:
+#### Current Issues Observed
 
-**File:** `src/components/svelte/admin/AdminTray.svelte` (lines ~75-83)
-```svelte
-<li>
-  <button id="error-button">Throw test error</button>
-<script>
-  function handleClick () {
-    throw new Error('This is a test error');
-  }
-  document.querySelector("#error-button").addEventListener("click", handleClick);
-</script>
-</li>
-```
+- An admin test button exists but is implemented with non-idiomatic patterns (vanilla DOM, inline template scripts).
+- Embedding Sentry integration directly into `AdminTray.svelte` increases coupling and makes the tray harder to maintain.
 
-**Problems:**
-- Uses vanilla JS `document.querySelector` in a Svelte component
-- `<script>` tag inside component template (incorrect Svelte syntax)
-- Doesn't use our `captureError` utility from `@utils/client/sentry`
-- No user feedback or error context
-- Inconsistent with other buttons in the tray
+#### Proposed Implementation (Updated)
 
-#### Proposed Implementation:
+Create a small, reusable Svelte component at:
 
-**File:** `src/components/svelte/admin/AdminTray.svelte`
+`src/components/svelte/admin/SentryTestButton.svelte`
+
+This component will:
+- Use proper Svelte event handling and reactive state
+- Import and use `captureError` from `@utils/client/sentry`
+- Provide user feedback (success / failure message) that auto-clears after 3s
+- Include rich error context (component, action, timestamp, userAgent, url)
+- Be importable by `AdminTray.svelte` (or any other admin UI) without forcing implementation details into the tray
+
+Example usage in `AdminTray.svelte`:
+
 ```svelte
 <script lang="ts">
-import { captureError } from '@utils/client/sentry';
-// ... existing imports
-
-let testErrorMessage = $state('');
-
-async function throwTestError() {
-  try {
-    const testError = new Error('Admin Test Error - Sentry Integration Check');
-    
-    // Add context for debugging
-    const errorContext = {
-      component: 'AdminTray',
-      action: 'test_error_button',
-      timestamp: new Date().toISOString(),
-      userAgent: navigator.userAgent,
-      url: window.location.href
-    };
-    
-    // Send to Sentry
-    await captureError(testError, errorContext);
-    
-    testErrorMessage = 'Test error sent to Sentry successfully ✓';
-    
-    // Clear message after 3 seconds
-    setTimeout(() => {
-      testErrorMessage = '';
-    }, 3000);
-    
-  } catch (error) {
-    testErrorMessage = 'Failed to send error to Sentry ✗';
-    console.error('Test error failed:', error);
-  }
-}
+  import SentryTestButton from '@components/svelte/admin/SentryTestButton.svelte';
+  // ... other imports
 </script>
 
-<!-- In template -->
 <li>
-  <button onclick={throwTestError}>
-    <cn-icon noun="warning" small></cn-icon> Test Sentry Error
-  </button>
-  {#if testErrorMessage}
-    <p class="text-caption text-low p-1">{testErrorMessage}</p>
-  {/if}
+  <SentryTestButton />
 </li>
 ```
 
@@ -103,12 +61,9 @@ async function throwTestError() {
 
 #### Files to Modify:
 
-1. **`src/components/svelte/admin/AdminTray.svelte`**
-   - Remove the incorrect `<script>` tag and vanilla JS event listener
-   - Import `captureError` from `@utils/client/sentry`
-   - Add proper Svelte button with `onclick` handler
-   - Add state for user feedback message
-   - Include proper error context for debugging
+1. **`src/components/svelte/admin/SentryTestButton.svelte`** (new)
+  - Implement the reusable Svelte component that encapsulates Sentry test logic
+  - Keep `AdminTray.svelte` changes minimal: import and render the new component where needed
 
 #### Error Context Information:
 
@@ -128,26 +83,28 @@ The test error will include:
 
 ### Acceptance Criteria
 
-- [ ] Test error button uses proper Svelte event handling (no vanilla JS)
-- [ ] Button integrates with existing `captureError` utility
-- [ ] Error is successfully sent to Sentry with proper context
-- [ ] User receives visual feedback when error is sent
-- [ ] Feedback message automatically clears after 3 seconds
-- [ ] Error includes useful debugging context (component, timestamp, URL, etc.)
-- [ ] Button styling is consistent with other admin tray buttons
-- [ ] Works in both development and production environments
-- [ ] No console errors or warnings from the implementation
-- [ ] Sentry dashboard shows the test error with proper context
-
+- [ ] There is a new component `src/components/svelte/admin/SentryTestButton.svelte` that implements the test button using Svelte patterns (no vanilla JS DOM access)
+- [ ] Component imports and uses `captureError` from `@utils/client/sentry` (or a platform-appropriate wrapper)
+- [ ] Clicking the button sends an error to Sentry with context fields: component, action, timestamp, userAgent, url
+- [ ] Component shows temporary success or failure feedback under the button and clears it after ~3 seconds
+- [ ] Component markup and styling are consistent with other admin buttons (uses Cyan components / icon)
+- [ ] Admin tray can import the new component without additional logic changes
+- [ ] No browser console errors or warnings introduced by the component
+- [ ] Sentry dashboard shows the test error with the provided context when tested
 ### Testing Requirements
 
-- [ ] Manual testing: Click button → verify visual feedback appears
-- [ ] Manual testing: Check Sentry dashboard for test error with context
+- [ ] Manual testing: Click the `SentryTestButton` → verify visual feedback appears
+- [ ] Manual testing: Check Sentry dashboard for test error with context populated
 - [ ] Manual testing: Verify feedback message disappears after 3 seconds
-- [ ] Environment testing: Test in both development and production
+- [ ] Environment testing: Test in both development and production builds
 - [ ] Console testing: Verify no JavaScript errors in browser console
-- [ ] Error context testing: Verify all context fields are populated in Sentry
+- [ ] Error context testing: Verify all context fields are visible in Sentry
 
+### Integration / Notes
+
+- Keep `AdminTray.svelte` changes minimal: import and render `<SentryTestButton />` where appropriate. This keeps the tray focused on layout and composition and avoids mixing implementation details.
+- The new component should use dynamic imports for Firestore/Firebase utilities only if needed by `captureError` (follow repository patterns).
+- If `captureError` is not available client-side, mock or wrap server API calls in development for safe testing.
 ### Priority
 
 **Low Priority** - This is a developer/admin tool improvement. The existing button partially works, but this enhances the debugging experience and follows proper Svelte patterns.
