@@ -6,9 +6,11 @@ noun: 'monsters'
 ## Version 18
 
 ### 18.1.x (ongoing)
- - fix: Library page auth redirect moved to server-side to prevent content flash for unauthenticated users (PBI 011)
- - fix: Restored and simplified lefthook commit hooks and commitlint configuration for faster local checks (PBI 012)
- - fix: Added reusable Sentry test button component with user feedback and rich context for admin debugging (PBI 013)
+- fix: Cyan Design System 4.0.0 latest beta patches 
+- fix: Libary updates for CVS issues and security patches
+- fix: Library page auth redirect moved to server-side to prevent content flash for unauthenticated users (PBI 011)
+- fix: Restored and simplified lefthook commit hooks and commitlint configuration for faster local checks (PBI 012)
+- fix: Added reusable Sentry test button component with user feedback and rich context for admin debugging (PBI 013)
 
 ### 18.1.0 (9.9.2025)
 - feat: Onboarding flow moved to server-side rendering for better performance and UX
