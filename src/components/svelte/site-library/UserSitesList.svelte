@@ -1,6 +1,4 @@
 <script lang="ts">
-import { onMount } from 'svelte';
-import { uid } from '../../../stores/session';
 import { userSites } from '../../../stores/userSites/index.ts';
 import { t } from '../../../utils/i18n.ts';
 import FilteredSites from './FilteredSites.svelte';
@@ -9,13 +7,6 @@ import { filters, toggleOrder } from './filters.svelte.ts';
 const directionNoun = $derived(
   filters.orderDirection === 'asc' ? 'arrow-up' : 'arrow-down',
 );
-
-onMount(() => {
-  if (!$uid) {
-    // Redirect to public site list if not logged in
-    window.location.href = '/sites';
-  }
-});
 </script>
 
 <div class="content-cards">

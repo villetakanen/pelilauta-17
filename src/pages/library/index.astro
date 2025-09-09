@@ -1,10 +1,25 @@
 ---
+import { verifySession } from '@utils/server/auth/verifySession';
 import { t } from 'src/utils/i18n';
 import LibraryTray from '../../components/server/library/LibraryTray.astro';
 import BackgroundPoster from '../../components/server/ui/BackgroundPoster.astro';
 import LibrarySitesFabs from '../../components/svelte/site-library/LibrarySitesFabs.svelte';
 import UserSitesList from '../../components/svelte/site-library/UserSitesList.svelte';
 import PageWithTray from '../../layouts/PageWithTray.astro';
+
+/* Server-side authentication check: redirect unauthenticated users */
+const session = await verifySession(Astro);
+
+if (!session?.uid) {
+  // Redirect unauthenticated users to public sites list
+  return Astro.redirect('/sites');
+}
+
+// Set cache control headers for authenticated content
+Astro.response.headers.set(
+  'Cache-Control',
+  'private, no-cache, no-store, must-revalidate',
+);
 
 const title = `${t('app:shortname')} – ${t('library:title')}`;
 const shortTitle = t('library:title');
