@@ -1,4 +1,5 @@
 <script lang="ts">
+import { captureError } from '@utils/client/sentry';
 import { authedPost } from 'src/firebase/client/apiClient';
 import { appMeta } from 'src/stores/metaStore/metaStore';
 import { logDebug } from 'src/utils/logHelpers';
@@ -10,6 +11,8 @@ type Props = {
 };
 const { showLocalTools }: Props = $props();
 const visible = $derived.by(() => $appMeta.admins.includes($uid));
+
+let testErrorMessage = $state('');
 
 async function testSSRAuth() {
   const response = await authedPost('/api/bsky/skeet', {
@@ -36,6 +39,34 @@ async function testSSRNoAuth() {
     }),
   });
   logDebug(`SSR Auth response: ${response.status}`);
+}
+
+async function throwTestError() {
+  try {
+    const testError = new Error('Admin Test Error - Sentry Integration Check');
+
+    // Add context for debugging
+    const errorContext = {
+      component: 'AdminTray',
+      action: 'test_error_button',
+      timestamp: new Date().toISOString(),
+      userAgent: navigator.userAgent,
+      url: window.location.href,
+    };
+
+    // Send to Sentry
+    await captureError(testError, errorContext);
+
+    testErrorMessage = 'Test error sent to Sentry successfully ✓';
+
+    // Clear message after 3 seconds
+    setTimeout(() => {
+      testErrorMessage = '';
+    }, 3000);
+  } catch (error) {
+    testErrorMessage = 'Failed to send error to Sentry ✗';
+    console.error('Test error failed:', error);
+  }
 }
 </script>
 
@@ -85,13 +116,12 @@ async function testSSRNoAuth() {
       </button>
     </li>
     <li>
-      <button id="error-button">Throw test error</button>
-<script>
-  function handleClick () {
-    throw new Error('This is a test error');
-  }
-  document.querySelector("#error-button").addEventListener("click", handleClick);
-</script>
+      <button onclick={throwTestError}>
+        <cn-icon noun="warning" small></cn-icon> Test Sentry Error
+      </button>
+      {#if testErrorMessage}
+        <p class="text-caption text-low p-1">{testErrorMessage}</p>
+      {/if}
     </li>
   </ul>
 </WithAuth>
