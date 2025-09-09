@@ -128,16 +128,16 @@ The test error will include:
 
 ### Acceptance Criteria
 
-- [ ] Test error button uses proper Svelte event handling (no vanilla JS)
-- [ ] Button integrates with existing `captureError` utility
-- [ ] Error is successfully sent to Sentry with proper context
-- [ ] User receives visual feedback when error is sent
-- [ ] Feedback message automatically clears after 3 seconds
-- [ ] Error includes useful debugging context (component, timestamp, URL, etc.)
-- [ ] Button styling is consistent with other admin tray buttons
-- [ ] Works in both development and production environments
-- [ ] No console errors or warnings from the implementation
-- [ ] Sentry dashboard shows the test error with proper context
+- [x] Test error button uses proper Svelte event handling (no vanilla JS)
+- [x] Button integrates with existing `captureError` utility
+- [x] Error is successfully sent to Sentry with proper context
+- [x] User receives visual feedback when error is sent
+- [x] Feedback message automatically clears after 3 seconds
+- [x] Error includes useful debugging context (component, timestamp, URL, etc.)
+- [x] Button styling is consistent with other admin tray buttons
+- [x] Works in both development and production environments
+- [x] No console errors or warnings from the implementation
+- [x] Sentry dashboard shows the test error with proper context
 
 ### Testing Requirements
 
