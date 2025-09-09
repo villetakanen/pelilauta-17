@@ -1,7 +1,7 @@
 {
   "name": "Pelilauta",
   "type": "module",
-  "version": "18.1.1",
+  "version": "18.1.2",
   "engines": {
     "node": ">=20.0.0"
   },
@@ -22,9 +22,9 @@
     "postinstall": "lefthook install"
   },
   "dependencies": {
-    "@11thdeg/cn-editor": "4.0.0-beta.13",
-    "@11thdeg/cyan-css": "4.0.0-beta.23",
-    "@11thdeg/cyan-lit": "4.0.0-beta.14",
+    "@11thdeg/cn-editor": "4.0.0-beta.14",
+    "@11thdeg/cyan-css": "4.0.0-beta.24",
+    "@11thdeg/cyan-lit": "4.0.0-beta.15",
     "@astrojs/check": "^0.9.4",
     "@astrojs/netlify": "^6.5.10",
     "@astrojs/rss": "^4.0.12",
@@ -47,7 +47,7 @@
     "marked-footnote": "^1.2.4",
     "nanostores": "^1.0.1",
     "rss-parser": "^3.13.0",
-    "svelte": "^5.38.3",
+    "svelte": "^5.38.8",
     "turndown": "^7.2.0",
     "turndown-plugin-gfm": "^1.0.2",
     "typescript": "^5.9.2",
@@ -65,7 +65,7 @@
     "@types/uuid": "^10.0.0",
     "dotenv": "^16.5.0",
     "lefthook": "^1.12.2",
-    "rollup-plugin-visualizer": "^6.0.1",
+    "rollup-plugin-visualizer": "^6.0.3",
     "vite": "^6.0.11",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^2.1.8",
