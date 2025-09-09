@@ -5,7 +5,7 @@ noun: 'veil-advance'
 
 **(in english only)**
 
-The Pelilauta is a web application that is built on top of the excellent Astro.build site generator.
+The Pelilauta is a progressive web application built on top of the excellent Astro.build SSR generator.
 
 The application consists of 2 bespoke apps: the discussions or "threads" app and the Game-wiki app. The threads app is a forum-like application that allows users to create threads and post messages. The Game-wiki app is a wiki-like application that allows users to create and edit game related wiki-sites.
 
@@ -13,7 +13,7 @@ The application consists of 2 bespoke apps: the discussions or "threads" app and
 
 ### Locally cached multi-page app
 
-The Pelilauta is a multi-page application that is designed to be fast and responsive. The application is designed to be used on a mobile device and on a desktop computer. To enable this, we use reactive techniques (solid-js) to update the UI when the data changes, and local storage (nanostores) to cache the data.
+The Pelilauta is a multi page app that is designed to be fast and responsive. The application is designed to be used on a mobile device and on a desktop computer. To enable this, we use svelte to progressively enhance the user experience by adding interactivity to the server-rendered pages. By default, the SSR pages are fully functional for reading content, and svelte is used to enhance the experience for logged-in users and for actions that require interactivity, such as posting reacting to a post, creating a new thread or editing a wiki page.
 
 Both apps have their own local storage and cache the data that is needed to render the UI. The data is fetched from the server when the app is loaded and when the user navigates to a new page. The data is then stored in the local storage and used to render the UI.
 
@@ -23,23 +23,61 @@ This approach allows the app to be fast and responsive, even on a slow network c
 
 ...
 
-### Code structure
-```
-src/
-  components/
-    client/ (the solid-js, client side components)
-      ThreadsApp/
-        ... (UX of the threads app)
-      SitesApp/
-        ...
-    server/ (the server side components)
-      ...
-    store/ (the store components)
-      ThreadsApp/
-        ... (state management of the threads app)
-      SitesApp/
-        ...
-```
+### Project Structure
+
+The project structure is organized as follows:
+
+- **Root Directory**:
+  - `astro.config.mjs`: Configuration for the Astro site generator.
+  - `biome.json`: Configuration for Biome, used for linting and formatting.
+  - `netlify.toml`: Configuration for deploying the application to Netlify.
+  - `package.json`: Contains project dependencies and scripts.
+  - `tsconfig.json`: TypeScript configuration file.
+  - `vitest.config.js`: Configuration for Vitest, the testing framework.
+
+- **Directories**:
+  - `docs/`: Project documentation files, including integration guides and performance optimization plans.
+  - `e2e/`: End-to-end test specifications.
+  - `public/`: Static assets like icons, manifest files, and service workers.
+  - `src/`: Main source code directory, containing components, layouts, pages, schemas, stores, and utilities.
+  - `test/`: Unit and integration tests for APIs, libraries, and schemas.
+  - `tooling/`: Utility scripts for tasks like cache warming and data conversion.
+
+- **Special Directories**:
+  - `playwright/`: Playwright-specific configurations and reports.
+  - `playwright-report/`: Contains Playwright test reports.
+
+This structure ensures a clear separation of concerns, making the project easy to navigate and maintain.
+
+#### Code Organization
+
+The `src/` directory is structured as follows:
+
+- **`components/`**: Reusable UI components, further divided into:
+  - **`server/`**: Astro components for server-side rendering.
+    - **`[app-name]/`**: Components specific to each microfrontend or application (e.g., `threads`, `sites`).
+  - **`shared/`**: Components shared between server and client.
+    - **`[app-name]/`**: Shared components specific to each microfrontend or application, named accordingly (e.g., `threads`, `sites`).
+  - **`client/`**: Svelte components for client-side interactivity.
+    - **`[app-name]/`**: Components specific to each microfrontend or application (e.g., `threads`, `sites`).
+
+- **`docs/`**: Documentation-specific components and utilities.
+- **`firebase/`**: Firebase utilities, organized into:
+  - **`server/`**: Server-side Firebase utilities for authentication and Firestore operations.
+  - **`client/`**: Client-side Firebase utilities for interacting with Firebase services from the browser.
+
+- **`layouts/`**: Page layout components, including headers, footers, and navigation.
+- **`lib/`**: Shared libraries and helper functions.
+- **`locales/`**: Localization files for supporting multiple languages.
+- **`pages/`**: Astro and Svelte pages, organized by route.
+- **`schemas/`**: Zod schemas for data validation and Firestore collections.
+- **`stores/`**: Nanostores for state management.
+- **`utils/`**: General utility functions and helpers.
+
+This organization ensures modularity and reusability, making it easier to maintain and scale the application.
+
+> N.B. The `[app-name]` folders are named according to the specific microfrontend or application they belong to, such as `threads` for the discussions app and `sites` for the Game-wiki app. The naming happens
+> at this level so we can easily identify SSR and CSR code from the typescript alias (e.g., `@server/[component-name]` and `@svelte/[component-name]`).
 
 ## Authentication and Session Management
 
@@ -102,3 +140,13 @@ For our API endpoints, we use a token-based approach to secure them.
     // Proceed with data operation for the authenticated user
   }
   ```
+
+### Code Patterns
+
+The following code patterns are used throughout the project:
+
+- **Svelte Components**: Runes mode is used for client-side interactivity.
+- **Firebase Integration**: Dynamic imports for client-side utilities and static imports for server-side utilities.
+- **Schema Validation**: Zod schemas ensure data consistency.
+
+For examples, refer to the [README](../../README.md).

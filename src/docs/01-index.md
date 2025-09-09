@@ -9,8 +9,12 @@ noun: 'monsters'
 
 ## Sovelluksesta
 
-Pelilauta on roolipelikeskustelun ja pelien tukemiseen tarkoitettu sovellus.
+Pelilauta on roolipelikeskustelun ja pelien tukemiseen tarkoitettu sovellus. Sovelluksen pääominaisuuksia ovat:
 
-Tarkempia tietoja sovelluksen sielunelämästä voi käydä selvittelemässä lähdekoodista [GitHubissa](https://github.com/villetakanen/pelilauta-16). Sovelluksen lähdekoodi on kauttaaltaan MIT lisensoitu.
+- **Keskustelut**: Luo ja osallistu keskusteluihin, joissa on reaaliaikaiset päivitykset ja ilmoitukset.
+- **Pelisivustot**: Luo ja hallinnoi roolipelien tukisivustoja, jaa materiaaleja ja dokumentoi pelejä.
+- **Sisällönhallinta**: Tuo ja jaa tiedostoja, kuten käsikirjoja ja pelimateriaaleja.
+
+Tarkempia tietoja sovelluksen sielunelämästä voi käydä selvittelemässä lähdekoodista [GitHubissa](https://github.com/villetakanen/pelilauta-17). Sovelluksen lähdekoodi on kauttaaltaan MIT lisensoitu.
 
 
