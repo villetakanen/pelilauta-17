@@ -42,11 +42,12 @@ function isThreadsRoute() {
   <InboxNavigationButton client:only="svelte"/>
   <div class="grow sm-hidden"></div>
   <AdminNavigationButton client:only="svelte"/>
-  <a href="/docs/01-index">
+  <a href="/docs/01-index" class="sm-hidden" aria-label={t('navigation:docs')}>
     <cn-navigation-icon
       noun="design"
       label={t('navigation:docs')}
       checked={currentPath.startsWith('/docs')}
     />
+  </a>
   <SettingNavigationButton client:only="svelte"/>
 </nav>
