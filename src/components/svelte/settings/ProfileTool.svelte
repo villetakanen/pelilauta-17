@@ -1,23 +1,18 @@
 <script lang="ts">
+import { profile } from '@stores/session/profile';
 import { updateProfile } from 'src/firebase/client/profile/updateProfile';
 import { uploadAvatar } from 'src/firebase/client/profile/uploadAvatar';
-import type { Profile } from 'src/schemas/ProfileSchema';
 import { resizeImage } from 'src/utils/client/resizeImage';
 import { t } from 'src/utils/i18n';
 import { logout, uid } from '../../../stores/session';
 
-type Props = {
-  profile: Profile;
-};
-
-const { profile }: Props = $props();
-let avatarURL = $state(profile.avatarURL);
+let avatarURL = $state($profile?.avatarURL);
 let avatarFile = $state<File | null>(null);
-let bio = $state(profile.bio);
+let bio = $state($profile?.bio);
 
 const changes = $derived.by(() => {
   if (avatarFile) return true;
-  if (bio !== profile.bio) return true;
+  if (bio !== $profile?.bio) return true;
   return false;
 });
 
@@ -51,7 +46,7 @@ async function handleSubmit(event: Event) {
     avatarFile = null;
   }
 
-  if (bio !== profile.bio) {
+  if (bio !== $profile?.bio) {
     // Updated the Bio - lets update it
     await updateProfile({ bio }, $uid);
   }
@@ -65,36 +60,43 @@ async function logoutAction() {
 }
 </script>
 
-<article>
+<section class="surface">
   <h3>{t('settings:profile.title')}</h3>
 
-  <h4 class="downscaled mb-0">
+  <h4 class="text-h5 m-0">
     {t('entries:profile.uid')}
   </h4>
-  <p class="mt-0">{ $uid }</p>
+  <p class="text-small text-low">{ $uid }</p>
 
-  <h4 class="downscaled mb-0">
+  <h4 class="text-h5 m-0">
     {t('entries:profile.username')}
   </h4>
-  <p class="mt-0">{ profile.username }</p>
+  <p class="text-small text-low">{ $profile?.username }</p>
 
-  <h4 class="downscaled mb-0">
+  <hr>
+
+  <h4 class="mb-0">
     {t('settings:profile.edit.title')}
   </h4>
 
+  <p class="text-small text-low">
+    {t('settings:profile.info')}
+  </p>
+
   <form onsubmit={handleSubmit} class="flex flex-col">
-  <label for="avatar-file-input">{t('entries:profile.avatar')}
-  <input type="file" accept="image/*" style="display: none;" id="avatar-file-input"
-    onchange={onFileChange}
+  <label for="avatar-file-input">
+    <span>{t('entries:profile.avatar')}</span><br>
+    <input type="file" accept="image/*" style="display: none;" id="avatar-file-input"
+      onchange={onFileChange}
     
-  />
-  <cn-avatar-button
-    role="button"
-    tabindex="0"
-    src={avatarURL}
-    onkeydown={(e:KeyboardEvent) => e.key === 'Enter' && document.getElementById('avatar-file-input')?.click()}
-    onclick={() => document.getElementById('avatar-file-input')?.click()}
-  ></cn-avatar-button>
+    />
+    <cn-avatar-button
+      role="button"
+      tabindex="0"
+      src={avatarURL}
+      onkeydown={(e:KeyboardEvent) => e.key === 'Enter' && document.getElementById('avatar-file-input')?.click()}
+      onclick={() => document.getElementById('avatar-file-input')?.click()}
+    ></cn-avatar-button>
   </label>
 
   <label>
@@ -102,19 +104,18 @@ async function logoutAction() {
     <textarea
       oninput={setBio}
       placeholder={t('entries:profile.bio')}
-    >{profile.bio}</textarea>
+    >{$profile?.bio}</textarea>
   </label>
 
-    <div class="toolbar justify-end">
-      <button type="submit" disabled={!changes}>
+    <div class="toolbar items-center">
+      <button 
+        type="submit" disabled={!changes}>
         {t('actions:save')}
       </button>
     </div>
 
 
-    <p class="downscaled text-low">
-      {t('settings:profile.info')}
-    </p>
+    
   </form>
 
-</article>
+</section>

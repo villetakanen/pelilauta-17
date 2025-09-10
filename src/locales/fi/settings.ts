@@ -9,7 +9,7 @@ export const settings: Locale = {
   },
   profile: {
     title: 'Profiili',
-    info: 'Ylläolevat profiilitiedot tallennetaan pelilaudan tietokantaan. Ne näkyvät pelilaudan käyttäjille ja vierailijoille.',
+    info: 'Profiilitiedot tallennetaan pelilaudan tietokantaan. Ne näkyvät sovelluksen käyttäjille.',
     dangerZone: {
       title: 'Vaaravyöhyke',
       info: 'Seuraavat toiminnot poistavat tilisi ja profiilisi tiedot tietokannasta. Tämä toimintoa ei voi peruuttaa.',
