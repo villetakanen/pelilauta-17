@@ -1,43 +1,28 @@
 <script lang="ts">
 // Import stores and utilities
+
+import { authUser, uid } from 'src/stores/session'; // Use centralized session stores
 import { profile } from 'src/stores/session/profile'; // $profile is used directly as per nanostores/svelte
 import { pushSessionSnack } from 'src/utils/client/snackUtils'; // For user feedback
 import { t } from 'src/utils/i18n';
-import { onMount } from 'svelte';
 
 // No props needed for this component
 // interface Props {}
 // const {}: Props = $props();
 
-// Component state using Svelte runes
-let uid = $state<string | null>(null);
-let email = $state<string | null>(null);
+// Component state using Svelte runes - using session stores instead of local state
 let avatarURL = $state<string | null>(null);
-let displayName = $state<string | null>(null);
 let loadingAvatarUpdate = $state(false); // For UX feedback during avatar update
 
-// No specific derived state needed for this component structure
-// const derivedVar = $derived.by(() => {return value})
+// Derived values from session stores
+const email = $derived.by(() => $authUser?.email || null);
+const displayName = $derived.by(() => $authUser?.displayName || null);
 
-onMount(async () => {
-  // Dynamically import Firebase Auth functions and instance
-  const { onAuthStateChanged } = await import('firebase/auth');
-  const { auth } = await import('../../../firebase/client'); // Corrected path as per instructions
-
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      uid = user.uid;
-      email = user.email;
-      avatarURL = user.photoURL;
-      displayName = user.displayName;
-    } else {
-      // Handle user being logged out or not found
-      uid = null;
-      email = null;
-      avatarURL = null;
-      displayName = null;
-    }
-  });
+// Initialize avatarURL from auth user when available
+$effect(() => {
+  if ($authUser?.photoURL && avatarURL !== $authUser.photoURL) {
+    avatarURL = $authUser.photoURL;
+  }
 });
 
 /**
@@ -73,7 +58,7 @@ async function updateAvatar() {
   
     <div class="field-grid">
       <p><strong>{t('settings:authz.fields.uid')}</strong></p>
-      <p>{uid || '---'}</p> 
+      <p>{$uid || '---'}</p> 
   
       <p><strong>{t('settings:authz.fields.displayName')}</strong></p>
       <p>{displayName || '---'}</p>

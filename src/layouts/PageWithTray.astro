@@ -6,6 +6,10 @@ import AppFooter from '../components/server/app/AppFooter.astro';
 import BaseHead from '../components/server/BaseHead/BaseHead.astro';
 import BaseTail from '../components/server/BaseTail.astro';
 
+// NOTE: PageWithTray layout includes AuthManager for client-side authentication.
+// This layout is used for interactive pages that need to detect user auth state
+// and handle onboarding flows (EULA acceptance, account creation).
+
 type Props = {
   title?: string;
   description?: string;

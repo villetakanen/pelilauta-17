@@ -9,14 +9,14 @@ importers:
   .:
     dependencies:
       '@11thdeg/cn-editor':
-        specifier: 4.0.0-beta.15
-        version: 4.0.0-beta.15
-      '@11thdeg/cyan-css':
-        specifier: 4.0.0-beta.27
-        version: 4.0.0-beta.27(lato-font@3.0.0)
-      '@11thdeg/cyan-lit':
         specifier: 4.0.0-beta.16
         version: 4.0.0-beta.16
+      '@11thdeg/cyan-css':
+        specifier: 4.0.0-beta.28
+        version: 4.0.0-beta.28(lato-font@3.0.0)
+      '@11thdeg/cyan-lit':
+        specifier: 4.0.0-beta.18
+        version: 4.0.0-beta.18
       '@astrojs/check':
         specifier: ^0.9.4
         version: 0.9.4(typescript@5.9.2)
@@ -153,16 +153,16 @@ importers:
 
 packages:
 
-  '@11thdeg/cn-editor@4.0.0-beta.15':
-    resolution: {integrity: sha512-Kg0ktFiJT0j2YUXyp9LDTyGAsY02g+K9WNqCJpBKqWhuAGEqEcdIpM86OmBno2uujK/5K26pJ7c+EWB+d6hloA==}
+  '@11thdeg/cn-editor@4.0.0-beta.16':
+    resolution: {integrity: sha512-Ck9On+c/sRo13CsqJxshnhd/i6BTcwu1Svao+koB0PPyiHPnoBZYSaXe0gHvshVqd3fT28b9otqRdBhsSvMvZQ==}
 
-  '@11thdeg/cyan-css@4.0.0-beta.27':
-    resolution: {integrity: sha512-LArEEGeiBcFN3enziNwoB4hrXqtOijBjpkjChL+hrktcXxE7BJotn9Wakg2ncvxpiD2cKAp3ILaLptXMSXhmCw==}
+  '@11thdeg/cyan-css@4.0.0-beta.28':
+    resolution: {integrity: sha512-/m/is4xrCYZzZAwc9lFVngTZnQWoRDl70RwNEmI6qTYXB1/iA7a2gez9j0rSMZ+UYtc48Z//PKUP19040ct/aA==}
     peerDependencies:
       lato-font: '*'
 
-  '@11thdeg/cyan-lit@4.0.0-beta.16':
-    resolution: {integrity: sha512-vrptIFdG8xlcarSCL33zU0tGPu7sSu/s+xDHsMh3Agu9M6fAHrp8/cU3B0JJqeUYgxjSlohUxCUPOw25+uyTtw==}
+  '@11thdeg/cyan-lit@4.0.0-beta.18':
+    resolution: {integrity: sha512-YDnyXvfTTaJRYniRdxosU/sEvNzrxEWYDsiS9bVUzoMJzwi5Q5hyDjnCWtA/mTwquBybymHk6ccrkI7ea6RURg==}
 
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
@@ -7261,7 +7261,7 @@ packages:
 
 snapshots:
 
-  '@11thdeg/cn-editor@4.0.0-beta.15':
+  '@11thdeg/cn-editor@4.0.0-beta.16':
     dependencies:
       '@codemirror/commands': 6.8.1
       '@codemirror/lang-markdown': 6.3.4
@@ -7275,11 +7275,11 @@ snapshots:
       turndown: 7.2.0
       turndown-plugin-gfm: 1.0.2
 
-  '@11thdeg/cyan-css@4.0.0-beta.27(lato-font@3.0.0)':
+  '@11thdeg/cyan-css@4.0.0-beta.28(lato-font@3.0.0)':
     dependencies:
       lato-font: 3.0.0
 
-  '@11thdeg/cyan-lit@4.0.0-beta.16':
+  '@11thdeg/cyan-lit@4.0.0-beta.18':
     dependencies:
       lit: 3.3.1
 

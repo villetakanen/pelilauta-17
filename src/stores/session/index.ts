@@ -1,9 +1,9 @@
+import { auth } from '@firebase/client';
 import { persistentAtom } from '@nanostores/persistent';
+import { pushSnack } from '@utils/client/snackUtils';
+import { logDebug, logError, logWarn } from '@utils/logHelpers';
 import type { User } from 'firebase/auth';
-import { computed, onMount } from 'nanostores';
-import { pushSnack } from 'src/utils/client/snackUtils';
-import { logWarn } from 'src/utils/logHelpers';
-import { auth } from '../../firebase/client';
+import { atom, computed, onMount } from 'nanostores';
 import {
   $account,
   subscribe as subscribeToAccount,
@@ -12,14 +12,28 @@ import {
 import { subscribeToProfile, unsubscribeFromProfile } from './profile';
 import { initSubscriberStore } from './subscriber';
 
+// Firebase auth user - reactive store for the current Firebase user
+export const authUser = atom<User | null>(null);
+
 // *** Primary session stores ******************************************
 
-export type SessionState = 'initial' | 'loading' | 'active';
+export type SessionState = 'initial' | 'loading' | 'active' | 'error';
 // Session state - used to determine if the session is active for UX purposes
 export const sessionState = persistentAtom<SessionState>(
   'session-state',
   'initial',
 );
+
+// Add debug logging for session state changes
+sessionState.subscribe((state, oldState) => {
+  if (state !== oldState) {
+    logDebug('sessionStore', 'sessionState changed', {
+      from: oldState,
+      to: state,
+    });
+  }
+});
+
 // Legacy support for solid components
 export const $loadingState = sessionState;
 
@@ -55,8 +69,12 @@ export { $profile, $profileMissing } from './profile';
 // We need to listen to Firebase auth state changes if any of the components
 // are interested in the session state
 onMount(uid, () => {
-  auth.onAuthStateChanged(handleFirebaseAuthChange);
-  //logDebug('sessionStore mounted, subscribing to Firebase auth state changes');
+  const unsubscribe = auth.onAuthStateChanged(handleFirebaseAuthChange);
+  logDebug('sessionStore', 'onMount', 'Subscribed to auth state changes');
+  return () => {
+    unsubscribe();
+    logDebug('sessionStore', 'onMount', 'Unsubscribed from auth state changes');
+  };
 });
 
 /**
@@ -65,46 +83,101 @@ onMount(uid, () => {
  * @param user
  */
 async function handleFirebaseAuthChange(user: User | null) {
-  // Lets see if Firebase has a user for us
-  if (user) {
-    try {
-      const token = await user.getIdToken();
-      await fetch('/api/auth/session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ token }),
-      });
-      // We need to subscribe to the account data
-      await subscribeToAccount(user.uid);
-      subscribeToProfile(user.uid);
+  logDebug('sessionStore', 'handleFirebaseAuthChange', {
+    user: !!user,
+    currentState: sessionState.get(),
+    currentUid: uid.get(),
+  });
+  authUser.set(user);
 
-      // Mark session as active after successful subscription
-      sessionState.set('active');
-    } catch (error) {
-      logWarn(
+  // User is not authenticated
+  if (!user) {
+    const currentState = sessionState.get();
+    // Prevent redundant logout calls - if we're already in initial state or loading (during logout)
+    // then we don't need to call logout() again
+    if (currentState !== 'initial' && currentState !== 'loading') {
+      logDebug(
         'sessionStore',
         'handleFirebaseAuthChange',
-        'Error subscribing to account or profile',
-        error,
+        'User logged out, calling logout()',
       );
-      // If we fail to subscribe, we should log out the user
-      pushSnack('app.login.error.firebase');
       await logout();
-      return;
-    }
-    // Lets see if we have an active session, with same UID, if so, we are done
-    if ($loadingState.get() === 'active' && user.uid === uid.get()) {
-      // no-op
     } else {
-      // We have a new user, lets login
-      await login(user.uid);
+      logDebug(
+        'sessionStore',
+        'handleFirebaseAuthChange',
+        `User logged out but session state is '${currentState}' - skipping logout() call`,
+      );
     }
-  } else {
-    // User is logged out, lets clear the account store
-    unsubscribeFromAccount();
-    unsubscribeFromProfile();
+    return;
+  }
+
+  // User is authenticated
+  if (uid.get() === user.uid && sessionState.get() === 'active') {
+    logDebug(
+      'sessionStore',
+      'handleFirebaseAuthChange',
+      'User already logged in and session is active, checking if subscriptions need refresh',
+    );
+
+    // Even if session is active, we should ensure subscriptions are active
+    // This handles cases where session state was restored from localStorage
+    // but subscriptions were not re-established
+    try {
+      await subscribeToAccount(user.uid);
+      await subscribeToProfile(user.uid);
+      logDebug(
+        'sessionStore',
+        'handleFirebaseAuthChange',
+        'Refreshed subscriptions for active session',
+      );
+    } catch (error) {
+      logError('sessionStore', 'Failed to refresh subscriptions:', error);
+    }
+    return;
+  }
+
+  try {
+    sessionState.set('loading');
+    const token = await user.getIdToken();
+    await fetch('/api/auth/session', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ token }),
+    });
+
+    // Subscribe to account and profile - both might be missing
+    try {
+      await subscribeToAccount(user.uid);
+    } catch (error) {
+      logError('sessionStore', 'Failed to subscribe to account:', error);
+    }
+
+    try {
+      await subscribeToProfile(user.uid);
+    } catch (error) {
+      logError('sessionStore', 'Failed to subscribe to profile:', error);
+    }
+
+    await login(user.uid);
+
+    sessionState.set('active');
+    logDebug(
+      'sessionStore',
+      'handleFirebaseAuthChange',
+      'User logged in and session is active',
+    );
+  } catch (error) {
+    logWarn(
+      'sessionStore',
+      'handleFirebaseAuthChange',
+      'Error during login process',
+      error,
+    );
+    sessionState.set('error');
+    pushSnack('app.login.error.firebase');
     await logout();
   }
 }
@@ -121,25 +194,46 @@ async function login(newUid: string) {
 }
 
 async function clear() {
-  window?.localStorage.clear();
+  logDebug('sessionStore', 'clear', 'Clearing session data');
   uid.set('');
   unsubscribeFromAccount();
   unsubscribeFromProfile();
 }
 
 export async function logout() {
-  // As we are logging out, we need to set the loading state
+  const currentState = sessionState.get();
+  if (currentState === 'initial') {
+    logDebug(
+      'sessionStore',
+      'logout',
+      'Session already cleared - skipping logout',
+    );
+    return;
+  }
+
+  if (currentState === 'loading') {
+    logDebug(
+      'sessionStore',
+      'logout',
+      'Logout already in progress - skipping duplicate call',
+    );
+    return;
+  }
+
+  logDebug('sessionStore', 'logout', 'Starting logout process');
   sessionState.set('loading');
 
   // Clear the session
   await clear();
-  sessionState.set('initial');
 
   // Sign out from Firebase
-  auth.signOut();
+  await auth.signOut();
 
   // Clear the session cookie
   await fetch('/api/auth/session', { method: 'DELETE' });
+
+  sessionState.set('initial');
+  logDebug('sessionStore', 'logout', 'Logout complete');
 }
 
 export * from './account';

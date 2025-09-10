@@ -4,6 +4,11 @@ import AppRail from '../components/server/AppRail.astro';
 import BaseHead from '../components/server/BaseHead/BaseHead.astro';
 import BaseTail from '../components/server/BaseTail.astro';
 
+// NOTE: ModalPage intentionally does not include AuthManager.
+// This layout is only used for server-side authenticated pages where
+// authentication is verified during server-side rendering.
+// Client-side auth state management is not needed for these pages.
+
 const { title, shortTitle } = Astro.props;
 ---
 
