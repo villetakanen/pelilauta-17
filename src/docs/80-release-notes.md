@@ -6,6 +6,7 @@ noun: 'monsters'
 ## Version 18
 
 ### 18.1.x (ongoing)
+- fix: Removed extraneous DELETE /api/session calls caused by a race condition in the auth store (PBI 014)
 - fix: Cyan Design System 4.0.0 latest beta patches 
 - fix: Libary updates for CVS issues and security patches
 - fix: Library page auth redirect moved to server-side to prevent content flash for unauthenticated users (PBI 011)
