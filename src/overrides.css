@@ -1,0 +1,5 @@
+/* Patch for long urls in profile bios, etc. Move to Design System when able */
+.content-columns > section,
+.content-columns > article {
+  word-break: break-word;
+}

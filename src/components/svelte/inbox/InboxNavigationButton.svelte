@@ -8,7 +8,12 @@ const count = $derived.by(() => {
     if ($newCount > 9) {
       return '9+';
     }
-    return $newCount < 10 ? `${$newCount}` : undefined;
+    // The notification prop shows a string, even if it's 0 - so we need to return undefined to
+    // avoid showing a notification bubble, when there are no new messages
+    if ($newCount < 1) {
+      return undefined;
+    }
+    return `${$newCount}`;
   }
   return undefined;
 });

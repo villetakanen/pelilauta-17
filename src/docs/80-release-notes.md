@@ -6,6 +6,8 @@ noun: 'monsters'
 ## Version 18
 
 ### 18.1.x (ongoing)
+- fix: Settings tool no longer subscribes to firebase directly, instead it uses the nanostore profile data. Expected to fix Sentry:PELILAUTA-4K, caused by firebase client side error only visible in the said route.
+- fix: Removed deprecated authz code from SettingsTool
 - fix: Removed extraneous DELETE /api/session calls caused by a race condition in the auth store (PBI 014)
 - fix: Cyan Design System 4.0.0 latest beta patches 
 - fix: Libary updates for CVS issues and security patches
