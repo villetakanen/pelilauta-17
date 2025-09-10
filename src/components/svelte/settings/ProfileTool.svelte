@@ -10,6 +10,11 @@ let avatarURL = $state($profile?.avatarURL);
 let avatarFile = $state<File | null>(null);
 let bio = $state($profile?.bio);
 
+$effect(() => {
+  avatarURL = $profile?.avatarURL;
+  bio = $profile?.bio;
+});
+
 const changes = $derived.by(() => {
   if (avatarFile) return true;
   if (bio !== $profile?.bio) return true;

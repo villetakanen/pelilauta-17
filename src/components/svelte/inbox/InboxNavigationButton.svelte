@@ -13,7 +13,7 @@ const count = $derived.by(() => {
     if ($newCount < 1) {
       return undefined;
     }
-    return $newCount < 10 ? `${$newCount}` : undefined;
+    return `${$newCount}`;
   }
   return undefined;
 });
