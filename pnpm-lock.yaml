@@ -15,8 +15,8 @@ importers:
         specifier: 4.0.0-beta.27
         version: 4.0.0-beta.27(lato-font@3.0.0)
       '@11thdeg/cyan-lit':
-        specifier: 4.0.0-beta.16
-        version: 4.0.0-beta.16
+        specifier: 4.0.0-beta.17
+        version: 4.0.0-beta.17
       '@astrojs/check':
         specifier: ^0.9.4
         version: 0.9.4(typescript@5.9.2)
@@ -161,8 +161,8 @@ packages:
     peerDependencies:
       lato-font: '*'
 
-  '@11thdeg/cyan-lit@4.0.0-beta.16':
-    resolution: {integrity: sha512-vrptIFdG8xlcarSCL33zU0tGPu7sSu/s+xDHsMh3Agu9M6fAHrp8/cU3B0JJqeUYgxjSlohUxCUPOw25+uyTtw==}
+  '@11thdeg/cyan-lit@4.0.0-beta.17':
+    resolution: {integrity: sha512-pmygX5ne7leXi/bSe+CWz2K+v53FWN3NjLB50I//1PyMYVPPnQFURL8KySUhJCpDpVulN335b0lmVFnUWWi7AQ==}
 
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
@@ -7279,7 +7279,7 @@ snapshots:
     dependencies:
       lato-font: 3.0.0
 
-  '@11thdeg/cyan-lit@4.0.0-beta.16':
+  '@11thdeg/cyan-lit@4.0.0-beta.17':
     dependencies:
       lit: 3.3.1
 

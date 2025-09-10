@@ -24,7 +24,7 @@
   "dependencies": {
     "@11thdeg/cn-editor": "4.0.0-beta.15",
     "@11thdeg/cyan-css": "4.0.0-beta.27",
-    "@11thdeg/cyan-lit": "4.0.0-beta.16",
+    "@11thdeg/cyan-lit": "4.0.0-beta.17",
     "@astrojs/check": "^0.9.4",
     "@astrojs/netlify": "^6.5.10",
     "@astrojs/rss": "^4.0.12",
