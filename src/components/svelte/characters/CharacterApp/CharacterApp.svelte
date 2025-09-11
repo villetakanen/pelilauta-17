@@ -6,10 +6,10 @@
  * to display and interact with the character.
  */
 import { character, subscribe } from 'src/stores/characters/characterStore';
-import { t } from 'src/utils/i18n';
 import { logDebug } from 'src/utils/logHelpers';
+import CharacterCard from '../CharacterCard.svelte';
 import CharacterArticle from './CharacterArticle.svelte';
-import CharacterInfo from './CharacterInfo.svelte';
+import CharacterHeader from './CharacterHeader.svelte';
 import StatBlock from './StatBlock.svelte';
 
 interface Props {
@@ -27,22 +27,21 @@ $effect(() => {
 });
 </script>
 
-<div class="content-columns">
+<div class="content-listing">
+  <CharacterHeader />
+  
+  <aside>
+    {#if $character}
+      <CharacterCard character={$character}></CharacterCard>
+    {/if}
+  </aside>
+
+  {#if statBlocks.length > 0}
+    {#each statBlocks as group}
+      <StatBlock {group} />
+    {/each}
+  {/if}
 
   <CharacterArticle />
-
-  <div class="column-s">
-    <CharacterInfo />
-  </div>
-
-  {#each statBlocks as group}
-    <StatBlock {group} />
-  {/each}
-
-  {#if !$character}
-    <section class="debug column-s">
-      {t('characters:snacks:characterNotFound')}
-    </section>
-  {/if}
 
 </div>
