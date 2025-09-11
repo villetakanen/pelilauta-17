@@ -1,9 +1,9 @@
 <script lang="ts">
-import type { Site } from 'src/schemas/SiteSchema';
-import { t } from 'src/utils/i18n';
-import { logDebug } from 'src/utils/logHelpers';
-import { uid } from '../../../stores/session';
-import { userSites } from '../../../stores/userSites';
+import type { Site } from '@schemas/SiteSchema';
+import { uid } from '@stores/session';
+import { userSites } from '@stores/userSites';
+import { t } from '@utils/i18n';
+import { logDebug } from '@utils/logHelpers';
 
 interface Props {
   selectedSiteKey: string;

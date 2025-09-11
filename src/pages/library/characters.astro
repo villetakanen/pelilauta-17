@@ -1,4 +1,5 @@
 ---
+import BetaHeader from '@components/server/app/BetaHeader.astro';
 import { t } from 'src/utils/i18n';
 import LibraryTray from '../../components/server/library/LibraryTray.astro';
 import BackgroundPoster from '../../components/server/ui/BackgroundPoster.astro';
@@ -13,15 +14,10 @@ const description = t('library:characters.description');
 
 <PageWithTray title={title} description={description} shortTitle={shortTitle}>
   <LibraryTray slot="app-tray" />
+
+  <BetaHeader />
+
   <CharacterLibraryApp client:only="svelte" />
   <CharacterLibraryFabs client:only="svelte" slot="fab-tray"/>
-  
-  <BackgroundPoster
-      slot="app-background-poster"
-      src="/myrrys-proprietary/juno-viinikka/juno-viinikka-dragon-2.webp"
-      md="/myrrys-proprietary/juno-viinikka/juno-viinikka-dragon-2-960.webp"
-    />
-    <p class="text-caption text-center" style="opacity:0.44" slot="app-footer-credits">
-      Taustakuva © Juno Viinikka (<a href="https://linktr.ee/junowski">https://linktr.ee/junowski</a>)
-    </p>
+
 </PageWithTray>

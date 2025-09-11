@@ -9,7 +9,7 @@ import { pushSnack } from 'src/utils/client/snackUtils';
 import { t } from 'src/utils/i18n';
 import { logError } from 'src/utils/logHelpers';
 import CharacterCard from '../CharacterCard.svelte';
-import SiteSelect from '../SiteSelect.svelte';
+import SiteSelect from '../create/SiteSelect.svelte';
 
 type modes = 'view' | 'edit';
 

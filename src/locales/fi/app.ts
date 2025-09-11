@@ -1,4 +1,9 @@
 export const app = {
+  beta: {
+    title: 'β',
+    description:
+      'Tämä toiminto on kokeellinen - sen kautta luotu sisältö voi kadota tai rikkoontua milloin tahansa.',
+  },
   forbidden: {
     title: 'Hups!',
     message: 'Tämä sivu vaatii kirjautumisen pelilaudalle.',
