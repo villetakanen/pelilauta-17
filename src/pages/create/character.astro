@@ -1,6 +1,6 @@
 ---
 import BetaHeader from '@components/server/app/BetaHeader.astro';
-import CreateCharacterForm from '@components/svelte/characters/create/CreateCharacterForm.svelte';
+import CreateCharacterWizard from '@components/svelte/characters/create/CreateCharacterWizard.svelte';
 import { verifySession } from '@utils/server/auth/verifySession';
 import { t } from 'src/utils/i18n';
 import ModalPage from '../../layouts/ModalPage.astro';
@@ -21,5 +21,5 @@ if (!session) {
 ---
 <ModalPage title={title} shortTitle={shortTitle} noSharing={true}>
   <BetaHeader />
-  <CreateCharacterForm siteKey={siteKey} client:only="svelte" />
+  <CreateCharacterWizard siteKey={siteKey} client:only="svelte" />
 </ModalPage>

@@ -25,6 +25,7 @@ export const actions: Locale = {
   import: 'Tuo',
   login: 'Kirjaudu sisään',
   logout: 'Kirjaudu ulos',
+  next: 'Seuraava',
   send: 'Lähetä',
   save: 'Tallenna',
   share: 'Jaa',
@@ -32,6 +33,7 @@ export const actions: Locale = {
   show: {
     options: 'Näytä lisäasetukset',
   },
+  previous: 'Edellinen',
   readMore: 'Lue lisää',
   submit: 'Lähetä',
   title: 'Toiminnot',

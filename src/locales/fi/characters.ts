@@ -19,6 +19,24 @@ export const characters: Locale = {
     description: 'Valitse alta hahmolomake, jota haluat käyttää. ',
     noSheet: 'Ei hahmolomaketta (vain nimi ja kuvaus)',
     noSite: 'Ei sivustoa',
+    steps: {
+      system: {
+        title: 'Peli',
+        description: 'Valitse peli- tai pelijärjestelmä.',
+      },
+      sheet: {
+        title: 'Lomake',
+        description: 'Valitse käytettävä hahmolomake.',
+      },
+      site: {
+        title: 'Sivusto',
+        description: 'Valitse pelisi tai sivustosi, johon hahmo liittyy.',
+      },
+      meta: {
+        title: 'Tiedot',
+        description: 'Anna hahmollesi nimi ja kuvaus.',
+      },
+    },
   },
   edit: {},
   snacks: {
@@ -54,4 +72,5 @@ export const characters: Locale = {
       empty: 'Sinulla ei ole pelejä tai sivustoja.',
     },
   },
+  defaultSheet: 'Nimi ja kuvaus',
 };

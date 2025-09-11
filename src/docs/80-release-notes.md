@@ -5,7 +5,8 @@ noun: 'monsters'
 ---
 ## Version 18
 
-### 18.1.x (ongoing)
+### 18.2.0 (TBD)
+- feat(characters): Added wizard with step-by-step flow for new character metadata creation
 - fix: Moved thread deletion to server-side API endpoint, only accessible to thread owners and pelilauta admins
 - fix: Added some small patches to CDS 4.0 beta bugs to local overrides @TODO: report the patches to CDS repo
 - fix: Character listings on the library and sites/characters page match CDS 4.0 styles
