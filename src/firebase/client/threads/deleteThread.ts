@@ -1,5 +1,6 @@
 import { ChannelsSchema } from 'src/schemas/ChannelSchema';
 import { THREADS_COLLECTION_NAME, type Thread } from 'src/schemas/ThreadSchema';
+import { logDebug, logError } from 'src/utils/logHelpers';
 
 /**
  * Delete a thread from the database and update the channel thread count. Please
@@ -10,14 +11,25 @@ import { THREADS_COLLECTION_NAME, type Thread } from 'src/schemas/ThreadSchema';
  * @param thread a Thread object to be deleted
  */
 export async function deleteThread(thread: Thread) {
-  const { db } = await import('..');
-  const { deleteDoc, doc } = await import('firebase/firestore');
+  try {
+    logDebug('deleteThread', 'Starting thread deletion', { threadKey: thread.key, channel: thread.channel });
+    
+    const { db } = await import('..');
+    const { deleteDoc, doc } = await import('firebase/firestore');
 
-  if (!thread.key) throw new Error('Thread key is required to delete a thread');
+    if (!thread.key) throw new Error('Thread key is required to delete a thread');
 
-  await deleteDoc(doc(db, THREADS_COLLECTION_NAME, thread.key));
-
-  await updateChannelThreadCount(thread);
+    logDebug('deleteThread', 'Deleting thread document from Firestore');
+    await deleteDoc(doc(db, THREADS_COLLECTION_NAME, thread.key));
+    
+    logDebug('deleteThread', 'Thread document deleted, updating channel count');
+    await updateChannelThreadCount(thread);
+    
+    logDebug('deleteThread', 'Thread deletion completed successfully');
+  } catch (error) {
+    logError('deleteThread', 'Failed to delete thread:', error);
+    throw error;
+  }
 }
 
 /**
