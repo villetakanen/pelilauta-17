@@ -125,7 +125,7 @@ async function handleFirebaseAuthChange(user: User | null) {
     // but subscriptions were not re-established
     try {
       await subscribeToAccount(user.uid);
-      await subscribeToProfile(user.uid);
+      subscribeToProfile(user.uid);
       logDebug(
         'sessionStore',
         'handleFirebaseAuthChange',
@@ -156,7 +156,7 @@ async function handleFirebaseAuthChange(user: User | null) {
     }
 
     try {
-      await subscribeToProfile(user.uid);
+      subscribeToProfile(user.uid);
     } catch (error) {
       logError('sessionStore', 'Failed to subscribe to profile:', error);
     }

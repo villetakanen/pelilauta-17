@@ -20,6 +20,12 @@ if (profileRequest.status === 404) {
 
 const profileResponse = await profileRequest.json();
 const profile = parseProfile(toClientEntry(profileResponse), uid);
+
+// Set a 1h cache time for profiles
+Astro.response.headers.set(
+  'Cache-Control',
+  's-maxage=3600, stale-while-revalidate',
+);
 ---
 <Page>
   <ProfileApp profile={profile} />

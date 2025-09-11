@@ -17,7 +17,7 @@ const visible = $derived.by(() => {
     <span class="sm-hidden">{t('actions:create.thread')}</span>
   </a>
 {:else}
-  <a href="/login" class="fab">
+  <a href="/login" class="fab button">
     <cn-icon noun="avatar"></cn-icon>
     <span class="sm-hidden">{t('actions:login')}</span>
   </a>

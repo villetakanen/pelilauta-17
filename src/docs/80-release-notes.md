@@ -6,6 +6,7 @@ noun: 'monsters'
 ## Version 18
 
 ### 18.1.x (ongoing)
+- fix: anchor FABs now have class `button fab` instead of `fab`, to match CDS 4.0 class patterns.
 - fix: Settings tool no longer subscribes to firebase directly, instead it uses the nanostore profile data. Expected to fix Sentry:PELILAUTA-4K, caused by firebase client side error only visible in the said route.
 - fix: Removed deprecated authz code from SettingsTool
 - fix: Removed extraneous DELETE /api/session calls caused by a race condition in the auth store (PBI 014)
