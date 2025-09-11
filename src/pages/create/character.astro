@@ -1,15 +1,25 @@
 ---
-import CreateCharacterForm from '@components/svelte/characters/CreateCharacterForm.svelte';
+import BetaHeader from '@components/server/app/BetaHeader.astro';
+import CreateCharacterForm from '@components/svelte/characters/create/CreateCharacterForm.svelte';
+import { verifySession } from '@utils/server/auth/verifySession';
 import { t } from 'src/utils/i18n';
 import ModalPage from '../../layouts/ModalPage.astro';
 
-// Authentication is handled client-side within the CreateCharacterForm component,
-// as it's rendered with client:only.
+// Authentication is handled server-side in verifySession
 const title = `${t('app:shortname')} – ${t('characters:create.title')}`;
 const shortTitle = t('characters:create.title');
 const siteKey = Astro.url.searchParams.get('siteKey') || '';
----
 
+// Ensure we have a logged-in user before proceeding
+const session = await verifySession(Astro);
+
+if (!session) {
+  return Astro.redirect(
+    `/login?redirect=${encodeURIComponent(Astro.url.pathname)}&info=login-required`,
+  );
+}
+---
 <ModalPage title={title} shortTitle={shortTitle} noSharing={true}>
+  <BetaHeader />
   <CreateCharacterForm siteKey={siteKey} client:only="svelte" />
 </ModalPage>

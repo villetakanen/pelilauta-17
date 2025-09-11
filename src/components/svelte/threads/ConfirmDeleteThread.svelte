@@ -1,4 +1,5 @@
 <script lang="ts">
+import { appMeta } from '@stores/metaStore/metaStore';
 import { deleteThread } from 'src/firebase/client/threads/deleteThread';
 import type { Thread } from 'src/schemas/ThreadSchema';
 import { pushSessionSnack, pushSnack } from 'src/utils/client/snackUtils';
@@ -10,8 +11,13 @@ import WithAuth from '../app/WithAuth.svelte';
 interface Props {
   thread: Thread;
 }
+
 const { thread }: Props = $props();
+
 const allow = $derived.by(() => {
+  if ($appMeta.admins.includes($uid)) {
+    return true;
+  }
   if (!$uid) {
     return false;
   }

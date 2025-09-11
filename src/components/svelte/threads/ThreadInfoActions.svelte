@@ -58,6 +58,12 @@ async function onsubmit(e: Event) {
           <span>{t('threads:info.actions.admin.repost')}</span>
         </button>
       </form>
+      <a
+        href={`/threads/${thread?.key}/confirmDelete`}
+        class="button text-center text"
+      >
+        {t('actions:delete')} 
+      </a>
     {/if}
   </section>
 {/if}

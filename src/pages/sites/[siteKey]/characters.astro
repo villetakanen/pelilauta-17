@@ -70,7 +70,7 @@ const image = site.avatarURL || site.posterURL || site.backgroundURL;
   
   <div class="content-cards">
     <!-- Header for the list -->
-    <header>
+    <header class="surface">
       <h1 class="downscaled m-0">{t('site:characters.title')}</h1>
       <p class="downscaled text-low">{site.description}</p>
     </header>
@@ -88,6 +88,12 @@ const image = site.avatarURL || site.posterURL || site.backgroundURL;
         </p>
       </section>
     )}
+
+    <footer class="mb-2">
+      <p>
+        {t('site:characters.count', { count: characters.length })}
+      </p>
+    </footer>
   </div>
 
   <CharactersFab site={site} client:only="svelte" slot="fab-tray" />

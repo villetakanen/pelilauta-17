@@ -5,19 +5,18 @@
  * 2. Press create.
  */
 
-import type { Character } from 'src/schemas/CharacterSchema';
-import type { CharacterSheet } from 'src/schemas/CharacterSheetSchema';
-import type { Site } from 'src/schemas/SiteSchema';
-import { pushSessionSnack, pushSnack } from 'src/utils/client/snackUtils';
-import { t } from 'src/utils/i18n';
-import { logError } from 'src/utils/logHelpers';
-import { uid } from '../../../stores/session';
-import WithAuth from '../app/WithAuth.svelte';
+import type { Character } from '@schemas/CharacterSchema';
+import type { CharacterSheet } from '@schemas/CharacterSheetSchema';
+import type { Site } from '@schemas/SiteSchema';
+import { uid } from '@stores/session';
+import { pushSessionSnack, pushSnack } from '@utils/client/snackUtils';
+import { t } from '@utils/i18n';
+import { logError } from '@utils/logHelpers';
 import CharacterSheetSelect from './CharacterSheetSelect.svelte';
 import SiteSelect from './SiteSelect.svelte';
 
 interface Props {
-  siteKey?: string;
+  siteKey?: string; // Optional site/campaign/game to which the character will be added.
 }
 
 const { siteKey }: Props = $props();
@@ -34,10 +33,6 @@ let selectedSheetKey = $state('');
 let selectedSheet: CharacterSheet | null = $state(null);
 let selectedSiteKey = $state(siteKey || '');
 let selectedSite: Site | null = $state(null);
-
-const allow = $derived.by(() => {
-  return !!$uid;
-});
 
 const valid = $derived.by(() => {
   return characterData.name && characterData.name.length > 0;
@@ -94,7 +89,6 @@ async function onsubmit(e: Event) {
 }
 </script>
 
-<WithAuth {allow}>
   <div class="content-columns">
     <section class="column surface">
       <h1>{t('characters:create.title')}</h1>
@@ -143,4 +137,3 @@ async function onsubmit(e: Event) {
       </div-->    
     </section>
   </div>
-</WithAuth>

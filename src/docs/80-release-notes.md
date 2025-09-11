@@ -6,6 +6,10 @@ noun: 'monsters'
 ## Version 18
 
 ### 18.1.x (ongoing)
+- fix: Moved thread deletion to server-side API endpoint, only accessible to thread owners and pelilauta admins
+- fix: Added some small patches to CDS 4.0 beta bugs to local overrides @TODO: report the patches to CDS repo
+- fix: Character listings on the library and sites/characters page match CDS 4.0 styles
+- fix: Profile page uses CDS 4.0 containers and flex atomics
 - fix: anchor FABs now have class `button fab` instead of `fab`, to match CDS 4.0 class patterns.
 - fix: Settings tool no longer subscribes to firebase directly, instead it uses the nanostore profile data. Expected to fix Sentry:PELILAUTA-4K, caused by firebase client side error only visible in the said route.
 - fix: Removed deprecated authz code from SettingsTool

@@ -1,7 +1,7 @@
 {
   "name": "Pelilauta",
   "type": "module",
-  "version": "18.1.6",
+  "version": "18.1.7",
   "engines": {
     "node": ">=20.0.0"
   },

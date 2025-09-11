@@ -9,3 +9,9 @@ h3 cn-icon,
 h3 .icon {
   vertical-align: middle;
 }
+
+/* FIX: Patch italic text in headings, font size is erroneously set for inline elements */
+main em,
+main i {
+  font-size: inherit;
+}

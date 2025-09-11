@@ -22,6 +22,7 @@ export const site: Locale = {
   characters: {
     title: 'Hahmot',
     empty: 'Sivustolla ei ole vielä hahmoja',
+    count: '{count} hahmoa',
   },
   data: {
     title: 'Tuo & vie',
