@@ -12,19 +12,23 @@ import { logDebug, logError } from 'src/utils/logHelpers';
  */
 export async function deleteThread(thread: Thread) {
   try {
-    logDebug('deleteThread', 'Starting thread deletion', { threadKey: thread.key, channel: thread.channel });
-    
+    logDebug('deleteThread', 'Starting thread deletion', {
+      threadKey: thread.key,
+      channel: thread.channel,
+    });
+
     const { db } = await import('..');
     const { deleteDoc, doc } = await import('firebase/firestore');
 
-    if (!thread.key) throw new Error('Thread key is required to delete a thread');
+    if (!thread.key)
+      throw new Error('Thread key is required to delete a thread');
 
     logDebug('deleteThread', 'Deleting thread document from Firestore');
     await deleteDoc(doc(db, THREADS_COLLECTION_NAME, thread.key));
-    
+
     logDebug('deleteThread', 'Thread document deleted, updating channel count');
     await updateChannelThreadCount(thread);
-    
+
     logDebug('deleteThread', 'Thread deletion completed successfully');
   } catch (error) {
     logError('deleteThread', 'Failed to delete thread:', error);
