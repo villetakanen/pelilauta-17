@@ -15,7 +15,7 @@ const session = await verifySession(Astro);
 
 if (!session) {
   return Astro.redirect(
-    `/login?redirect=${encodeURIComponent(Astro.url.pathname)}?info=login-required`,
+    `/login?redirect=${encodeURIComponent(Astro.url.pathname)}&info=login-required`,
   );
 }
 ---
