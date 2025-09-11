@@ -134,6 +134,8 @@ test('can create a thread successfully', async ({ page }) => {
 
     // Monitor for potential errors during deletion
     let deletionError: string | null = null;
+    let deletionSuccessful = false;
+
     page.on('console', (msg) => {
       if (msg.type() === 'error' && msg.text().includes('thread')) {
         deletionError = msg.text();
@@ -148,6 +150,8 @@ test('can create a thread successfully', async ({ page }) => {
       if (status >= 400 && url.includes('thread')) {
         deletionError = `HTTP ${status} on ${url}`;
         console.log('Thread deletion HTTP error:', status, url);
+      } else if (status === 202 && url.includes('api/threads')) {
+        deletionSuccessful = true;
       }
     });
 
@@ -180,6 +184,12 @@ test('can create a thread successfully', async ({ page }) => {
 
     if (deletionError) {
       throw new Error(`Thread deletion failed with error: ${deletionError}`);
+    }
+
+    if (!deletionSuccessful) {
+      throw new Error(
+        'Thread deletion API call did not return 202 Accepted status',
+      );
     }
 
     // If we're still on the thread page, deletion might have failed
