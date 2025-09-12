@@ -25,6 +25,7 @@ const StatBaseSchema = z.object({
     .describe(
       'Optional group name for organizing stats in the UI, e.g., "Attributes".',
     ),
+  value: z.any().optional().describe('The value of the stat.'),
 });
 
 /**
