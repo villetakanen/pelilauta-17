@@ -1,10 +1,11 @@
 <script lang="ts">
+import type { CnToggleButton } from '@11thdeg/cyan-lit';
 import { updateCharacterSheet } from 'src/firebase/client/characterSheets/updateCharacterSheet';
 import {
   type CharacterStat,
   CharacterStatSchema,
 } from 'src/schemas/CharacterSheetSchema';
-import { loading, sheet } from 'src/stores/characters/characterSheetStore';
+import { characterSheet as sheet } from 'src/stores/characters/characterSheetStore';
 import { logDebug, logError } from 'src/utils/logHelpers';
 
 let stats = $state<CharacterStat[]>([]);
@@ -216,7 +217,7 @@ function isGroupExpanded(groupName: string): boolean {
                       <cn-toggle-button 
                         label="Proficiency"
                         checked={stat.hasProficiency || false}
-                        onchange={(e:Event) => updateStat(statIndex, { hasProficiency: (e.target as CyanToggleButton).pressed })}
+                        onchange={(e:Event) => updateStat(statIndex, { hasProficiency: (e.target as CnToggleButton).pressed })}
                       ></cn-toggle-button>
                       <p class="text-low text-caption m-0">Supports proficiency (e.g., saving throws)</p>
                   </div>
@@ -273,10 +274,10 @@ function isGroupExpanded(groupName: string): boolean {
     {/if}
 
     <div class="toolbar justify-end mb-2">
-      <button type="submit" class="button primary" disabled={$loading || !dirty}>
+      <button type="submit" class="button primary" disabled={!dirty}>
         <cn-icon noun="save"></cn-icon>
         <span>
-          {#if $loading} Saving... {:else} Save {/if}
+          save
         </span>
       </button>
     </div>

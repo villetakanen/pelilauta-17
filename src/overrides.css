@@ -15,3 +15,53 @@ main em,
 main i {
   font-size: inherit;
 }
+
+/* FEAT: Container for character sheets and similar views */
+/*
+[content-listing] utility
+*/
+.content-sheet {
+  display: grid;
+  grid-template-areas:
+    "header"
+    "blocks"
+    "aside"
+    "footer";
+  gap: var(--cn-grid);
+  margin: 0 auto;
+  max-width: 1024px;
+  width: 100cqw;
+}
+.content-sheet > header {
+  grid-area: header;
+  padding-bottom: calc(var(--cn-grid) - 1pt);
+  border-bottom: 1pt solid var(--color-border);
+}
+.content-sheet > aside {
+  grid-area: aside;
+}
+.content-sheet > footer {
+  grid-area: footer;
+}
+.content-sheet > .blocks {
+  grid-area: blocks;
+  display: flex;
+  flex-direction: column;
+  gap: var(--cn-grid);
+}
+@container main-app-content (width > 620px) {
+  .content-sheet > .blocks {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--cn-grid);
+  }
+}
+/*@container main-app-content (width > 890px) {
+  .content-sheet {
+    grid-template-areas:
+      "header header"
+      "blocks aside"
+      "footer footer";
+    grid-template-columns: 3.236fr 1fr;
+  }
+}*/

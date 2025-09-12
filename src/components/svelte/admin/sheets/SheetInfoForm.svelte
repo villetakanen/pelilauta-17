@@ -1,6 +1,6 @@
 <script lang="ts">
 import { updateCharacterSheet } from 'src/firebase/client/characterSheets/updateCharacterSheet';
-import { loading, sheet } from 'src/stores/characters/characterSheetStore';
+import { characterSheet as sheet } from 'src/stores/characters/characterSheetStore';
 import { pushSnack } from 'src/utils/client/snackUtils';
 import { t } from 'src/utils/i18n';
 import SystemSelect from '../../sites/SystemSelect.svelte';
@@ -39,9 +39,7 @@ async function handleSubmit(event: SubmitEvent) {
 </script>
 
 <section class="surface">
-  {#if $loading}
-    <cn-loader></cn-loader>
-  {:else if $sheet}
+  {#if $sheet}
     <h2 class="downscaled">{t('characters:sheets.editor.info.title')}</h2>
     <form onsubmit={handleSubmit}>
       <fieldset class:elevation-1={dirty}>
@@ -79,8 +77,6 @@ async function handleSubmit(event: SubmitEvent) {
     </form>
     
   {/if}
-  <!-- note: error state for not-loading, but no sheet, is handled by the parent, thus we do not need
-       to care about it here -->
 </section>
 
 

@@ -1,6 +1,6 @@
 <script lang="ts">
 import { updateCharacterSheet } from 'src/firebase/client/characterSheets/updateCharacterSheet';
-import { loading, sheet } from 'src/stores/characters/characterSheetStore';
+import { characterSheet as sheet } from 'src/stores/characters/characterSheetStore';
 import { logDebug, logError } from 'src/utils/logHelpers';
 
 let statGroups = $state<string[]>([]);
@@ -123,10 +123,10 @@ function moveGroupDown(index: number) {
         <cn-icon noun="add"></cn-icon>
         <span>Add Group</span>
       </button>
-      <button type="submit" class="button primary" disabled={$loading || !dirty}>
+      <button type="submit" class="button primary" disabled={!dirty}>
         <cn-icon noun="save"></cn-icon>
         <span>
-          {#if $loading} Saving... {:else} Save {/if}
+          save
         </span>
       </button>
     </div>

@@ -86,6 +86,15 @@ const DerivedStatSchema = StatBaseSchema.extend({
 });
 
 /**
+ * Schema for a stat whose value is derived from a formula.
+ * The formula can reference other stats using the "@key" notation.
+ */
+const TextStatSchema = StatBaseSchema.extend({
+  type: z.literal('text'),
+  value: z.string().describe('The text value of the stat.'),
+});
+
+/**
  * A discriminated union of all possible stat types.
  * This allows for flexible and type-safe handling of different kinds of stats.
  */
@@ -94,6 +103,7 @@ export const CharacterStatSchema = z.discriminatedUnion('type', [
   ToggledStatSchema,
   DerivedStatSchema,
   D20AbilityScoreSchema,
+  TextStatSchema,
 ]);
 
 /**

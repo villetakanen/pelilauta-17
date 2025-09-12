@@ -74,7 +74,7 @@ describe('CharacterStatSchema', () => {
 
   it('should fail validation for an unknown type', () => {
     const stat = {
-      type: 'text',
+      type: 'atext',
       key: 'name',
       value: 'John Doe',
     };
