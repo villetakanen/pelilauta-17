@@ -27,7 +27,7 @@ $effect(() => {
 });
 </script>
 
-<div class="content-listing">
+<div class="content-sheet">
   <CharacterHeader />
   
   <aside>
@@ -36,12 +36,16 @@ $effect(() => {
     {/if}
   </aside>
 
-  {#if statBlocks.length > 0}
-    {#each statBlocks as group}
-      <StatBlock {group} />
-    {/each}
-  {/if}
-
-  <CharacterArticle />
+  <div class="blocks">
+    {#if statBlocks.length > 0}
+      {#each statBlocks as group}
+        <StatBlock {group} />
+      {/each}
+    {/if}
+  </div>
+  <div class="meta">
+    <!-- Future metadata about the character could go here -->
+    <CharacterArticle />
+  </div>
 
 </div>

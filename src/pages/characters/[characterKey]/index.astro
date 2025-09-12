@@ -1,4 +1,5 @@
 ---
+import BetaHeader from '@components/server/app/BetaHeader.astro';
 import { getCharacter } from 'src/firebase/server/characters/getCharacter';
 import type { Character } from 'src/schemas/CharacterSchema';
 import { type Site, SiteSchema } from 'src/schemas/SiteSchema';
@@ -62,6 +63,9 @@ const description = t('characters:character.description');
   shortTitle={shortTitle}
   description={description}
   >
+
+  <BetaHeader />
+
     {character && <CharacterApp {characterKey} client:only="svelte"/>}
     {poster && (
       <BackgroundPoster

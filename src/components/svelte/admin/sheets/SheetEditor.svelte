@@ -10,9 +10,8 @@ import { appMeta } from 'src/stores/metaStore/metaStore';
 import { pushSnack } from 'src/utils/client/snackUtils';
 import { uid } from '../../../../stores/session';
 import WithAuth from '../../app/WithAuth.svelte';
+import NewGroupCard from './NewGroupCard.svelte';
 import SheetInfoForm from './SheetInfoForm.svelte';
-import SheetStatGroups from './SheetStatGroups.svelte';
-import SheetStats from './SheetStats.svelte';
 import StatsSection from './StatsSection.svelte';
 
 export interface Props {
@@ -78,31 +77,13 @@ $effect(() => {
     }
   }
 });
-
-async function onsubmit(e: Event) {
-  e.preventDefault();
-  await save().catch((error) => {
-    pushSnack({
-      message: `Failed to save sheet: ${error instanceof Error ? error.message : 'Unknown error'}`,
-    });
-  });
-  pushSnack({ message: 'Sheet saved' });
-}
 </script>
 
 <WithAuth {allow}>
-  <div class="content-sheet">
-    <header>
-      <form class="toolbar" onsubmit={onsubmit}>
-        <h1 class="text-h3 m-0">Character Sheet Editor</h1>
-        <p class="debug">
-          {`${$dirty}`}
-        </p>
-        <button type="submit" class="button primary" disabled={!$dirty}>
-          <cn-icon noun="save"></cn-icon>
-          <span>Save Sheet</span>
-        </button>
-      </form>
+  <div class="content-sheet border p-1">
+    <header class="pb-2">
+      <SheetInfoForm />
+      <br>
     </header>
 
     <section class="blocks">
@@ -135,28 +116,9 @@ async function onsubmit(e: Event) {
       {/each}
 
       <div>
-        <cn-card>
-          <div class="flex items-center">
-            <cn-icon noun="card" large></cn-icon>
-          </div>
-          <div slot="actions" class="toolbar items-center">
-            <button class="text">
-              <cn-icon noun="add"></cn-icon>
-              <span>New Group</span>
-            </button>
-          </div>
-        </cn-card>
+        <NewGroupCard />
       </div>
     </section>
-
-    <aside>
-      <SheetInfoForm />
-    </aside>
-  </div>
-  <div class="content-columns">
-    <SheetStatGroups />
-    <SheetStats />
-    
   </div>
 </WithAuth>
 

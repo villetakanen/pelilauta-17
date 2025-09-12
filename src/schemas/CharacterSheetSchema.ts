@@ -41,7 +41,10 @@ const NumberStatSchema = StatBaseSchema.extend({
  */
 const ToggledStatSchema = StatBaseSchema.extend({
   type: z.literal('toggled'),
-  value: z.boolean().default(false).describe('The boolean state of the stat.'),
+  value: z.coerce
+    .boolean()
+    .default(false)
+    .describe('The boolean state of the stat.'),
 });
 
 /**

@@ -3,6 +3,7 @@ import type { CharacterStat } from 'src/schemas/CharacterSheetSchema';
 import { character } from 'src/stores/characters/characterStore';
 import { t } from 'src/utils/i18n';
 import { onMount } from 'svelte';
+import Stat from './Stat.svelte';
 
 interface Props {
   group: string;
@@ -44,21 +45,7 @@ function getStatLabel(stat: CharacterStat): string {
   {#if statsInGroup.length > 0}
     <div class="column-s gap-xs">
       {#each statsInGroup as stat}
-        {#if stat.type === 'd20_ability_score'}
-          <div class="flex flex-no-wrap align-center mb-2">
-            <h4 class="downscaled grow">{getStatLabel(stat)}</h4>
-          <cn-d20-ability-score
-            class="flex-none"
-            baseValue={stat.baseValue}
-            modifier={stat.value}
-          ></cn-d20-ability-score>
-          </div>
-        {:else}
-          <div class="toolbar justify-between">
-            <span class="text-medium">{getStatLabel(stat)}</span>
-            <span class="text-high font-mono">{formatStatValue(stat)}</span>
-          </div>
-        {/if}
+        <Stat key={stat.key} />
       {/each}
     </div>
   {:else}

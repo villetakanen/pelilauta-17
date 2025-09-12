@@ -1,16 +1,15 @@
 <script lang="ts">
-import { updateCharacterSheet } from 'src/firebase/client/characterSheets/updateCharacterSheet';
-import { characterSheet as sheet } from 'src/stores/characters/characterSheetStore';
+import {
+  dirty,
+  save,
+  characterSheet as sheet,
+} from 'src/stores/characters/characterSheetStore';
 import { pushSnack } from 'src/utils/client/snackUtils';
 import { t } from 'src/utils/i18n';
 import SystemSelect from '../../sites/SystemSelect.svelte';
 
 let name = $state('');
 let system = $state('');
-
-const dirty = $derived.by(() => {
-  return $sheet && ($sheet.name !== name || $sheet.system !== system);
-});
 
 $effect(() => {
   // On update of the sheet, override the local state
@@ -20,64 +19,52 @@ $effect(() => {
   }
 });
 
-async function handleSubmit(event: SubmitEvent) {
-  event.preventDefault();
-  try {
-    const key = $sheet?.key;
-    if (!key) throw new Error('Sheet key is required for update');
-
-    await updateCharacterSheet({
-      key: $sheet?.key,
-      name,
-      system,
+async function onsubmit(e: Event) {
+  e.preventDefault();
+  await save().catch((error) => {
+    pushSnack({
+      message: `Failed to save sheet: ${error instanceof Error ? error.message : 'Unknown error'}`,
     });
-  } catch (error) {
-    pushSnack(t('errors:firestore.write.generic'));
-    console.error('Failed to update character sheet:', error);
-  }
+  });
+  pushSnack({ message: 'Sheet saved' });
 }
 </script>
 
-<section class="surface">
-  {#if $sheet}
-    <h2 class="downscaled">{t('characters:sheets.editor.info.title')}</h2>
-    <form onsubmit={handleSubmit}>
-      <fieldset class:elevation-1={dirty}>
-        <label>
-          <span class="label">{t('characters:sheets.fields.name')}</span>
-          <input
-            type="text"
-            bind:value={name}
-            placeholder={t('characters:sheets.placeholders.name')}
-            required />
-        </label>
-      
-        <SystemSelect 
-          system={system}
-          setSystem={(value: string) => {
-            system = value;
-          }} />
+{#if $sheet}
+  <form  {onsubmit}>
+    <div class="toolbar">
+    <label class="grow">
+      <span class="label">{t('characters:sheets.fields.name')}</span>
+      <input
+        type="text"
+        value="{name}"
+        oninput={(e) => {
+          name = (e.target as HTMLInputElement).value;
+          const updated = { ...$sheet, name };
+          sheet.set(updated);
+        }}
+        placeholder={t('characters:sheets.placeholders.name')}
+        required />
+    </label>
 
-      <div class="toolbar justify-end">
-        <button
-          type="button"
-          class="text"
-          disabled={!dirty}>
-          <cn-icon noun="undo"></cn-icon>
-          <span>{t('actions:reset')}</span>
-        </button>
-        <button
-          type="submit"
-          disabled={!dirty}>
-          <cn-icon noun="save"></cn-icon>
-          <span>{t('actions:save')}</span>
-        </button>
-      </div>
-      </fieldset>
-    </form>
     
-  {/if}
-</section>
+      
+  <button type="submit" class="button primary" disabled={!$dirty}>
+    <cn-icon noun="save"></cn-icon>
+    <span>Save Sheet</span>
+  </button>
+  </div>
+
+  <div class="toolbar mb-2">
+    <SystemSelect {system} setSystem={(newSystem) => {
+      system = newSystem;
+      const updated = { ...$sheet, system };
+      sheet.set(updated);
+    }} />
+  </div>
+
+  </form>
+{/if}
 
 
 

@@ -12,15 +12,29 @@ const canEdit = $derived.by(() => {
 });
 </script>
 
-<header class="flex">
-  <div>
-    <h1 class="text-h3 mb-0">{$character?.name}</h1>
-    <p class="text-small text-low">{$character?.description}</p>
-  </div>
+<header>
+  <div class="toolbar">
+  <h1 class="text-h3 mb-0 grow">{$character?.name}</h1>
   {#if canEdit}
-    <a href={`/characters/${$character?.key}/edit`} class="text button" style="flex-grow:0">
-      <cn-icon noun="edit"></cn-icon>
+    
+    <cn-menu>
+      <ul>
+        <li>
+          <a href={`/characters/${$character?.key}/edit`}>
+      <cn-icon xsmall noun="edit"></cn-icon>
       <span>{t('actions:edit')}</span>
     </a>
+        </li>
+        <li>
+          <a href={`/characters/${$character?.key}/delete`}>
+            <cn-icon xsmall noun="delete"></cn-icon>
+            <span>{t('actions:delete')}</span>
+          </a>
+        </li>
+      </ul>
+
+    </cn-menu>
   {/if}
+  </div>
+  <p class="text-small text-low">{$character?.description}</p>
 </header>

@@ -25,6 +25,7 @@ main i {
   grid-template-areas:
     "header"
     "blocks"
+    "meta"
     "aside"
     "footer";
   gap: var(--cn-grid);
@@ -49,19 +50,25 @@ main i {
   flex-direction: column;
   gap: var(--cn-grid);
 }
-@container main-app-content (width > 620px) {
+.content-sheet > .meta {
+  grid-area: meta;
+}
+@container main-app-content (width > 880px) {
   .content-sheet > .blocks {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: var(--cn-grid);
   }
 }
-/*@container main-app-content (width > 890px) {
+
+@container main-app-content (width > 1381px) {
   .content-sheet {
+    max-width: 1481px;
     grid-template-areas:
-      "header header"
+      "header ."
       "blocks aside"
-      "footer footer";
+      "meta aside"
+      "footer .";
     grid-template-columns: 3.236fr 1fr;
   }
-}*/
+}
