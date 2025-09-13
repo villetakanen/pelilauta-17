@@ -1,20 +1,12 @@
 <script lang="ts">
 /**
- * Single text stat display/edit component
- *
- * Props:
- * - label
- * - value
- * - onchange (function to call on value change)
- *
- * The stats are put intoa grid of 2 cols, in case
- * of interactive mode, the input spans bot cols
+ * Single number stat display/edit component
  */
 interface Props {
   interactive: boolean;
   label: string;
-  value: string;
-  onchange: (newValue: string) => void;
+  value: number;
+  onchange: (newValue: number) => void;
   disabled: boolean;
 }
 const { label, value, onchange, interactive, disabled }: Props = $props();
@@ -24,9 +16,9 @@ const { label, value, onchange, interactive, disabled }: Props = $props();
   <label class="span-cols-2">
     <span>{label}</span>
     <input
-      type="text"
+      type="number"
       value={value}
-      onchange={(e) => onchange((e.target as HTMLInputElement).value)}
+      onchange={(e) => onchange(Number((e.target as HTMLInputElement).value))}
       disabled={disabled}
     />
   </label>
@@ -40,4 +32,3 @@ const { label, value, onchange, interactive, disabled }: Props = $props();
     grid-column: span 2;
   }
 </style>
-

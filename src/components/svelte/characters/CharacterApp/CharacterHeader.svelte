@@ -1,4 +1,8 @@
 <script lang="ts">
+import {
+  isEditing,
+  toggleEditing,
+} from '@stores/characters/characterSheetState';
 import { uid } from '@stores/session';
 import { t } from '@utils/i18n';
 /*
@@ -14,27 +18,13 @@ const canEdit = $derived.by(() => {
 
 <header>
   <div class="toolbar">
-  <h1 class="text-h3 mb-0 grow">{$character?.name}</h1>
-  {#if canEdit}
-    
-    <cn-menu>
-      <ul>
-        <li>
-          <a href={`/characters/${$character?.key}/edit`}>
-      <cn-icon xsmall noun="edit"></cn-icon>
-      <span>{t('actions:edit')}</span>
-    </a>
-        </li>
-        <li>
-          <a href={`/characters/${$character?.key}/delete`}>
-            <cn-icon xsmall noun="delete"></cn-icon>
-            <span>{t('actions:delete')}</span>
-          </a>
-        </li>
-      </ul>
-
-    </cn-menu>
-  {/if}
+    <h1 class="text-h3 mb-0 grow">{$character?.name}</h1>
+    {#if canEdit}
+      <button class="secondary" onclick={toggleEditing}>
+        <cn-icon noun={$isEditing ? 'check' : 'edit'}></cn-icon>
+        <span>{$isEditing ? t('actions:done') : t('actions:edit')}</span>
+      </button>
+    {/if}
   </div>
   <p class="text-small text-low">{$character?.description}</p>
 </header>

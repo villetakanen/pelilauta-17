@@ -6,9 +6,13 @@
  */
 
 import type { CharacterStat } from '@schemas/CharacterSheetSchema';
+import { isEditing } from '@stores/characters/characterSheetState';
 import { character, update } from '@stores/characters/characterStore';
 import { uid } from '@stores/session';
+import { logError } from '@utils/logHelpers';
+import NumberStat from './NumberStat.svelte';
 import TextStat from './TextStat.svelte';
+import ToggledStat from './ToggledStat.svelte';
 
 interface Props {
   // The stat to display/edit
@@ -21,57 +25,61 @@ const stat = $derived.by(() => {
 });
 
 const owns = $derived.by(() => $character?.owners?.includes($uid) || false);
+const canEdit = $derived.by(() => owns && $isEditing);
 
-function updateStat(key: string, value: string | number | boolean) {
+let saving = $state(false);
+let error = $state<string | null>(null);
+
+async function updateStat(key: string, value: string | number | boolean) {
+  saving = true;
+  error = null;
   const c = { ...$character };
   if (!c?.sheet?.stats) return;
   const statToUpdate = c.sheet.stats.find((s) => s.key === key);
   if (statToUpdate) {
     statToUpdate.value = value;
-    update(c);
+    try {
+      await update(c);
+    } catch (e) {
+      logError('Stat.svelte', `Failed to update stat ${key}`, e);
+      error = 'Failed to save';
+      // TODO: Rollback state on failure
+    } finally {
+      saving = false;
+    }
   }
 }
 </script>
 
 {#if stat}
   {#if stat.type === 'text'}
-    <TextStat 
-      key={stat.key} 
-      value={String(stat.value)} 
-      interactive={owns} 
-      onchange={(newValue) => updateStat(stat.key, newValue)} />
+    <TextStat
+      label={stat.key}
+      value={String(stat.value)}
+      interactive={canEdit}
+      onchange={(newValue) => updateStat(stat.key, newValue)}
+      disabled={saving}
+    />
   {:else if stat.type === 'number'}
-      {#if owns}
-        <label class="span-cols">
-            <span class="sr-only">{stat.key}</span>
-            <input
-            type="number"
-            value="{stat.value}"
-            />
-        </label>
-        {:else}
-        <div>
-            {stat.value}
-        </div>
-      {/if}
+    <NumberStat
+      label={stat.key}
+      value={Number(stat.value)}
+      interactive={canEdit}
+      onchange={(newValue) => updateStat(stat.key, newValue)}
+      disabled={saving}
+    />
   {:else if stat.type === 'toggled'}
-    {#if owns}
-      <div>
-        <span>{stat.key}</span>
-        <input
-          type="checkbox"
-          checked={stat.value}
-        />
-      </div>
-    {:else}
-      <div>
-        <p class="text-overline m-0">{stat.key}</p>
-        <p class="m-0">{stat.value ? '✔️' : '❌'}</p>
-      </div>
-    {/if}
+    <ToggledStat
+      label={stat.key}
+      value={Boolean(stat.value)}
+      interactive={canEdit}
+      onchange={(newValue) => updateStat(stat.key, newValue)}
+      disabled={saving}
+    />
   {:else}
-    <div>
-      {stat.key}
-    </div>
+    <div>{stat.key}</div>
+  {/if}
+  {#if error}
+    <p class="text-error text-small">{error}</p>
   {/if}
 {/if}
