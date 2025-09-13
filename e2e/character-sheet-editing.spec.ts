@@ -41,7 +41,9 @@ test('can edit character stats', async ({ page }) => {
   await page.getByRole('button', { name: 'Edit' }).click();
 
   // Wait for edit mode to activate - the button text should change to "Done"
-  await expect(page.getByRole('button', { name: 'Done' })).toBeVisible({ timeout: 10000 });
+  await expect(page.getByRole('button', { name: 'Done' })).toBeVisible({
+    timeout: 10000,
+  });
 
   // Wait for the edit mode to activate and input fields to appear
   await page.waitForSelector('input[type="text"]', { timeout: 5000 });

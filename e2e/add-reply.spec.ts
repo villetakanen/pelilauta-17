@@ -107,8 +107,10 @@ test.describe('Reply Submission UX Improvements', () => {
     await page.getByPlaceholder('Kirjoita viesti...').fill(replyContent);
 
     // Listen for the reply submission API call
-    const responsePromise = page.waitForResponse((response) => 
-      response.url().includes('/api/threads/add-reply') && response.status() === 202
+    const responsePromise = page.waitForResponse(
+      (response) =>
+        response.url().includes('/api/threads/add-reply') &&
+        response.status() === 202,
     );
 
     // Submit reply
@@ -246,8 +248,10 @@ test.describe('Reply Submission UX Improvements', () => {
     const startTime = Date.now();
 
     // Listen for the reply submission API call
-    const responsePromise = page.waitForResponse((response) => 
-      response.url().includes('/api/threads/add-reply') && response.status() === 202
+    const responsePromise = page.waitForResponse(
+      (response) =>
+        response.url().includes('/api/threads/add-reply') &&
+        response.status() === 202,
     );
 
     // Submit the reply
@@ -365,10 +369,12 @@ test.describe('Reply Submission UX Improvements', () => {
     await page
       .getByPlaceholder('Kirjoita viesti...')
       .fill('Valid reply content');
-    
+
     // Listen for the reply submission API call
-    const responsePromise = page.waitForResponse((response) => 
-      response.url().includes('/api/threads/add-reply') && response.status() === 202
+    const responsePromise = page.waitForResponse(
+      (response) =>
+        response.url().includes('/api/threads/add-reply') &&
+        response.status() === 202,
     );
 
     await page.getByRole('button', { name: 'Lähetä' }).click();
