@@ -62,7 +62,7 @@ main i {
 }
 
 @container main-app-content (width > 1381px) {
-  .content-sheet {
+  .content-sheet:has(> aside) {
     max-width: 1481px;
     grid-template-areas:
       "header ."

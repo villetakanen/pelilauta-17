@@ -95,7 +95,10 @@ const DerivedStatSchema = StatBaseSchema.extend({
  */
 const TextStatSchema = StatBaseSchema.extend({
   type: z.literal('text'),
-  value: z.string().describe('The text value of the stat.'),
+  // Make text value optional with a safe default so sheets without an
+  // explicit value won't fail validation. This mirrors other schemas that
+  // provide defaults (number -> 0, toggled -> false).
+  value: z.string().default('').describe('The text value of the stat.'),
 });
 
 /**
