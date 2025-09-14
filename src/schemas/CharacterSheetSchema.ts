@@ -113,8 +113,6 @@ export const CharacterStatSchema = z.discriminatedUnion('type', [
   TextStatSchema,
 ]);
 
-
-
 /**
  * The TypeScript type inferred from the CharacterStatSchema.
  * Use this type in your application code.
