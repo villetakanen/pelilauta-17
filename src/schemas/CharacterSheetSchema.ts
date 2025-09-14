@@ -9,7 +9,7 @@ export const CHARACTER_SHEETS_COLLECTION_NAME = 'charsheets';
 const StatBaseSchema = z.object({
   key: z
     .string()
-    .min(1, 'Key cannot be empty')
+    .min(0, 'Key must be a string')
     .describe(
       'Unique identifier for the stat, e.g., "strength" or "hit_points".',
     ),
@@ -112,6 +112,8 @@ export const CharacterStatSchema = z.discriminatedUnion('type', [
   D20AbilityScoreSchema,
   TextStatSchema,
 ]);
+
+
 
 /**
  * The TypeScript type inferred from the CharacterStatSchema.
