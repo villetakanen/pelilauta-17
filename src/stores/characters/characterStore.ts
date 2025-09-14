@@ -14,9 +14,14 @@ import { toClientEntry } from 'src/utils/client/entryUtils';
 import { logDebug } from 'src/utils/logHelpers';
 import { uid } from '../session';
 
-const _character: WritableAtom<Character | null> = atom(null);
-export const character = computed(_character, (value) => value);
-export const canEdit = computed([_character, uid], (c, u) => {
+// The currently loaded character, transient store for reactive updates
+// form the firestore subscription. Writable for initial state, and
+// updates from the firestore.
+//
+// For non-initial data: Updating the state should be done using the
+// store methods, not by using the atom set method directly.
+export const character: WritableAtom<Character | null> = atom(null);
+export const canEdit = computed([character, uid], (c, u) => {
   // Check if the character is editable by the current user
   return c?.owners?.includes(u) ?? false;
 });
@@ -30,7 +35,7 @@ let unsubscribe: CallableFunction = () => {};
  */
 export async function subscribe(key: string) {
   logDebug('characterStore', 'Subscribing to character:', key);
-  if (_character.get()?.key === key) {
+  if (character.get()?.key === key) {
     // Already subscribed to this character
     return;
   }
@@ -44,9 +49,9 @@ export async function subscribe(key: string) {
   unsubscribe = onSnapshot(characterDoc, (snapshot) => {
     if (snapshot.exists()) {
       const entry = toClientEntry(snapshot.data());
-      _character.set(CharacterSchema.parse({ ...entry, key }));
+      character.set(CharacterSchema.parse({ ...entry, key }));
     } else {
-      _character.set(null);
+      character.set(null);
     }
     loading.set(false);
   });
@@ -60,7 +65,7 @@ export async function update(data: Partial<Character>) {
     'src/utils/client/toFirestoreEntry'
   );
 
-  const currentCharacter = _character.get();
+  const currentCharacter = character.get();
   if (!currentCharacter) {
     throw new Error('No character to update');
   }

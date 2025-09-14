@@ -5,25 +5,34 @@
  * This component subscribes to a character's data and mounts the components
  * to display and interact with the character.
  */
+
+import SiteCard from '@components/svelte/site-library/SiteCard.svelte';
+import type { Character } from '@schemas/CharacterSchema';
+import type { Site } from '@schemas/SiteSchema';
+import { uid } from '@stores/session';
 import { character, subscribe } from 'src/stores/characters/characterStore';
-import { logDebug } from 'src/utils/logHelpers';
 import CharacterCard from '../CharacterCard.svelte';
 import CharacterArticle from './CharacterArticle.svelte';
 import CharacterHeader from './CharacterHeader.svelte';
 import StatBlock from './StatBlock.svelte';
 
 interface Props {
-  characterKey: string;
+  character: Character;
+  site?: Site;
 }
 
-const { characterKey }: Props = $props();
-const statBlocks = $derived.by(() => {
-  return $character?.sheet?.statGroups || [];
-});
+const { character: initialCharacter, site }: Props = $props();
 
 $effect(() => {
-  logDebug('CharacterApp', 'Subscribing to character:', characterKey);
-  subscribe(characterKey);
+  character.set(initialCharacter);
+  // Logged in users get real-time updates to character data
+  if ($uid) {
+    subscribe(initialCharacter.key);
+  }
+});
+
+const statBlocks = $derived.by(() => {
+  return $character?.sheet?.statGroups || [];
 });
 </script>
 
@@ -34,6 +43,9 @@ $effect(() => {
     {#if $character}
       <CharacterCard character={$character}></CharacterCard>
     {/if}
+    {#if site}
+      <SiteCard {site} />
+    {/if}
   </aside>
 
   <div class="blocks">
@@ -43,8 +55,8 @@ $effect(() => {
       {/each}
     {/if}
   </div>
+  
   <div class="meta">
-    <!-- Future metadata about the character could go here -->
     <CharacterArticle />
   </div>
 
