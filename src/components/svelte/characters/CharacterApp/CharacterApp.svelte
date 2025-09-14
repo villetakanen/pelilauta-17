@@ -10,7 +10,11 @@ import SiteCard from '@components/svelte/site-library/SiteCard.svelte';
 import type { Character } from '@schemas/CharacterSchema';
 import type { Site } from '@schemas/SiteSchema';
 import { uid } from '@stores/session';
-import { character, subscribe } from 'src/stores/characters/characterStore';
+import {
+  character,
+  editor,
+  subscribe,
+} from 'src/stores/characters/characterStore';
 import CharacterCard from '../CharacterCard.svelte';
 import CharacterArticle from './CharacterArticle.svelte';
 import CharacterHeader from './CharacterHeader.svelte';
@@ -34,6 +38,9 @@ $effect(() => {
 const statBlocks = $derived.by(() => {
   return $character?.sheet?.statGroups || [];
 });
+const isOwner = $derived.by(() => {
+  return $character?.owners?.includes($uid) || false;
+});
 </script>
 
 <div class="content-sheet">
@@ -51,7 +58,13 @@ const statBlocks = $derived.by(() => {
   <div class="blocks">
     {#if statBlocks.length > 0}
       {#each statBlocks as group}
-        <StatBlock {group} />
+        {#if isOwner && $editor}
+          <!-- Show the editor functionality-->
+          <StatBlock {group} />
+        {:else}
+          <!-- Show the read-only functionality, reactive for logged in users -->
+          <StatBlock {group} />
+        {/if}
       {/each}
     {/if}
   </div>

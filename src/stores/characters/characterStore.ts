@@ -21,6 +21,10 @@ import { uid } from '../session';
 // For non-initial data: Updating the state should be done using the
 // store methods, not by using the atom set method directly.
 export const character: WritableAtom<Character | null> = atom(null);
+
+// Is the character in edit mode (editable by the current user)
+export const editor = atom(false);
+
 export const canEdit = computed([character, uid], (c, u) => {
   // Check if the character is editable by the current user
   return c?.owners?.includes(u) ?? false;
