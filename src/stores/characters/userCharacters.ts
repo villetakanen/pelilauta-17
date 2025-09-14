@@ -1,11 +1,6 @@
 import { persistentAtom } from '@nanostores/persistent';
-import { effect, type WritableAtom } from 'nanostores';
-import {
-  CHARACTERS_COLLECTION_NAME,
-  type Character,
-  CharacterSchema,
-} from 'src/schemas/CharacterSchema';
-import { toClientEntry } from 'src/utils/client/entryUtils';
+import { atom, effect, type WritableAtom } from 'nanostores';
+import { type Character, CharacterSchema } from 'src/schemas/CharacterSchema';
 import { logDebug, logError } from 'src/utils/logHelpers';
 import { z } from 'zod';
 import { uid } from '../session';
@@ -42,92 +37,67 @@ export const userCharacters: WritableAtom<Character[]> = persistentAtom(
     },
   },
 );
-let unsubscribe: CallableFunction = () => {};
 
 /**
- * Adds or updates the character data in the user characters store.
- *
- * @param character the Character data to patch
+ * Loading state for the characters
  */
-function patchCharacterData(character: Character) {
-  const currentCharacters = userCharacters.get();
-  const existingIndex = currentCharacters.findIndex(
-    (c) => c.key === character.key,
-  );
+export const userCharactersLoading = atom<boolean>(false);
 
-  let updatedCharacters: Character[];
-  if (existingIndex !== -1) {
-    // Update existing character immutably
-    updatedCharacters = [
-      ...currentCharacters.slice(0, existingIndex),
-      character,
-      ...currentCharacters.slice(existingIndex + 1),
-    ];
-  } else {
-    // Add new character
-    updatedCharacters = [...currentCharacters, character];
-  }
-  userCharacters.set(updatedCharacters);
-}
+/**
+ * Fetch characters from API and replace local cache if successful
+ */
+async function fetchAndReplaceCharacters(currentUid: string) {
+  userCharactersLoading.set(true);
 
-async function subscribeToUserCharacters(currentUid: string) {
-  logDebug(
-    'userCharacters:subscribe',
-    `Subscribing to user characters for ${currentUid}`,
-  );
-  unsubscribe(); // Unsubscribe from any previous listener
   try {
-    const { db } = await import('../../firebase/client');
-    const { onSnapshot, collection, query, where } = await import(
-      'firebase/firestore'
+    logDebug(
+      'userCharacters',
+      `Fetching characters for ${currentUid} from API`,
     );
 
-    const q = query(
-      collection(db, CHARACTERS_COLLECTION_NAME),
-      where('owners', 'array-contains', currentUid),
-    );
+    // Use authedFetch helper instead of manual token handling
+    const { authedGet } = await import('../../firebase/client/apiClient');
+    const response = await authedGet('/api/characters');
 
-    unsubscribe = onSnapshot(q, (snapshot) => {
-      for (const change of snapshot.docChanges()) {
-        const docId = change.doc.id;
-        if (change.type === 'added' || change.type === 'modified') {
-          const entry = toClientEntry(change.doc.data());
-          // If you need to set the key, do it here:
-          if (entry && typeof entry === 'object') {
-            (entry as Character).key = docId;
-          }
-          const result = CharacterSchema.safeParse(entry);
+    if (!response.ok) {
+      logError('userCharacters', `API request failed: ${response.status}`);
+      return;
+    }
 
-          if (result.success) {
-            patchCharacterData(result.data);
-          } else {
-            logError(
-              'userCharacters:onSnapshot',
-              `Invalid character data received for doc ${docId}`,
-              result.error,
-            );
-          }
-        } else if (change.type === 'removed') {
-          userCharacters.set(
-            userCharacters.get().filter((c) => c.key !== docId),
-          );
-        }
-      }
-    });
+    const data = await response.json();
+    const validationResult = z.array(CharacterSchema).safeParse(data);
+
+    if (validationResult.success) {
+      // Replace local cache with fresh data
+      userCharacters.set(validationResult.data);
+      logDebug(
+        'userCharacters',
+        `Replaced cache with ${validationResult.data.length} characters from API`,
+      );
+    } else {
+      logError(
+        'userCharacters',
+        'Invalid characters data from API',
+        validationResult.error,
+      );
+    }
   } catch (error) {
-    logError(
-      'userCharacters:subscribe',
-      `Failed to subscribe to user characters for ${currentUid}`,
-      error,
-    );
+    logError('userCharacters', 'Failed to fetch characters from API:', error);
+  } finally {
+    userCharactersLoading.set(false);
   }
 }
 
+/**
+ * React to authentication state changes
+ */
 effect(uid, (currentUid) => {
-  unsubscribe();
   if (currentUid) {
-    subscribeToUserCharacters(currentUid);
+    // User logged in, try to fetch fresh data
+    fetchAndReplaceCharacters(currentUid);
   } else {
+    // User logged out, clear characters
     userCharacters.set([]);
+    userCharactersLoading.set(false);
   }
 });
