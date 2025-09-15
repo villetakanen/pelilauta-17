@@ -6,6 +6,7 @@ noun: 'monsters'
 ## Version 18
 
 ### 18.2.0 (TBD)
+- feat(characters): Character sheet is no longer embedded in a Character, enabling switching between sheets
 - feat(characters): Character editor now supports rendering of stat groups and stats, including the new stat types
 - feat(characters): Sheet editor supports cr(u)d of stat groups.
 - feat(characters): Sheet editor supports crud of stats to groups.
