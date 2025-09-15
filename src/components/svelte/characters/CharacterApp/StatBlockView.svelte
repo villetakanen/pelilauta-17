@@ -15,9 +15,11 @@ const statsInGroup = $derived.by(() => {
 });
 
 const type = (key: string) => {
-  return $resolvedCharacter?.sheet?.stats?.find((s) => s.key === key)?.type || 'number';
+  return (
+    $resolvedCharacter?.sheet?.stats?.find((s) => s.key === key)?.type ||
+    'number'
+  );
 };
-
 </script>
 
 <section class="surface border-radius flex flex-col">

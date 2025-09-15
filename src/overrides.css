@@ -4,8 +4,8 @@
 }
 /* FIX: patched missing wide-flex-col atomic */
 @media screen and (min-width: 1380px) {
-.wide-flex-col {
-  flex-direction: column;
-  flex-wrap: nowrap;
-}
+  .wide-flex-col {
+    flex-direction: column;
+    flex-wrap: nowrap;
+  }
 }
