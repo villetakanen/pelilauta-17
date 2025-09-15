@@ -5,7 +5,8 @@ import {
   type CharacterWithResolvedSheet,
   resolveCharacterWithSheet,
 } from '@firebase/server/characters/resolveCharacterWithSheet';
-import { type Site, SiteSchema } from '@schemas/SiteSchema';
+import { getSiteData } from '@firebase/server/sites';
+import { type Site } from '@schemas/SiteSchema';
 import { t } from '@utils/i18n';
 import { logError } from '@utils/logHelpers';
 import { verifySession } from '@utils/server/auth/verifySession';
@@ -30,26 +31,20 @@ try {
   const rawCharacter = await getCharacter(characterKey);
   character = await resolveCharacterWithSheet(rawCharacter);
 } catch (error) {
-  logError(error, 'Failed to get character', { characterKey });
+  logError('CharacterIndex', 'Failed to get character:', error);
   if (error instanceof Error && error.message.includes('not_found')) {
-    Astro.redirect('/404');
+    return Astro.redirect('/404');
   } else {
-    Astro.redirect('/500');
+    return Astro.redirect('/500');
   }
 }
 
-// If we have siteKey, pre-fetch the site data
+// If we have siteKey, pre-fetch the site data using server function
 if (character?.siteKey) {
-  // Fetch site data if character has a siteKey
   try {
-    const siteResponse = await fetch(
-      `${Astro.url.origin}/api/sites/${character.siteKey}`,
-    );
-    site = SiteSchema.parse(await siteResponse.json());
+    site = await getSiteData(character.siteKey) || undefined;
   } catch (error) {
-    logError(error, 'Failed to fetch site data', {
-      siteKey: character?.siteKey,
-    });
+    logError('CharacterIndex', 'Failed to fetch site data:', error);
     // If site data fetch fails, we can still render the character without site info
     site = undefined;
   }
