@@ -1,11 +1,14 @@
 ---
 import BetaHeader from '@components/server/app/BetaHeader.astro';
-import { getCharacter } from 'src/firebase/server/characters/getCharacter';
-import type { Character } from 'src/schemas/CharacterSchema';
-import { type Site, SiteSchema } from 'src/schemas/SiteSchema';
-import { t } from 'src/utils/i18n';
-import { logError } from 'src/utils/logHelpers';
-import { verifySession } from 'src/utils/server/auth/verifySession';
+import { getCharacter } from '@firebase/server/characters/getCharacter';
+import {
+  resolveCharacterWithSheet,
+  type CharacterWithResolvedSheet,
+} from '@firebase/server/characters/resolveCharacterWithSheet';
+import { type Site, SiteSchema } from '@schemas/SiteSchema';
+import { t } from '@utils/i18n';
+import { logError } from '@utils/logHelpers';
+import { verifySession } from '@utils/server/auth/verifySession';
 import BackgroundPoster from '../../../components/server/ui/BackgroundPoster.astro';
 import CharacterApp from '../../../components/svelte/characters/CharacterApp/CharacterApp.svelte';
 import Page from '../../../layouts/Page.astro';
@@ -19,12 +22,13 @@ if (!hasSession) {
   Astro.redirect(`/login?redirect=/characters/${characterKey}`);
 }
 
-let character: Character | undefined;
+let character: CharacterWithResolvedSheet | undefined;
 let site: Site | undefined;
 
 // Fetch character data
 try {
-  character = await getCharacter(characterKey);
+  const rawCharacter = await getCharacter(characterKey);
+  character = await resolveCharacterWithSheet(rawCharacter);
 } catch (error) {
   logError(error, 'Failed to get character', { characterKey });
   if (error instanceof Error && error.message.includes('not_found')) {

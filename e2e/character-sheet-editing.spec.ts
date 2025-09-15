@@ -6,6 +6,9 @@ let characterPageUrl = '';
 
 test.beforeAll(async ({ browser }) => {
   const page = await browser.newPage();
+  await page.context().clearCookies();
+  await page.goto('http://localhost:4321');
+  await page.evaluate(() => window.localStorage.clear());
   await authenticate(page);
   await page.goto('http://localhost:4321/create/character');
   await waitForAuthState(page, 15000);
@@ -13,8 +16,14 @@ test.beforeAll(async ({ browser }) => {
   // Use a unique name for the character
   const uniqueCharacterName = `E2E Edit Test Character ${Date.now()}`;
 
-  // Go to final step
+  // Go to step 2
   await page.getByTestId('character-wizard-next-button').click();
+
+  // Select the sheet
+  await page.waitForTimeout(2000);
+  await page.getByText('E2E Test Sheet').click();
+
+  // Go to final step
   await page.getByTestId('character-wizard-next-button').click();
   await page.getByTestId('character-wizard-next-button').click();
 
@@ -26,10 +35,23 @@ test.beforeAll(async ({ browser }) => {
   await page.waitForURL(/\/library\/characters$/);
 
   // Find the character in the library and navigate to its page
+  await page.reload();
   await page.getByText(uniqueCharacterName).click();
   await page.waitForURL(/\/characters\//);
   characterPageUrl = page.url();
   await page.close();
+});
+
+test.afterAll(async () => {
+  const { initializeTestFirebase } = await import('../test/api/setup');
+  const { serverDB } = initializeTestFirebase();
+  const query = serverDB.collection('characters').where('name', '>=', 'E2E Edit Test Character');
+  const snapshot = await query.get();
+  const batch = serverDB.batch();
+  snapshot.forEach(doc => {
+    batch.delete(doc.ref);
+  });
+  await batch.commit();
 });
 
 test('can edit character stats', async ({ page }) => {

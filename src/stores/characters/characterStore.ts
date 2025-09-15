@@ -9,9 +9,13 @@ import {
   CHARACTERS_COLLECTION_NAME,
   type Character,
   CharacterSchema,
-} from 'src/schemas/CharacterSchema';
-import { toClientEntry } from 'src/utils/client/entryUtils';
-import { logDebug } from 'src/utils/logHelpers';
+} from '@schemas/CharacterSchema';
+import { toClientEntry } from '@utils/client/entryUtils';
+import {
+  resolveCharacterWithSheet,
+  type CharacterWithResolvedSheet,
+} from '@utils/characters/characterUtils';
+import { logDebug } from '@utils/logHelpers';
 import { uid } from '../session';
 
 // The currently loaded character, transient store for reactive updates
@@ -21,6 +25,8 @@ import { uid } from '../session';
 // For non-initial data: Updating the state should be done using the
 // store methods, not by using the atom set method directly.
 export const character: WritableAtom<Character | null> = atom(null);
+export const resolvedCharacter: WritableAtom<CharacterWithResolvedSheet | null> =
+  atom(null);
 
 // Is the character in edit mode (editable by the current user)
 export const editor = atom(false);
@@ -46,16 +52,21 @@ export async function subscribe(key: string) {
   loading.set(true);
   unsubscribe();
 
-  const { db } = await import('../../firebase/client');
+  const { db } = await import('@firebase/client');
   const { onSnapshot, doc } = await import('firebase/firestore');
   const characterDoc = doc(db, CHARACTERS_COLLECTION_NAME, key);
 
   unsubscribe = onSnapshot(characterDoc, (snapshot) => {
     if (snapshot.exists()) {
       const entry = toClientEntry(snapshot.data());
-      character.set(CharacterSchema.parse({ ...entry, key }));
+      const parsedCharacter = CharacterSchema.parse({ ...entry, key });
+      character.set(parsedCharacter);
+      resolveCharacterWithSheet(parsedCharacter).then((c) =>
+        resolvedCharacter.set(c),
+      );
     } else {
       character.set(null);
+      resolvedCharacter.set(null);
     }
     loading.set(false);
   });
@@ -64,10 +75,8 @@ export async function subscribe(key: string) {
 export async function update(data: Partial<Character>) {
   logDebug('characterStore', 'Updating character:', data);
   const { updateDoc, doc } = await import('firebase/firestore');
-  const { db } = await import('../../firebase/client');
-  const { toFirestoreEntry } = await import(
-    'src/utils/client/toFirestoreEntry'
-  );
+  const { db } = await import('@firebase/client');
+  const { toFirestoreEntry } = await import('@utils/client/toFirestoreEntry');
 
   const currentCharacter = character.get();
   if (!currentCharacter) {

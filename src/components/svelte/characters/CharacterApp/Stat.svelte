@@ -7,7 +7,7 @@
 
 import type { CharacterStat } from '@schemas/CharacterSheetSchema';
 import { isEditing } from '@stores/characters/characterSheetState';
-import { character, update } from '@stores/characters/characterStore';
+import { resolvedCharacter, update } from '@stores/characters/characterStore';
 import { uid } from '@stores/session';
 import { logError } from '@utils/logHelpers';
 import NumberStat from './NumberStat.svelte';
@@ -15,16 +15,17 @@ import TextStat from './TextStat.svelte';
 import ToggledStat from './ToggledStat.svelte';
 
 interface Props {
-  // The stat to display/edit
-  key: string;
+  // The stat to display/edit, from the character sheet
+  stat: CharacterStat;
 }
 
-const { key }: Props = $props();
-const stat = $derived.by(() => {
-  return $character?.sheet?.stats.find((s) => s.key === key);
+const { stat }: Props = $props();
+
+const statValue = $derived.by(() => {
+    return $resolvedCharacter?.stats[stat.key] ?? stat.value;
 });
 
-const owns = $derived.by(() => $character?.owners?.includes($uid) || false);
+const owns = $derived.by(() => $resolvedCharacter?.owners?.includes($uid) || false);
 const canEdit = $derived.by(() => owns && $isEditing);
 
 let saving = $state(false);
@@ -33,20 +34,19 @@ let error = $state<string | null>(null);
 async function updateStat(key: string, value: string | number | boolean) {
   saving = true;
   error = null;
-  const c = { ...$character };
-  if (!c?.sheet?.stats) return;
-  const statToUpdate = c.sheet.stats.find((s) => s.key === key);
-  if (statToUpdate) {
-    statToUpdate.value = value;
-    try {
-      await update(c);
-    } catch (e) {
-      logError('Stat.svelte', `Failed to update stat ${key}`, e);
-      error = 'Failed to save';
-      // TODO: Rollback state on failure
-    } finally {
-      saving = false;
-    }
+  
+  if (!$resolvedCharacter) return;
+
+  const newStats = { ...$resolvedCharacter.stats, [key]: value };
+
+  try {
+    await update({ stats: newStats });
+  } catch (e) {
+    logError('Stat.svelte', `Failed to update stat ${key}`, e);
+    error = 'Failed to save';
+    // TODO: Rollback state on failure
+  } finally {
+    saving = false;
   }
 }
 </script>
@@ -55,7 +55,7 @@ async function updateStat(key: string, value: string | number | boolean) {
   {#if stat.type === 'text'}
     <TextStat
       label={stat.key}
-      value={String(stat.value)}
+      value={String(statValue)}
       interactive={canEdit}
       onchange={(newValue) => updateStat(stat.key, newValue)}
       disabled={saving}
@@ -63,7 +63,7 @@ async function updateStat(key: string, value: string | number | boolean) {
   {:else if stat.type === 'number'}
     <NumberStat
       label={stat.key}
-      value={Number(stat.value)}
+      value={Number(statValue)}
       interactive={canEdit}
       onchange={(newValue) => updateStat(stat.key, newValue)}
       disabled={saving}
@@ -71,7 +71,7 @@ async function updateStat(key: string, value: string | number | boolean) {
   {:else if stat.type === 'toggled'}
     <ToggledStat
       label={stat.key}
-      value={Boolean(stat.value)}
+      value={Boolean(statValue)}
       interactive={canEdit}
       onchange={(newValue) => updateStat(stat.key, newValue)}
       disabled={saving}

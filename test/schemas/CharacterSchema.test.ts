@@ -10,9 +10,12 @@ describe('CharacterSchema', () => {
     owners: ['user-1'],
   };
 
-  it('should validate a basic character without a sheet', () => {
+  it('should validate a basic character without a sheetKey or stats', () => {
     const result = CharacterSchema.safeParse(basicCharacter);
     expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.stats).toEqual({});
+    }
   });
 
   it('should validate a character with only the required fields', () => {
@@ -24,26 +27,27 @@ describe('CharacterSchema', () => {
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.owners).toEqual([]);
+      expect(result.data.stats).toEqual({});
     }
   });
 
-  it('should validate a character with an embedded sheet', () => {
-    const characterWithSheet = {
+  it('should validate a character with a sheetKey and stats', () => {
+    const characterWithSheetKey = {
       ...basicCharacter,
-      sheet: {
-        key: 'dnd5e-fighter',
-        name: 'D&D 5e Fighter',
-        system: 'dnd5e',
-        stats: [
-          { type: 'number', key: 'strength', value: 16 },
-          { type: 'toggled', key: 'second_wind_used', value: false },
-        ],
+      sheetKey: 'dnd5e-fighter',
+      stats: {
+        strength: 16,
+        second_wind_used: false,
       },
     };
-    const result = CharacterSchema.safeParse(characterWithSheet);
+    const result = CharacterSchema.safeParse(characterWithSheetKey);
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.sheet?.stats.length).toBe(2);
+      expect(result.data.sheetKey).toBe('dnd5e-fighter');
+      expect(result.data.stats).toEqual({
+        strength: 16,
+        second_wind_used: false,
+      });
     }
   });
 
@@ -59,15 +63,14 @@ describe('CharacterSchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it('should fail if the embedded sheet is invalid', () => {
-    const characterWithInvalidSheet = {
+  it('should fail if stats are not a record of string, number or boolean', () => {
+    const characterWithInvalidStats = {
       ...basicCharacter,
-      sheet: {
-        // Missing required 'key', 'name', and 'system' fields
-        stats: [],
+      stats: {
+        strength: { value: 16 }, // Invalid stat value
       },
     };
-    const result = CharacterSchema.safeParse(characterWithInvalidSheet);
+    const result = CharacterSchema.safeParse(characterWithInvalidStats);
     expect(result.success).toBe(false);
   });
 });

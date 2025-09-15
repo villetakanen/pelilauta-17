@@ -9,7 +9,7 @@ export const CHARACTER_SHEETS_COLLECTION_NAME = 'charsheets';
 const StatBaseSchema = z.object({
   key: z
     .string()
-    .min(0, 'Key must be a string')
+    .min(1, 'Key cannot be empty')
     .describe(
       'Unique identifier for the stat, e.g., "strength" or "hit_points".',
     ),
@@ -127,7 +127,7 @@ export const CharacterSheetSchema = z
   .object({
     key: z
       .string()
-      .min(0, 'Key cannot be empty')
+      .min(1, 'Key cannot be empty')
       .describe('Unique identifier for the character sheet template.'),
     name: z
       .string()

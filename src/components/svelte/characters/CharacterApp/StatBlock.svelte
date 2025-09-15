@@ -1,7 +1,6 @@
 <script lang="ts">
-import type { CharacterStat } from 'src/schemas/CharacterSheetSchema';
-import { character } from 'src/stores/characters/characterStore';
-import { t } from 'src/utils/i18n';
+import { resolvedCharacter } from '@stores/characters/characterStore';
+import { t } from '@utils/i18n';
 import Stat from './Stat.svelte';
 
 interface Props {
@@ -11,8 +10,8 @@ interface Props {
 const { group }: Props = $props();
 
 const statsInGroup = $derived.by(() => {
-  if (!$character?.sheet?.stats) return [];
-  return $character.sheet.stats.filter((stat) => stat.group === group);
+  if (!$resolvedCharacter?.sheet?.stats) return [];
+  return $resolvedCharacter.sheet.stats.filter((stat) => stat.group === group);
 });
 </script>
 
@@ -22,7 +21,7 @@ const statsInGroup = $derived.by(() => {
   {#if statsInGroup.length > 0}
     <div class="stat-grid">
       {#each statsInGroup as stat}
-        <Stat key={stat.key} />
+        <Stat {stat} />
       {/each}
     </div>
   {:else}

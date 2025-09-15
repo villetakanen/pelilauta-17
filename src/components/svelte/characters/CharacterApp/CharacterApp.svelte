@@ -14,7 +14,9 @@ import {
   character,
   editor,
   subscribe,
-} from 'src/stores/characters/characterStore';
+  resolvedCharacter,
+  loading,
+} from '@stores/characters/characterStore';
 import CharacterCard from '../CharacterCard.svelte';
 import CharacterArticle from './CharacterArticle.svelte';
 import CharacterHeader from './CharacterHeader.svelte';
@@ -29,48 +31,48 @@ const { character: initialCharacter, site }: Props = $props();
 
 $effect(() => {
   character.set(initialCharacter);
-  // Logged in users get real-time updates to character data
-  if ($uid) {
-    subscribe(initialCharacter.key);
-  }
+  // The resolved character will be null until the subscription is active
+  resolvedCharacter.set(null);
+  subscribe(initialCharacter.key);
 });
 
 const statBlocks = $derived.by(() => {
-  return $character?.sheet?.statGroups || [];
+  return $resolvedCharacter?.sheet?.statGroups || [];
 });
 const isOwner = $derived.by(() => {
-  return $character?.owners?.includes($uid) || false;
+  return $resolvedCharacter?.owners?.includes($uid) || false;
 });
 </script>
 
 <div class="content-sheet">
-  <CharacterHeader />
-  
-  <aside>
-    {#if $character}
-      <CharacterCard character={$character}></CharacterCard>
-    {/if}
-    {#if site}
-      <SiteCard {site} />
-    {/if}
-  </aside>
+  {#if $loading && !$resolvedCharacter}
+    <cn-loader />
+  {:else if $resolvedCharacter}
+    <CharacterHeader character={$resolvedCharacter} />
+    
+    <aside>
+      <CharacterCard character={$resolvedCharacter}></CharacterCard>
+      {#if site}
+        <SiteCard {site} />
+      {/if}
+    </aside>
 
-  <div class="blocks">
-    {#if statBlocks.length > 0}
-      {#each statBlocks as group}
-        {#if isOwner && $editor}
-          <!-- Show the editor functionality-->
-          <StatBlock {group} />
-        {:else}
-          <!-- Show the read-only functionality, reactive for logged in users -->
-          <StatBlock {group} />
-        {/if}
-      {/each}
-    {/if}
-  </div>
-  
-  <div class="meta">
-    <CharacterArticle />
-  </div>
-
+    <div class="blocks">
+      {#if statBlocks.length > 0}
+        {#each statBlocks as group}
+          {#if isOwner && $editor}
+            <!-- Show the editor functionality-->
+            <StatBlock {group} />
+          {:else}
+            <!-- Show the read-only functionality, reactive for logged in users -->
+            <StatBlock {group} />
+          {/if}
+        {/each}
+      {/if}
+    </div>
+    
+    <div class="meta">
+      <CharacterArticle character={$resolvedCharacter} />
+    </div>
+  {/if}
 </div>
