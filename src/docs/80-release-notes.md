@@ -5,7 +5,15 @@ noun: 'monsters'
 ---
 ## Version 18
 
-### 18.1.x (ongoing)
+### 18.2.0 (TBD)
+- feat(characters): Character sheet is no longer embedded in a Character, enabling switching between sheets
+- feat(characters): Character editor now supports rendering of stat groups and stats, including the new stat types
+- feat(characters): Sheet editor supports cr(u)d of stat groups.
+- feat(characters): Sheet editor supports crud of stats to groups.
+- feat(characters): Added new stat types: text (in addition to existing number, toggled, and d20_ability_score)
+- feat(characters): Added wizard with step-by-step flow for new character metadata creation
+- fix(characters): Character view now uses CDS listing content container - and aside for meta links
+- fix(schema): Character Sheet schema stat provides value as a z.any() for better type flexibility
 - fix: Moved thread deletion to server-side API endpoint, only accessible to thread owners and pelilauta admins
 - fix: Added some small patches to CDS 4.0 beta bugs to local overrides @TODO: report the patches to CDS repo
 - fix: Character listings on the library and sites/characters page match CDS 4.0 styles

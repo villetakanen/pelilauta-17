@@ -1,10 +1,14 @@
 ---
-import { getCharacter } from 'src/firebase/server/characters/getCharacter';
-import type { Character } from 'src/schemas/CharacterSchema';
-import { type Site, SiteSchema } from 'src/schemas/SiteSchema';
-import { t } from 'src/utils/i18n';
-import { logError } from 'src/utils/logHelpers';
-import { verifySession } from 'src/utils/server/auth/verifySession';
+import BetaHeader from '@components/server/app/BetaHeader.astro';
+import { getCharacter } from '@firebase/server/characters/getCharacter';
+import { getCharacterSheet } from '@firebase/server/characters/getCharacterSheet';
+import { getSiteData } from '@firebase/server/sites';
+import type { Character } from '@schemas/CharacterSchema';
+import type { CharacterSheet } from '@schemas/CharacterSheetSchema';
+import { type Site } from '@schemas/SiteSchema';
+import { t } from '@utils/i18n';
+import { logError } from '@utils/logHelpers';
+import { verifySession } from '@utils/server/auth/verifySession';
 import BackgroundPoster from '../../../components/server/ui/BackgroundPoster.astro';
 import CharacterApp from '../../../components/svelte/characters/CharacterApp/CharacterApp.svelte';
 import Page from '../../../layouts/Page.astro';
@@ -19,32 +23,38 @@ if (!hasSession) {
 }
 
 let character: Character | undefined;
+let sheet: CharacterSheet | undefined;
 let site: Site | undefined;
 
 // Fetch character data
 try {
   character = await getCharacter(characterKey);
 } catch (error) {
-  logError(error, 'Failed to get character', { characterKey });
+  logError('CharacterIndex', 'Failed to get character:', error);
   if (error instanceof Error && error.message.includes('not_found')) {
-    Astro.redirect('/404');
+    return Astro.redirect('/404');
   } else {
-    Astro.redirect('/500');
+    return Astro.redirect('/500');
   }
 }
 
-// If we have siteKey, fetch the site data
-if (character?.siteKey) {
-  // Fetch site data if character has a siteKey
+// If character has a sheet, pre-fetch the sheet data
+if (character?.sheetKey) {
   try {
-    const siteResponse = await fetch(
-      `${Astro.url.origin}/api/sites/${character.siteKey}`,
-    );
-    site = SiteSchema.parse(await siteResponse.json());
+    sheet = await getCharacterSheet(character.sheetKey);
   } catch (error) {
-    logError(error, 'Failed to fetch site data', {
-      siteKey: character?.siteKey,
-    });
+    logError('CharacterIndex', 'Failed to fetch character sheet:', error);
+    // If sheet fetch fails, we can still render the character without sheet data
+    sheet = undefined;
+  }
+}
+
+// If we have siteKey, pre-fetch the site data using server function
+if (character?.siteKey) {
+  try {
+    site = (await getSiteData(character.siteKey)) || undefined;
+  } catch (error) {
+    logError('CharacterIndex', 'Failed to fetch site data:', error);
     // If site data fetch fails, we can still render the character without site info
     site = undefined;
   }
@@ -62,7 +72,15 @@ const description = t('characters:character.description');
   shortTitle={shortTitle}
   description={description}
   >
-    {character && <CharacterApp {characterKey} client:only="svelte"/>}
+
+  <BetaHeader />
+
+    {character && 
+      <CharacterApp
+        {character} 
+        {sheet}
+        {site} 
+        client:only="svelte"/>}
     {poster && (
       <BackgroundPoster
         src={poster}

@@ -25,6 +25,7 @@ const StatBaseSchema = z.object({
     .describe(
       'Optional group name for organizing stats in the UI, e.g., "Attributes".',
     ),
+  value: z.any().optional().describe('The value of the stat.'),
 });
 
 /**
@@ -40,7 +41,10 @@ const NumberStatSchema = StatBaseSchema.extend({
  */
 const ToggledStatSchema = StatBaseSchema.extend({
   type: z.literal('toggled'),
-  value: z.boolean().default(false).describe('The boolean state of the stat.'),
+  value: z.coerce
+    .boolean()
+    .default(false)
+    .describe('The boolean state of the stat.'),
 });
 
 /**
@@ -86,6 +90,18 @@ const DerivedStatSchema = StatBaseSchema.extend({
 });
 
 /**
+ * Schema for a stat whose value is derived from a formula.
+ * The formula can reference other stats using the "@key" notation.
+ */
+const TextStatSchema = StatBaseSchema.extend({
+  type: z.literal('text'),
+  // Make text value optional with a safe default so sheets without an
+  // explicit value won't fail validation. This mirrors other schemas that
+  // provide defaults (number -> 0, toggled -> false).
+  value: z.string().default('').describe('The text value of the stat.'),
+});
+
+/**
  * A discriminated union of all possible stat types.
  * This allows for flexible and type-safe handling of different kinds of stats.
  */
@@ -94,6 +110,7 @@ export const CharacterStatSchema = z.discriminatedUnion('type', [
   ToggledStatSchema,
   DerivedStatSchema,
   D20AbilityScoreSchema,
+  TextStatSchema,
 ]);
 
 /**
@@ -110,7 +127,7 @@ export const CharacterSheetSchema = z
   .object({
     key: z
       .string()
-      .min(0, 'Key cannot be empty')
+      .min(1, 'Key cannot be empty')
       .describe('Unique identifier for the character sheet template.'),
     name: z
       .string()

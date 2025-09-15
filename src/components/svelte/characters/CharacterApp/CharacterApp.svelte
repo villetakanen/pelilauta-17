@@ -5,44 +5,84 @@
  * This component subscribes to a character's data and mounts the components
  * to display and interact with the character.
  */
-import { character, subscribe } from 'src/stores/characters/characterStore';
-import { t } from 'src/utils/i18n';
-import { logDebug } from 'src/utils/logHelpers';
+
+import SiteCard from '@components/svelte/site-library/SiteCard.svelte';
+import type { Character } from '@schemas/CharacterSchema';
+import type { CharacterSheet } from '@schemas/CharacterSheetSchema';
+import type { Site } from '@schemas/SiteSchema';
+import {
+  character,
+  editor,
+  loading,
+  resolvedCharacter,
+  subscribe,
+} from '@stores/characters/characterStore';
+import { uid } from '@stores/session';
+import CharacterCard from '../CharacterCard.svelte';
 import CharacterArticle from './CharacterArticle.svelte';
-import CharacterInfo from './CharacterInfo.svelte';
+import CharacterHeader from './CharacterHeader.svelte';
 import StatBlock from './StatBlock.svelte';
+import StatBlockView from './StatBlockView.svelte';
 
 interface Props {
-  characterKey: string;
+  character: Character;
+  sheet?: CharacterSheet;
+  site?: Site;
 }
 
-const { characterKey }: Props = $props();
-const statBlocks = $derived.by(() => {
-  return $character?.sheet?.statGroups || [];
-});
+const {
+  character: initialCharacter,
+  sheet: initialSheet,
+  site,
+}: Props = $props();
 
 $effect(() => {
-  logDebug('CharacterApp', 'Subscribing to character:', characterKey);
-  subscribe(characterKey);
+  character.set(initialCharacter);
+  // Set initial resolved character with preloaded sheet data
+  resolvedCharacter.set({
+    ...initialCharacter,
+    sheet: initialSheet,
+  });
+  subscribe(initialCharacter.key);
+});
+
+const statBlocks = $derived.by(() => {
+  return $resolvedCharacter?.sheet?.statGroups || [];
+});
+const isOwner = $derived.by(() => {
+  return $resolvedCharacter?.owners?.includes($uid) || false;
 });
 </script>
 
-<div class="content-columns">
+<div class="content-sheet">
+  {#if $loading && !$resolvedCharacter}
+    <cn-loader></cn-loader>
+  {:else if $resolvedCharacter}
+    <CharacterHeader character={$resolvedCharacter} />
+    
+    <aside class="flex wide-flex-col">
+      {#if site}
+        <SiteCard {site} />
+      {/if}
+      <CharacterCard character={$resolvedCharacter}></CharacterCard>
+    </aside>
 
-  <CharacterArticle />
-
-  <div class="column-s">
-    <CharacterInfo />
-  </div>
-
-  {#each statBlocks as group}
-    <StatBlock {group} />
-  {/each}
-
-  {#if !$character}
-    <section class="debug column-s">
-      {t('characters:snacks:characterNotFound')}
-    </section>
+    <div class="blocks">
+      {#if statBlocks.length > 0}
+        {#each statBlocks as group}
+          {#if isOwner && $editor}
+            <!-- Show the editor functionality-->
+            <StatBlock {group} />
+          {:else}
+            <!-- Show the read-only functionality, reactive for logged in users -->
+            <StatBlockView {group} />
+          {/if}
+        {/each}
+      {/if}
+    </div>
+    
+    <div class="meta">
+      <CharacterArticle character={$resolvedCharacter} />
+    </div>
   {/if}
-
 </div>

@@ -1,17 +1,11 @@
-/* FIX: Patch for long urls in profile bios, etc. Move to Design System when able */
-.content-columns > section,
-.content-columns > article {
-  word-break: break-word;
+/* FIX: patched missing border-radius atomic */
+.border-radius {
+  border-radius: var(--cn-border-radius-large);
 }
-
-/* FIX: Patch for heading icons */
-h3 cn-icon,
-h3 .icon {
-  vertical-align: middle;
-}
-
-/* FIX: Patch italic text in headings, font size is erroneously set for inline elements */
-main em,
-main i {
-  font-size: inherit;
+/* FIX: patched missing wide-flex-col atomic */
+@media screen and (min-width: 1380px) {
+  .wide-flex-col {
+    flex-direction: column;
+    flex-wrap: nowrap;
+  }
 }

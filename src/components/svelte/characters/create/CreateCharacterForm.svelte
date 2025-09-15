@@ -59,14 +59,11 @@ function setDescription(e: Event) {
 async function onsubmit(e: Event) {
   e.preventDefault();
 
-  const { createCharacter } = await import(
-    'src/firebase/client/characters/createCharacter'
-  );
+  const { authedPost } = await import('@firebase/client/apiClient');
 
   try {
     const data: Partial<Character> = {
       ...characterData,
-      owners: [$uid],
     };
     if (selectedSheet) {
       data.sheet = selectedSheet;
@@ -75,7 +72,14 @@ async function onsubmit(e: Event) {
       data.siteKey = selectedSite.key;
     }
 
-    const key = await createCharacter(data);
+    const response = await authedPost('/api/characters', data);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+
     pushSessionSnack(
       t('characters:snacks.characterCreated', {
         charactername: `${characterData.name}`,
@@ -116,8 +120,8 @@ async function onsubmit(e: Event) {
         />
 
         <SiteSelect 
-          {selectedSiteKey}
-          {setSelectedSite}
+          selected={selectedSiteKey}
+          setSelected={setSelectedSite}
         />
         
         <div class="toolbar justify-end">

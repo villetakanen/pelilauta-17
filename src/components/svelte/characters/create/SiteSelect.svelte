@@ -6,11 +6,11 @@ import { t } from '@utils/i18n';
 import { logDebug } from '@utils/logHelpers';
 
 interface Props {
-  selectedSiteKey: string;
-  setSelectedSite: (siteKey: string, site: Site | null) => void;
+  selected: string;
+  setSelected: (siteKey: string, site: Site | null) => void;
 }
 
-const { selectedSiteKey, setSelectedSite }: Props = $props();
+const { selected, setSelected }: Props = $props();
 
 // Use the userSites store which contains sites the user owns or plays in
 const sites = $derived($userSites || []);
@@ -20,12 +20,12 @@ $effect(() => {
   logDebug('SiteSelect', 'Available sites:', sites);
 });
 
-// Auto-select site when sites are loaded and selectedSiteKey is prefilled
+// Auto-select site when sites are loaded and selected (sitekey) is prefilled
 $effect(() => {
-  if (selectedSiteKey && sites.length > 0) {
-    const prefillSite = sites.find((site) => site.key === selectedSiteKey);
+  if (selected && sites.length > 0) {
+    const prefillSite = sites.find((site) => site.key === selected);
     if (prefillSite) {
-      setSelectedSite(selectedSiteKey, prefillSite);
+      setSelected(selected, prefillSite);
     }
   }
 });
@@ -35,19 +35,19 @@ function handleSelectionChange(event: Event) {
   const selectedKey = select.value;
 
   if (selectedKey === '') {
-    setSelectedSite('', null);
+    setSelected('', null);
     return;
   }
 
   const selectedSite = sites.find((site) => site.key === selectedKey) || null;
-  setSelectedSite(selectedKey, selectedSite);
+  setSelected(selectedKey, selectedSite);
 }
 </script>
 
 <label>
   {t('entries:character.site')}
   <select
-    value={selectedSiteKey || ''}
+    value={setSelected || ''}
     onchange={handleSelectionChange}
     disabled={loading}
   >
