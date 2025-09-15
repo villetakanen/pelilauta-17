@@ -71,9 +71,15 @@ test('can edit character stats', async ({ page }) => {
 
   // Check if character sheet editing is fully functional or still experimental
   // Try to find editable input fields (not readonly) in the character sheet area
-  const editableTextInputs = page.locator('main input[type="text"]:not([readonly]), article input[type="text"]:not([readonly])');
-  const editableNumberInputs = page.locator('main input[type="number"]:not([readonly]), article input[type="number"]:not([readonly])');
-  const editableCheckboxes = page.locator('main input[type="checkbox"]:not([disabled]):visible, article input[type="checkbox"]:not([disabled]):visible');
+  const editableTextInputs = page.locator(
+    'main input[type="text"]:not([readonly]), article input[type="text"]:not([readonly])',
+  );
+  const editableNumberInputs = page.locator(
+    'main input[type="number"]:not([readonly]), article input[type="number"]:not([readonly])',
+  );
+  const editableCheckboxes = page.locator(
+    'main input[type="checkbox"]:not([disabled]):visible, article input[type="checkbox"]:not([disabled]):visible',
+  );
 
   const hasEditableText = (await editableTextInputs.count()) > 0;
   const hasEditableNumber = (await editableNumberInputs.count()) > 0;
@@ -81,12 +87,14 @@ test('can edit character stats', async ({ page }) => {
 
   if (!hasEditableText && !hasEditableNumber && !hasEditableCheckbox) {
     // Character sheet editing is not fully implemented yet - this is expected for experimental features
-    console.log('Character sheet editing appears to be in experimental state - inputs are readonly');
-    
+    console.log(
+      'Character sheet editing appears to be in experimental state - inputs are readonly',
+    );
+
     // Just verify we can toggle back to view mode
     await page.getByRole('button', { name: 'Done' }).click();
     await expect(page.getByRole('button', { name: 'Edit' })).toBeVisible();
-    
+
     // Mark test as passing since the basic edit/view toggle works
     console.log('Basic edit mode toggle functionality verified');
     return;
@@ -128,13 +136,13 @@ test('can edit character stats', async ({ page }) => {
   if (hasEditableText && originalText) {
     await expect(page.getByText(`${originalText} edited`)).toBeVisible();
   }
-  
+
   if (hasEditableNumber && originalNumber) {
     await expect(
       page.getByText(String(Number(originalNumber) + 1)),
     ).toBeVisible();
   }
-  
+
   if (hasEditableCheckbox) {
     await expect(page.getByText(originalToggled ? '❌' : '✔️')).toBeVisible();
   }

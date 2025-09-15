@@ -1,5 +1,5 @@
+import type { ConsoleMessage, Page } from '@playwright/test';
 import { existingUser, newUser } from '../playwright/.auth/credentials.ts';
-import type { Page, ConsoleMessage } from '@playwright/test';
 
 // Use environment variable for base URL or default to localhost
 const BASE_URL = process.env.BASE_URL || 'http://localhost:4321';
@@ -35,7 +35,9 @@ export async function authenticate(page: Page, useNewUserAccount = false) {
   try {
     await page.waitForLoadState('networkidle', { timeout: 20000 });
   } catch {
-    console.log('NetworkIdle timeout exceeded, continuing with form interaction...');
+    console.log(
+      'NetworkIdle timeout exceeded, continuing with form interaction...',
+    );
     // Fallback: wait for DOM to be stable instead
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(2000);
@@ -43,11 +45,15 @@ export async function authenticate(page: Page, useNewUserAccount = false) {
 
   console.log('Filling email field with:', credentials.email);
   // Use specific ID for password login form (test environment)
-  const emailField = page.locator('#password-email').or(page.getByLabel('Email'));
+  const emailField = page
+    .locator('#password-email')
+    .or(page.getByLabel('Email'));
   await emailField.fill(credentials.email);
 
   console.log('Filling password field');
-  const passwordField = page.locator('#password-password').or(page.getByLabel('Password'));
+  const passwordField = page
+    .locator('#password-password')
+    .or(page.getByLabel('Password'));
   await passwordField.fill(credentials.password);
 
   // Wait for the form to be ready for submission
