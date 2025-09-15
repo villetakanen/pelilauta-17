@@ -52,7 +52,7 @@ export const GET: APIRoute = async ({ request }) => {
     });
 
     const body = JSON.stringify(characters);
-    const etag = crypto.createHash('sha1').update(body).digest('hex');
+    const etag = crypto.createHash('sha256').update(body).digest('hex');
 
     // Check if client has cached version
     const ifNoneMatch = request.headers.get('if-none-match');
