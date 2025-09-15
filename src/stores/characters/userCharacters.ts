@@ -3,7 +3,7 @@ import { atom, effect, type WritableAtom } from 'nanostores';
 import { type Character, CharacterSchema } from 'src/schemas/CharacterSchema';
 import { logDebug, logError } from 'src/utils/logHelpers';
 import { z } from 'zod';
-import { uid, authUser } from '../session';
+import { authUser, uid } from '../session';
 
 /**
  * A nanostore for caching the user's characters.
@@ -100,7 +100,10 @@ async function fetchAndReplaceCharacters(currentUid: string) {
   } catch (error) {
     logError('userCharacters', 'Failed to fetch characters from API:', error);
     // Check if it's an auth error
-    if (error instanceof Error && error.message.includes('User not authenticated')) {
+    if (
+      error instanceof Error &&
+      error.message.includes('User not authenticated')
+    ) {
       logError(
         'userCharacters',
         'Auth error during fetch - this indicates a race condition was caught',
