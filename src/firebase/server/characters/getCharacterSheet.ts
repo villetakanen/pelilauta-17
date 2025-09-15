@@ -28,13 +28,18 @@ export async function getCharacterSheet(
   key: string | undefined,
 ): Promise<CharacterSheet> {
   if (!key) {
-    throw new CharacterSheetError('Character sheet key is required.', 'not_found');
+    throw new CharacterSheetError(
+      'Character sheet key is required.',
+      'not_found',
+    );
   }
 
   try {
     const { serverDB } = await import('..');
 
-    const docRef = serverDB.collection(CHARACTER_SHEETS_COLLECTION_NAME).doc(key);
+    const docRef = serverDB
+      .collection(CHARACTER_SHEETS_COLLECTION_NAME)
+      .doc(key);
     const docSnapshot = await docRef.get();
 
     if (!docSnapshot.exists) {

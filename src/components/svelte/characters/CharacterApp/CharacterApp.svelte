@@ -29,14 +29,18 @@ interface Props {
   site?: Site;
 }
 
-const { character: initialCharacter, sheet: initialSheet, site }: Props = $props();
+const {
+  character: initialCharacter,
+  sheet: initialSheet,
+  site,
+}: Props = $props();
 
 $effect(() => {
   character.set(initialCharacter);
   // Set initial resolved character with preloaded sheet data
   resolvedCharacter.set({
     ...initialCharacter,
-    sheet: initialSheet
+    sheet: initialSheet,
   });
   subscribe(initialCharacter.key);
 });
