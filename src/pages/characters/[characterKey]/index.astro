@@ -1,11 +1,10 @@
 ---
 import BetaHeader from '@components/server/app/BetaHeader.astro';
 import { getCharacter } from '@firebase/server/characters/getCharacter';
-import {
-  type CharacterWithResolvedSheet,
-  resolveCharacterWithSheet,
-} from '@firebase/server/characters/resolveCharacterWithSheet';
+import { getCharacterSheet } from '@firebase/server/characters/getCharacterSheet';
 import { getSiteData } from '@firebase/server/sites';
+import type { Character } from '@schemas/CharacterSchema';
+import type { CharacterSheet } from '@schemas/CharacterSheetSchema';
 import { type Site } from '@schemas/SiteSchema';
 import { t } from '@utils/i18n';
 import { logError } from '@utils/logHelpers';
@@ -23,19 +22,30 @@ if (!hasSession) {
   Astro.redirect(`/login?redirect=/characters/${characterKey}`);
 }
 
-let character: CharacterWithResolvedSheet | undefined;
+let character: Character | undefined;
+let sheet: CharacterSheet | undefined;
 let site: Site | undefined;
 
 // Fetch character data
 try {
-  const rawCharacter = await getCharacter(characterKey);
-  character = await resolveCharacterWithSheet(rawCharacter);
+  character = await getCharacter(characterKey);
 } catch (error) {
   logError('CharacterIndex', 'Failed to get character:', error);
   if (error instanceof Error && error.message.includes('not_found')) {
     return Astro.redirect('/404');
   } else {
     return Astro.redirect('/500');
+  }
+}
+
+// If character has a sheet, pre-fetch the sheet data
+if (character?.sheetKey) {
+  try {
+    sheet = await getCharacterSheet(character.sheetKey);
+  } catch (error) {
+    logError('CharacterIndex', 'Failed to fetch character sheet:', error);
+    // If sheet fetch fails, we can still render the character without sheet data
+    sheet = undefined;
   }
 }
 
@@ -68,6 +78,7 @@ const description = t('characters:character.description');
     {character && 
       <CharacterApp
         {character} 
+        {sheet}
         {site} 
         client:only="svelte"/>}
     {poster && (

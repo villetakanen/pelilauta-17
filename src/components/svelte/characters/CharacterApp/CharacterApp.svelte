@@ -8,6 +8,7 @@
 
 import SiteCard from '@components/svelte/site-library/SiteCard.svelte';
 import type { Character } from '@schemas/CharacterSchema';
+import type { CharacterSheet } from '@schemas/CharacterSheetSchema';
 import type { Site } from '@schemas/SiteSchema';
 import {
   character,
@@ -24,15 +25,19 @@ import StatBlock from './StatBlock.svelte';
 
 interface Props {
   character: Character;
+  sheet?: CharacterSheet;
   site?: Site;
 }
 
-const { character: initialCharacter, site }: Props = $props();
+const { character: initialCharacter, sheet: initialSheet, site }: Props = $props();
 
 $effect(() => {
   character.set(initialCharacter);
-  // The resolved character will be null until the subscription is active
-  resolvedCharacter.set(null);
+  // Set initial resolved character with preloaded sheet data
+  resolvedCharacter.set({
+    ...initialCharacter,
+    sheet: initialSheet
+  });
   subscribe(initialCharacter.key);
 });
 
@@ -46,7 +51,7 @@ const isOwner = $derived.by(() => {
 
 <div class="content-sheet">
   {#if $loading && !$resolvedCharacter}
-    <cn-loader />
+    <cn-loader></cn-loader>
   {:else if $resolvedCharacter}
     <CharacterHeader character={$resolvedCharacter} />
     

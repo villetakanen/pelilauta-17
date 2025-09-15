@@ -28,7 +28,7 @@ export async function resolveCharacterWithSheet(
       .doc(character.sheetKey);
     const sheetDoc = await sheetDocRef.get();
 
-    if (sheetDoc.exists()) {
+    if (sheetDoc.exists) {
       const sheetData = CharacterSheetSchema.parse({
         ...sheetDoc.data(),
         key: sheetDoc.id,
