@@ -3,10 +3,10 @@
  * A component to display the character's markdown content as an article.column-l
  */
 
-import { marked } from 'marked';
-import { t } from '@utils/i18n';
 import type { Character } from '@schemas/CharacterSchema';
 import { canEdit } from '@stores/characters/characterStore';
+import { t } from '@utils/i18n';
+import { marked } from 'marked';
 
 interface Props {
   character: Character;

@@ -45,10 +45,12 @@ test.beforeAll(async ({ browser }) => {
 test.afterAll(async () => {
   const { initializeTestFirebase } = await import('../test/api/setup');
   const { serverDB } = initializeTestFirebase();
-  const query = serverDB.collection('characters').where('name', '>=', 'E2E Edit Test Character');
+  const query = serverDB
+    .collection('characters')
+    .where('name', '>=', 'E2E Edit Test Character');
   const snapshot = await query.get();
   const batch = serverDB.batch();
-  snapshot.forEach(doc => {
+  snapshot.forEach((doc) => {
     batch.delete(doc.ref);
   });
   await batch.commit();

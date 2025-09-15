@@ -1,8 +1,8 @@
 import type { Character } from '@schemas/CharacterSchema';
 import {
   CHARACTER_SHEETS_COLLECTION_NAME,
-  CharacterSheetSchema,
   type CharacterSheet,
+  CharacterSheetSchema,
 } from '@schemas/CharacterSheetSchema';
 import { logDebug, logError } from '@utils/logHelpers';
 import { serverDB } from '..';
@@ -15,7 +15,10 @@ export async function resolveCharacterWithSheet(
   character: Character,
 ): Promise<CharacterWithResolvedSheet> {
   if (!character.sheetKey) {
-    logDebug('resolveCharacterWithSheet', 'Character has no sheetKey, returning as is.');
+    logDebug(
+      'resolveCharacterWithSheet',
+      'Character has no sheetKey, returning as is.',
+    );
     return character;
   }
 
@@ -32,7 +35,11 @@ export async function resolveCharacterWithSheet(
       });
       return { ...character, sheet: sheetData };
     }
-    logDebug('resolveCharacterWithSheet', 'Sheet not found for key:', character.sheetKey);
+    logDebug(
+      'resolveCharacterWithSheet',
+      'Sheet not found for key:',
+      character.sheetKey,
+    );
     return character;
   } catch (error) {
     logError(

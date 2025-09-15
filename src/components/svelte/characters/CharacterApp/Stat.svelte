@@ -22,10 +22,12 @@ interface Props {
 const { stat }: Props = $props();
 
 const statValue = $derived.by(() => {
-    return $resolvedCharacter?.stats[stat.key] ?? stat.value;
+  return $resolvedCharacter?.stats[stat.key] ?? stat.value;
 });
 
-const owns = $derived.by(() => $resolvedCharacter?.owners?.includes($uid) || false);
+const owns = $derived.by(
+  () => $resolvedCharacter?.owners?.includes($uid) || false,
+);
 const canEdit = $derived.by(() => owns && $isEditing);
 
 let saving = $state(false);
@@ -34,7 +36,7 @@ let error = $state<string | null>(null);
 async function updateStat(key: string, value: string | number | boolean) {
   saving = true;
   error = null;
-  
+
   if (!$resolvedCharacter) return;
 
   const newStats = { ...$resolvedCharacter.stats, [key]: value };

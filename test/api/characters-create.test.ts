@@ -187,7 +187,10 @@ describe('/api/characters', () => {
 
       // Verify the data in firestore
       const { serverDB } = initializeTestFirebase();
-      const characterDoc = await serverDB.collection('characters').doc(data.id).get();
+      const characterDoc = await serverDB
+        .collection('characters')
+        .doc(data.id)
+        .get();
       expect(characterDoc.exists).toBe(true);
       const characterDocData = characterDoc.data();
       expect(characterDocData?.sheetKey).toBe('dnd5e-sheet');

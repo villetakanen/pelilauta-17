@@ -4,18 +4,18 @@
  * Subscribes to set character data and provides methods to get and update character information.
  */
 
-import { atom, computed, type WritableAtom } from 'nanostores';
 import {
   CHARACTERS_COLLECTION_NAME,
   type Character,
   CharacterSchema,
 } from '@schemas/CharacterSchema';
-import { toClientEntry } from '@utils/client/entryUtils';
 import {
-  resolveCharacterWithSheet,
   type CharacterWithResolvedSheet,
+  resolveCharacterWithSheet,
 } from '@utils/characters/characterUtils';
+import { toClientEntry } from '@utils/client/entryUtils';
 import { logDebug } from '@utils/logHelpers';
+import { atom, computed, type WritableAtom } from 'nanostores';
 import { uid } from '../session';
 
 // The currently loaded character, transient store for reactive updates

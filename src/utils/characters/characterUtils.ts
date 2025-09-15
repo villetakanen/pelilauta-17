@@ -1,8 +1,8 @@
 import type { Character } from '@schemas/CharacterSchema';
 import {
   CHARACTER_SHEETS_COLLECTION_NAME,
-  CharacterSheetSchema,
   type CharacterSheet,
+  CharacterSheetSchema,
 } from '@schemas/CharacterSheetSchema';
 import { logDebug, logError } from '@utils/logHelpers';
 

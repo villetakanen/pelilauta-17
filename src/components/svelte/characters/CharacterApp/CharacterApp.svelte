@@ -9,14 +9,14 @@
 import SiteCard from '@components/svelte/site-library/SiteCard.svelte';
 import type { Character } from '@schemas/CharacterSchema';
 import type { Site } from '@schemas/SiteSchema';
-import { uid } from '@stores/session';
 import {
   character,
   editor,
-  subscribe,
-  resolvedCharacter,
   loading,
+  resolvedCharacter,
+  subscribe,
 } from '@stores/characters/characterStore';
+import { uid } from '@stores/session';
 import CharacterCard from '../CharacterCard.svelte';
 import CharacterArticle from './CharacterArticle.svelte';
 import CharacterHeader from './CharacterHeader.svelte';
