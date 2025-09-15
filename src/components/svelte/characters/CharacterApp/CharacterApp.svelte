@@ -22,6 +22,7 @@ import CharacterCard from '../CharacterCard.svelte';
 import CharacterArticle from './CharacterArticle.svelte';
 import CharacterHeader from './CharacterHeader.svelte';
 import StatBlock from './StatBlock.svelte';
+import StatBlockView from './StatBlockView.svelte';
 
 interface Props {
   character: Character;
@@ -59,11 +60,11 @@ const isOwner = $derived.by(() => {
   {:else if $resolvedCharacter}
     <CharacterHeader character={$resolvedCharacter} />
     
-    <aside>
-      <CharacterCard character={$resolvedCharacter}></CharacterCard>
+    <aside class="flex wide-flex-col">
       {#if site}
         <SiteCard {site} />
       {/if}
+      <CharacterCard character={$resolvedCharacter}></CharacterCard>
     </aside>
 
     <div class="blocks">
@@ -74,7 +75,7 @@ const isOwner = $derived.by(() => {
             <StatBlock {group} />
           {:else}
             <!-- Show the read-only functionality, reactive for logged in users -->
-            <StatBlock {group} />
+            <StatBlockView {group} />
           {/if}
         {/each}
       {/if}
