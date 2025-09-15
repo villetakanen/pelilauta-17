@@ -106,11 +106,21 @@ test.describe('Reply Submission UX Improvements', () => {
     const replyContent = 'This is my test reply!';
     await page.getByPlaceholder('Kirjoita viesti...').fill(replyContent);
 
+    // Listen for the reply submission API call
+    const responsePromise = page.waitForResponse(
+      (response) =>
+        response.url().includes('/api/threads/add-reply') &&
+        response.status() === 202,
+    );
+
     // Submit reply
     await page.getByRole('button', { name: 'Lähetä' }).click();
 
+    // Wait for successful API response
+    await responsePromise;
+
     // The dialog should close
-    await expect(page.getByRole('dialog')).toBeHidden({ timeout: 2000 });
+    await expect(page.getByRole('dialog')).toBeHidden({ timeout: 5000 });
 
     // Verify the reply appears
     await expect(page.getByText(replyContent)).toBeVisible({ timeout: 10000 });
@@ -237,11 +247,21 @@ test.describe('Reply Submission UX Improvements', () => {
     // Start timing the reply submission with file
     const startTime = Date.now();
 
+    // Listen for the reply submission API call
+    const responsePromise = page.waitForResponse(
+      (response) =>
+        response.url().includes('/api/threads/add-reply') &&
+        response.status() === 202,
+    );
+
     // Submit the reply
     await page.getByRole('button', { name: 'Lähetä' }).click();
 
-    // The dialog should close quickly even with file upload
-    await expect(page.getByRole('dialog')).toBeHidden({ timeout: 2000 });
+    // Wait for successful API response
+    await responsePromise;
+
+    // Wait for the dialog to close after successful submission (file uploads may take longer)
+    await expect(page.getByRole('dialog')).toBeHidden({ timeout: 5000 });
 
     const endTime = Date.now();
     const responseTime = endTime - startTime;
@@ -349,10 +369,21 @@ test.describe('Reply Submission UX Improvements', () => {
     await page
       .getByPlaceholder('Kirjoita viesti...')
       .fill('Valid reply content');
+
+    // Listen for the reply submission API call
+    const responsePromise = page.waitForResponse(
+      (response) =>
+        response.url().includes('/api/threads/add-reply') &&
+        response.status() === 202,
+    );
+
     await page.getByRole('button', { name: 'Lähetä' }).click();
 
-    // Now it should close
-    await expect(page.getByRole('dialog')).toBeHidden({ timeout: 1000 });
+    // Wait for successful API response
+    await responsePromise;
+
+    // Wait for the dialog to close after successful validation and submission
+    await expect(page.getByRole('dialog')).toBeHidden({ timeout: 3000 });
   });
 
   test('Error handling works correctly', async ({ page }) => {

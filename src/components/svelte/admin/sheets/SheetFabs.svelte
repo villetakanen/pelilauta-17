@@ -2,7 +2,6 @@
 import { createCharacterSheet } from 'src/stores/characters/characterSheetStore';
 import { pushSnack } from 'src/utils/client/snackUtils';
 import { logError } from 'src/utils/logHelpers';
-import { fly } from 'svelte/transition';
 
 let creating = $state(false);
 
@@ -11,7 +10,7 @@ async function handleCreateCharacterSheet() {
 
   try {
     const newCharacterSheet = {
-      key: '',
+      key: '-',
       name: 'New Character Sheet Schema',
       system: '-',
       stats: [],

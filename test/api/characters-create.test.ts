@@ -161,20 +161,15 @@ describe('/api/characters', () => {
       expect(data.id).toBeDefined();
     });
 
-    it('should create a character with embedded sheet', async () => {
+    it('should create a character with sheetKey and stats', async () => {
       const headers = await getAuthHeaders(TEST_USERS.NORMAL);
       const characterData = {
         name: 'Legolas',
         description: 'Elven archer from the Woodland Realm',
-        sheet: {
-          key: 'dnd5e-sheet',
-          name: 'D&D 5e Character Sheet',
-          system: 'D&D 5e',
-          version: '1.0.0',
-          fields: [
-            { key: 'strength', type: 'number', name: 'Strength', value: 16 },
-            { key: 'dexterity', type: 'number', name: 'Dexterity', value: 18 },
-          ],
+        sheetKey: 'dnd5e-sheet',
+        stats: {
+          strength: 16,
+          dexterity: 18,
         },
       };
 
@@ -189,6 +184,17 @@ describe('/api/characters', () => {
       const data = await response.json();
       expect(data.success).toBe(true);
       expect(data.id).toBeDefined();
+
+      // Verify the data in firestore
+      const { serverDB } = initializeTestFirebase();
+      const characterDoc = await serverDB
+        .collection('characters')
+        .doc(data.id)
+        .get();
+      expect(characterDoc.exists).toBe(true);
+      const characterDocData = characterDoc.data();
+      expect(characterDocData?.sheetKey).toBe('dnd5e-sheet');
+      expect(characterDocData?.stats).toEqual({ strength: 16, dexterity: 18 });
     });
   });
 

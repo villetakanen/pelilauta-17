@@ -149,4 +149,34 @@ const profileRef = serverDB.collection('profiles').doc(testUserUid);
 await profileRef.delete();
 console.log('Profile document deleted.');
 
+// Create a test character sheet
+const testSheet = {
+  key: 'e2e-test-sheet',
+  name: 'E2E Test Sheet',
+  system: 'homebrew',
+  stats: [
+    {
+      key: 'text_stat',
+      type: 'text',
+      value: 'initial text',
+      group: 'Test Group',
+    },
+    {
+      key: 'number_stat',
+      type: 'number',
+      value: 10,
+      group: 'Test Group',
+    },
+    {
+      key: 'toggled_stat',
+      type: 'toggled',
+      value: false,
+      group: 'Test Group',
+    },
+  ],
+  statGroups: ['Test Group'],
+};
+await serverDB.collection('charsheets').doc(testSheet.key).set(testSheet);
+console.log('Test character sheet created:', testSheet.key);
+
 console.log('User cleanup complete.');

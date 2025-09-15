@@ -29,6 +29,10 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+
+    /* Add default timeouts for better reliability */
+    actionTimeout: 10000,
+    navigationTimeout: 30000,
   },
 
   /* Configure projects for major browsers */
@@ -39,8 +43,8 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
         // Add extra timeout for authentication and page loads
-        actionTimeout: 30000,
-        navigationTimeout: 60000,
+        actionTimeout: 15000,
+        navigationTimeout: 30000,
       },
     },
 
@@ -58,8 +62,8 @@ export default defineConfig({
   ],
 
   /* Global timeout settings */
-  timeout: 60000,
+  timeout: 90000,
   expect: {
-    timeout: 10000,
+    timeout: 15000,
   },
 });

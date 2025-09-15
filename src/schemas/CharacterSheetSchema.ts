@@ -127,7 +127,7 @@ export const CharacterSheetSchema = z
   .object({
     key: z
       .string()
-      .min(0, 'Key cannot be empty')
+      .min(1, 'Key cannot be empty')
       .describe('Unique identifier for the character sheet template.'),
     name: z
       .string()

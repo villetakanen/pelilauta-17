@@ -1,4 +1,3 @@
-import { CharacterSheetSchema } from 'src/schemas/CharacterSheetSchema';
 import { z } from 'zod';
 import { ContentEntrySchema } from './ContentEntry';
 
@@ -18,8 +17,11 @@ export const CharacterSchema = ContentEntrySchema.extend({
   /** The key of the site this character belongs to. */
   siteKey: z.string().optional(),
 
-  /** An optional, embedded character sheet defining the character's stats and structure. */
-  sheet: CharacterSheetSchema.optional(),
+  /** Reference to a character sheet template by key. */
+  sheetKey: z.string().optional(),
+
+  /** Character stats as key-value pairs. Values can be string, number, or boolean. */
+  stats: z.record(z.union([z.string(), z.number(), z.boolean()])).default({}),
 
   /** URL for the character's avatar image. */
   avatar: z.string().url().optional(),

@@ -1,42 +1,42 @@
 <script lang="ts">
 import { sheets } from '@stores/characters/sheetsStore';
-import { t } from '@utils/i18n';
+import { logDebug } from '@utils/logHelpers';
 
 interface Props {
   system: string;
-  selected?: string;
-  onSelect: (sheetKey: string, sheetName: string) => void;
+  selected: string | undefined;
+  onSelect: (key: string, name: string) => void;
 }
 
 const { system, selected, onSelect }: Props = $props();
 
-const options = $sheets
-  .filter((sheet) => sheet.system === system)
-  .map((sheet) => ({
-    label: sheet.name,
-    value: sheet.key,
-  }));
+$effect(() => {
+  logDebug('SheetSelect', 'System prop:', system);
+});
 
-options.push({ label: t('characters:defaultSheet'), value: '-' });
-
-function onchange(e: Event) {
-  const select = e.target as HTMLSelectElement;
-  const selectedKey = select.value;
-  const selectedSheet = $sheets.find((sheet) => sheet.key === selectedKey);
-  onSelect(
-    selectedKey,
-    selectedSheet ? selectedSheet.name : t('characters:defaultSheet'),
-  );
-}
+const filteredSheets = $derived.by(() => {
+  logDebug('SheetSelect', 'Sheets store updated:', $sheets);
+  const filtered = $sheets.filter((s) => s.system === system);
+  logDebug('SheetSelect', 'Filtered sheets:', filtered);
+  return filtered;
+});
 </script>
 
-<select onchange={onchange}>
-  {#each options as option}
-    <option
-      value={option.value}
-      selected={option.value === selected}
+<div class="sheet-select">
+  <button
+    class="border p-2"
+    class:selected={!selected}
+    onclick={() => onSelect('-', 'Markdown only')}
+  >
+    Markdown only
+  </button>
+  {#each filteredSheets as sheet}
+    <button
+      class="border p-2"
+      class:selected={selected === sheet.key}
+      onclick={() => onSelect(sheet.key, sheet.name)}
     >
-      {option.label}
-    </option>
+      {sheet.name}
+    </button>
   {/each}
-</select>
+</div>

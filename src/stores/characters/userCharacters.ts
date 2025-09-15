@@ -1,14 +1,9 @@
 import { persistentAtom } from '@nanostores/persistent';
-import { effect, type WritableAtom } from 'nanostores';
-import {
-  CHARACTERS_COLLECTION_NAME,
-  type Character,
-  CharacterSchema,
-} from 'src/schemas/CharacterSchema';
-import { toClientEntry } from 'src/utils/client/entryUtils';
+import { atom, effect, type WritableAtom } from 'nanostores';
+import { type Character, CharacterSchema } from 'src/schemas/CharacterSchema';
 import { logDebug, logError } from 'src/utils/logHelpers';
 import { z } from 'zod';
-import { uid } from '../session';
+import { authUser, uid } from '../session';
 
 /**
  * A nanostore for caching the user's characters.
@@ -42,92 +37,104 @@ export const userCharacters: WritableAtom<Character[]> = persistentAtom(
     },
   },
 );
-let unsubscribe: CallableFunction = () => {};
 
 /**
- * Adds or updates the character data in the user characters store.
- *
- * @param character the Character data to patch
+ * Loading state for the characters
  */
-function patchCharacterData(character: Character) {
-  const currentCharacters = userCharacters.get();
-  const existingIndex = currentCharacters.findIndex(
-    (c) => c.key === character.key,
-  );
+export const userCharactersLoading = atom<boolean>(false);
 
-  let updatedCharacters: Character[];
-  if (existingIndex !== -1) {
-    // Update existing character immutably
-    updatedCharacters = [
-      ...currentCharacters.slice(0, existingIndex),
-      character,
-      ...currentCharacters.slice(existingIndex + 1),
-    ];
-  } else {
-    // Add new character
-    updatedCharacters = [...currentCharacters, character];
+/**
+ * Fetch characters from API and replace local cache if successful
+ */
+async function fetchAndReplaceCharacters(currentUid: string) {
+  // Double-check that we still have a uid and Firebase auth user before making API call
+  if (!currentUid || !authUser.get()) {
+    logDebug(
+      'userCharacters',
+      'Firebase auth not ready when trying to fetch characters, skipping',
+    );
+    return;
   }
-  userCharacters.set(updatedCharacters);
-}
 
-async function subscribeToUserCharacters(currentUid: string) {
-  logDebug(
-    'userCharacters:subscribe',
-    `Subscribing to user characters for ${currentUid}`,
-  );
-  unsubscribe(); // Unsubscribe from any previous listener
+  userCharactersLoading.set(true);
+
   try {
-    const { db } = await import('../../firebase/client');
-    const { onSnapshot, collection, query, where } = await import(
-      'firebase/firestore'
+    logDebug(
+      'userCharacters',
+      `Fetching characters for ${currentUid} from API`,
     );
 
-    const q = query(
-      collection(db, CHARACTERS_COLLECTION_NAME),
-      where('owners', 'array-contains', currentUid),
-    );
+    // Use authedFetch helper instead of manual token handling
+    const { authedGet } = await import('../../firebase/client/apiClient');
+    const response = await authedGet('/api/characters');
 
-    unsubscribe = onSnapshot(q, (snapshot) => {
-      for (const change of snapshot.docChanges()) {
-        const docId = change.doc.id;
-        if (change.type === 'added' || change.type === 'modified') {
-          const entry = toClientEntry(change.doc.data());
-          // If you need to set the key, do it here:
-          if (entry && typeof entry === 'object') {
-            (entry as Character).key = docId;
-          }
-          const result = CharacterSchema.safeParse(entry);
-
-          if (result.success) {
-            patchCharacterData(result.data);
-          } else {
-            logError(
-              'userCharacters:onSnapshot',
-              `Invalid character data received for doc ${docId}`,
-              result.error,
-            );
-          }
-        } else if (change.type === 'removed') {
-          userCharacters.set(
-            userCharacters.get().filter((c) => c.key !== docId),
-          );
-        }
+    if (!response.ok) {
+      logError('userCharacters', `API request failed: ${response.status}`);
+      // If unauthorized, it might be a temporary auth issue, don't clear cache
+      if (response.status === 401) {
+        logError(
+          'userCharacters',
+          'Unauthorized API call - possible auth race condition',
+        );
       }
-    });
+      return;
+    }
+
+    const data = await response.json();
+    const validationResult = z.array(CharacterSchema).safeParse(data);
+
+    if (validationResult.success) {
+      // Replace local cache with fresh data
+      userCharacters.set(validationResult.data);
+      logDebug(
+        'userCharacters',
+        `Replaced cache with ${validationResult.data.length} characters from API`,
+      );
+    } else {
+      logError(
+        'userCharacters',
+        'Invalid characters data from API',
+        validationResult.error,
+      );
+    }
   } catch (error) {
-    logError(
-      'userCharacters:subscribe',
-      `Failed to subscribe to user characters for ${currentUid}`,
-      error,
-    );
+    logError('userCharacters', 'Failed to fetch characters from API:', error);
+    // Check if it's an auth error
+    if (
+      error instanceof Error &&
+      error.message.includes('User not authenticated')
+    ) {
+      logError(
+        'userCharacters',
+        'Auth error during fetch - this indicates a race condition was caught',
+      );
+    }
+  } finally {
+    userCharactersLoading.set(false);
   }
 }
 
-effect(uid, (currentUid) => {
-  unsubscribe();
-  if (currentUid) {
-    subscribeToUserCharacters(currentUid);
-  } else {
+/**
+ * React to authentication state changes
+ * Wait for both uid and Firebase authUser to be available before making API calls
+ * This prevents race conditions where uid is available from localStorage
+ * but Firebase auth hasn't finished initializing yet
+ */
+effect([uid, authUser], ([currentUid, currentAuthUser]) => {
+  logDebug('userCharacters:effect', 'State change', {
+    uid: currentUid,
+    authUserReady: !!currentAuthUser,
+  });
+
+  if (currentUid && currentAuthUser) {
+    // User logged in and Firebase auth is ready, safe to fetch characters
+    fetchAndReplaceCharacters(currentUid);
+  } else if (!currentUid) {
+    // User logged out, clear characters
     userCharacters.set([]);
+    userCharactersLoading.set(false);
   }
+  // For other states (uid but no authUser yet), we wait and don't make API calls
+  // This prevents the race condition where uid is restored from localStorage
+  // before Firebase auth has finished initializing and set currentUser
 });

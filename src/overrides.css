@@ -1,74 +1,11 @@
-/* FIX: Patch for long urls in profile bios, etc. Move to Design System when able */
-.content-columns > section,
-.content-columns > article {
-  word-break: break-word;
+/* FIX: patched missing border-radius atomic */
+.border-radius {
+  border-radius: var(--cn-border-radius-large);
 }
-
-/* FIX: Patch for heading icons */
-h3 cn-icon,
-h3 .icon {
-  vertical-align: middle;
-}
-
-/* FIX: Patch italic text in headings, font size is erroneously set for inline elements */
-main em,
-main i {
-  font-size: inherit;
-}
-
-/* FEAT: Container for character sheets and similar views */
-/*
-[content-listing] utility
-*/
-.content-sheet {
-  display: grid;
-  grid-template-areas:
-    "header"
-    "blocks"
-    "meta"
-    "aside"
-    "footer";
-  gap: var(--cn-grid);
-  margin: 0 auto;
-  max-width: 1024px;
-  width: 100cqw;
-}
-.content-sheet > header {
-  grid-area: header;
-  padding-bottom: calc(var(--cn-grid) - 1pt);
-  border-bottom: 1pt solid var(--color-border);
-}
-.content-sheet > aside {
-  grid-area: aside;
-}
-.content-sheet > footer {
-  grid-area: footer;
-}
-.content-sheet > .blocks {
-  grid-area: blocks;
-  display: flex;
-  flex-direction: column;
-  gap: var(--cn-grid);
-}
-.content-sheet > .meta {
-  grid-area: meta;
-}
-@container main-app-content (width > 880px) {
-  .content-sheet > .blocks {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: var(--cn-grid);
-  }
-}
-
-@container main-app-content (width > 1381px) {
-  .content-sheet:has(> aside) {
-    max-width: 1481px;
-    grid-template-areas:
-      "header ."
-      "blocks aside"
-      "meta aside"
-      "footer .";
-    grid-template-columns: 3.236fr 1fr;
+/* FIX: patched missing wide-flex-col atomic */
+@media screen and (min-width: 1380px) {
+  .wide-flex-col {
+    flex-direction: column;
+    flex-wrap: nowrap;
   }
 }

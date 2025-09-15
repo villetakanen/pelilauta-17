@@ -57,10 +57,19 @@ async function createCharacter() {
     const data: Partial<Character> = {
       name: characterName,
       description: characterDescription,
+      stats: {},
     };
 
     if (selectedSheet) {
-      data.sheet = selectedSheet;
+      data.sheetKey = selectedSheet.key;
+      if (selectedSheet.stats) {
+        for (const stat of selectedSheet.stats) {
+          if (stat.value !== undefined) {
+            if (!data.stats) data.stats = {};
+            data.stats[stat.key] = stat.value;
+          }
+        }
+      }
     }
     if (selectedSite) {
       data.siteKey = selectedSite.key;

@@ -263,6 +263,47 @@ if (!$uid) {
 }
 ```
 
+#### Firebase Auth Race Condition Prevention
+
+**CRITICAL**: When creating stores that make authenticated API calls, always wait for Firebase auth initialization to prevent race conditions:
+
+```ts
+// ❌ Wrong - Race condition prone
+import { uid } from '@stores/session';
+
+effect(uid, (currentUid) => {
+  if (currentUid) {
+    // This can fail if Firebase auth isn't ready yet!
+    fetchDataFromAPI(currentUid);
+  }
+});
+
+// ✅ Correct - Wait for both uid and authUser
+import { uid, authUser } from '@stores/session';
+
+effect([uid, authUser], ([currentUid, currentAuthUser]) => {
+  if (currentUid && currentAuthUser) {
+    // Safe to make API calls - Firebase auth is fully initialized
+    fetchDataFromAPI(currentUid);
+  } else if (!currentUid) {
+    // User logged out, clear data
+    clearData();
+  }
+  // For other states (uid but no authUser), wait - don't make API calls
+});
+```
+
+**Why this pattern is needed:**
+- `uid` is a `persistentAtom` that restores immediately from localStorage
+- Firebase auth initialization is async and takes time
+- `authedFetch()` requires `auth.currentUser` to be available
+- Race condition: uid available → effect triggers → API call fails with "User not authenticated"
+
+**Use this pattern for any store that:**
+- Makes authenticated API calls using `authedFetch`, `authedGet`, etc.
+- Needs to wait for Firebase auth to be fully ready
+- Should avoid "User not authenticated" errors on app startup
+
 **Key Differences:**
 - **`verifySession`**: Reads session cookies, returns session object with `uid` property, used in Astro pages
 - **`tokenToUid`**: Reads Authorization header with Bearer token, returns uid string directly, used in API routes
