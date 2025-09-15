@@ -42,7 +42,7 @@ try {
 // If we have siteKey, pre-fetch the site data using server function
 if (character?.siteKey) {
   try {
-    site = await getSiteData(character.siteKey) || undefined;
+    site = (await getSiteData(character.siteKey)) || undefined;
   } catch (error) {
     logError('CharacterIndex', 'Failed to fetch site data:', error);
     // If site data fetch fails, we can still render the character without site info
