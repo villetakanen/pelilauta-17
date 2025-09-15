@@ -1,9 +1,10 @@
 import { existingUser, newUser } from '../playwright/.auth/credentials.ts';
+import type { Page, ConsoleMessage } from '@playwright/test';
 
 // Use environment variable for base URL or default to localhost
 const BASE_URL = process.env.BASE_URL || 'http://localhost:4321';
 
-export async function authenticate(page, useNewUserAccount = false) {
+export async function authenticate(page: Page, useNewUserAccount = false) {
   console.log(
     `Starting authentication process for ${useNewUserAccount ? 'new' : 'existing'} user...`,
   );
@@ -17,16 +18,37 @@ export async function authenticate(page, useNewUserAccount = false) {
   await page.goto(`${BASE_URL}/login`);
 
   // Wait for the login form to be loaded and Svelte components to be hydrated
-  await page.waitForSelector('input[type="email"]', { timeout: 10000 });
+  // Try multiple selectors to account for different login sections
+  try {
+    // First try to wait for password login email field (test environment)
+    await page.waitForSelector('#password-email', { timeout: 5000 });
+  } catch {
+    // Fallback to any email input field
+    await page.waitForSelector('input[type="email"]', { timeout: 10000 });
+  }
 
-  // Additional wait for client-side hydration to complete
-  await page.waitForTimeout(1000);
+  // Additional wait for client-side hydration to complete and vite deps to load
+  await page.waitForTimeout(3000);
+
+  // Try to ensure no more network activity (vite deps finished loading)
+  // Use a longer timeout and fallback strategy for more reliability
+  try {
+    await page.waitForLoadState('networkidle', { timeout: 20000 });
+  } catch {
+    console.log('NetworkIdle timeout exceeded, continuing with form interaction...');
+    // Fallback: wait for DOM to be stable instead
+    await page.waitForLoadState('domcontentloaded');
+    await page.waitForTimeout(2000);
+  }
 
   console.log('Filling email field with:', credentials.email);
-  await page.getByLabel('Email').fill(credentials.email);
+  // Use specific ID for password login form (test environment)
+  const emailField = page.locator('#password-email').or(page.getByLabel('Email'));
+  await emailField.fill(credentials.email);
 
   console.log('Filling password field');
-  await page.getByLabel('Password').fill(credentials.password);
+  const passwordField = page.locator('#password-password').or(page.getByLabel('Password'));
+  await passwordField.fill(credentials.password);
 
   // Wait for the form to be ready for submission
   await page.waitForTimeout(500);
@@ -40,7 +62,7 @@ export async function authenticate(page, useNewUserAccount = false) {
   await page.waitForTimeout(2000);
 
   // Check for JavaScript errors in console
-  page.on('console', (msg) => {
+  page.on('console', (msg: ConsoleMessage) => {
     if (msg.type() === 'error') {
       console.log('Browser console error:', msg.text());
     }

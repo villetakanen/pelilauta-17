@@ -19,7 +19,7 @@ export default defineConfig({
       }),
     ],
     optimizeDeps: {
-      include: ['nanostores', '@nanostores/persistent'],
+      include: ['nanostores', '@nanostores/persistent', 'zod'],
       exclude: [
         'firebase/firestore',
         'firebase/auth',
