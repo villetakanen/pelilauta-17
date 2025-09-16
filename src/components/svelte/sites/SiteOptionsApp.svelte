@@ -1,9 +1,9 @@
 <script lang="ts">
+import { CnToggleButton } from '@11thdeg/cyan-lit';
 import type { Site } from 'src/schemas/SiteSchema';
 import { t } from 'src/utils/i18n';
 import { site, update } from '../../../stores/site';
 import SitePageSelect from './SitePageSelect.svelte';
-import { CnToggleButton } from '@11thdeg/cyan-lit'
 
 interface Props {
   site: Site;
