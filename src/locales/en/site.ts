@@ -18,6 +18,7 @@ export const site: Locale = {
     useClocks: 'Clocks',
     useHandouts: 'Secrets',
     useCharacters: 'Characters',
+    useCharacterKeeper: 'Character Keeper',
     useRecentChanges: 'Recent changes panel',
     useSidebar: 'Sidebar (Mekanismi SideBar)',
     sidebarPage: 'Custom sidebar page',

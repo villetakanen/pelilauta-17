@@ -41,22 +41,22 @@ Create a "Character Keeper" feature that provides all site members with a consol
 ## Acceptance Criteria
 
 ### Authentication & Authorization
-- [ ] Character Keeper is only accessible to authenticated users
-- [ ] All authenticated site members (owners and players) can access the Character Keeper
-- [ ] Proper redirect to login page for unauthenticated users
-- [ ] Character Keeper page returns 404 or redirects when `useCharacters` is disabled
-- [ ] Character Keeper page returns 404 or redirects when `useCharacterKeeper` is disabled
-- [ ] Site membership verification ensures only site members can access
+- [x] Character Keeper is only accessible to authenticated users
+- [x] All authenticated site members (owners and players) can access the Character Keeper
+- [x] Proper redirect to login page for unauthenticated users
+- [x] Character Keeper page returns 404 or redirects when `useCharacters` is disabled
+- [x] Character Keeper page returns 404 or redirects when `useCharacterKeeper` is disabled
+- [x] Site membership verification ensures only site members can access
 
 ### Character Keeper Configuration
-- [ ] Character Keeper feature is only available when `useCharacters` is enabled
-- [ ] Site owners can activate/deactivate the Character Keeper feature (`useCharacterKeeper`) for their site
+- [x] Character Keeper feature is only available when `useCharacters` is enabled
+- [x] Site owners can activate/deactivate the Character Keeper feature (`useCharacterKeeper`) for their site
 - [ ] Site owners can select which character sheet template to use for the keeper view
 - [ ] Character sheet selection persisted per site (`characterKeeperSheetKey`)
 - [ ] Configuration settings are persisted in the site configuration
-- [ ] Clear UI indication when Character Keeper is enabled/disabled (visible to all site members)
-- [ ] UI prevents enabling Character Keeper when Characters feature is disabled
-- [ ] Disabling Characters feature automatically disables Character Keeper
+- [x] Clear UI indication when Character Keeper is enabled/disabled (visible to all site members)
+- [x] UI prevents enabling Character Keeper when Characters feature is disabled
+- [x] Disabling Characters feature automatically disables Character Keeper
 
 ### Character Overview
 - [ ] Consolidated view displays all characters associated with the site
@@ -180,14 +180,14 @@ if (!siteAccess.isMember) {
 ## Implementation Steps
 
 ### Phase 1: Core Infrastructure
-1. **Extend Site Schema**: Add `useCharacterKeeper` and `characterKeeperSheetKey` fields to Site schema
-2. **Feature Dependency Logic**: Implement `useCharacters` dependency for Character Keeper activation
-3. **Create Route & Page**: Build authenticated Character Keeper page with feature checks
-4. **Basic Authorization**: Implement site membership access control and feature availability checks
-5. **Character Collection Store**: Create store with stale-while-revalidate pattern for character caching
-6. **Local Storage Integration**: Implement persistent caching for character data
-7. **Character Sheets API**: Create API endpoint to fetch character sheets by system
-8. **Selected Sheet Store**: Create simple store to hold the selected character sheet for the site
+- [x] **Extend Site Schema**: Add `useCharacterKeeper` and `characterKeeperSheetKey` fields to Site schema
+- [x] **Feature Dependency Logic**: Implement `useCharacters` dependency for Character Keeper activation
+- [x] **Create Route & Page**: Build authenticated Character Keeper page with feature checks
+- [x] **Basic Authorization**: Implement site membership access control and feature availability checks
+- [x] **Character Collection Store**: Create store with stale-while-revalidate pattern for character caching
+- [x] **Local Storage Integration**: Implement persistent caching for character data
+- [x] **Character Sheets API**: Create API endpoint to fetch character sheets by system
+- [x] **Selected Sheet Store**: Create simple store to hold the selected character sheet for the site
 
 ### Phase 2: Character Sheet Selection & Display  
 9. **Character Sheet Selector**: Build UI component that fetches available sheets via API by site system

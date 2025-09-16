@@ -3,6 +3,7 @@ import type { Site } from 'src/schemas/SiteSchema';
 import { t } from 'src/utils/i18n';
 import { site, update } from '../../../stores/site';
 import SitePageSelect from './SitePageSelect.svelte';
+import { CnToggleButton } from '@11thdeg/cyan-lit'
 
 interface Props {
   site: Site;
@@ -17,10 +18,15 @@ async function setOption(
     | 'useRecentChanges'
     | 'useSidebar'
     | 'usePlainTextURLs'
-    | 'useCharacters',
+    | 'useCharacters'
+    | 'useCharacterKeeper',
   value: boolean,
 ) {
-  update({ [option]: value });
+  if (option === 'useCharacters' && value === false) {
+    update({ useCharacters: false, useCharacterKeeper: false });
+  } else {
+    update({ [option]: value });
+  }
 }
 
 async function setSidebarKey(key: string) {
@@ -39,25 +45,34 @@ async function setSidebarKey(key: string) {
     <cn-toggle-button 
       label={t('site:options.useClocks')}
       pressed={$site.useClocks || undefined}
-      onchange={(e: Event) => setOption('useClocks', (e.target as CyanToggleButton).pressed)}
+      onchange={(e: Event) => setOption('useClocks', (e.target as CnToggleButton).pressed)}
     ></cn-toggle-button>
 
     <cn-toggle-button 
       label={t('site:options.useHandouts')}
       pressed={$site.useHandouts || undefined}
-      onchange={(e: Event) => setOption('useHandouts', (e.target as CyanToggleButton).pressed)}
+      onchange={(e: Event) => setOption('useHandouts', (e.target as CnToggleButton).pressed)}
     ></cn-toggle-button>
 
     <cn-toggle-button 
       label={t('site:options.useCharacters')}
       pressed={$site.useCharacters || undefined}
-      onchange={(e: Event) => setOption('useCharacters', (e.target as CyanToggleButton).pressed)}
+      onchange={(e: Event) => setOption('useCharacters', (e.target as CnToggleButton).pressed)}
     ></cn-toggle-button>
+
+    {#if $site.useCharacters}
+      <cn-toggle-button
+        class="nested"
+        label={t('site:options.useCharacterKeeper')}
+        pressed={$site.useCharacterKeeper || undefined}
+        onchange={(e: Event) => setOption('useCharacterKeeper', (e.target as CnToggleButton).pressed)}
+      ></cn-toggle-button>
+    {/if}
 
     <cn-toggle-button 
       label={t('site:options.useRecentChanges')}
       pressed={$site.useRecentChanges || undefined}
-      onchange={(e: Event) => setOption('useRecentChanges', (e.target as CyanToggleButton).pressed)}
+      onchange={(e: Event) => setOption('useRecentChanges', (e.target as CnToggleButton).pressed)}
     ></cn-toggle-button>
     </fieldset>
 
@@ -66,7 +81,7 @@ async function setSidebarKey(key: string) {
       <cn-toggle-button 
         label={t('site:options.useSidebar')}
         pressed={$site.useSidebar || undefined}
-        onchange={(e: Event) => setOption('useSidebar', (e.target as CyanToggleButton).pressed)}
+        onchange={(e: Event) => setOption('useSidebar', (e.target as CnToggleButton).pressed)}
       ></cn-toggle-button>
 
       {#if $site.useSidebar}
@@ -87,7 +102,7 @@ async function setSidebarKey(key: string) {
     <cn-toggle-button 
       label={t('entries:site.customPageKeys')}
       pressed={$site.usePlainTextURLs || undefined}
-      onchange={(e: Event) => setOption('usePlainTextURLs', (e.target as CyanToggleButton).pressed)}
+      onchange={(e: Event) => setOption('usePlainTextURLs', (e.target as CnToggleButton).pressed)}
     ></cn-toggle-button>
 
     <p class="downscaled text-low">{t('site:create.plaintexturls.description')}</p>
