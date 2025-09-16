@@ -76,6 +76,8 @@ export const SiteSchema = EntrySchema.extend({
   sidebarKey: z.string().optional(), // The page key to display in sidebar
   usePlainTextURLs: z.boolean().optional(),
   useCharacters: z.boolean().optional(),
+  useCharacterKeeper: z.boolean().optional(), // Character Keeper feature toggle
+  characterKeeperSheetKey: z.string().optional(), // Selected character sheet template for keeper view
 });
 
 export type Site = z.infer<typeof SiteSchema>;

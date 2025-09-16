@@ -18,10 +18,12 @@ export const site: Locale = {
     useClocks: 'Clocks',
     useHandouts: 'Secrets',
     useCharacters: 'Characters',
+    useCharacterKeeper: 'Character Keeper',
     useRecentChanges: 'Recent changes panel',
     useSidebar: 'Sidebar (Mekanismi SideBar)',
     sidebarPage: 'Custom sidebar page',
     selectPage: 'Select page',
+    selectSheet: 'Select a character sheet',
     selectSidebarPage: 'Select custom page for sidebar (optional)',
     sidebarPageDescription:
       'Select a custom page to display in the sidebar. If no page is selected, the default sidebar will be used.',

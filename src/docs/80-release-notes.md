@@ -5,6 +5,14 @@ noun: 'monsters'
 ---
 ## Version 18
 
+### 18.3.0 (16.9.2025)
+- feat(characters): Character keeper can be activated at site options
+- feat(characters): Character keeper sheet can be set at keeper header
+- feat(characters): Character keeper route and template added to sites
+- feat(characters): Character keeper nanostores added to manage keeper state
+- fix(characters): Character sheet api now requires auth
+- fix(characters): Character page preloads happen without an API waterfall
+
 ### 18.2.0 (15.9.2025)
 - feat(characters): Character sheet is no longer embedded in a Character, enabling switching between sheets
 - feat(characters): Character editor now supports rendering of stat groups and stats, including the new stat types
