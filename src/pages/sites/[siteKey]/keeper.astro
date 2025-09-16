@@ -1,0 +1,48 @@
+---
+import SiteTray from '@components/server/SiteApp/SiteTray.astro';
+import { getSiteData } from '@firebase/server/sites';
+import PageWithTray from '@layouts/PageWithTray.astro';
+import { verifySession } from '@utils/server/auth/verifySession';
+import { verifySiteAccess } from '@utils/server/auth/verifySiteAccess';
+
+// import CharacterKeeperApp from '@components/svelte/keepers/CharacterKeeperApp.svelte';
+
+const { sitekey } = Astro.params;
+
+const session = await verifySession(Astro);
+if (!session?.uid) {
+  return Astro.redirect(
+    `/login?redirect=${encodeURIComponent(Astro.url.pathname)}`,
+  );
+}
+
+if (!sitekey) {
+  return new Response('Bad request', { status: 400 });
+}
+
+const site = await getSiteData(sitekey);
+
+if (!site) {
+  return new Response('Site not found', { status: 404 });
+}
+
+if (!site.useCharacters) {
+  return new Response('Characters feature not enabled', { status: 404 });
+}
+if (!site.useCharacterKeeper) {
+  return new Response('Character Keeper feature not enabled', { status: 404 });
+}
+
+const siteAccess = await verifySiteAccess(site, session.uid);
+if (!siteAccess.isMember) {
+  return new Response('Forbidden', { status: 403 });
+}
+---
+<PageWithTray title={`Character Keeper - ${site.name}`} noSharing>
+    <div class="p-4">
+        <h1 class="text-2xl font-bold">Character Keeper</h1>
+        <p>This is the character keeper page.</p>
+        <!-- <CharacterKeeperApp siteKey={sitekey} client:only="svelte" /> -->
+    </div>
+    <SiteTray site={site} slot="tray" />
+</PageWithTray>

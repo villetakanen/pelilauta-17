@@ -5,16 +5,31 @@ import {
 } from '@schemas/CharacterSheetSchema';
 import { toClientEntry } from '@utils/client/entryUtils';
 import { logError } from '@utils/logHelpers';
+import { tokenToUid } from '@utils/server/auth/tokenToUid';
 import type { APIContext } from 'astro';
+import type { CollectionReference, Query } from 'firebase-admin/firestore';
 
 export async function GET({ request }: APIContext) {
+  const uid = await tokenToUid(request);
+  if (!uid) {
+    return new Response('Unauthorized', { status: 401 });
+  }
+
+  const { searchParams } = new URL(request.url);
+  const system = searchParams.get('system');
+
   try {
     const { serverDB } = await import('../../../firebase/server');
 
-    const sheetsCollection = serverDB.collection(
+    let sheetsQuery: CollectionReference | Query = serverDB.collection(
       CHARACTER_SHEETS_COLLECTION_NAME,
     );
-    const sheetDocs = await sheetsCollection.get();
+
+    if (system) {
+      sheetsQuery = sheetsQuery.where('system', '==', system);
+    }
+
+    const sheetDocs = await sheetsQuery.get();
 
     const sheets = [];
     for (const sheetDoc of sheetDocs.docs) {
@@ -29,7 +44,7 @@ export async function GET({ request }: APIContext) {
     // Sort by name for consistent ordering
     sheets.sort((a, b) => a.name.localeCompare(b.name));
 
-    const body = JSON.stringify(sheets);
+    const body = JSON.stringify({ sheets });
     const etag = crypto.createHash('sha1').update(body).digest('hex');
 
     const ifNoneMatch = request.headers.get('if-none-match');
