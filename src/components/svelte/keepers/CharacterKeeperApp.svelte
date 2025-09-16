@@ -76,18 +76,20 @@ onMount(() => {
 });
 </script>
 
-<div class="character-keeper-app">
+<div class="content-columns">
+  <div class="column-s">
     <CharacterSheetSelector
         system={$site?.system || ''}
         {selectedSheetKey}
         {setSelectedSheetKey}
     />
+  </div>
     {#if sheet}
-        <ul>
+        
             {#each $charactersInKeeper as character}
                 <KeeperCharacterCard {character} {sheet} />
             {/each}
-        </ul>
+      
     {:else}
         <p>No sheet selected</p>
     {/if}

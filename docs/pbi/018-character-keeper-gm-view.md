@@ -51,44 +51,44 @@ Create a "Character Keeper" feature that provides all site members with a consol
 ### Character Keeper Configuration
 - [x] Character Keeper feature is only available when `useCharacters` is enabled
 - [x] Site owners can activate/deactivate the Character Keeper feature (`useCharacterKeeper`) for their site
-- [ ] Site owners can select which character sheet template to use for the keeper view
-- [ ] Character sheet selection persisted per site (`characterKeeperSheetKey`)
-- [ ] Configuration settings are persisted in the site configuration
+- [x] Site owners can select which character sheet template to use for the keeper view
+- [x] Character sheet selection persisted per site (`characterKeeperSheetKey`)
+- [x] Configuration settings are persisted in the site configuration
 - [x] Clear UI indication when Character Keeper is enabled/disabled (visible to all site members)
 - [x] UI prevents enabling Character Keeper when Characters feature is disabled
 - [x] Disabling Characters feature automatically disables Character Keeper
 
 ### Character Overview
-- [ ] Consolidated view displays all characters associated with the site
-- [ ] Each character shows information using the site owner-selected character sheet template
-- [ ] All characters use the same selected template for consistency in the keeper view
-- [ ] Characters are displayed in a grid/list layout for easy scanning
-- [ ] Empty state shown when no characters exist for the site
-- [ ] Template selection available to site owners using API to fetch sheets by site system
-- [ ] Character sheet selector shows only sheets matching the site's system
+- [x] Consolidated view displays all characters associated with the site
+- [x] Each character shows information using the site owner-selected character sheet template
+- [x] All characters use the same selected template for consistency in the keeper view
+- [x] Characters are displayed in a grid/list layout for easy scanning
+- [x] Empty state shown when no characters exist for the site
+- [x] Template selection available to site owners using API to fetch sheets by site system
+- [x] Character sheet selector shows only sheets matching the site's system
 
 ### Real-time Updates & Caching (CSR)
-- [ ] Character Keeper uses stale-while-revalidate pattern for optimal performance
-- [ ] Cached character data loads instantly from local storage on page visit
-- [ ] Background Firestore subscriptions update cached data when characters change
-- [ ] Local storage persists character data between sessions
-- [ ] Real-time updates propagate to UI when background sync completes
-- [ ] New characters appear automatically when created (after background sync)
-- [ ] Deleted characters are removed from view automatically (after background sync)
-- [ ] Cache invalidation handles stale data scenarios
+- [x] Character Keeper uses stale-while-revalidate pattern for optimal performance
+- [x] Cached character data loads instantly from local storage on page visit
+- [x] Background Firestore subscriptions update cached data when characters change
+- [x] Local storage persists character data between sessions
+- [x] Real-time updates propagate to UI when background sync completes
+- [x] New characters appear automatically when created (after background sync)
+- [x] Deleted characters are removed from view automatically (after background sync)
+- [x] Cache invalidation handles stale data scenarios
 
 ### Read-only Interface
-- [ ] All character information is display-only (no editing capabilities)
-- [ ] Clear visual indication that this is a read-only GM view
-- [ ] No edit buttons or input fields visible
+- [x] All character information is display-only (no editing capabilities)
+- [x] Clear visual indication that this is a read-only GM view
+- [x] No edit buttons or input fields visible
 - [ ] Links to individual character pages for detailed editing (if needed)
 
 ### Performance & UX
-- [ ] Page loads instantly using cached data (stale-while-revalidate)
+- [x] Page loads instantly using cached data (stale-while-revalidate)
 - [ ] Background loading indicator shows when fresh data is being fetched
-- [ ] Responsive layout works on desktop and tablet devices
-- [ ] Standard site tray integration provides consistent navigation
-- [ ] Graceful degradation when offline (shows cached data)
+- [x] Responsive layout works on desktop and tablet devices
+- [x] Standard site tray integration provides consistent navigation
+- [x] Graceful degradation when offline (shows cached data)
 - [ ] Error handling for failed background updates
 - [ ] Cache freshness indicators (optional: show last updated time)
 
@@ -190,12 +190,12 @@ if (!siteAccess.isMember) {
 - [x] **Selected Sheet Store**: Create simple store to hold the selected character sheet for the site
 
 ### Phase 2: Character Sheet Selection & Display  
-9. **Character Sheet Selector**: Build UI component that fetches available sheets via API by site system
-10. **Character Keeper App**: Build main Svelte component with selected sheet display and cache management
-11. **Keeper Character Card**: Create read-only character display using selected sheet template
-12. **Stale-While-Revalidate Implementation**: Implement background Firestore sync with local storage caching
-13. **Sheet Template Rendering**: Integrate selected character sheet template into character display
-14. **Site Tray Integration**: Ensure proper integration with standard site tray navigation
+- [x] **Character Sheet Selector**: Build UI component that fetches available sheets via API by site system
+- [x] **Character Keeper App**: Build main Svelte component with selected sheet display and cache management
+- [x] **Keeper Character Card**: Create read-only character display using selected sheet template
+- [x] **Stale-While-Revalidate Implementation**: Implement background Firestore sync with local storage caching
+- [x] **Sheet Template Rendering**: Integrate selected character sheet template into character display
+- [x] **Site Tray Integration**: Ensure proper integration with standard site tray navigation
 
 ### Phase 3: Site Integration & Configuration
 15. **Character Sheets API Implementation**: Create API endpoint to query sheets by system
@@ -273,19 +273,19 @@ if (!siteAccess.isMember) {
 
 ## Definition of Done
 
-- [ ] Character Keeper page accessible to all authenticated site members
-- [ ] Character Keeper feature only available when Characters feature is enabled
-- [ ] Site owners can activate/deactivate Character Keeper feature (`useCharacterKeeper`)  
-- [ ] Site owners can select character sheet template for keeper view
-- [ ] Selected character sheet template persisted per site (`characterKeeperSheetKey`)
-- [ ] All site characters displayed using selected sheet template in read-only format
-- [ ] Feature dependency properly enforced in UI and server-side validation
-- [ ] Stale-while-revalidate caching provides instant page loads
-- [ ] Background sync updates work correctly when characters are modified  
-- [ ] Offline functionality gracefully shows cached data
-- [ ] Standard site tray integration provides consistent navigation
-- [ ] Responsive design works on desktop and tablet
+- [x] Character Keeper page accessible to all authenticated site members
+- [x] Character Keeper feature only available when Characters feature is enabled
+- [x] Site owners can activate/deactivate Character Keeper feature (`useCharacterKeeper`)  
+- [x] Site owners can select character sheet template for keeper view
+- [x] Selected character sheet template persisted per site (`characterKeeperSheetKey`)
+- [x] All site characters displayed using selected sheet template in read-only format
+- [x] Feature dependency properly enforced in UI and server-side validation
+- [x] Stale-while-revalidate caching provides instant page loads
+- [x] Background sync updates work correctly when characters are modified  
+- [x] Offline functionality gracefully shows cached data
+- [x] Standard site tray integration provides consistent navigation
+- [x] Responsive design works on desktop and tablet
 - [ ] Unit and E2E tests pass including cache behavior
 - [ ] Performance meets specified requirements
 - [ ] Error handling provides clear user feedback
-- [ ] Code follows project patterns and conventions
+- [x] Code follows project patterns and conventions

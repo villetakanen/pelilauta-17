@@ -10,7 +10,7 @@ interface Props {
 const { character, sheet }: Props = $props();
 </script>
 
-<div class="keeper-character-card">
+<div class="column-s">
     <h3>{character.name}</h3>
     <p>Sheet: {sheet.name}</p>
 </div>

@@ -1,4 +1,5 @@
 ---
+import BetaHeader from '@components/server/app/BetaHeader.astro';
 import SiteTray from '@components/server/SiteApp/SiteTray.astro';
 import CharacterKeeperApp from '@components/svelte/keepers/CharacterKeeperApp.svelte';
 import SiteStoreInitializer from '@components/svelte/sites/SiteStoreInitializer.svelte';
@@ -7,7 +8,7 @@ import PageWithTray from '@layouts/PageWithTray.astro';
 import { verifySession } from '@utils/server/auth/verifySession';
 import { verifySiteAccess } from '@utils/server/auth/verifySiteAccess';
 
-const { sitekey } = Astro.params;
+const { siteKey } = Astro.params;
 
 const session = await verifySession(Astro);
 if (!session?.uid) {
@@ -16,11 +17,11 @@ if (!session?.uid) {
   );
 }
 
-if (!sitekey) {
+if (!siteKey) {
   return new Response('Bad request', { status: 400 });
 }
 
-const site = await getSiteData(sitekey);
+const site = await getSiteData(siteKey);
 
 if (!site) {
   return new Response('Site not found', { status: 404 });
@@ -42,8 +43,9 @@ if (!siteAccess.isMember) {
     <SiteStoreInitializer {site} client:only="svelte" />
     <SiteTray slot="app-tray" {site} />
     <div class="p-4">
+        <BetaHeader />
         <h1 class="text-2xl font-bold">Character Keeper</h1>
         <p>This is the character keeper page.</p>
-        <CharacterKeeperApp siteKey={sitekey} client:only="svelte" />
+        <CharacterKeeperApp siteKey={siteKey} client:only="svelte" />
     </div>
 </PageWithTray>
