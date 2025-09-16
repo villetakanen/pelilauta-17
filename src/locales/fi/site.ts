@@ -85,6 +85,7 @@ export const site: Locale = {
     useSidebar: 'Käytä sivupalkkia',
     sidebarPage: 'Sivupalkin sisältö',
     selectPage: 'Valitse sivu',
+    selectSheet: 'Valitse hahmolomake',
     selectSidebarPage: 'Oletus',
     sidebarPageDescription:
       'Valitse mukautettu sivu sivupalkkia varten. Jos sivua ei valita, käytetään oletussivupalkkia.',

@@ -1,11 +1,11 @@
 ---
 import SiteTray from '@components/server/SiteApp/SiteTray.astro';
+import CharacterKeeperApp from '@components/svelte/keepers/CharacterKeeperApp.svelte';
+import SiteStoreInitializer from '@components/svelte/sites/SiteStoreInitializer.svelte';
 import { getSiteData } from '@firebase/server/sites';
 import PageWithTray from '@layouts/PageWithTray.astro';
 import { verifySession } from '@utils/server/auth/verifySession';
 import { verifySiteAccess } from '@utils/server/auth/verifySiteAccess';
-
-// import CharacterKeeperApp from '@components/svelte/keepers/CharacterKeeperApp.svelte';
 
 const { sitekey } = Astro.params;
 
@@ -39,10 +39,11 @@ if (!siteAccess.isMember) {
 }
 ---
 <PageWithTray title={`Character Keeper - ${site.name}`} noSharing>
+    <SiteStoreInitializer {site} client:only="svelte" />
+    <SiteTray slot="app-tray" {site} />
     <div class="p-4">
         <h1 class="text-2xl font-bold">Character Keeper</h1>
         <p>This is the character keeper page.</p>
-        <!-- <CharacterKeeperApp siteKey={sitekey} client:only="svelte" /> -->
+        <CharacterKeeperApp siteKey={sitekey} client:only="svelte" />
     </div>
-    <SiteTray site={site} slot="tray" />
 </PageWithTray>

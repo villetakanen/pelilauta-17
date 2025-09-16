@@ -23,6 +23,7 @@ export const site: Locale = {
     useSidebar: 'Sidebar (Mekanismi SideBar)',
     sidebarPage: 'Custom sidebar page',
     selectPage: 'Select page',
+    selectSheet: 'Select a character sheet',
     selectSidebarPage: 'Select custom page for sidebar (optional)',
     sidebarPageDescription:
       'Select a custom page to display in the sidebar. If no page is selected, the default sidebar will be used.',
