@@ -42,10 +42,7 @@ if (!siteAccess.isMember) {
 <PageWithTray title={`Character Keeper - ${site.name}`} noSharing>
     <SiteStoreInitializer {site} client:only="svelte" />
     <SiteTray slot="app-tray" {site} />
-    <div class="p-4">
-        <BetaHeader />
-        <h1 class="text-2xl font-bold">Character Keeper</h1>
-        <p>This is the character keeper page.</p>
-        <CharacterKeeperApp siteKey={siteKey} client:only="svelte" />
+    <BetaHeader />    
+    <CharacterKeeperApp siteKey={siteKey} client:only="svelte" />
     </div>
 </PageWithTray>

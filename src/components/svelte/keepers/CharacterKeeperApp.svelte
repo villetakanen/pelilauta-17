@@ -11,6 +11,7 @@ import { logDebug } from '@utils/logHelpers';
 import { onMount } from 'svelte';
 import CharacterSheetSelector from './CharacterSheetSelector.svelte';
 import KeeperCharacterCard from './KeeperCharacterCard.svelte';
+    import { t } from '@utils/i18n';
 
 interface Props {
   siteKey: string;
@@ -76,21 +77,36 @@ onMount(() => {
 });
 </script>
 
-<div class="content-columns">
-  <div class="column-s">
+<div class="content-cards">
+  <header class=toolbar>
+    <h1 class="text-h3">{t('site:keeper.title')}</h1>
     <CharacterSheetSelector
         system={$site?.system || ''}
         {selectedSheetKey}
         {setSelectedSheetKey}
     />
-  </div>
-    {#if sheet}
-        
-            {#each $charactersInKeeper as character}
-                <KeeperCharacterCard {character} {sheet} />
-            {/each}
-      
-    {:else}
-        <p>No sheet selected</p>
-    {/if}
+  </header>
+  
+  {#if sheet && $charactersInKeeper.length > 0}
+    {#each $charactersInKeeper as character}
+      <KeeperCharacterCard {character} {sheet} />
+    {/each}  
+  {:else if sheet && $charactersInKeeper.length === 0}
+    <cn-card
+      noun="info"
+      title={t('site:keeper.noCharacters.title')}
+      class="secondary"
+      description={t('site:keeper.noCharacters.description')}
+    >
+    </cn-card>
+  {:else}
+    <div></div>
+    <cn-card
+      noun="info"
+      title={t('site:keeper.noSheet.title')}
+      class="secondary"
+      description={t('site:keeper.noSheet.description')}
+    >
+    </cn-card>
+  {/if}
 </div>
