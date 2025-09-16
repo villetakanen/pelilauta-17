@@ -7,11 +7,11 @@ import type { CharacterSheet } from '@schemas/CharacterSheetSchema';
 import { CHARACTER_SHEETS_COLLECTION_NAME } from '@schemas/CharacterSheetSchema';
 import { charactersInKeeper } from '@stores/keepers/characterKeeperStore';
 import { site, update } from '@stores/site';
+import { t } from '@utils/i18n';
 import { logDebug } from '@utils/logHelpers';
 import { onMount } from 'svelte';
 import CharacterSheetSelector from './CharacterSheetSelector.svelte';
 import KeeperCharacterCard from './KeeperCharacterCard.svelte';
-    import { t } from '@utils/i18n';
 
 interface Props {
   siteKey: string;
