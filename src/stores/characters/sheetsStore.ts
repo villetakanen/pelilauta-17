@@ -1,6 +1,6 @@
 import { persistentAtom } from '@nanostores/persistent';
 import { CharacterSheetSchema } from '@schemas/CharacterSheetSchema';
-import { uid, authUser } from '@stores/session';
+import { authUser, uid } from '@stores/session';
 import { logDebug, logWarn } from '@utils/logHelpers';
 import { effect } from 'nanostores';
 import { z } from 'zod';
@@ -35,11 +35,11 @@ async function refreshSheets() {
   try {
     const { authedGet } = await import('@firebase/client/apiClient');
     const response = await authedGet('/api/character-sheets');
-    
+
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
-    
+
     const data = await response.json();
     // This is just for safety, the API should always return valid data
     // as it uses the same Zod schema for validation.
@@ -56,7 +56,7 @@ async function refreshSheets() {
   }
 }
 
-/** 
+/**
  * Wait for both uid and authUser to prevent Firebase auth race conditions.
  * Only make authenticated API calls when Firebase is fully initialized.
  */
