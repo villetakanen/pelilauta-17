@@ -81,16 +81,16 @@ Create a "Character Keeper" feature that provides all site members with a consol
 - [x] All character information is display-only (no editing capabilities)
 - [x] Clear visual indication that this is a read-only GM view
 - [x] No edit buttons or input fields visible
-- [ ] Links to individual character pages for detailed editing (if needed)
+- [x] Links to individual character pages for detailed editing (if needed)
 
 ### Performance & UX
 - [x] Page loads instantly using cached data (stale-while-revalidate)
-- [ ] Background loading indicator shows when fresh data is being fetched
+- [x] Background loading indicator shows when fresh data is being fetched
 - [x] Responsive layout works on desktop and tablet devices
 - [x] Standard site tray integration provides consistent navigation
 - [x] Graceful degradation when offline (shows cached data)
-- [ ] Error handling for failed background updates
-- [ ] Cache freshness indicators (optional: show last updated time)
+- [x] Error handling for failed background updates
+- [x] Cache freshness indicators (optional: show last updated time)
 
 ## Technical Implementation
 
@@ -207,14 +207,14 @@ if (!siteAccess.isMember) {
 21. **Error Handling**: Implement proper error boundaries and API error handling
 
 ### Phase 4: Testing & Polish
-22. **Unit Tests**: Test character keeper store with caching, selected sheet store, and components
-23. **API Testing**: Test character sheets API filtering by system, error scenarios
-24. **Cache Testing**: Test stale-while-revalidate behavior, offline scenarios, and cache invalidation  
-25. **E2E Tests**: Test full user flow including API-based sheet selection, caching, and character viewing
-26. **Performance Testing**: Verify instant loading with cached data and efficient API calls
-27. **Responsive Design**: Verify layout works across device sizes with site tray integration
-28. **Sheet Selection Testing**: Verify API fetches correct sheets by system and updates display
-29. **Offline Testing**: Ensure graceful degradation when network is unavailable
+- [x] **Unit Tests**: Test character keeper store with caching, selected sheet store, and components
+- [x] **API Testing**: Test character sheets API filtering by system, error scenarios
+- [x] **Cache Testing**: Test stale-while-revalidate behavior, offline scenarios, and cache invalidation  
+- [x] **E2E Tests**: Test full user flow including API-based sheet selection, caching, and character viewing
+- [x] **Performance Testing**: Verify instant loading with cached data and efficient API calls
+- [x] **Responsive Design**: Verify layout works across device sizes with site tray integration
+- [x] **Sheet Selection Testing**: Verify API fetches correct sheets by system and updates display
+- [x] **Offline Testing**: Ensure graceful degradation when network is unavailable
 
 ## Non-Functional Requirements
 
@@ -285,7 +285,7 @@ if (!siteAccess.isMember) {
 - [x] Offline functionality gracefully shows cached data
 - [x] Standard site tray integration provides consistent navigation
 - [x] Responsive design works on desktop and tablet
-- [ ] Unit and E2E tests pass including cache behavior
-- [ ] Performance meets specified requirements
-- [ ] Error handling provides clear user feedback
+- [x] Unit and E2E tests pass including cache behavior
+- [x] Performance meets specified requirements
+- [x] Error handling provides clear user feedback
 - [x] Code follows project patterns and conventions

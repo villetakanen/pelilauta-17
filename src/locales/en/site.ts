@@ -11,6 +11,21 @@ export const site: Locale = {
   handouts: {
     title: 'Secrets',
   },
+  keeper: {
+    title: 'Character Keeper',
+    lastUpdated: 'Last updated',
+    error: {
+      title: 'Error loading characters',
+    },
+    noCharacters: {
+      title: 'No characters',
+      description: 'There are no characters on this site yet.',
+    },
+    noSheet: {
+      title: 'No character sheet selected',
+      description: 'Select a character sheet to see the characters.',
+    },
+  },
   options: {
     title: 'Tools',
     description:
