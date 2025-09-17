@@ -5,7 +5,9 @@ noun: 'monsters'
 ---
 ## Version 18
 
-### 18.3.x (ongoing)
+### 18.4.0 (17.9.2025)
+- feat(search): Added Algolia search for threads, accessible to logged-in users
+- feat(search): Added search page and rudimentary search results listing
 - fix(sites): Character keeper icon added
 - fix(sites): Minor Character keeper layout polish
 - fix(characters): StatBlock view now uses the new cn-stat-block web component

@@ -9,3 +9,14 @@
     flex-wrap: nowrap;
   }
 }
+/* FIX: patched missing light-only and dark-only classes */
+@media screen and (prefers-color-scheme: light) {
+  .dark-only {
+    display: none;
+  }
+}
+@media screen and (prefers-color-scheme: dark) {
+  .light-only {
+    display: none;
+  }
+}

@@ -13,7 +13,9 @@ Astro.response.headers.set(
   's-maxage=1, stale-while-revalidate',
 );
 ---
-<Page title={import.meta.env.PUBLIC_APP_NAME}>
+<Page
+  search 
+  title={import.meta.env.PUBLIC_APP_NAME}>
     <div class="content-columns">
       
       <TopThreadsStream/>

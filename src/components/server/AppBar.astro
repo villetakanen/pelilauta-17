@@ -8,9 +8,11 @@ interface Props {
   sticky?: boolean;
   noun?: string;
   noSharing?: boolean;
+  search?: boolean;
 }
 
-const { title, modal, noun, sticky, shortTitle, noSharing } = Astro.props;
+const { title, modal, noun, sticky, shortTitle, noSharing, search } =
+  Astro.props;
 const barTitle = title || t('app:meta.title');
 const mode = modal ? 'modal' : sticky ? 'sticky' : undefined;
 const shareButton = !noSharing;
@@ -18,5 +20,8 @@ const shareButton = !noSharing;
 
 <cn-app-bar title={barTitle} shortTitle={shortTitle} mode={mode} noun={noun}>
   <slot />
+  {search && <a href="/search" aria-label={t('actions:search')} class="button text">
+    <cn-icon noun="search"></cn-icon>
+  </a>}
   {shareButton && <cn-share-button label={t('actions:share')}></cn-share-button>}
 </cn-app-bar>
