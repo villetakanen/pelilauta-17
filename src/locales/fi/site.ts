@@ -70,6 +70,21 @@ export const site: Locale = {
   members: {
     title: 'Jäsenet',
   },
+  keeper: {
+    title: 'Hahmokansio',
+    lastUpdated: 'Päivitetty',
+    error: {
+      title: 'Hahmojen lataus epäonnistui',
+    },
+    noCharacters: {
+      title: 'Ei hahmoja',
+      description: 'Sivustolla ei ole vielä hahmoja.',
+    },
+    noSheet: {
+      title: 'Hahmolomaketta ei ole valittu',
+      description: 'Valitse hahmolomake nähdäksesi hahmot.',
+    },
+  },
   options: {
     title: 'Työkalut',
     description:

@@ -5,12 +5,13 @@ import type { CharacterSheet } from '@schemas/CharacterSheetSchema';
 interface Props {
   character: Character;
   sheet: CharacterSheet;
+  siteKey: string;
 }
 
-const { character, sheet }: Props = $props();
+const { character, sheet, siteKey }: Props = $props();
 </script>
 
-<div class="column-s">
+<a href={`/sites/${siteKey}/characters/${character.key}`} class="column-s">
     <h3>{character.name}</h3>
     <p>Sheet: {sheet.name}</p>
-</div>
+</a>

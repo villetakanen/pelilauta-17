@@ -5,10 +5,11 @@ import {
 } from '@schemas/CharacterSchema';
 import type { CharacterSheet } from '@schemas/CharacterSheetSchema';
 import { CHARACTER_SHEETS_COLLECTION_NAME } from '@schemas/CharacterSheetSchema';
+import { characterKeeperStatus } from '@stores/keepers/characterKeeperStatusStore';
 import { charactersInKeeper } from '@stores/keepers/characterKeeperStore';
 import { site, update } from '@stores/site';
 import { t } from '@utils/i18n';
-import { logDebug } from '@utils/logHelpers';
+import { logDebug, logError } from '@utils/logHelpers';
 import { onMount } from 'svelte';
 import CharacterSheetSelector from './CharacterSheetSelector.svelte';
 import KeeperCharacterCard from './KeeperCharacterCard.svelte';
@@ -32,6 +33,8 @@ async function getSheet(sheetKey: string) {
 }
 
 async function syncCharacters() {
+  characterKeeperStatus.setKey('loading', true);
+  characterKeeperStatus.setKey('error', null);
   const { collection, query, where, onSnapshot } = await import(
     'firebase/firestore'
   );
@@ -41,14 +44,24 @@ async function syncCharacters() {
     where('siteKey', '==', siteKey),
   );
 
-  const unsubscribe = onSnapshot(q, (querySnapshot) => {
-    const characters: Character[] = [];
-    querySnapshot.forEach((doc) => {
-      characters.push(doc.data() as Character);
-    });
-    charactersInKeeper.set(characters);
-    logDebug('CharacterKeeperApp', 'Characters updated', characters);
-  });
+  const unsubscribe = onSnapshot(
+    q,
+    (querySnapshot) => {
+      const characters: Character[] = [];
+      querySnapshot.forEach((doc) => {
+        characters.push(doc.data() as Character);
+      });
+      charactersInKeeper.set(characters);
+      characterKeeperStatus.setKey('loading', false);
+      characterKeeperStatus.setKey('lastUpdated', new Date());
+      logDebug('CharacterKeeperApp', 'Characters updated', characters);
+    },
+    (error) => {
+      logError('CharacterKeeperApp', 'Error syncing characters', error);
+      characterKeeperStatus.setKey('loading', false);
+      characterKeeperStatus.setKey('error', error.message);
+    },
+  );
 
   return unsubscribe;
 }
@@ -65,7 +78,8 @@ function setSelectedSheetKey(key: string) {
 
 // Stale-while-revalidate implementation
 onMount(() => {
-  logDebug('CharacterKeeperApp', 'onMount');
+  logDebug('CharacterKeeperApp', 'onMount - Site data:', $site);
+  logDebug('CharacterKeeperApp', 'Site system:', $site?.system);
   if (selectedSheetKey) {
     getSheet(selectedSheetKey);
   }
@@ -81,15 +95,33 @@ onMount(() => {
   <header class=toolbar>
     <h1 class="text-h3">{t('site:keeper.title')}</h1>
     <CharacterSheetSelector
-        system={$site?.system || ''}
+        system={$site?.system || 'homebrew'}
         {selectedSheetKey}
         {setSelectedSheetKey}
     />
+    {#if $characterKeeperStatus.loading}
+      <cn-loader />
+    {/if}
+    {#if $characterKeeperStatus.lastUpdated}
+      <p class="text-small text-low">
+        {t('site:keeper.lastUpdated')}: {$characterKeeperStatus.lastUpdated.toLocaleTimeString()}
+      </p>
+    {/if}
   </header>
   
+  {#if $characterKeeperStatus.error}
+    <cn-card
+      noun="error"
+      title={t('site:keeper.error.title')}
+      class="secondary"
+      description={$characterKeeperStatus.error}
+    >
+    </cn-card>
+  {/if}
+
   {#if sheet && $charactersInKeeper.length > 0}
     {#each $charactersInKeeper as character}
-      <KeeperCharacterCard {character} {sheet} />
+      <KeeperCharacterCard {character} {sheet} {siteKey} />
     {/each}  
   {:else if sheet && $charactersInKeeper.length === 0}
     <cn-card
