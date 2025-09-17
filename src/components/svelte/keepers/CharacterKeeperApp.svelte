@@ -136,9 +136,11 @@ onMount(() => {
     >
     </cn-card>
   {/if}
-  <footer>
-    <p class="text-small text-low text-right">
-      {t('site:keeper.lastUpdated', { date: $characterKeeperStatus.lastUpdated?.toLocaleString() || '' })}
-    </p>
-  </footer>
+  {#if $characterKeeperStatus.lastUpdated}
+    <footer>
+      <p class="text-small text-low text-right">
+        {t('site:keeper.lastUpdated', { date: $characterKeeperStatus.lastUpdated.toLocaleString() })}
+      </p>
+    </footer>
+  {/if}
 </div>
