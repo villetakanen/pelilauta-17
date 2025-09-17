@@ -8,6 +8,8 @@ noun: 'monsters'
 ### 18.3.x (ongoing)
 - fix(sites): Character keeper icon added
 - fix(sites): Minor Character keeper layout polish
+- fix(characters): StatBlock view now uses the new cn-stat-block web component
+- fix: Importing the cn-d20-ability-score addon web-component in BaseHead to ensure it's available globally
 
 ### 18.3.0 (16.9.2025)
 - feat(characters): Character keeper can be activated at site options

@@ -8,15 +8,18 @@ importers:
 
   .:
     dependencies:
+      '@11thdeg/cn-d20-ability-score':
+        specifier: 4.0.0-beta.5
+        version: 4.0.0-beta.5
       '@11thdeg/cn-editor':
         specifier: 4.0.0-beta.16
         version: 4.0.0-beta.16
       '@11thdeg/cyan-css':
-        specifier: 4.0.0-beta.29
-        version: 4.0.0-beta.29(lato-font@3.0.0)
+        specifier: 4.0.0-beta.30
+        version: 4.0.0-beta.30(lato-font@3.0.0)
       '@11thdeg/cyan-lit':
-        specifier: 4.0.0-beta.18
-        version: 4.0.0-beta.18
+        specifier: 4.0.0-beta.19
+        version: 4.0.0-beta.19
       '@astrojs/check':
         specifier: ^0.9.4
         version: 0.9.4(typescript@5.9.2)
@@ -153,16 +156,19 @@ importers:
 
 packages:
 
+  '@11thdeg/cn-d20-ability-score@4.0.0-beta.5':
+    resolution: {integrity: sha512-rVuUVHFDJmhuWRYBDIWhv2y3HbimNXI+I3FlhTwddtaLKwvEneZqNIS3zzg7huweqdIp8SJ7IhW9+AGAdWZoHQ==}
+
   '@11thdeg/cn-editor@4.0.0-beta.16':
     resolution: {integrity: sha512-Ck9On+c/sRo13CsqJxshnhd/i6BTcwu1Svao+koB0PPyiHPnoBZYSaXe0gHvshVqd3fT28b9otqRdBhsSvMvZQ==}
 
-  '@11thdeg/cyan-css@4.0.0-beta.29':
-    resolution: {integrity: sha512-Od0ybuc3LLyOa3TAVDPHJ73oSbbq4cHLj67f4dzTtw11dQfX4LCcsisGuvZ72HD+AXyTXtzQPwvK0XGPaHCq+w==}
+  '@11thdeg/cyan-css@4.0.0-beta.30':
+    resolution: {integrity: sha512-sCeiJzsaBSmSnzWpsRAgyADH99RzMLk9qBUYFhZs41kfwo5QtIJpLlmdPKUTdDM78yHHtS1jjoXBQzScaU0/YA==}
     peerDependencies:
       lato-font: '*'
 
-  '@11thdeg/cyan-lit@4.0.0-beta.18':
-    resolution: {integrity: sha512-YDnyXvfTTaJRYniRdxosU/sEvNzrxEWYDsiS9bVUzoMJzwi5Q5hyDjnCWtA/mTwquBybymHk6ccrkI7ea6RURg==}
+  '@11thdeg/cyan-lit@4.0.0-beta.19':
+    resolution: {integrity: sha512-9zTiXeWclE7Bdl8Xw2lPQc0hTciA+6xdS5voK3J0Df3licSfrGwF/aj+a2LkzbvyuZ6Xivo+uqVUPUAje+hxgA==}
 
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
@@ -7261,6 +7267,10 @@ packages:
 
 snapshots:
 
+  '@11thdeg/cn-d20-ability-score@4.0.0-beta.5':
+    dependencies:
+      lit: 3.3.1
+
   '@11thdeg/cn-editor@4.0.0-beta.16':
     dependencies:
       '@codemirror/commands': 6.8.1
@@ -7275,11 +7285,11 @@ snapshots:
       turndown: 7.2.0
       turndown-plugin-gfm: 1.0.2
 
-  '@11thdeg/cyan-css@4.0.0-beta.29(lato-font@3.0.0)':
+  '@11thdeg/cyan-css@4.0.0-beta.30(lato-font@3.0.0)':
     dependencies:
       lato-font: 3.0.0
 
-  '@11thdeg/cyan-lit@4.0.0-beta.18':
+  '@11thdeg/cyan-lit@4.0.0-beta.19':
     dependencies:
       lit: 3.3.1
 
