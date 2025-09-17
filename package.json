@@ -1,7 +1,7 @@
 {
   "name": "Pelilauta",
   "type": "module",
-  "version": "18.3.1",
+  "version": "18.4.0",
   "engines": {
     "node": ">=20.0.0"
   },
@@ -22,9 +22,10 @@
     "postinstall": "lefthook install"
   },
   "dependencies": {
+    "@11thdeg/cn-d20-ability-score": "4.0.0-beta.5",
     "@11thdeg/cn-editor": "4.0.0-beta.16",
-    "@11thdeg/cyan-css": "4.0.0-beta.29",
-    "@11thdeg/cyan-lit": "4.0.0-beta.18",
+    "@11thdeg/cyan-css": "4.0.0-beta.30",
+    "@11thdeg/cyan-lit": "4.0.0-beta.19",
     "@astrojs/check": "^0.9.4",
     "@astrojs/netlify": "^6.5.10",
     "@astrojs/rss": "^4.0.12",
@@ -34,6 +35,7 @@
     "@netlify/blobs": "^10.0.10",
     "@sentry/browser": "^10.8.0",
     "@vercel/analytics": "^1.5.0",
+    "algoliasearch": "^5.37.0",
     "astro": "^5.9.2",
     "diff": "^8.0.2",
     "dompurify": "^3.2.5",

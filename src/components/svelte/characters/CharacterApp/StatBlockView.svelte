@@ -22,7 +22,7 @@ const type = (key: string) => {
 };
 </script>
 
-<section class="surface border-radius flex flex-col">
+<cn-stat-block label={group}>
   {#each statsInGroup as stat}
     {#if stat.type === 'number'}
       <div class="flex flex-row flex-no-wrap">
@@ -35,7 +35,4 @@ const type = (key: string) => {
   {/each}
 
   <div class="grow"></div>
-  <h3 class="text-h4 text-center m-0">
-    {group}
-  </h3>
-</section>
+</cn-stat-block>
