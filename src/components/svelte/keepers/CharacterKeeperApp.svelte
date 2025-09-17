@@ -100,12 +100,7 @@ onMount(() => {
         {setSelectedSheetKey}
     />
     {#if $characterKeeperStatus.loading}
-      <cn-loader />
-    {/if}
-    {#if $characterKeeperStatus.lastUpdated}
-      <p class="text-small text-low">
-        {t('site:keeper.lastUpdated')}: {$characterKeeperStatus.lastUpdated.toLocaleTimeString()}
-      </p>
+      <cn-loader></cn-loader>
     {/if}
   </header>
   
@@ -141,4 +136,9 @@ onMount(() => {
     >
     </cn-card>
   {/if}
+  <footer>
+    <p class="text-small text-low text-right">
+      {t('site:keeper.lastUpdated', { date: $characterKeeperStatus.lastUpdated?.toLocaleString() || '' })}
+    </p>
+  </footer>
 </div>

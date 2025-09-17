@@ -71,8 +71,8 @@ export const site: Locale = {
     title: 'Jäsenet',
   },
   keeper: {
-    title: 'Hahmokansio',
-    lastUpdated: 'Päivitetty',
+    title: 'Keeper',
+    lastUpdated: 'Päivitetty {date}',
     error: {
       title: 'Hahmojen lataus epäonnistui',
     },
