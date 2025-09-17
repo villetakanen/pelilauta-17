@@ -5,6 +5,10 @@ noun: 'monsters'
 ---
 ## Version 18
 
+### 18.3.x (ongoing)
+- fix(sites): Character keeper icon added
+- fix(sites): Minor Character keeper layout polish
+
 ### 18.3.0 (16.9.2025)
 - feat(characters): Character keeper can be activated at site options
 - feat(characters): Character keeper sheet can be set at keeper header
