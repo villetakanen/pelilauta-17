@@ -2,7 +2,7 @@ import type { Character } from '@schemas/CharacterSchema';
 import {
   CHARACTER_SHEETS_COLLECTION_NAME,
   type CharacterSheet,
-  CharacterSheetSchema,
+  migrateCharacterSheet,
 } from '@schemas/CharacterSheetSchema';
 import { logDebug, logError } from '@utils/logHelpers';
 import { serverDB } from '..';
@@ -29,7 +29,7 @@ export async function resolveCharacterWithSheet(
     const sheetDoc = await sheetDocRef.get();
 
     if (sheetDoc.exists) {
-      const sheetData = CharacterSheetSchema.parse({
+      const sheetData = migrateCharacterSheet({
         ...sheetDoc.data(),
         key: sheetDoc.id,
       });

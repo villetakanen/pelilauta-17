@@ -13,9 +13,12 @@ function addGroup() {
   if (!updated) return;
   if (!updated.statGroups) updated.statGroups = [];
 
-  if (updated.statGroups.includes(name)) return;
+  if (updated.statGroups.some((g) => g.key === name)) return;
 
-  updated.statGroups = [...updated.statGroups, name];
+  updated.statGroups = [
+    ...updated.statGroups,
+    { key: name, layout: 'rows' as const },
+  ];
   sheet.set(CharacterSheetSchema.parse(updated));
   groupName = '';
 }

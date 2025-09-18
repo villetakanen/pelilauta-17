@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   CharacterSheetSchema,
   CharacterStatSchema,
+  migrateCharacterSheet,
 } from '../../src/schemas/CharacterSheetSchema';
 
 describe('CharacterStatSchema', () => {
@@ -159,5 +160,122 @@ describe('CharacterSheetSchema', () => {
     };
     const result = CharacterSheetSchema.safeParse(sheet);
     expect(result.success).toBe(false);
+  });
+
+  it('should validate a character sheet with StatGroup objects', () => {
+    const sheet = {
+      key: 'modern-sheet',
+      name: 'Modern Sheet with StatGroups',
+      system: 'dnd5e',
+      statGroups: [
+        { key: 'Attributes', layout: 'grid-2' },
+        { key: 'Skills', layout: 'rows' },
+        { key: 'Combat', layout: 'grid-3' },
+      ],
+      stats: [
+        { type: 'number', key: 'strength', value: 10, group: 'Attributes' },
+        { type: 'number', key: 'acrobatics', value: 5, group: 'Skills' },
+      ],
+    };
+    const result = CharacterSheetSchema.safeParse(sheet);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.statGroups).toHaveLength(3);
+      expect(result.data.statGroups[0].key).toBe('Attributes');
+      expect(result.data.statGroups[0].layout).toBe('grid-2');
+    }
+  });
+
+  it('should use default layout for StatGroup if not specified', () => {
+    const sheet = {
+      key: 'default-layout-sheet',
+      name: 'Default Layout Sheet',
+      system: 'generic',
+      statGroups: [{ key: 'Stats' }],
+      stats: [],
+    };
+    const result = CharacterSheetSchema.safeParse(sheet);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.statGroups[0].layout).toBe('rows');
+    }
+  });
+});
+
+describe('migrateCharacterSheet', () => {
+  it('should migrate string-based stat groups to StatGroup objects', () => {
+    const oldSheet = {
+      key: 'legacy-sheet',
+      name: 'Legacy Sheet',
+      system: 'dnd5e',
+      statGroups: ['Attributes', 'Skills', 'Combat'],
+      stats: [
+        { type: 'number', key: 'strength', value: 10, group: 'Attributes' },
+        { type: 'number', key: 'acrobatics', value: 5, group: 'Skills' },
+      ],
+    };
+
+    const migratedSheet = migrateCharacterSheet(oldSheet);
+
+    expect(migratedSheet.statGroups).toHaveLength(3);
+    expect(migratedSheet.statGroups[0]).toEqual({
+      key: 'Attributes',
+      layout: 'rows',
+    });
+    expect(migratedSheet.statGroups[1]).toEqual({
+      key: 'Skills',
+      layout: 'rows',
+    });
+    expect(migratedSheet.statGroups[2]).toEqual({
+      key: 'Combat',
+      layout: 'rows',
+    });
+  });
+
+  it('should not modify already migrated StatGroup objects', () => {
+    const modernSheet = {
+      key: 'modern-sheet',
+      name: 'Modern Sheet',
+      system: 'dnd5e',
+      statGroups: [
+        { key: 'Attributes', layout: 'grid-2' },
+        { key: 'Skills', layout: 'rows' },
+      ],
+      stats: [],
+    };
+
+    const result = migrateCharacterSheet(modernSheet);
+
+    expect(result.statGroups).toHaveLength(2);
+    expect(result.statGroups[0]).toEqual({
+      key: 'Attributes',
+      layout: 'grid-2',
+    });
+    expect(result.statGroups[1]).toEqual({
+      key: 'Skills',
+      layout: 'rows',
+    });
+  });
+
+  it('should handle empty statGroups array', () => {
+    const sheet = {
+      key: 'empty-groups-sheet',
+      name: 'Empty Groups Sheet',
+      system: 'generic',
+      statGroups: [],
+      stats: [],
+    };
+
+    const result = migrateCharacterSheet(sheet);
+    expect(result.statGroups).toEqual([]);
+  });
+
+  it('should throw error for invalid sheet data', () => {
+    expect(() => migrateCharacterSheet(null)).toThrow(
+      'Invalid character sheet data',
+    );
+    expect(() => migrateCharacterSheet('not an object')).toThrow(
+      'Invalid character sheet data',
+    );
   });
 });

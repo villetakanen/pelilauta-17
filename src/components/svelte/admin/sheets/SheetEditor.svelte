@@ -1,5 +1,8 @@
 <script lang="ts">
-import { CharacterSheetSchema } from '@schemas/CharacterSheetSchema';
+import {
+  CharacterSheetSchema,
+  type StatGroup,
+} from '@schemas/CharacterSheetSchema';
 import {
   dirty,
   load,
@@ -23,13 +26,13 @@ const allow = $derived.by(() => $appMeta.admins.includes($uid));
 /**
  * Add a new stat with an empty key to the given group unless one already exists.
  */
-function addStat(groupName: string) {
+function addStat(groupKey: string) {
   const updated = { ...$sheet };
   if (!updated.stats) updated.stats = [];
 
   // Only add if there isn't an existing stat with empty key in this group
   const hasEmpty = updated.stats.some(
-    (s) => s.group === groupName && s.key === '',
+    (s) => s.group === groupKey && s.key === '',
   );
   if (hasEmpty) return;
 
@@ -39,7 +42,7 @@ function addStat(groupName: string) {
       type: 'number',
       key: '-',
       value: 0,
-      group: groupName,
+      group: groupKey,
     },
   ];
 
@@ -47,18 +50,35 @@ function addStat(groupName: string) {
   sheet.set(CharacterSheetSchema.parse(updated));
 }
 
-function groupHasStats(groupName: string) {
-  return ($sheet?.stats || []).some((s) => s.group === groupName);
+function groupHasStats(groupKey: string) {
+  return ($sheet?.stats || []).some((s) => s.group === groupKey);
 }
 
-function removeGroup(groupName: string) {
+function removeGroup(groupKey: string) {
   // Only allow removing empty groups
-  if (groupHasStats(groupName)) return;
+  if (groupHasStats(groupKey)) return;
 
   const updated = { ...$sheet };
   if (!updated?.statGroups) return;
 
-  updated.statGroups = updated.statGroups.filter((g) => g !== groupName);
+  updated.statGroups = updated.statGroups.filter((g) => g.key !== groupKey);
+  sheet.set(CharacterSheetSchema.parse(updated));
+}
+
+function updateGroupLayout(
+  groupKey: string,
+  layout: 'rows' | 'grid-2' | 'grid-3',
+) {
+  const updated = { ...$sheet };
+  if (!updated?.statGroups) return;
+
+  const groupIndex = updated.statGroups.findIndex((g) => g.key === groupKey);
+  if (groupIndex === -1) return;
+
+  updated.statGroups[groupIndex] = {
+    ...updated.statGroups[groupIndex],
+    layout,
+  };
   sheet.set(CharacterSheetSchema.parse(updated));
 }
 
@@ -90,23 +110,31 @@ $effect(() => {
       {#each $sheet?.statGroups || [] as group }
         <div class="p-1 surface">
           <div class="toolbar pt-0 mt-0">
-            <h4 class="text-h5">{group}</h4>
+            <h4 class="text-h5">{group.key}</h4>
+            <select 
+              bind:value={group.layout}
+              onchange={() => updateGroupLayout(group.key, group.layout)}
+            >
+              <option value="rows">Rows (single column)</option>
+              <option value="grid-2">Grid 2-column</option>
+              <option value="grid-3">Grid 3-column</option>
+            </select>
             <button
               type="button"
               class="text"
               aria-label="delete"
-              onclick={() => removeGroup(group)}
-              disabled={groupHasStats(group)}
+              onclick={() => removeGroup(group.key)}
+              disabled={groupHasStats(group.key)}
             >
               <cn-icon noun="delete"></cn-icon>
             </button>
           </div>
-          <StatsSection {group} />
+          <StatsSection group={group.key} layout={group.layout} />
           <div class="toolbar items-center">
                 <button
                   type="button"
                   class="text"
-                  onclick={() => addStat(group)}
+                  onclick={() => addStat(group.key)}
                 >
                   <cn-icon noun="add"></cn-icon>
                   <span>New Stat</span>

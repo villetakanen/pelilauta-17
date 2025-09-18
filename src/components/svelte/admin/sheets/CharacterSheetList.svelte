@@ -17,7 +17,7 @@ async function loadCharacterSheets() {
   try {
     const { db } = await import('../../../../firebase/client');
     const { collection, getDocs } = await import('firebase/firestore');
-    const { CharacterSheetSchema } = await import(
+    const { migrateCharacterSheet } = await import(
       'src/schemas/CharacterSheetSchema'
     );
 
@@ -27,8 +27,8 @@ async function loadCharacterSheets() {
 
     characterSheets = snapshot.docs.map((doc) => {
       const rawData = { key: doc.id, ...doc.data() };
-      // Validate and parse the data with the schema
-      return CharacterSheetSchema.parse({
+      // Use migration function to handle old string-based statGroups
+      return migrateCharacterSheet({
         ...rawData,
         key: doc.id,
       });
