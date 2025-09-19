@@ -5,6 +5,10 @@ noun: 'monsters'
 ---
 ## Version 18
 
+### 18.5.x (ongoing)
+- fix(characters): Character sheets support layout settings for stat groups
+- fix(characters): Character sheet stat blocks are rendered correctly for toggled, number, and d20_ability_score stat types. Note: Cyan Design System 4 does not yet have full support for checkbox/toggled stat input, which will cause some visual inconsistencies.
+
 ### 18.5.0 (19.9.2025)
 - feat(characters): Character sheet schema supports layout settings for stat groups
 
