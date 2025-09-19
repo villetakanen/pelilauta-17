@@ -5,6 +5,7 @@ import {
   CHARACTER_SHEETS_COLLECTION_NAME,
   type CharacterSheet,
   CharacterSheetSchema,
+  migrateCharacterSheet,
 } from 'src/schemas/CharacterSheetSchema';
 import { logDebug, logError } from 'src/utils/logHelpers';
 
@@ -51,7 +52,7 @@ export async function load(key: string) {
 
   if (snapshot.exists()) {
     const data = snapshot.data();
-    const newSheet = CharacterSheetSchema.parse({
+    const newSheet = migrateCharacterSheet({
       ...data,
       key,
     });
