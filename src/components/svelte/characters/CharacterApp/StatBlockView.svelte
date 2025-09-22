@@ -1,5 +1,8 @@
 <script lang="ts">
-import { resolvedCharacter } from '@stores/characters/characterStore';
+import {
+  character,
+  resolvedCharacter,
+} from '@stores/characters/characterStore';
 import { t } from '@utils/i18n';
 import Stat from './Stat.svelte';
 
@@ -36,9 +39,9 @@ const type = (key: string) => {
     {:else if stat.type === 'd20_ability_score'}
       <cn-d20-ability-score
         class="stat"
-        value={stat.value}
         label={stat.key}
         readonly
+        base={$character?.stats[stat.key]?.value || 10}
       ></cn-d20-ability-score>
     {:else if stat.type === 'toggled'}
       <div class="flex items-center">
@@ -46,7 +49,7 @@ const type = (key: string) => {
           {stat.key}
         </h4>
         <div>
-          <input type="checkbox" class="stat" checked={stat.value === true} readonly />
+          <input type="checkbox" checked={stat.value === true} readonly />
         </div>
       </div>
     {/if}

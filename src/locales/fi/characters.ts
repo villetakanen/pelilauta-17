@@ -65,6 +65,9 @@ export const characters: Locale = {
     placeholders: {
       name: 'Esim. D&D 5e Taistelijat',
     },
+    mode: {
+      edit: 'Muokkaa',
+    },
   },
   sites: {
     select: {
