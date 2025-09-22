@@ -6,6 +6,7 @@ noun: 'monsters'
 ## Version 18
 
 ### 18.5.x (ongoing)
+- fix: Settings navigation button reacts correclty to authState changes
 - fix(characters): Character sheet d20 ability score stat uses base attribute for correct modifier calculation
 - fix(characters): Checkbox styling override patch for better visual consistency
 - fix(characters): Character sheets support layout settings for stat groups
