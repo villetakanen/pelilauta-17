@@ -1,7 +1,7 @@
 import {
   CHARACTER_SHEETS_COLLECTION_NAME,
   type CharacterSheet,
-  CharacterSheetSchema,
+  migrateCharacterSheet,
 } from '@schemas/CharacterSheetSchema';
 import { toClientEntry } from '@utils/client/entryUtils';
 import { logError } from '@utils/logHelpers';
@@ -49,7 +49,7 @@ export async function getCharacterSheet(
       );
     }
 
-    const sheet = CharacterSheetSchema.parse({
+    const sheet = migrateCharacterSheet({
       ...toClientEntry(docSnapshot.data() as Record<string, unknown>),
       key,
     });

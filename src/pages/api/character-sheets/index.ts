@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 import {
   CHARACTER_SHEETS_COLLECTION_NAME,
-  CharacterSheetSchema,
+  migrateCharacterSheet,
 } from '@schemas/CharacterSheetSchema';
 import { toClientEntry } from '@utils/client/entryUtils';
 import { logError } from '@utils/logHelpers';
@@ -38,7 +38,7 @@ export async function GET({ request }: APIContext) {
       if (!sheetData.key) {
         sheetData.key = sheetDoc.id;
       }
-      sheets.push(CharacterSheetSchema.parse(sheetData));
+      sheets.push(migrateCharacterSheet(sheetData));
     }
 
     // Sort by name for consistent ordering

@@ -10,9 +10,9 @@ import SiteCard from '@components/svelte/site-library/SiteCard.svelte';
 import type { Character } from '@schemas/CharacterSchema';
 import type { CharacterSheet } from '@schemas/CharacterSheetSchema';
 import type { Site } from '@schemas/SiteSchema';
+import { isEditing } from '@stores/characters/characterSheetState';
 import {
   character,
-  editor,
   loading,
   resolvedCharacter,
   subscribe,
@@ -70,7 +70,7 @@ const isOwner = $derived.by(() => {
     <div class="blocks">
       {#if statBlocks.length > 0}
         {#each statBlocks as group}
-          {#if isOwner && $editor}
+          {#if isOwner && $isEditing}
             <!-- Show the editor functionality-->
             <StatBlock {group} />
           {:else}

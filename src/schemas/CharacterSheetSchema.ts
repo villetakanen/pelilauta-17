@@ -3,6 +3,17 @@ import { z } from 'zod';
 export const CHARACTER_SHEETS_COLLECTION_NAME = 'charsheets';
 
 /**
+ * Schema for a stat group that defines how stats are visually organized.
+ * Each group has a key (name) and a layout type for the cn-stat-block component.
+ */
+const StatGroupSchema = z.object({
+  key: z.string().min(1, 'StatGroup key cannot be empty'),
+  layout: z.enum(['rows', 'grid-2', 'grid-3']).default('rows'),
+});
+
+export type StatGroup = z.infer<typeof StatGroupSchema>;
+
+/**
  * The base schema for any type of character stat.
  * It includes common properties like key, description, and group.
  */
@@ -141,7 +152,7 @@ export const CharacterSheetSchema = z
       .describe(
         'The roleplaying game system this sheet is for, e.g., "dnd5e".',
       ),
-    statGroups: z.array(z.string()).default([]),
+    statGroups: z.array(StatGroupSchema).default([]),
     stats: z
       .array(CharacterStatSchema)
       .default([])
@@ -150,3 +161,31 @@ export const CharacterSheetSchema = z
   .describe('A template for creating player characters.');
 
 export type CharacterSheet = z.infer<typeof CharacterSheetSchema>;
+
+/**
+ * Migration function to convert existing character sheets with string-based stat groups
+ * to the new StatGroup object format with layout properties.
+ */
+export function migrateCharacterSheet(sheet: unknown): CharacterSheet {
+  // Ensure sheet is an object
+  if (typeof sheet !== 'object' || sheet === null) {
+    throw new Error('Invalid character sheet data');
+  }
+
+  const sheetData = sheet as Record<string, unknown>;
+
+  // Handle the migration of statGroups from string[] to StatGroup[]
+  if (Array.isArray(sheetData.statGroups) && sheetData.statGroups.length > 0) {
+    // Check if first element is string (old format)
+    if (typeof sheetData.statGroups[0] === 'string') {
+      sheetData.statGroups = (sheetData.statGroups as string[]).map(
+        (groupName: string) => ({
+          key: groupName,
+          layout: 'rows' as const,
+        }),
+      );
+    }
+  }
+
+  return CharacterSheetSchema.parse(sheetData);
+}

@@ -5,11 +5,13 @@
  * Shows editable fields when the user is the owner of the character.
  */
 
+import type { CnD20AbilityScore } from '@11thdeg/cn-d20-ability-score';
 import type { CharacterStat } from '@schemas/CharacterSheetSchema';
 import { isEditing } from '@stores/characters/characterSheetState';
-import { resolvedCharacter, update } from '@stores/characters/characterStore';
+import { character, update } from '@stores/characters/characterStore';
 import { uid } from '@stores/session';
-import { logError } from '@utils/logHelpers';
+import { pushSnack } from '@utils/client/snackUtils';
+import { logDebug, logError } from '@utils/logHelpers';
 import NumberStat from './NumberStat.svelte';
 import TextStat from './TextStat.svelte';
 import ToggledStat from './ToggledStat.svelte';
@@ -22,12 +24,10 @@ interface Props {
 const { stat }: Props = $props();
 
 const statValue = $derived.by(() => {
-  return $resolvedCharacter?.stats[stat.key] ?? stat.value;
+  return $character?.stats[stat.key] ?? stat.value;
 });
 
-const owns = $derived.by(
-  () => $resolvedCharacter?.owners?.includes($uid) || false,
-);
+const owns = $derived.by(() => $character?.owners?.includes($uid) || false);
 const canEdit = $derived.by(() => owns && $isEditing);
 
 let saving = $state(false);
@@ -37,9 +37,9 @@ async function updateStat(key: string, value: string | number | boolean) {
   saving = true;
   error = null;
 
-  if (!$resolvedCharacter) return;
+  if (!$character) return;
 
-  const newStats = { ...$resolvedCharacter.stats, [key]: value };
+  const newStats = { ...$character.stats, [key]: value };
 
   try {
     await update({ stats: newStats });
@@ -49,6 +49,18 @@ async function updateStat(key: string, value: string | number | boolean) {
     // TODO: Rollback state on failure
   } finally {
     saving = false;
+  }
+}
+
+async function handleChange(key: string, value: string | number | boolean) {
+  logDebug('Stat.svelte', 'handleChange', key, value);
+  if (!$character) throw new Error('No character loaded');
+  const newStats = { ...$character.stats, [key]: value };
+  try {
+    await update({ stats: newStats });
+  } catch (e) {
+    logError('Stat.svelte', `Failed to update stat ${key}`, e);
+    pushSnack('app:error.generic');
   }
 }
 </script>
@@ -78,6 +90,15 @@ async function updateStat(key: string, value: string | number | boolean) {
       onchange={(newValue) => updateStat(stat.key, newValue)}
       disabled={saving}
     />
+  {:else if stat.type === 'd20_ability_score'}
+    <cn-d20-ability-score
+      label={stat.key}
+      base={Number(statValue)}
+      interactive={canEdit}
+      oninput={(e: Event) =>
+        handleChange(stat.key, (e.target as CnD20AbilityScore).base)}
+      disabled={saving}
+    ></cn-d20-ability-score>
   {:else}
     <div>{stat.key}</div>
   {/if}

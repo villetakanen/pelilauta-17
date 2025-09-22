@@ -5,10 +5,20 @@ noun: 'monsters'
 ---
 ## Version 18
 
+### 18.5.x (ongoing)
+- fix: Settings navigation button reacts correclty to authState changes
+- fix(characters): Character sheet d20 ability score stat uses base attribute for correct modifier calculation
+- fix(characters): Checkbox styling override patch for better visual consistency
+- fix(characters): Character sheets support layout settings for stat groups
+- fix(characters): Character sheet stat blocks are rendered correctly for toggled, number, and d20_ability_score stat types.
+
+### 18.5.0 (19.9.2025)
+- feat(characters): Character sheet schema supports layout settings for stat groups
+
 ### 18.4.0 (17.9.2025)
 - feat(search): Added Algolia search for threads, accessible to logged-in users
 - feat(search): Added search page and rudimentary search results listing
-- fix(sites): Character keeper icon added
+- fix(sites): Character keeper  icon added
 - fix(sites): Minor Character keeper layout polish
 - fix(characters): StatBlock view now uses the new cn-stat-block web component
 - fix: Importing the cn-d20-ability-score addon web-component in BaseHead to ensure it's available globally
