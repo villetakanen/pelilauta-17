@@ -1,13 +1,11 @@
 <script lang="ts">
+import { CnToggleButton } from '@11thdeg/cyan-lit';
 /*
  * A header component for the CharacterApp microfrontend.
  * Displays character name and edit button if permitted.
  */
 import type { Character } from '@schemas/CharacterSchema';
-import {
-  isEditing,
-  toggleEditing,
-} from '@stores/characters/characterSheetState';
+import { isEditing } from '@stores/characters/characterSheetState';
 import { uid } from '@stores/session';
 import { t } from '@utils/i18n';
 
@@ -23,12 +21,13 @@ const canEdit = $derived.by(() => {
 
 <header>
   <div class="toolbar">
-    <h1 class="text-h3 mb-0 grow">{character?.name}</h1>
+    <h1 class="mb-0 grow">{character?.name}</h1>
     {#if canEdit}
-      <button class="secondary" onclick={toggleEditing}>
-        <cn-icon noun={$isEditing ? 'check' : 'edit'}></cn-icon>
-        <span>{$isEditing ? t('actions:done') : t('actions:edit')}</span>
-      </button>
+      <cn-toggle-button
+        label={t('characters:sheets.mode.edit')}
+        pressed={$isEditing}
+        onchange={(e: Event) => isEditing.set((e.target as CnToggleButton).pressed)}
+      ></cn-toggle-button>
     {/if}
   </div>
   <p class="text-small text-low">{character?.description}</p>
