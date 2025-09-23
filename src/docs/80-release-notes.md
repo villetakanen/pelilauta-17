@@ -6,6 +6,7 @@ noun: 'monsters'
 ## Version 18
 
 ### 18.5.x (ongoing)
+- fix(characters): Sheet loading via API, with proper caching headers
 - fix: Cyan Design System updates, merging the patches below and correct fab-tray positioning on mobile screens
 - fix: Settings navigation button reacts correclty to authState changes
 - fix(characters): Character sheet d20 ability score stat uses base attribute for correct modifier calculation

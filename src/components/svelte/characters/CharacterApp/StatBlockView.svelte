@@ -1,10 +1,5 @@
 <script lang="ts">
-import {
-  character,
-  resolvedCharacter,
-} from '@stores/characters/characterStore';
-import { t } from '@utils/i18n';
-import Stat from './Stat.svelte';
+import { character, sheet } from '@stores/characters/characterStore';
 
 interface Props {
   group: { key: string; layout: string };
@@ -13,17 +8,12 @@ interface Props {
 const { group }: Props = $props();
 
 const statsInGroup = $derived.by(() => {
-  if (!$resolvedCharacter?.sheet?.stats) return [];
-  return $resolvedCharacter.sheet.stats.filter(
-    (stat) => stat.group === group.key,
-  );
+  if (!$sheet?.stats) return [];
+  return $sheet.stats.filter((stat) => stat.group === group.key);
 });
 
 const type = (key: string) => {
-  return (
-    $resolvedCharacter?.sheet?.stats?.find((s) => s.key === key)?.type ||
-    'number'
-  );
+  return $sheet?.stats?.find((s) => s.key === key)?.type || 'number';
 };
 </script>
 
@@ -41,7 +31,7 @@ const type = (key: string) => {
         class="stat"
         label={stat.key}
         readonly
-        base={$character?.stats[stat.key]?.value || 10}
+        base={$character?.stats[stat.key] || 10}
       ></cn-d20-ability-score>
     {:else if stat.type === 'toggled'}
       <div class="flex items-center">

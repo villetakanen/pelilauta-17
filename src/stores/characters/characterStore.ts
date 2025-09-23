@@ -68,15 +68,19 @@ export async function subscribe(key: string) {
       const entry = toClientEntry(snapshot.data());
       const parsedCharacter = CharacterSchema.parse({ ...entry, key });
       character.set(parsedCharacter);
-      
+
       // Add loading state tracking to prevent concurrent loads
       const currentSheet = sheet.get();
-      const isLoadingDifferentSheet = currentSheet?.key !== parsedCharacter.sheetKey;
-      
-      if (parsedCharacter.sheetKey && (!currentSheet || isLoadingDifferentSheet)) {
+      const isLoadingDifferentSheet =
+        currentSheet?.key !== parsedCharacter.sheetKey;
+
+      if (
+        parsedCharacter.sheetKey &&
+        (!currentSheet || isLoadingDifferentSheet)
+      ) {
         loadSheet(parsedCharacter.sheetKey);
       }
-    } 
+    }
     loading.set(false);
   });
 }
@@ -92,10 +96,10 @@ export async function subscribe(key: string) {
  */
 async function loadSheet(sheetKey: string) {
   if (sheetLoading.get()) return; // Prevent concurrent loads
-  
+
   logDebug('characterStore', 'Loading character sheet:', sheetKey);
   sheetLoading.set(true);
-  
+
   try {
     const sheetResponse = await authedFetch(
       `/api/character-sheets/${sheetKey}`,
@@ -127,13 +131,17 @@ export async function update(data: Partial<Character>) {
 
   // Store original state for potential rollback
   const originalCharacter = { ...currentCharacter };
-  
+
   // Optimistic update
   const updatedCharacter = { ...currentCharacter, ...data };
   character.set(updatedCharacter);
 
   try {
-    const characterDoc = doc(db, CHARACTERS_COLLECTION_NAME, currentCharacter.key);
+    const characterDoc = doc(
+      db,
+      CHARACTERS_COLLECTION_NAME,
+      currentCharacter.key,
+    );
     const firestoreData = toFirestoreEntry(updatedCharacter);
 
     // Load new sheet if the sheet key changed
@@ -142,8 +150,11 @@ export async function update(data: Partial<Character>) {
     }
 
     await updateDoc(characterDoc, firestoreData);
-    logDebug('characterStore', 'Character updated successfully:', currentCharacter.key);
-    
+    logDebug(
+      'characterStore',
+      'Character updated successfully:',
+      currentCharacter.key,
+    );
   } catch (error) {
     // Rollback optimistic update on failure
     character.set(originalCharacter);

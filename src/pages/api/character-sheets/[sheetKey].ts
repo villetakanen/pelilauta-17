@@ -16,11 +16,18 @@ export async function GET({ request, params }: APIContext) {
   }
 
   const { sheetKey } = params;
-  if (!sheetKey || typeof sheetKey !== 'string' || sheetKey.trim().length === 0) {
-    return new Response(JSON.stringify({ error: 'Valid sheet key is required' }), { 
-      status: 400,
-      headers: { 'Content-Type': 'application/json' }
-    });
+  if (
+    !sheetKey ||
+    typeof sheetKey !== 'string' ||
+    sheetKey.trim().length === 0
+  ) {
+    return new Response(
+      JSON.stringify({ error: 'Valid sheet key is required' }),
+      {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
   }
 
   try {
@@ -33,10 +40,13 @@ export async function GET({ request, params }: APIContext) {
     const sheetDocs = await sheetRef.get();
 
     if (!sheetDocs.exists || !sheetDocs.data()) {
-      return new Response(JSON.stringify({ error: 'Character sheet not found' }), { 
-        status: 404,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({ error: 'Character sheet not found' }),
+        {
+          status: 404,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      );
     }
 
     const sheet = CharacterSheetSchema.parse(
@@ -64,11 +74,14 @@ export async function GET({ request, params }: APIContext) {
     });
   } catch (error: unknown) {
     logError('character-sheets API', 'Error fetching character sheet:', error);
-    return new Response(JSON.stringify({ error: 'Error fetching character sheet' }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
+    return new Response(
+      JSON.stringify({ error: 'Error fetching character sheet' }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
-    });
+    );
   }
 }
