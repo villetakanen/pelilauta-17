@@ -5,9 +5,13 @@ import { CnToggleButton } from '@11thdeg/cyan-lit';
  * Displays character name and edit button if permitted.
  */
 import type { Character } from '@schemas/CharacterSchema';
-import { isEditing } from '@stores/characters/characterSheetState';
+import {
+  isEditing,
+  showSettingsPanel,
+} from '@stores/characters/characterSheetState';
 import { uid } from '@stores/session';
 import { t } from '@utils/i18n';
+import CharacterSettingsSection from './CharacterSettingsSection.svelte';
 
 interface Props {
   character: Character;
@@ -29,6 +33,11 @@ const canEdit = $derived.by(() => {
         onchange={(e: Event) => isEditing.set((e.target as CnToggleButton).pressed)}
       ></cn-toggle-button>
     {/if}
+    <button onclick={() => $showSettingsPanel = true}
+      aria-label={t('actions:settings')}>
+      <cn-icon noun="tools"></cn-icon>
+    </button>
   </div>
   <p class="text-small text-low">{character?.description}</p>
+  <CharacterSettingsSection />
 </header>
