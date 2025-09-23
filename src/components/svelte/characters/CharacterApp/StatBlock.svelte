@@ -1,5 +1,5 @@
 <script lang="ts">
-import { resolvedCharacter } from '@stores/characters/characterStore';
+import { sheet } from '@stores/characters/characterStore';
 import { t } from '@utils/i18n';
 import { logDebug } from '@utils/logHelpers';
 import Stat from './Stat.svelte';
@@ -11,10 +11,8 @@ interface Props {
 const { group }: Props = $props();
 
 const statsInGroup = $derived.by(() => {
-  if (!$resolvedCharacter?.sheet?.stats) return [];
-  return $resolvedCharacter.sheet.stats.filter(
-    (stat) => stat.group === group.key,
-  );
+  if (!$sheet?.stats) return [];
+  return $sheet.stats.filter((stat) => stat.group === group.key);
 });
 </script>
 

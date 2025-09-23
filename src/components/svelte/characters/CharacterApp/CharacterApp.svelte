@@ -14,7 +14,7 @@ import { isEditing } from '@stores/characters/characterSheetState';
 import {
   character,
   loading,
-  resolvedCharacter,
+  sheet,
   subscribe,
 } from '@stores/characters/characterStore';
 import { uid } from '@stores/session';
@@ -38,33 +38,29 @@ const {
 
 $effect(() => {
   character.set(initialCharacter);
-  // Set initial resolved character with preloaded sheet data
-  resolvedCharacter.set({
-    ...initialCharacter,
-    sheet: initialSheet,
-  });
+  sheet.set(initialSheet || null);
   subscribe(initialCharacter.key);
 });
 
 const statBlocks = $derived.by(() => {
-  return $resolvedCharacter?.sheet?.statGroups || [];
+  return $sheet?.statGroups || [];
 });
 const isOwner = $derived.by(() => {
-  return $resolvedCharacter?.owners?.includes($uid) || false;
+  return $character?.owners?.includes($uid) || false;
 });
 </script>
 
 <div class="content-sheet">
-  {#if $loading && !$resolvedCharacter}
+  {#if $loading}
     <cn-loader></cn-loader>
-  {:else if $resolvedCharacter}
-    <CharacterHeader character={$resolvedCharacter} />
-    
+  {:else if $sheet && $character}
+    <CharacterHeader />
+
     <aside class="flex wide-flex-col">
       {#if site}
         <SiteCard {site} />
       {/if}
-      <CharacterCard character={$resolvedCharacter}></CharacterCard>
+      <CharacterCard character={$character}></CharacterCard>
     </aside>
 
     <div class="blocks">
@@ -82,7 +78,9 @@ const isOwner = $derived.by(() => {
     </div>
     
     <div class="meta">
-      <CharacterArticle character={$resolvedCharacter} />
+      <CharacterArticle
+        character={$character} 
+       />
     </div>
   {/if}
 </div>
