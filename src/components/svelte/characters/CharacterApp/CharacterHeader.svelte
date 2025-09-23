@@ -9,10 +9,10 @@ import {
   isEditing,
   showSettingsPanel,
 } from '@stores/characters/characterSheetState';
+import { character } from '@stores/characters/characterStore';
 import { uid } from '@stores/session';
 import { t } from '@utils/i18n';
 import CharacterSettingsSection from './CharacterSettingsSection.svelte';
-import { character } from '@stores/characters/characterStore';
 
 const canEdit = $derived.by(() => {
   return $character?.owners?.includes($uid);
