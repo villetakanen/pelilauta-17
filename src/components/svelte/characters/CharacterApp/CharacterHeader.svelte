@@ -12,20 +12,16 @@ import {
 import { uid } from '@stores/session';
 import { t } from '@utils/i18n';
 import CharacterSettingsSection from './CharacterSettingsSection.svelte';
-
-interface Props {
-  character: Character;
-}
-const { character }: Props = $props();
+import { character } from '@stores/characters/characterStore';
 
 const canEdit = $derived.by(() => {
-  return character?.owners?.includes($uid);
+  return $character?.owners?.includes($uid);
 });
 </script>
 
 <header>
   <div class="toolbar">
-    <h1 class="mb-0 grow">{character?.name}</h1>
+    <h1 class="mb-0 grow">{$character?.name}</h1>
     {#if canEdit}
       <cn-toggle-button
         label={t('characters:sheets.mode.edit')}
@@ -33,11 +29,14 @@ const canEdit = $derived.by(() => {
         onchange={(e: Event) => isEditing.set((e.target as CnToggleButton).pressed)}
       ></cn-toggle-button>
     {/if}
-    <button onclick={() => $showSettingsPanel = true}
-      aria-label={t('actions:settings')}>
+    <button
+      type="button"
+      onclick={() => $showSettingsPanel = true}
+      aria-label={t('actions:settings')}
+    >
       <cn-icon noun="tools"></cn-icon>
     </button>
   </div>
-  <p class="text-small text-low">{character?.description}</p>
+  <p class="text-small text-low">{$character?.description}</p>
   <CharacterSettingsSection />
 </header>

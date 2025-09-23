@@ -37,9 +37,9 @@ export async function GET({ request, params }: APIContext) {
       .collection(CHARACTER_SHEETS_COLLECTION_NAME)
       .doc(sheetKey);
 
-    const sheetDocs = await sheetRef.get();
+    const sheetDoc = await sheetRef.get();
 
-    if (!sheetDocs.exists || !sheetDocs.data()) {
+    if (!sheetDoc.exists || !sheetDoc.data()) {
       return new Response(
         JSON.stringify({ error: 'Character sheet not found' }),
         {
@@ -51,7 +51,7 @@ export async function GET({ request, params }: APIContext) {
 
     const sheet = CharacterSheetSchema.parse(
       toClientEntry(
-        migrateCharacterSheet({ ...sheetDocs.data(), key: sheetDocs.id }),
+        migrateCharacterSheet({ ...sheetDoc.data(), key: sheetDoc.id }),
       ),
     );
 

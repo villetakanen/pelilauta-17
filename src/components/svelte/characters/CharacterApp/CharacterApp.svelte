@@ -51,7 +51,7 @@ const isOwner = $derived.by(() => {
 </script>
 
 <div class="content-sheet">
-  {#if $loading }
+  {#if $loading}
     <cn-loader></cn-loader>
   {:else if $sheet && $character}
     <CharacterHeader />
