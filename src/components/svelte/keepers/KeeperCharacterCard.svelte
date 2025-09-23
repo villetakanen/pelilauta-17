@@ -1,7 +1,7 @@
 <script lang="ts">
 import type { Character } from '@schemas/CharacterSchema';
 import type { CharacterSheet } from '@schemas/CharacterSheetSchema';
-    import { derived } from 'svelte/store';
+import { derived } from 'svelte/store';
 
 interface Props {
   character: Character;
@@ -13,7 +13,7 @@ const { character, sheet, siteKey }: Props = $props();
 
 const groups = $derived.by(() => {
   return sheet.statGroups || [];
-})
+});
 </script>
 <cn-card>
 <a href={`/sites/${siteKey}/characters/${character.key}`} class="column-s">
