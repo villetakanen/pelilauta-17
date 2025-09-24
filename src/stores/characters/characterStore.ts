@@ -213,7 +213,7 @@ export async function updateStat(statKey: string, value: number) {
   const statDefinition = currentSheet?.stats?.find((s) => s.key === statKey);
   if (statDefinition) {
     if (statDefinition.type === 'number') {
-      if (typeof value !== 'number' || Number.isNaN(value)) {
+      if (Number.isNaN(value)) {
         throw new Error(`Invalid value for stat ${statKey}: ${value}`);
       }
     }

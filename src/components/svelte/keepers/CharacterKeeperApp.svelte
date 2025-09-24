@@ -116,7 +116,7 @@ onMount(() => {
 
   {#if sheet && $charactersInKeeper.length > 0}
     {#each $charactersInKeeper as character}
-      <KeeperCharacterCard {character} {sheet} {siteKey} />
+      <KeeperCharacterCard {character} {sheet} />
     {/each}  
   {:else if sheet && $charactersInKeeper.length === 0}
     <cn-card
@@ -145,8 +145,3 @@ onMount(() => {
   {/if}
 </div>
 
-<!--div class="content-columns">
-  <div class="column-l debug">
-    <pre class="text-small text-low">{JSON.stringify(sheet, null, 2)}</pre>
-  </div>
-</div-->

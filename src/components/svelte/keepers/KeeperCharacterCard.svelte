@@ -5,7 +5,6 @@ import type { CharacterSheet } from '@schemas/CharacterSheetSchema';
 interface Props {
   character: Character;
   sheet: CharacterSheet;
-  siteKey: string;
 }
 
 const { character, sheet }: Props = $props();

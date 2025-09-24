@@ -18,8 +18,9 @@ const value = $derived.by(() => {
 
 function onchange(event: Event) {
   const input = event.target as HTMLInputElement;
+  // Must be an integer, no decimals
   const newValue = Number.parseInt(input.value, 10);
-  if ($isEditing) {
+  if ($isEditing && !readonly) {
     updateStat(key, newValue);
   }
 }
