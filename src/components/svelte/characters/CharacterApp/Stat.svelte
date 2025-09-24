@@ -75,13 +75,7 @@ async function handleChange(key: string, value: string | number | boolean) {
       disabled={saving}
     />
   {:else if stat.type === 'number'}
-    <NumberStat
-      label={stat.key}
-      value={Number(statValue)}
-      interactive={canEdit}
-      onchange={(newValue) => updateStat(stat.key, newValue)}
-      disabled={saving}
-    />
+    <NumberStat key={stat.key} />
   {:else if stat.type === 'toggled'}
     <ToggledStat
       label={stat.key}

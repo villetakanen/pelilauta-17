@@ -6,7 +6,8 @@ noun: 'monsters'
 ## Version 18
 
 ### 18.5.x (ongoing)
-- fix(characters): Keeper shows character stats correctly
+- fix(sites): Keeper character card shows number stats with the same ui styles as in the character sheet
+- fix(sites): Keeper shows character stats correctly
 - fix(characters): Sheet loading via API, with proper caching headers
 - fix: Cyan Design System updates, merging the patches below and correct fab-tray positioning on mobile screens
 - fix: Settings navigation button reacts correclty to authState changes

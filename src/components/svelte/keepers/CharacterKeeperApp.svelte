@@ -116,7 +116,7 @@ onMount(() => {
 
   {#if sheet && $charactersInKeeper.length > 0}
     {#each $charactersInKeeper as character}
-      <KeeperCharacterCard {character} {sheet} {siteKey} />
+      <KeeperCharacterCard {character} {sheet} />
     {/each}  
   {:else if sheet && $charactersInKeeper.length === 0}
     <cn-card
@@ -144,3 +144,4 @@ onMount(() => {
     </footer>
   {/if}
 </div>
+

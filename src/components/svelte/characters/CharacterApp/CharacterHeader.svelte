@@ -4,12 +4,11 @@ import { CnToggleButton } from '@11thdeg/cyan-lit';
  * A header component for the CharacterApp microfrontend.
  * Displays character name and edit button if permitted.
  */
-import type { Character } from '@schemas/CharacterSchema';
 import {
   isEditing,
   showSettingsPanel,
 } from '@stores/characters/characterSheetState';
-import { character } from '@stores/characters/characterStore';
+import { character, saving } from '@stores/characters/characterStore';
 import { uid } from '@stores/session';
 import { t } from '@utils/i18n';
 import CharacterSettingsSection from './CharacterSettingsSection.svelte';
@@ -23,6 +22,9 @@ const canEdit = $derived.by(() => {
   <div class="toolbar">
     <h1 class="mb-0 grow">{$character?.name}</h1>
     {#if canEdit}
+      {#if $saving}
+        <cn-loader inline></cn-loader>
+      {/if}
       <cn-toggle-button
         label={t('characters:sheets.mode.edit')}
         pressed={$isEditing}
