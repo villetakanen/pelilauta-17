@@ -1,34 +1,36 @@
 <script lang="ts">
+import { isEditing } from '@stores/characters/characterSheetState';
+import { character, updateStat } from '@stores/characters/characterStore';
+
 /**
  * Single number stat display/edit component
  */
 interface Props {
-  interactive: boolean;
-  label: string;
-  value: number;
-  onchange: (newValue: number) => void;
-  disabled: boolean;
+  key: string;
+  readonly?: boolean; // Override editing state to make stat readonly, f.ex. on Keeper view
 }
-const { label, value, onchange, interactive, disabled }: Props = $props();
+
+const { key, readonly }: Props = $props();
+
+const value = $derived.by(() => {
+  return $character?.stats[key] ?? 0;
+});
+
+function onchange(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const newValue = Number.parseInt(input.value, 10);
+  if ($isEditing) {
+    updateStat(key, newValue);
+  }
+}
 </script>
 
-{#if interactive}
-  <label class="span-cols-2">
-    <span>{label}</span>
-    <input
-      type="number"
-      value={value}
-      onchange={(e) => onchange(Number((e.target as HTMLInputElement).value))}
-      disabled={disabled}
-    />
-  </label>
-{:else}
-  <span class="text-small text-high">{label}</span>
-  <span class="text-low">{value}</span>
-{/if}
-
-<style>
-  .span-cols-2 {
-    grid-column: span 2;
-  }
-</style>
+<label class="m-0">
+  <span class="text-h5 m-0">{key}</span>
+  <input 
+    type="number" 
+    class="stat" 
+    {value}
+    {onchange} 
+    readonly={!isEditing || readonly} />
+</label>

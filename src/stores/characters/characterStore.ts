@@ -34,8 +34,7 @@ export const character: WritableAtom<Character | null> = atom(null);
 // when the character changes, the page is refreshed, or the sheet key changes.
 export const sheet: WritableAtom<CharacterSheet | null> = atom(null);
 
-// Is the character in edit mode (editable by the current user)
-export const editor = atom(false);
+export const saving = atom(false);
 
 export const canEdit = computed([character, uid], (c, u) => {
   // Check if the character is editable by the current user
@@ -120,6 +119,8 @@ async function loadSheet(sheetKey: string) {
 
 export async function update(data: Partial<Character>) {
   logDebug('characterStore', 'Updating character:', data);
+  saving.set(true);
+
   const { updateDoc, doc } = await import('firebase/firestore');
   const { db } = await import('@firebase/client');
   const { toFirestoreEntry } = await import('@utils/client/toFirestoreEntry');
@@ -161,6 +162,8 @@ export async function update(data: Partial<Character>) {
     logDebug('characterStore', 'Character update failed, rolling back:', error);
     pushSnack('app:error.generic');
     throw error;
+  } finally {
+    saving.set(false);
   }
 }
 
@@ -175,7 +178,6 @@ export function cleanup() {
   sheet.set(null);
   loading.set(false);
   sheetLoading.set(false);
-  editor.set(false);
 }
 
 /**
@@ -188,4 +190,41 @@ export async function refreshSheet() {
     sheet.set(null); // Clear current sheet
     await loadSheet(currentCharacter.sheetKey);
   }
+}
+
+/**
+ * Update a single stat value in the character's stats object.
+ *
+ * @param statKey the key of the stat to update
+ * @param value the new value for the stat
+ */
+export async function updateStat(statKey: string, value: number) {
+  const currentCharacter = character.get();
+  if (!currentCharacter) {
+    throw new Error('No character to update');
+  }
+
+  // Check if the stat has a type in the sheet, if so, validate the value
+  // before updating.
+  //
+  // If the there is no sheet, or the stat is not defined in the sheet,
+  // we skip validation and update the value as given.
+  const currentSheet = sheet.get();
+  const statDefinition = currentSheet?.stats?.find((s) => s.key === statKey);
+  if (statDefinition) {
+    if (statDefinition.type === 'number') {
+      if (typeof value !== 'number' || Number.isNaN(value)) {
+        throw new Error(`Invalid value for stat ${statKey}: ${value}`);
+      }
+    }
+  }
+
+  // Update the stat in the character's stats object
+  const updatedStats = {
+    ...currentCharacter.stats,
+    [statKey]: value,
+  };
+
+  // Call the update function to persist the change
+  await update({ stats: updatedStats });
 }

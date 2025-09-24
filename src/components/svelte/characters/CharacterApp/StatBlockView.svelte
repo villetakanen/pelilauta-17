@@ -1,5 +1,6 @@
 <script lang="ts">
 import { character, sheet } from '@stores/characters/characterStore';
+import NumberStat from './NumberStat.svelte';
 
 interface Props {
   group: { key: string; layout: string };
@@ -20,12 +21,7 @@ const type = (key: string) => {
 <cn-stat-block label={group.key} layout={group.layout}>
   {#each statsInGroup as stat}
     {#if stat.type === 'number'}
-      <div class="flex flex-row flex-no-wrap">
-        <h4 class="text-h5 m-0 grow">
-          {stat.key}
-        </h4>
-        <input type="number" value={stat.value} class="stat flex-none" style="flex:none" readonly />
-      </div>
+      <NumberStat key={stat.key} />
     {:else if stat.type === 'd20_ability_score'}
       <cn-d20-ability-score
         class="stat"

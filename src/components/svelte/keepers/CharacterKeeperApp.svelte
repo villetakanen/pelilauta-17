@@ -144,3 +144,9 @@ onMount(() => {
     </footer>
   {/if}
 </div>
+
+<!--div class="content-columns">
+  <div class="column-l debug">
+    <pre class="text-small text-low">{JSON.stringify(sheet, null, 2)}</pre>
+  </div>
+</div-->

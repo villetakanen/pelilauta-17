@@ -81,6 +81,11 @@ const isOwner = $derived.by(() => {
       <CharacterArticle
         character={$character} 
        />
+
+       <div class="debug">
+          <pre class="text-small text-low">{JSON.stringify($character, null, 2)}</pre>
+       </div>
     </div>
+
   {/if}
 </div>
