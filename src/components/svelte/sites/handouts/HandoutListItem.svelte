@@ -15,10 +15,12 @@ interface Props {
 const { handout }: Props = $props();
 </script>
 
-<li class="flex flex-no-wrap justify-between">
-  <a href={`/sites/${handout.siteKey}/handouts/${handout.key}`}>
-    {handout.title}
-  </a>
+<li class="flex flex-row p-1">
+  <div class="grow">
+    <a href={`/sites/${handout.siteKey}/handouts/${handout.key}`}>
+      {handout.title}
+    </a>
+  </div>
   <span class="flex-none">
     {#each handout?.readers || [] as reader}
       <span style="padding-left: var(--cn-grid)">
