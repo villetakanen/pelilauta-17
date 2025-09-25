@@ -5,7 +5,7 @@ import ProfileLink from '../../app/ProfileLink.svelte';
 import HandoutListItem from './HandoutListItem.svelte';
 </script>
 
-<section class="surface p-2">
+<section>
 
   {#if $handouts.length === 0}
     <p>No handouts available.</p>
