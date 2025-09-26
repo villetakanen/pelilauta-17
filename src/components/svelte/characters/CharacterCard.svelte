@@ -10,11 +10,14 @@ export interface CharacterCardProps {
   actions?: Snippet;
 }
 const { character, children, actions }: CharacterCardProps = $props();
+
+const systemKey = $derived.by(() => character.systemKey || undefined);
 </script>
 
 <cn-card
   href={`/characters/${character.key}`}
   title={character.name}
+  noun={systemKey}
 >
   {#if character.siteKey}
     <p class="downscaled">

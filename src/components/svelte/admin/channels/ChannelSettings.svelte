@@ -1,68 +1,234 @@
 <script lang="ts">
-import { updateDoc } from 'firebase/firestore';
+import { authedFetch } from '@firebase/client/apiClient';
 import type { Channel } from 'src/schemas/ChannelSchema';
-import { THREADS_COLLECTION_NAME } from 'src/schemas/ThreadSchema';
 import { toDisplayString } from 'src/utils/contentHelpers';
-import { logDebug } from 'src/utils/logHelpers';
-import { update } from '../../../../stores/site';
+import { t } from 'src/utils/i18n';
+import { logDebug, logError } from 'src/utils/logHelpers';
 
 interface Props {
   channel: Channel;
+  onRefresh?: () => void;
+  onChannelUpdated?: (updatedChannel: Channel) => void;
+  onChannelDeleted?: (deletedSlug: string) => void;
 }
-const { channel }: Props = $props();
+const { channel, onRefresh, onChannelUpdated, onChannelDeleted }: Props =
+  $props();
+
+let isRefreshing = $state(false);
+let isDeleting = $state(false);
 
 async function forceRefresh() {
-  const { db } = await import('../../../../firebase/client');
-  const { getDocs, collection, query, where, getDoc, doc } = await import(
-    'firebase/firestore'
+  try {
+    isRefreshing = true;
+    logDebug(
+      'ChannelSettings',
+      `Refreshing statistics for channel: ${channel.slug}`,
+    );
+
+    const response = await authedFetch('/api/admin/channels/refresh', {
+      method: 'POST',
+      body: JSON.stringify({ channelSlug: channel.slug }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `Failed to refresh channel: ${response.status} ${errorText}`,
+      );
+    }
+
+    const result = await response.json();
+    logDebug('ChannelSettings', 'Refresh completed:', result.message);
+
+    // Notify parent to reload data
+    if (onRefresh) onRefresh();
+
+    // Show success feedback (TODO: implement with cn-snackbar)
+    console.log('Success:', result.message);
+  } catch (err) {
+    logError(
+      'ChannelSettings',
+      `Failed to refresh channel ${channel.slug}:`,
+      err,
+    );
+    const errorMessage =
+      err instanceof Error ? err.message : 'Failed to refresh channel';
+    // Show error feedback (TODO: implement with cn-snackbar)
+    console.error('Error:', errorMessage);
+  } finally {
+    isRefreshing = false;
+  }
+}
+
+function handleEdit() {
+  // For now, just prompt for a new name as a simple edit
+  const newName = prompt(
+    t('admin:channels.edit.namePrompt', { current: channel.name }),
   );
-  const threadsRef = collection(db, THREADS_COLLECTION_NAME);
-  const q = query(threadsRef, where('channel', '==', channel.slug));
-  const threads = await getDocs(q);
-  const lastFlowTime = threads.docs.reduce((acc, doc) => {
-    const data = doc.data();
-    if (data.flowTime.toMillis() > acc) {
-      return data.flowTime.toMillis();
-    }
-    return acc;
-  }, 1000);
+  if (newName?.trim() && newName !== channel.name) {
+    updateChannel(newName.trim());
+  }
+}
 
-  logDebug('forceRefresh', channel.slug, threads.size, lastFlowTime);
+async function updateChannel(newName: string) {
+  try {
+    const response = await authedFetch('/api/admin/channels', {
+      method: 'PUT',
+      body: JSON.stringify({
+        originalSlug: channel.slug,
+        name: newName,
+        category: channel.category,
+        icon: channel.icon,
+        description: channel.description,
+      }),
+    });
 
-  const channels = await getDoc(doc(db, 'meta', 'threads'));
-  if (channels.exists()) {
-    logDebug('forceRefresh', 'updating', channel.slug);
-    const data = channels.data();
-    if (data) {
-      const topics = data.topics.map((c: Channel) => {
-        if (c.slug === channel.slug) {
-          return {
-            ...c,
-            threadCount: threads.size,
-            flowTime: lastFlowTime,
-          };
-        }
-        return c;
-      });
-      logDebug('forceRefresh', 'updating', topics);
-      await updateDoc(doc(db, 'meta', 'threads'), { topics });
+    if (response.ok) {
+      const result = await response.json();
+      logDebug('ChannelSettings', 'Channel updated:', result.channel);
+      // Show success feedback (TODO: implement with cn-snackbar)
+      console.log('Success:', t('admin:channels.edit.success'));
+
+      if (onChannelUpdated) {
+        onChannelUpdated(result.channel);
+      }
+
+      // Reload to get fresh data
+      if (onRefresh) {
+        onRefresh();
+      }
+    } else {
+      const data = await response.json();
+      const errorMessage = data.error || response.statusText;
+      console.error('Error:', errorMessage);
+      alert(`${t('admin:channels.edit.failed')}: ${errorMessage}`);
+      logError('ChannelSettings', 'Failed to update channel:', errorMessage);
     }
+  } catch (error) {
+    logError('ChannelSettings', 'Error updating channel:', error);
+    alert(t('admin:channels.edit.failed'));
+  }
+}
+
+async function handleDelete() {
+  // Enhanced confirmation dialog
+  const confirmation = confirm(
+    `⚠️ ${t('admin:channels.delete.confirm')}: "${channel.name}"\n\n` +
+      `${t('admin:channels.delete.warning')}\n` +
+      `- ${t('admin:channels.delete.details.threads')}: ${channel.threadCount}\n` +
+      `- ${t('admin:channels.delete.details.category')}: ${channel.category}\n\n` +
+      `❗ ${t('admin:channels.delete.cannotUndo')}\n\n` +
+      `${t('admin:channels.delete.typeToConfirm')}`,
+  );
+
+  if (!confirmation) {
+    return;
+  }
+
+  // Ask user to type the channel name for confirmation
+  const typedName = prompt(
+    t('admin:channels.delete.namePrompt', { name: channel.name }),
+  );
+  if (typedName !== channel.name) {
+    alert(t('admin:channels.delete.nameMismatch'));
+    return;
+  }
+
+  isDeleting = true;
+  try {
+    const response = await authedFetch(
+      `/api/admin/channels?slug=${encodeURIComponent(channel.slug)}`,
+      {
+        method: 'DELETE',
+      },
+    );
+
+    if (response.ok) {
+      logDebug('ChannelSettings', 'Channel deleted:', channel.slug);
+      // Show success feedback (TODO: implement with cn-snackbar)
+      console.log(
+        'Success:',
+        t('admin:channels.delete.success', { name: channel.name }),
+      );
+
+      if (onChannelDeleted) {
+        onChannelDeleted(channel.slug);
+      }
+    } else {
+      const data = await response.json();
+      const errorMessage = data.error || response.statusText;
+      // Show error feedback (TODO: implement with cn-snackbar)
+      console.error('Error:', errorMessage);
+      alert(`${t('admin:channels.delete.failed')}: ${errorMessage}`);
+      logError('ChannelSettings', 'Failed to delete channel:', errorMessage);
+    }
+  } catch (error) {
+    logError('ChannelSettings', 'Error deleting channel:', error);
+    alert(t('admin:channels.delete.failed'));
+  } finally {
+    isDeleting = false;
   }
 }
 </script>
 
-<div class="flex">
-  <div class="grow">
-    <h3>{channel.slug}</h3>
+<article class="surface">
+  <div class="flex flex-row items-start">
+    <cn-icon noun={channel.icon} class="flex-none"></cn-icon>
+    <div class="grow">
+      <h3 class="text-h5 m-0">{channel.name}</h3>
+      <p class="text-caption">/channels/{channel.slug}</p>
+    </div>
+    <div class="text-small flex-none">
+      <div class="m-0">
+        <span class="text-high">{channel.threadCount}</span> 
+        <span class="text-low">threads</span>
+      </div>
+      <div class="text-caption text-low">
+        {toDisplayString(channel.flowTime)} latest
+      </div>
+    </div>
   </div>
-  <div>
-    <p class="text-small">
-      {channel.threadCount} threads <br><br>
-      {toDisplayString(channel.flowTime)} latest flowTime
-    </p>
-    <button type="button"
-    onclick={forceRefresh}
-    >Force Refresh</button>
-  </div>
-</div>
 
+  <div class="toolbar">
+    <div class="grow"></div>
+      <button 
+        type="button"
+        class="btn btn-sm"
+        onclick={forceRefresh}
+        disabled={isRefreshing}
+        title="Refresh channel statistics"
+      >
+        {#if isRefreshing}
+          <cn-loader small></cn-loader>
+        {:else}
+          <cn-icon noun="tools" small></cn-icon>
+        {/if}
+        {t('admin:channels.actions.refresh')}
+      </button>
+      
+      <button 
+        type="button" 
+        class="btn btn-sm btn-outline"
+        onclick={handleEdit}
+        title={t('admin:channels.actions.edit')}
+      >
+        <cn-icon noun="edit" small></cn-icon>
+        {t('admin:channels.actions.edit')}
+      </button>
+      
+      <button 
+        type="button" 
+        class="btn btn-sm btn-outline text-danger"
+        onclick={handleDelete}
+        disabled={isDeleting}
+        title={t('admin:channels.actions.delete')}
+      >
+        {#if isDeleting}
+          <cn-loader small></cn-loader>
+        {:else}
+          <cn-icon noun="delete" small></cn-icon>
+        {/if}
+        {t('admin:channels.actions.delete')}
+      </button>
+    </div>
+</article>

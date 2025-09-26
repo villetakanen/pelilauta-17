@@ -1,16 +1,17 @@
 {
   "name": "Pelilauta",
   "type": "module",
-  "version": "18.5.9",
+  "version": "18.6.0",
   "engines": {
     "node": ">=20.0.0"
   },
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro check && astro build && npm run generateSW",
+    "build": "npm run generate:icons && astro check && astro build && npm run generateSW",
     "preview": "astro preview",
     "astro": "astro",
+    "generate:icons": "node scripts/generate-icons.mjs",
     "test": "vitest run test --exclude test/api",
     "test:api": "NODE_ENV=development node test/api/init-api-test-db.js && NODE_ENV=development npx wait-on http://localhost:4321 && NODE_ENV=development vitest run test/api",
     "check": "biome check --write .",

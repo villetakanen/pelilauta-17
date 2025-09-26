@@ -6,10 +6,6 @@ import { uid } from '../../../stores/session';
 import WithAuth from '../app/WithAuth.svelte';
 import SentryTestButton from './SentryTestButton.svelte';
 
-type Props = {
-  showLocalTools: boolean;
-};
-const { showLocalTools }: Props = $props();
 const visible = $derived.by(() => $appMeta.admins.includes($uid));
 
 async function testSSRAuth() {
@@ -41,15 +37,14 @@ async function testSSRNoAuth() {
 </script>
 
 <WithAuth allow={visible}>
-  <h3>MOD / ADM</h3>
+  <h3>Admin Tools</h3>
   <p class="text-caption pb-1 pt-1">
-    Admin and Mod tools. Please note some of the tools are not available in the public
-    deployment of the Pelilauta app - and require a local deployment.
+    Administrative tools for managing forum channels, content, and system settings.
   </p>
   <ul>
     <li>
       <a href="/admin/channels">
-        <cn-icon noun="discussion" small></cn-icon> Forum / Channels
+        <cn-icon noun="discussion" small></cn-icon> Forum Administration
       </a>
     </li>
     <li>
@@ -57,14 +52,11 @@ async function testSSRNoAuth() {
         <cn-icon noun="send" small></cn-icon> Social Media Poster
       </a>
     </li>
-    {#if showLocalTools}  
-      <li>
-        <a href="/admin/users">
-          <cn-icon noun="adventurer" small></cn-icon> Users
-        </a>
-      </li>
-      
-    {/if}
+    <li>
+      <a href="/admin/users">
+        <cn-icon noun="adventurer" small></cn-icon> User Management
+      </a>
+    </li>
     <li>
       <a href="/admin/sheets">
         <cn-icon noun="adventurer" small></cn-icon> Character Sheets
@@ -72,7 +64,7 @@ async function testSSRNoAuth() {
     </li>
     <li>
       <a href="/admin/sites">
-        <cn-icon noun="mekanismi" small></cn-icon> Site activity
+        <cn-icon noun="mekanismi" small></cn-icon> Site Activity
       </a>
     </li>
     <li>
