@@ -20,6 +20,11 @@ export const CharacterSchema = ContentEntrySchema.extend({
   /** Reference to a character sheet template by key. */
   sheetKey: z.string().optional(),
 
+  /** The key of the system this character belongs to. Used for
+   * loading system-specific character sheets etc.
+   */
+  systemKey: z.string().optional(),
+
   /** Character stats as key-value pairs. Values can be string, number, or boolean. */
   stats: z.record(z.union([z.string(), z.number(), z.boolean()])).default({}),
 
