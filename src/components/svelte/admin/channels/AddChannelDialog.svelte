@@ -1,6 +1,7 @@
 <script lang="ts">
 import { logDebug } from 'src/utils/logHelpers';
 import { toMekanismiURI } from 'src/utils/mekanismiUtils';
+import NounSelect from '../../ui/NounSelect.svelte';
 
 interface Props {
   topics: Array<string>;
@@ -15,7 +16,7 @@ let channelName = $state('');
 const channelSlug = $derived.by(() => toMekanismiURI(channelName));
 
 let selectedCategory = $state('');
-let icon = $state('icon1'); // Default icon
+let icon = $state('discussion'); // Default to a real icon
 
 let isSaving = $state(false);
 
@@ -36,7 +37,7 @@ function closeDialog() {
     dialogRef.close();
     // Reset form fields
     channelName = '';
-    icon = 'icon1'; // Reset to default icon
+    icon = 'discussion'; // Reset to default real icon
   }
 }
 
@@ -112,11 +113,14 @@ function handleSubmit(event: SubmitEvent) {
 
         <label>
           Icon:
-          <select bind:value={icon}>
-            <option value="icon1">Icon 1</option>
-            <option value="icon2">Icon 2</option>
-            <option value="icon3">Icon 3</option>
-          </select>
+          <NounSelect 
+            value={icon}
+            defaultValue="discussion"
+            placeholder="Choose an icon..."
+            searchable
+            required
+            onIconSelect={(selectedIcon) => { icon = selectedIcon; }}
+          />
         </label>
       </fieldset>
 

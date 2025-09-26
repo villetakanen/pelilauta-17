@@ -5,7 +5,8 @@ noun: 'monsters'
 ---
 ## Version 18
 
-### 18.5.x (ongoing)
+### 18.6.0 (ongoing)
+- feat: PBI-21 – Added NounSelect.svelte component for selecting Cyan Design System nouns (`/public/icons/*.svg`)
 - fix(sites): Handout list item layout fix for better rendering
 - fix(sites): Handout list auth check at SSR to prevent flickering
 - fix(sites): Keeper character card shows number stats with the same ui styles as in the character sheet
