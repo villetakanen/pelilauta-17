@@ -1,4 +1,5 @@
 <script lang="ts">
+import { t } from 'src/utils/i18n';
 import { logDebug } from 'src/utils/logHelpers';
 import { toMekanismiURI } from 'src/utils/mekanismiUtils';
 import NounSelect from '../../ui/NounSelect.svelte';
@@ -75,7 +76,7 @@ function handleSubmit(event: SubmitEvent) {
 
 <button onclick={openDialog} data-add-channel-trigger>
   <cn-icon noun="add" small></cn-icon>
-  <span>Add Channel</span>
+  <span>{t('admin:channels.addChannel')}</span>
 </button>
 
 <dialog bind:this={dialogRef}>    

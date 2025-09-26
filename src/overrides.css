@@ -1,3 +1,8 @@
 main .flex-row > .flex-none {
   flex: none;
 }
+
+/* Text alignment atomic class */
+.text-end {
+  text-align: end;
+}

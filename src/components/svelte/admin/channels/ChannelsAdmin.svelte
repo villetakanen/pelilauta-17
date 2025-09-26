@@ -2,6 +2,7 @@
 import { authedFetch } from '@firebase/client/apiClient';
 import { authUser, uid } from '@stores/session';
 import { type Channel, parseChannel } from 'src/schemas/ChannelSchema';
+import { t } from 'src/utils/i18n';
 import { logDebug, logError } from 'src/utils/logHelpers';
 import { onMount } from 'svelte';
 import AddChannelDialog from './AddChannelDialog.svelte';
@@ -84,7 +85,7 @@ async function loadChannels() {
     logDebug('ChannelsAdmin', `Loaded ${channels.length} channels`);
   } catch (err) {
     logError('ChannelsAdmin', 'Failed to load channels:', err);
-    error = err instanceof Error ? err.message : 'Failed to load channels';
+    error = err instanceof Error ? err.message : t('admin:errors.loadFailed');
   } finally {
     isLoading = false;
   }
@@ -117,11 +118,11 @@ async function addChannel(name: string, category: string, icon: string) {
     await loadChannels();
 
     // Show success notification (if using cn-snackbar)
-    showSuccess(`Channel "${name}" created successfully`);
+    showSuccess(t('admin:channels.create.success', { name }));
   } catch (err) {
     logError('ChannelsAdmin', 'Failed to create channel:', err);
     const errorMessage =
-      err instanceof Error ? err.message : 'Failed to create channel';
+      err instanceof Error ? err.message : t('admin:channels.create.failed');
     showError(errorMessage);
     throw err; // Re-throw so AddChannelDialog can handle it
   }
@@ -147,11 +148,11 @@ async function refreshAllChannels() {
 
     // Reload channels to get fresh statistics
     await loadChannels();
-    showSuccess(result.message);
+    showSuccess(t('admin:channels.refresh.allSuccess'));
   } catch (err) {
     logError('ChannelsAdmin', 'Failed to refresh channels:', err);
     const errorMessage =
-      err instanceof Error ? err.message : 'Failed to refresh channels';
+      err instanceof Error ? err.message : t('admin:channels.refresh.failed');
     showError(errorMessage);
   }
 }
@@ -174,26 +175,20 @@ function showError(message: string) {
 }
 </script>
 
-<div class="content-columns">
-  <section class="column-l">
-    <div class="toolbar">
+<div class="content-listing">
+  <header class="border-b">
+    <div class="toolbar px-0">
       <div class="grow">
-        <h1>Forum Administration</h1>
-        <p class="text-caption pb-1">
-          Manage forum channels and topics. Create new channels, refresh statistics, and organize forum structure.
-        </p>
-        <p class="text-caption text-low">
-          <kbd>Ctrl+R</kbd> Refresh All • <kbd>Ctrl+N</kbd> Add Channel
-        </p>
+        <h1>{t('admin:title')}</h1>
       </div>
       <div class="flex gap-2">
-        <button onclick={refreshAllChannels} class="btn" disabled={isLoading}>
+        <button onclick={refreshAllChannels} class="text" disabled={isLoading}>
           {#if isLoading}
             <cn-loader small></cn-loader>
           {:else}
-            <cn-icon noun="tools" small></cn-icon>
+            <cn-icon noun="spiral" small></cn-icon>
           {/if}
-          Refresh All
+          <span>{t('admin:channels.refreshAll')}</span>
         </button>
         <AddChannelDialog 
           {topics}
@@ -201,6 +196,15 @@ function showError(message: string) {
         />
       </div>
     </div>
+    <p class="text-caption pb-1">
+      {t('admin:description')}
+    </p>
+    <p class="text-caption text-low text-end">
+      <kbd>Ctrl+R</kbd> {t('admin:shortcuts.refreshAll')} • <kbd>Ctrl+N</kbd> {t('admin:shortcuts.addChannel')}
+    </p>
+  </header>
+
+  <section class="column-l">
 
     {#if error}
       <div class="p-4 border border-error radius-s bg-error-low">
@@ -210,19 +214,19 @@ function showError(message: string) {
         </p>
         <button onclick={loadChannels} class="btn btn-sm mt-2">
           <cn-icon noun="tools" small></cn-icon>
-          Retry
+          {t('admin:errors.retry')}
         </button>
       </div>
     {:else if isLoading}
       <div class="p-4 text-center">
         <cn-loader></cn-loader>
-        <p class="text-caption">Loading channels...</p>
+        <p class="text-caption">{t('admin:channels.loading')}</p>
       </div>
     {:else if channels.length === 0}
       <div class="p-4 text-center">
         <cn-icon noun="discussion" large></cn-icon>
-        <h2>No Channels Found</h2>
-        <p class="text-caption pb-4">Create your first channel to get started.</p>
+        <h2>{t('admin:channels.noChannels.title')}</h2>
+        <p class="text-caption pb-4">{t('admin:channels.noChannels.description')}</p>
       </div>
     {:else}
       {#each topics as topic}

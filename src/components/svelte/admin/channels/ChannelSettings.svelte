@@ -2,6 +2,7 @@
 import { authedFetch } from '@firebase/client/apiClient';
 import type { Channel } from 'src/schemas/ChannelSchema';
 import { toDisplayString } from 'src/utils/contentHelpers';
+import { t } from 'src/utils/i18n';
 import { logDebug, logError } from 'src/utils/logHelpers';
 
 interface Props {
@@ -61,7 +62,9 @@ async function forceRefresh() {
 
 function handleEdit() {
   // For now, just prompt for a new name as a simple edit
-  const newName = prompt(`Edit channel name (current: "${channel.name}"):`);
+  const newName = prompt(
+    t('admin:channels.edit.namePrompt', { current: channel.name }),
+  );
   if (newName?.trim() && newName !== channel.name) {
     updateChannel(newName.trim());
   }
@@ -84,7 +87,7 @@ async function updateChannel(newName: string) {
       const result = await response.json();
       logDebug('ChannelSettings', 'Channel updated:', result.channel);
       // Show success feedback (TODO: implement with cn-snackbar)
-      console.log('Success: Channel updated');
+      console.log('Success:', t('admin:channels.edit.success'));
 
       if (onChannelUpdated) {
         onChannelUpdated(result.channel);
@@ -98,24 +101,24 @@ async function updateChannel(newName: string) {
       const data = await response.json();
       const errorMessage = data.error || response.statusText;
       console.error('Error:', errorMessage);
-      alert(`Failed to update channel: ${errorMessage}`);
+      alert(`${t('admin:channels.edit.failed')}: ${errorMessage}`);
       logError('ChannelSettings', 'Failed to update channel:', errorMessage);
     }
   } catch (error) {
     logError('ChannelSettings', 'Error updating channel:', error);
-    alert('Error updating channel. Please try again.');
+    alert(t('admin:channels.edit.failed'));
   }
 }
 
 async function handleDelete() {
   // Enhanced confirmation dialog
   const confirmation = confirm(
-    `⚠️ DELETE CHANNEL: "${channel.name}"\n\n` +
-      `This will permanently delete the channel.\n` +
-      `- Current threads: ${channel.threadCount}\n` +
-      `- Category: ${channel.category}\n\n` +
-      `❗ This action cannot be undone!\n\n` +
-      `Type the channel name to confirm deletion:`,
+    `⚠️ ${t('admin:channels.delete.confirm')}: "${channel.name}"\n\n` +
+      `${t('admin:channels.delete.warning')}\n` +
+      `- ${t('admin:channels.delete.details.threads')}: ${channel.threadCount}\n` +
+      `- ${t('admin:channels.delete.details.category')}: ${channel.category}\n\n` +
+      `❗ ${t('admin:channels.delete.cannotUndo')}\n\n` +
+      `${t('admin:channels.delete.typeToConfirm')}`,
   );
 
   if (!confirmation) {
@@ -124,10 +127,10 @@ async function handleDelete() {
 
   // Ask user to type the channel name for confirmation
   const typedName = prompt(
-    `Please type "${channel.name}" to confirm deletion:`,
+    t('admin:channels.delete.namePrompt', { name: channel.name }),
   );
   if (typedName !== channel.name) {
-    alert('Channel name does not match. Deletion cancelled.');
+    alert(t('admin:channels.delete.nameMismatch'));
     return;
   }
 
@@ -143,7 +146,10 @@ async function handleDelete() {
     if (response.ok) {
       logDebug('ChannelSettings', 'Channel deleted:', channel.slug);
       // Show success feedback (TODO: implement with cn-snackbar)
-      console.log('Success: Channel deleted');
+      console.log(
+        'Success:',
+        t('admin:channels.delete.success', { name: channel.name }),
+      );
 
       if (onChannelDeleted) {
         onChannelDeleted(channel.slug);
@@ -153,12 +159,12 @@ async function handleDelete() {
       const errorMessage = data.error || response.statusText;
       // Show error feedback (TODO: implement with cn-snackbar)
       console.error('Error:', errorMessage);
-      alert(`Failed to delete channel: ${errorMessage}`);
+      alert(`${t('admin:channels.delete.failed')}: ${errorMessage}`);
       logError('ChannelSettings', 'Failed to delete channel:', errorMessage);
     }
   } catch (error) {
     logError('ChannelSettings', 'Error deleting channel:', error);
-    alert('Error deleting channel. Please try again.');
+    alert(t('admin:channels.delete.failed'));
   } finally {
     isDeleting = false;
   }
@@ -200,18 +206,17 @@ async function handleDelete() {
         {:else}
           <cn-icon noun="tools" small></cn-icon>
         {/if}
-        Refresh
+        {t('admin:channels.actions.refresh')}
       </button>
       
-      <!-- TODO: Add edit and delete buttons in Phase 2 -->
       <button 
         type="button" 
         class="btn btn-sm btn-outline"
         onclick={handleEdit}
-        title="Edit channel"
+        title={t('admin:channels.actions.edit')}
       >
         <cn-icon noun="edit" small></cn-icon>
-        Edit
+        {t('admin:channels.actions.edit')}
       </button>
       
       <button 
@@ -219,14 +224,14 @@ async function handleDelete() {
         class="btn btn-sm btn-outline text-danger"
         onclick={handleDelete}
         disabled={isDeleting}
-        title="Delete channel (must have no threads)"
+        title={t('admin:channels.actions.delete')}
       >
         {#if isDeleting}
           <cn-loader small></cn-loader>
         {:else}
           <cn-icon noun="delete" small></cn-icon>
         {/if}
-        Delete
+        {t('admin:channels.actions.delete')}
       </button>
     </div>
   </div>

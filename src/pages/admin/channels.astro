@@ -9,7 +9,7 @@ import PageWithTray from '../../layouts/PageWithTray.astro';
 const session = await verifySession(Astro);
 if (!session?.uid) {
   return Astro.redirect(
-    '/login?redirect=' + encodeURIComponent(Astro.url.pathname),
+    `/login?redirect=${encodeURIComponent(Astro.url.pathname)}`,
   );
 }
 
