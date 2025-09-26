@@ -73,7 +73,7 @@ function handleSubmit(event: SubmitEvent) {
 }
 </script>
 
-<button onclick={openDialog}>
+<button onclick={openDialog} data-add-channel-trigger>
   <cn-icon noun="add" small></cn-icon>
   <span>Add Channel</span>
 </button>
@@ -114,12 +114,11 @@ function handleSubmit(event: SubmitEvent) {
         <label>
           Icon:
           <NounSelect 
-            value={icon}
+            bind:value={icon}
             defaultValue="discussion"
             placeholder="Choose an icon..."
             searchable
             required
-            onIconSelect={(selectedIcon) => { icon = selectedIcon; }}
           />
         </label>
       </fieldset>

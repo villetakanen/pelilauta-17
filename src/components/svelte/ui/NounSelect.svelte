@@ -1,6 +1,6 @@
 <script lang="ts">
 interface Props {
-  value?: string;
+  value: string;
   defaultValue?: string;
   placeholder?: string;
   disabled?: boolean;
@@ -10,8 +10,8 @@ interface Props {
   onIconSelect?: (iconName: string) => void;
 }
 
-const {
-  value = '',
+let {
+  value = $bindable('discussion'),
   defaultValue = 'discussion',
   placeholder = 'Select an icon...',
   disabled = false,
@@ -20,8 +20,6 @@ const {
   required = false,
   onIconSelect,
 }: Props = $props();
-
-let currentValue = $state(value || defaultValue);
 
 // Static icon list from our generated data
 const availableIcons = [
@@ -107,14 +105,14 @@ const filteredIcons = $derived.by(() => {
 
 // Initialize with default if needed
 $effect(() => {
-  if (!currentValue && defaultValue) {
-    currentValue = defaultValue;
-    if (onIconSelect) onIconSelect(currentValue);
+  if (!value && defaultValue) {
+    value = defaultValue;
+    if (onIconSelect) onIconSelect(value);
   }
 });
 
 function selectIcon(iconName: string) {
-  currentValue = iconName;
+  value = iconName;
   if (onIconSelect) onIconSelect(iconName);
   isOpen = false;
   searchTerm = '';
@@ -174,9 +172,9 @@ function handleKeydown(event: KeyboardEvent) {
     aria-expanded={isOpen}
     aria-label={placeholder}
   >
-    {#if currentValue}
-      <cn-icon noun={currentValue} small={size === 'small'} large={size === 'large'}></cn-icon>
-      <span class="icon-name">{currentValue}</span>
+    {#if value}
+      <cn-icon noun={value} small={size === 'small'} large={size === 'large'}></cn-icon>
+      <span class="icon-name">{value}</span>
     {:else}
       <span class="placeholder">{placeholder}</span>
     {/if}
@@ -209,11 +207,11 @@ function handleKeydown(event: KeyboardEvent) {
             <button
               type="button"
               class="icon-option"
-              class:selected={currentValue === icon}
+              class:selected={value === icon}
               class:focused={focusedIndex === index}
               onclick={() => selectIcon(icon)}
               role="option"
-              aria-selected={currentValue === icon}
+              aria-selected={value === icon}
             >
               <cn-icon noun={icon} small></cn-icon>
               <span>{icon}</span>
