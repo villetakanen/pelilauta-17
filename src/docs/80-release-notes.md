@@ -5,8 +5,11 @@ noun: 'monsters'
 ---
 ## Version 18
 
-### 18.6.0 (ongoing)
+### 18.6.0 (26.9.2025)
+- feat(threads): Admin channels tool topic management (add, reorder, delete) added
+- feat(threads): PBI-20 - Moved channels admin to non-local admin tools suite
 - feat: PBI-21 – Added NounSelect.svelte component for selecting Cyan Design System nouns (`/public/icons/*.svg`)
+- fix(threads): Admin channels tool new topic creation dialog is again functional
 - fix(sites): Handout list item layout fix for better rendering
 - fix(sites): Handout list auth check at SSR to prevent flickering
 - fix(sites): Keeper character card shows number stats with the same ui styles as in the character sheet
