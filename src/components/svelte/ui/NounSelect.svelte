@@ -1,5 +1,4 @@
 <script lang="ts">
-
 interface Props {
   value?: string;
   defaultValue?: string;
@@ -11,7 +10,7 @@ interface Props {
   onIconSelect?: (iconName: string) => void;
 }
 
-const { 
+const {
   value = '',
   defaultValue = 'discussion',
   placeholder = 'Select an icon...',
@@ -19,21 +18,79 @@ const {
   size = 'medium',
   searchable = true,
   required = false,
-  onIconSelect
+  onIconSelect,
 }: Props = $props();
 
 let currentValue = $state(value || defaultValue);
 
 // Static icon list from our generated data
 const availableIcons = [
-  "add", "admin", "adventurer", "arrow-down", "arrow-left", "arrow-up", "assets", "avatar", 
-  "books", "card", "check", "chevron-left", "clock", "close", "components", "copy-md", 
-  "d12", "d20", "d8", "dd5", "delete", "design", "discussion", "dots", "drag", "dragger", 
-  "edit", "file-pdf", "filter", "font", "fork", "fox", "gamepad", "google", "homebrew", 
-  "hood", "idea", "import-export", "info", "karu", "kebab", "ll-ampersand", "login", 
-  "love", "mekanismi", "monsters", "moon", "myrrys-scarlet", "open-down", "palette", 
-  "pathfinder", "pbta", "pdf", "quote", "reduce", "save", "search", "send", "share", 
-  "spiral", "thequick", "tokens", "tools", "undo", "veil-advance", "youtube"
+  'add',
+  'admin',
+  'adventurer',
+  'arrow-down',
+  'arrow-left',
+  'arrow-up',
+  'assets',
+  'avatar',
+  'books',
+  'card',
+  'check',
+  'chevron-left',
+  'clock',
+  'close',
+  'components',
+  'copy-md',
+  'd12',
+  'd20',
+  'd8',
+  'dd5',
+  'delete',
+  'design',
+  'discussion',
+  'dots',
+  'drag',
+  'dragger',
+  'edit',
+  'file-pdf',
+  'filter',
+  'font',
+  'fork',
+  'fox',
+  'gamepad',
+  'google',
+  'homebrew',
+  'hood',
+  'idea',
+  'import-export',
+  'info',
+  'karu',
+  'kebab',
+  'll-ampersand',
+  'login',
+  'love',
+  'mekanismi',
+  'monsters',
+  'moon',
+  'myrrys-scarlet',
+  'open-down',
+  'palette',
+  'pathfinder',
+  'pbta',
+  'pdf',
+  'quote',
+  'reduce',
+  'save',
+  'search',
+  'send',
+  'share',
+  'spiral',
+  'thequick',
+  'tokens',
+  'tools',
+  'undo',
+  'veil-advance',
+  'youtube',
 ];
 
 let isOpen = $state(false);
@@ -43,8 +100,8 @@ let focusedIndex = $state(-1);
 // Filtered icons based on search
 const filteredIcons = $derived.by(() => {
   if (!searchTerm) return availableIcons;
-  return availableIcons.filter(icon => 
-    icon.toLowerCase().includes(searchTerm.toLowerCase())
+  return availableIcons.filter((icon) =>
+    icon.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 });
 
@@ -71,7 +128,7 @@ function toggleDropdown() {
 
 function handleKeydown(event: KeyboardEvent) {
   if (disabled) return;
-  
+
   switch (event.key) {
     case 'Enter':
     case ' ':
