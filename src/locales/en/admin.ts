@@ -37,6 +37,7 @@ export const admin: Locale = {
         'Cannot delete channel with existing threads. Move or delete threads first.',
       success: 'Channel deleted successfully',
       failed: 'Failed to delete channel',
+      confirmText: 'Are you sure you want to delete this channel?',
     },
     edit: {
       namePrompt: 'Edit channel name (current: "{current}"):',
@@ -52,6 +53,12 @@ export const admin: Locale = {
       allSuccess: 'All channel statistics refreshed',
       failed: 'Failed to refresh channel statistics',
     },
+  },
+  topics: {
+    moveUp: 'Move topic up',
+    moveDown: 'Move topic down',
+    delete: 'Delete topic',
+    deleteDisabled: 'Cannot delete topic with channels',
   },
   errors: {
     loadFailed: 'Failed to load channels',

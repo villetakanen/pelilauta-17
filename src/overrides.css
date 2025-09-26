@@ -6,3 +6,8 @@ main .flex-row > .flex-none {
 .text-end {
   text-align: end;
 }
+
+kbd {
+  font-family: var(--cn-font-family-monospace);
+  color: var(--color-text-high);
+}

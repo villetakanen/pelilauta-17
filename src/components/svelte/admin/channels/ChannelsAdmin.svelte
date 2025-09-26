@@ -7,6 +7,7 @@ import { logDebug, logError } from 'src/utils/logHelpers';
 import { onMount } from 'svelte';
 import AddChannelDialog from './AddChannelDialog.svelte';
 import ChannelSettings from './ChannelSettings.svelte';
+import TopicToolbar from './TopicToolbar.svelte';
 
 let channels: Channel[] = $state([]);
 let isLoading = $state(true);
@@ -163,6 +164,41 @@ function handleChannelDeleted(deletedSlug: string) {
   logDebug('ChannelsAdmin', `Channel deleted from UI: ${deletedSlug}`);
 }
 
+// Topic management functions
+function moveTopicUp(topicIndex: number) {
+  if (topicIndex === 0) return; // Can't move first topic up
+
+  const topicsArray = [...topics];
+  [topicsArray[topicIndex - 1], topicsArray[topicIndex]] = [
+    topicsArray[topicIndex],
+    topicsArray[topicIndex - 1],
+  ];
+
+  // This would need to be implemented with a proper topic management system
+  logDebug('ChannelsAdmin', 'Move topic up not yet implemented');
+}
+
+function moveTopicDown(topicIndex: number) {
+  if (topicIndex >= topics.length - 1) return; // Can't move last topic down
+
+  const topicsArray = [...topics];
+  [topicsArray[topicIndex], topicsArray[topicIndex + 1]] = [
+    topicsArray[topicIndex + 1],
+    topicsArray[topicIndex],
+  ];
+
+  // This would need to be implemented with a proper topic management system
+  logDebug('ChannelsAdmin', 'Move topic down not yet implemented');
+}
+
+function deleteTopic(topic: string) {
+  const hasChannels = filterChannels(topic).length > 0;
+  if (hasChannels) return; // Can't delete topic with channels
+
+  // This would need to be implemented with a proper topic management system
+  logDebug('ChannelsAdmin', 'Delete topic not yet implemented');
+}
+
 // Helper functions for user feedback
 function showSuccess(message: string) {
   // TODO: Implement using cn-snackbar in future
@@ -175,8 +211,8 @@ function showError(message: string) {
 }
 </script>
 
-<div class="content-listing">
-  <header class="border-b">
+<section class="content-listing">
+  <header class="surface elevation-1">
     <div class="toolbar px-0">
       <div class="grow">
         <h1>{t('admin:title')}</h1>
@@ -204,7 +240,7 @@ function showError(message: string) {
     </p>
   </header>
 
-  <section class="column-l">
+  <div class="listing-items">
 
     {#if error}
       <div class="p-4 border border-error radius-s bg-error-low">
@@ -229,33 +265,24 @@ function showError(message: string) {
         <p class="text-caption pb-4">{t('admin:channels.noChannels.description')}</p>
       </div>
     {:else}
-      {#each topics as topic}
-        <div class="mb-4">
-          <h2 class="pb-2">{topic}</h2>
-          <div class="content-cards">
-            {#each filterChannels(topic) as channel}
-              <ChannelSettings 
-                {channel} 
+      {#each topics as topic, index}
+        <TopicToolbar 
+          {topic}
+          hasChannels={filterChannels(topic).length > 0}
+          canMoveUp={index > 0}
+          canMoveDown={index < topics.length - 1}
+          onMoveUp={() => moveTopicUp(index)}
+          onMoveDown={() => moveTopicDown(index)}
+          onDelete={() => deleteTopic(topic)}
+        />
+        {#each filterChannels(topic) as channel}
+          <ChannelSettings 
+            {channel} 
                 onRefresh={loadChannels}
                 onChannelDeleted={handleChannelDeleted}
               />
             {/each}
-          </div>
-        </div>
       {/each}
     {/if}
-  </section>
-</div>
-
-<style>
-kbd {
-  display: inline-block;
-  padding: 0.125rem 0.25rem;
-  font-size: 0.75rem;
-  background: var(--background-low);
-  border: 1px solid var(--border-low);
-  border-radius: var(--radius-s);
-  font-family: monospace;
-  margin: 0 0.125rem;
-}
-</style>
+  </div>
+</section>

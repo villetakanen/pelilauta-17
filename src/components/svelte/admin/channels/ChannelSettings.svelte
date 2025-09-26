@@ -171,20 +171,15 @@ async function handleDelete() {
 }
 </script>
 
-<cn-card class="channel-settings">
-  <div class="flex items-start gap-4">
-    <div class="flex items-center gap-2">
-      <cn-icon noun={channel.icon} medium></cn-icon>
-      <div>
-        <h3 class="text-l">{channel.name}</h3>
-        <p class="text-caption text-low">{channel.slug}</p>
-      </div>
+<article class="surface">
+  <div class="flex flex-row items-start">
+    <cn-icon noun={channel.icon} class="flex-none"></cn-icon>
+    <div class="grow">
+      <h3 class="text-h5 m-0">{channel.name}</h3>
+      <p class="text-caption">/channels/{channel.slug}</p>
     </div>
-    
-    <div class="grow"></div>
-    
-    <div class="text-right text-small">
-      <div class="pb-1">
+    <div class="text-small flex-none">
+      <div class="m-0">
         <span class="text-high">{channel.threadCount}</span> 
         <span class="text-low">threads</span>
       </div>
@@ -192,8 +187,10 @@ async function handleDelete() {
         {toDisplayString(channel.flowTime)} latest
       </div>
     </div>
-    
-    <div class="flex flex-col gap-2">
+  </div>
+
+  <div class="toolbar">
+    <div class="grow"></div>
       <button 
         type="button"
         class="btn btn-sm"
@@ -234,26 +231,4 @@ async function handleDelete() {
         {t('admin:channels.actions.delete')}
       </button>
     </div>
-  </div>
-  
-  {#if channel.description}
-    <div class="pt-2 border-t">
-      <p class="text-small text-low">{channel.description}</p>
-    </div>
-  {/if}
-  
-  <div class="pt-2 border-t text-caption text-low">
-    <span>Category: {channel.category || 'Uncategorized'}</span>
-  </div>
-</cn-card>
-
-<style>
-.channel-settings {
-  margin-bottom: 0.5rem;
-}
-
-.text-danger {
-  color: var(--color-danger);
-}
-</style>
-
+</article>

@@ -53,6 +53,12 @@ export const admin: Locale = {
       failed: 'Kanavan tilastojen päivittäminen epäonnistui',
     },
   },
+  topics: {
+    moveUp: 'Siirrä aihetta ylös',
+    moveDown: 'Siirrä aihetta alas',
+    delete: 'Poista aihe',
+    deleteDisabled: 'Aihetta ei voi poistaa, koska siinä on kanavia',
+  },
   errors: {
     loadFailed: 'Kanavien lataaminen epäonnistui',
     retry: 'Yritä uudelleen',
