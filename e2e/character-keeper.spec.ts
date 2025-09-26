@@ -172,8 +172,6 @@ test.describe('Character Keeper', () => {
 
     await page.getByText('E2E Keeper Test Character').click();
     await page.waitForURL(/\/characters\//);
-    expect(page.url()).toContain(
-      `/characters/e2e-keeper-test-character`,
-    );
+    expect(page.url()).toContain(`/characters/e2e-keeper-test-character`);
   });
 });
