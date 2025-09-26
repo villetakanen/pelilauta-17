@@ -15,7 +15,7 @@ test.describe('Channels Page', () => {
 
     // Verify that channel cards are present
     const channelCards = page.locator('article.cols-2');
-    await expect(channelCards).toHaveCount(3); // We know there are 3 channels from our test data
+    await expect(channelCards).toHaveCount(4); // We know there are 4 channels from our test data
 
     // Verify specific channels are displayed
     await expect(page.locator('a[href="/channels/pelilauta/1"]')).toBeVisible();
@@ -174,7 +174,7 @@ test.describe('Channels Page', () => {
 
     // Verify all channels are grouped under the correct category
     const channelsInCategory = categorySection.locator('article.cols-2');
-    await expect(channelsInCategory).toHaveCount(3); // All test channels are in "Pelilauta" category
+    await expect(channelsInCategory).toHaveCount(4); // All test channels are in "Pelilauta" category
   });
 
   test('should respond to API endpoint correctly', async ({ page }) => {
