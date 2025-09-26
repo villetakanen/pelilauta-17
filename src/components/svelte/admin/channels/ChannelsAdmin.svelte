@@ -1,27 +1,40 @@
 <script lang="ts">
 import { authedFetch } from '@firebase/client/apiClient';
+import { addTopicFormOpen } from '@stores/admin/ChannelsAdminStore';
 import { authUser, uid } from '@stores/session';
 import { type Channel, parseChannel } from 'src/schemas/ChannelSchema';
 import { t } from 'src/utils/i18n';
 import { logDebug, logError } from 'src/utils/logHelpers';
-import { onMount } from 'svelte';
 import AddChannelDialog from './AddChannelDialog.svelte';
+import AddTopicForm from './AddTopicForm.svelte';
 import ChannelSettings from './ChannelSettings.svelte';
 import TopicToolbar from './TopicToolbar.svelte';
 
 let channels: Channel[] = $state([]);
+let topicList: string[] = $state([]);
 let isLoading = $state(true);
 let error = $state<string | null>(null);
 
 const topics = $derived.by(() => {
-  const t = new Set<string>();
-  for (const channel of channels) {
-    t.add(channel.category ?? '-');
+  // Use topicList from API if available, otherwise derive from channels
+  let derivedTopics: string[] = [];
+  if (topicList.length > 0) {
+    derivedTopics = topicList;
+  } else {
+    const t = new Set<string>();
+    for (const channel of channels) {
+      t.add(channel.category ?? '-');
+    }
+    derivedTopics = Array.from(t);
   }
-  return Array.from(t);
-});
 
-// Wait for both uid and authUser to prevent race conditions
+  // Auto-open form if no topics exist and not currently loading
+  if (derivedTopics.length === 0 && !isLoading && !error) {
+    addTopicFormOpen.set(true);
+  }
+
+  return derivedTopics;
+}); // Wait for both uid and authUser to prevent race conditions
 $effect(() => {
   if ($uid && $authUser) {
     loadChannels();
@@ -60,6 +73,12 @@ $effect(() => {
         addButton.click();
       }
     }
+
+    // Ctrl/Cmd + T: Open "Add Topic" form
+    if ((e.ctrlKey || e.metaKey) && e.key === 't') {
+      e.preventDefault();
+      addTopicFormOpen.set(true);
+    }
   }
 
   document.addEventListener('keydown', handleKeyDown);
@@ -74,18 +93,36 @@ async function loadChannels() {
     isLoading = true;
     error = null;
 
-    const response = await authedFetch('/api/admin/channels');
-    if (!response.ok) {
+    // Load both channels and topics
+    const [channelsResponse, topicsResponse] = await Promise.all([
+      authedFetch('/api/admin/channels'),
+      authedFetch('/api/admin/topics'),
+    ]);
+
+    if (!channelsResponse.ok) {
       throw new Error(
-        `Failed to load channels: ${response.status} ${response.statusText}`,
+        `Failed to load channels: ${channelsResponse.status} ${channelsResponse.statusText}`,
       );
     }
 
-    const data = await response.json();
-    channels = data.channels.map(parseChannel);
-    logDebug('ChannelsAdmin', `Loaded ${channels.length} channels`);
+    if (!topicsResponse.ok) {
+      throw new Error(
+        `Failed to load topics: ${topicsResponse.status} ${topicsResponse.statusText}`,
+      );
+    }
+
+    const channelsData = await channelsResponse.json();
+    const topicsData = await topicsResponse.json();
+
+    channels = channelsData.channels.map(parseChannel);
+    topicList = topicsData.topics || [];
+
+    logDebug(
+      'ChannelsAdmin',
+      `Loaded ${channels.length} channels and ${topicList.length} topics`,
+    );
   } catch (err) {
-    logError('ChannelsAdmin', 'Failed to load channels:', err);
+    logError('ChannelsAdmin', 'Failed to load channels and topics:', err);
     error = err instanceof Error ? err.message : t('admin:errors.loadFailed');
   } finally {
     isLoading = false;
@@ -129,6 +166,39 @@ async function addChannel(name: string, category: string, icon: string) {
   }
 }
 
+async function addTopic(name: string) {
+  try {
+    logDebug('ChannelsAdmin', 'Creating topic:', { name });
+
+    const response = await authedFetch('/api/admin/topics', {
+      method: 'POST',
+      body: JSON.stringify({ name }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `Failed to create topic: ${response.status} ${errorText}`,
+      );
+    }
+
+    const result = await response.json();
+    logDebug('ChannelsAdmin', 'Topic created successfully:', result);
+
+    // Reload channels to get fresh topic list
+    await loadChannels();
+
+    // Show success notification
+    showSuccess(t('admin:topics.create.success', { name }));
+  } catch (err) {
+    logError('ChannelsAdmin', 'Failed to create topic:', err);
+    const errorMessage =
+      err instanceof Error ? err.message : t('admin:topics.create.failed');
+    showError(errorMessage);
+    throw err; // Re-throw so AddTopicDialog can handle it
+  }
+}
+
 async function refreshAllChannels() {
   try {
     logDebug('ChannelsAdmin', 'Refreshing all channel statistics');
@@ -158,45 +228,20 @@ async function refreshAllChannels() {
   }
 }
 
+async function handleAddTopic(topicName: string) {
+  await addTopic(topicName);
+  // Hide the form after successful submission
+  addTopicFormOpen.set(false);
+}
+
+function cancelAddTopic() {
+  addTopicFormOpen.set(false);
+}
+
 function handleChannelDeleted(deletedSlug: string) {
   // Remove the deleted channel from the local state
   channels = channels.filter((channel) => channel.slug !== deletedSlug);
   logDebug('ChannelsAdmin', `Channel deleted from UI: ${deletedSlug}`);
-}
-
-// Topic management functions
-function moveTopicUp(topicIndex: number) {
-  if (topicIndex === 0) return; // Can't move first topic up
-
-  const topicsArray = [...topics];
-  [topicsArray[topicIndex - 1], topicsArray[topicIndex]] = [
-    topicsArray[topicIndex],
-    topicsArray[topicIndex - 1],
-  ];
-
-  // This would need to be implemented with a proper topic management system
-  logDebug('ChannelsAdmin', 'Move topic up not yet implemented');
-}
-
-function moveTopicDown(topicIndex: number) {
-  if (topicIndex >= topics.length - 1) return; // Can't move last topic down
-
-  const topicsArray = [...topics];
-  [topicsArray[topicIndex], topicsArray[topicIndex + 1]] = [
-    topicsArray[topicIndex + 1],
-    topicsArray[topicIndex],
-  ];
-
-  // This would need to be implemented with a proper topic management system
-  logDebug('ChannelsAdmin', 'Move topic down not yet implemented');
-}
-
-function deleteTopic(topic: string) {
-  const hasChannels = filterChannels(topic).length > 0;
-  if (hasChannels) return; // Can't delete topic with channels
-
-  // This would need to be implemented with a proper topic management system
-  logDebug('ChannelsAdmin', 'Delete topic not yet implemented');
 }
 
 // Helper functions for user feedback
@@ -226,6 +271,10 @@ function showError(message: string) {
           {/if}
           <span>{t('admin:channels.refreshAll')}</span>
         </button>
+        <button onclick={() => addTopicFormOpen.set(true)} class="outlined" disabled={$addTopicFormOpen} data-add-topic-trigger>
+          <cn-icon noun="tag" small></cn-icon>
+          <span>{t('admin:topics.addTopic')}</span>
+        </button>
         <AddChannelDialog 
           {topics}
           {addChannel}
@@ -236,7 +285,7 @@ function showError(message: string) {
       {t('admin:description')}
     </p>
     <p class="text-caption text-low text-end">
-      <kbd>Ctrl+R</kbd> {t('admin:shortcuts.refreshAll')} • <kbd>Ctrl+N</kbd> {t('admin:shortcuts.addChannel')}
+      <kbd>Ctrl+R</kbd> {t('admin:shortcuts.refreshAll')} • <kbd>Ctrl+T</kbd> {t('admin:shortcuts.addTopic')} • <kbd>Ctrl+N</kbd> {t('admin:shortcuts.addChannel')}
     </p>
   </header>
 
@@ -265,15 +314,21 @@ function showError(message: string) {
         <p class="text-caption pb-4">{t('admin:channels.noChannels.description')}</p>
       </div>
     {:else}
-      {#each topics as topic, index}
+      <!-- Add Topic Form -->
+      {#if $addTopicFormOpen}
+        <AddTopicForm 
+          onAddTopic={handleAddTopic}
+          onCancel={cancelAddTopic}
+        />
+      {/if}      {#each topics as topic, index}
         <TopicToolbar 
           {topic}
+          {topics}
           hasChannels={filterChannels(topic).length > 0}
           canMoveUp={index > 0}
           canMoveDown={index < topics.length - 1}
-          onMoveUp={() => moveTopicUp(index)}
-          onMoveDown={() => moveTopicDown(index)}
-          onDelete={() => deleteTopic(topic)}
+          onTopicDeleted={loadChannels}
+          onTopicsReordered={loadChannels}
         />
         {#each filterChannels(topic) as channel}
           <ChannelSettings 

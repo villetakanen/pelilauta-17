@@ -7,6 +7,7 @@ export const admin: Locale = {
   shortcuts: {
     refreshAll: 'Päivitä kaikki',
     addChannel: 'Lisää kanava',
+    addTopic: 'Lisää aihe',
   },
   channels: {
     title: 'Kanavat',
@@ -54,6 +55,17 @@ export const admin: Locale = {
     },
   },
   topics: {
+    addTopic: 'Lisää aihe',
+    create: {
+      title: 'Luo uusi aihe',
+      name: 'Aiheen nimi',
+      placeholder: 'Syötä aiheen nimi',
+      slugPreview: 'URL luodaan automaattisesti',
+      description: 'Aiheet auttavat järjestämään kanavat loogisiin ryhmiin.',
+      save: 'Luo aihe',
+      success: 'Aihe "{name}" luotu onnistuneesti',
+      failed: 'Aiheen luominen epäonnistui',
+    },
     moveUp: 'Siirrä aihetta ylös',
     moveDown: 'Siirrä aihetta alas',
     delete: 'Poista aihe',

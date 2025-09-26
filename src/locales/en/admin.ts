@@ -7,6 +7,7 @@ export const admin: Locale = {
   shortcuts: {
     refreshAll: 'Refresh All',
     addChannel: 'Add Channel',
+    addTopic: 'Add Topic',
   },
   channels: {
     title: 'Channels',
@@ -55,6 +56,17 @@ export const admin: Locale = {
     },
   },
   topics: {
+    addTopic: 'Add Topic',
+    create: {
+      title: 'Create New Topic',
+      name: 'Topic Name',
+      placeholder: 'Enter topic name',
+      slugPreview: 'URL will be generated automatically',
+      description: 'Topics help organize channels into logical groups.',
+      save: 'Create Topic',
+      success: 'Topic "{name}" created successfully',
+      failed: 'Failed to create topic',
+    },
     moveUp: 'Move topic up',
     moveDown: 'Move topic down',
     delete: 'Delete topic',
