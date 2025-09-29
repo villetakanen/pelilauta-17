@@ -5,9 +5,6 @@ import { logDebug, logError } from '@utils/logHelpers';
 import { tokenToUid } from '@utils/server/auth/tokenToUid';
 import type { APIContext } from 'astro';
 
-interface Channel {
-  category?: string;
-}
 
 /**
  * Authentication middleware for admin endpoints
@@ -39,11 +36,11 @@ export async function POST({ request }: APIContext): Promise<Response> {
     if (typeof authResult !== 'string') {
       return authResult; // Return error response
     }
-    const adminUid = authResult;
 
     // Parse and validate request body
     const body = await request.json();
     const { name } = body;
+    logDebug('TopicsAPI', 'Creating topic with name:', body);
 
     if (!name || typeof name !== 'string' || name.trim().length === 0) {
       return new Response('Bad Request - Topic name is required', {
@@ -60,7 +57,7 @@ export async function POST({ request }: APIContext): Promise<Response> {
     let existingTopics: string[] = [];
     if (metaDoc.exists) {
       const data = metaDoc.data();
-      existingTopics = data?.topicList || [];
+      existingTopics = data?.topicsArray || [];
 
       // Check for duplicate topic
       if (existingTopics.includes(topicName)) {
@@ -77,9 +74,7 @@ export async function POST({ request }: APIContext): Promise<Response> {
     const validatedTopics = TopicsSchema.parse(updatedTopics);
 
     // Update the meta document
-    await metaRef.set({ topicList: validatedTopics }, { merge: true });
-
-    logDebug('TopicsAPI', `Topic created by admin ${adminUid}:`, topicName);
+    await metaRef.set({ topicsArray: validatedTopics }, { merge: true });
 
     return new Response(JSON.stringify({ topic: topicName }), {
       status: 201,
@@ -125,7 +120,7 @@ export async function PUT({ request }: APIContext): Promise<Response> {
 
     // Update the meta document
     const metaRef = serverDB.collection('meta').doc('threads');
-    await metaRef.set({ topicList: validatedTopics }, { merge: true });
+    await metaRef.set({ topicsArray: validatedTopics }, { merge: true });
 
     logDebug('TopicsAPI', `Updated topic order`, { uid, topics });
 
@@ -184,9 +179,8 @@ export async function DELETE({ request }: APIContext): Promise<Response> {
     }
 
     const data = metaDoc.data();
-    const existingTopics = data?.topicList || [];
-    const existingChannels = data?.topics || []; // Channel objects
-
+    const existingTopics = data?.topicsArray || [];
+    
     // Check if topic exists
     if (!existingTopics.includes(topicName)) {
       return new Response(JSON.stringify({ error: 'Topic not found' }), {
@@ -195,28 +189,11 @@ export async function DELETE({ request }: APIContext): Promise<Response> {
       });
     }
 
-    // Check if topic has channels
-    const hasChannels = existingChannels.some(
-      (channel: Channel) => channel.category === topicName,
-    );
-    if (hasChannels) {
-      return new Response(
-        JSON.stringify({
-          error:
-            'Cannot delete topic with existing channels. Move or delete channels first.',
-        }),
-        {
-          status: 409,
-          headers: { 'Content-Type': 'application/json' },
-        },
-      );
-    }
-
     // Remove topic from array
     const updatedTopics = existingTopics.filter((t: string) => t !== topicName);
 
     // Save to database
-    await metaRef.set({ topicList: updatedTopics }, { merge: true });
+    await metaRef.set({ topicsArray: updatedTopics }, { merge: true });
 
     logDebug('TopicsAPI', `Deleted topic ${topicName}`, { uid });
 

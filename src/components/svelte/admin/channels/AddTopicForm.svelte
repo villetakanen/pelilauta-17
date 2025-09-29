@@ -1,33 +1,47 @@
 <script lang="ts">
+import { authedFetch, authedPost } from '@firebase/client/apiClient';
+import { addTopicFormOpen } from '@stores/admin/ChannelsAdminStore';
+import { pushSnack } from '@utils/client/snackUtils';
+import { logError } from '@utils/logHelpers';
 import { t } from 'src/utils/i18n';
-
-interface Props {
-  onAddTopic: (name: string) => Promise<void>;
-  onCancel: () => void;
-}
-
-const { onAddTopic, onCancel }: Props = $props();
 
 let topicName = $state('');
 let isSubmitting = $state(false);
 
 async function handleSubmit(event: SubmitEvent) {
   event.preventDefault();
-  if (!topicName.trim() || isSubmitting) return;
+
+  const newTopicName = topicName.trim();
+
+  if (!newTopicName || isSubmitting) return;
 
   isSubmitting = true;
   try {
-    await onAddTopic(topicName.trim());
-    // Component will be unmounted by parent, so no need to reset form
+    const response = await authedFetch('/api/admin/topics', {
+      method: 'POST',
+      body: JSON.stringify({ name: newTopicName }),
+    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      pushSnack('app:errors.generic');
+      logError(
+        'AddTopicForm',
+        `Failed to create topic: ${response.status} ${errorText}`,
+      );
+    }
   } catch (err) {
     // Error handling is done by parent component
   } finally {
     isSubmitting = false;
+    topicName = '';
+    $addTopicFormOpen = false; // Close the form
   }
 }
 
 function handleCancel() {
-  onCancel();
+  topicName = '';
+  isSubmitting = false;
+  $addTopicFormOpen = false;
 }
 </script>
 

@@ -1,15 +1,15 @@
 <script lang="ts">
+import { forumTopics } from '@stores/admin/ChannelsAdminStore';
 import { t } from 'src/utils/i18n';
 import { logDebug } from 'src/utils/logHelpers';
 import { toMekanismiURI } from 'src/utils/mekanismiUtils';
 import NounSelect from '../../ui/NounSelect.svelte';
 
 interface Props {
-  topics: Array<string>;
   addChannel: (name: string, category: string, icon: string) => Promise<void>;
 }
 
-const { topics, addChannel }: Props = $props();
+const { addChannel }: Props = $props();
 
 let dialogRef: HTMLDialogElement | undefined = $state();
 
@@ -24,8 +24,8 @@ let isSaving = $state(false);
 function openDialog() {
   if (dialogRef) {
     // Set default category if available
-    if (topics.length > 0 && !selectedCategory) {
-      selectedCategory = topics[0];
+    if ($forumTopics.length > 0 && !selectedCategory) {
+      selectedCategory = $forumTopics[0];
     }
     dialogRef.showModal();
   } else {
@@ -98,13 +98,13 @@ function handleSubmit(event: SubmitEvent) {
             bind:value={selectedCategory}
             class="select select-bordered w-full"
             required
-            disabled={topics.length === 0}
+            disabled={$forumTopics.length === 0}
           >
-            {#if topics.length === 0}
+            {#if $forumTopics.length === 0}
               <option value="" disabled>No categories available</option>
             {:else}
               <option value="" disabled selected={!selectedCategory}>Select a category</option>
-              {#each topics as topic}
+              {#each $forumTopics as topic}
                 <option value={topic}>{topic}</option>
               {/each}
             {/if}

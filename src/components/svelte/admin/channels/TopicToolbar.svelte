@@ -1,11 +1,11 @@
 <script lang="ts">
 import { authedFetch } from '@firebase/client/apiClient';
+import { forumTopics } from '@stores/admin/ChannelsAdminStore';
 import { t } from '../../../../utils/i18n';
 import { logDebug, logError } from '../../../../utils/logHelpers';
 
 interface Props {
   topic: string;
-  topics: string[];
   hasChannels: boolean;
   canMoveUp: boolean;
   canMoveDown: boolean;
@@ -15,7 +15,6 @@ interface Props {
 
 const {
   topic,
-  topics,
   hasChannels,
   canMoveUp,
   canMoveDown,
@@ -69,7 +68,7 @@ async function deleteTopic() {
 async function moveTopicUp() {
   if (!canMoveUp || isMoving) return;
 
-  const currentIndex = topics.indexOf(topic);
+  const currentIndex = $forumTopics.indexOf(topic);
   if (currentIndex <= 0) return;
 
   try {
@@ -77,7 +76,7 @@ async function moveTopicUp() {
     logDebug('TopicToolbar', 'Moving topic up:', topic);
 
     // Create new array with topic moved up
-    const reorderedTopics = [...topics];
+    const reorderedTopics = [...$forumTopics];
     [reorderedTopics[currentIndex - 1], reorderedTopics[currentIndex]] = [
       reorderedTopics[currentIndex],
       reorderedTopics[currentIndex - 1],
@@ -117,15 +116,15 @@ async function moveTopicUp() {
 async function moveTopicDown() {
   if (!canMoveDown || isMoving) return;
 
-  const currentIndex = topics.indexOf(topic);
-  if (currentIndex >= topics.length - 1) return;
+  const currentIndex = $forumTopics.indexOf(topic);
+  if (currentIndex >= $forumTopics.length - 1) return;
 
   try {
     isMoving = true;
     logDebug('TopicToolbar', 'Moving topic down:', topic);
 
     // Create new array with topic moved down
-    const reorderedTopics = [...topics];
+    const reorderedTopics = [...$forumTopics];
     [reorderedTopics[currentIndex], reorderedTopics[currentIndex + 1]] = [
       reorderedTopics[currentIndex + 1],
       reorderedTopics[currentIndex],
