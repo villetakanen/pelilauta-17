@@ -1,5 +1,4 @@
 <script lang="ts">
-import { authedFetch } from '@firebase/client/apiClient';
 import {
   addTopicFormOpen,
   forumTopics,
@@ -8,7 +7,7 @@ import {
 } from '@stores/admin/ChannelsAdminStore';
 import { t } from 'src/utils/i18n';
 import { logDebug, logError } from 'src/utils/logHelpers';
-import AddChannelDialog from './AddChannelDialog.svelte';
+
 import AddTopicForm from './AddTopicForm.svelte';
 import ChannelSettings from './ChannelSettings.svelte';
 import TopicToolbar from './TopicToolbar.svelte';
@@ -49,15 +48,10 @@ $effect(() => {
       refreshAllChannels();
     }
 
-    // Ctrl/Cmd + N: Focus on "Add Channel" button (if available)
+    // Ctrl/Cmd + N: Navigate to "Add Channel" page
     if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
       e.preventDefault();
-      const addButton = document.querySelector(
-        '[data-add-channel-trigger]',
-      ) as HTMLElement;
-      if (addButton) {
-        addButton.click();
-      }
+      window.location.href = '/admin/channels/add';
     }
 
     // Ctrl/Cmd + T: Open "Add Topic" form
@@ -76,39 +70,6 @@ $effect(() => {
 
 function filterChannels(topic: string) {
   return channels.filter((channel) => channel.category === topic);
-}
-
-async function addChannel(name: string, category: string, icon: string) {
-  try {
-    logDebug('ChannelsAdmin', 'Creating channel:', { name, category, icon });
-
-    const response = await authedFetch('/api/admin/channels', {
-      method: 'POST',
-      body: JSON.stringify({ name, category, icon }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(
-        `Failed to create channel: ${response.status} ${errorText}`,
-      );
-    }
-
-    const newChannel = await response.json();
-    logDebug('ChannelsAdmin', 'Channel created successfully:', newChannel);
-
-    // The store subscription will automatically update with fresh data
-    // No need to manually reload
-
-    // Show success notification (if using cn-snackbar)
-    showSuccess(t('admin:channels.create.success', { name }));
-  } catch (err) {
-    logError('ChannelsAdmin', 'Failed to create channel:', err);
-    const errorMessage =
-      err instanceof Error ? err.message : t('admin:channels.create.failed');
-    showError(errorMessage);
-    throw err; // Re-throw so AddChannelDialog can handle it
-  }
 }
 
 async function refreshAllChannels() {
@@ -149,17 +110,6 @@ function handleChannelDeleted(deletedSlug: string) {
   // No need to manually filter the local state
   logDebug('ChannelsAdmin', `Channel deletion handled: ${deletedSlug}`);
 }
-
-// Helper functions for user feedback
-function showSuccess(message: string) {
-  // TODO: Implement using cn-snackbar in future
-  console.log('Success:', message);
-}
-
-function showError(message: string) {
-  // TODO: Implement using cn-snackbar in future
-  console.error('Error:', message);
-}
 </script>
 
 <section class="content-listing">
@@ -178,9 +128,10 @@ function showError(message: string) {
           <span>{t('admin:channels.refreshAll')}</span>
         </button>
 
-        <AddChannelDialog 
-          {addChannel}
-        />
+        <a href="/admin/channels/add" class="button">
+          <cn-icon noun="add" small></cn-icon>
+          <span>{t('admin:channels.addChannel')}</span>
+        </a>
       </div>
     </div>
     <p class="text-caption pb-1">

@@ -13,6 +13,43 @@ export const admin: Locale = {
     title: 'Kanavat',
     addChannel: 'Lisää kanava',
     refreshAll: 'Päivitä kaikki',
+    add: {
+      title: 'Lisää kanava',
+      shortTitle: 'Lisää kanava',
+      description:
+        'Luo uusi kanava nimellä, aihealueella ja kuvakkeella. Kanava on käytettävissä heti - sen ilmestyminen foorumin etusivulle voi viedä hetken johtuen CDN-välimuistista.',
+      form: {
+        name: 'Kanavan nimi',
+        namePlaceholder: 'Syötä kanavan nimi',
+        nameRequired: 'Nimi ja kategoria ovat pakollisia.',
+        category: 'Aiheluokka',
+        categoryPlaceholder: 'Valitse kategoria',
+        categoryRequired: 'Aiheluokka',
+        categoryEmpty: 'Ei kategorioita saatavilla',
+        categoryEmptyHelper:
+          'Aiheluokkia ei löytynyt. Luo ensin aihe pääkanavien hallintasivulta.',
+        icon: 'Kuvake',
+        iconPlaceholder: 'Valitse kuvake...',
+        iconHelper: 'Valitse kuvake, joka kuvaa kanavan tarkoitusta',
+        urlSlugPrefix: 'URL-tunnus:',
+        actions: {
+          cancel: 'Peruuta',
+          reset: 'Tyhjennä lomake',
+          create: 'Luo kanava',
+        },
+      },
+      guidelines: {
+        title: 'Huomaa',
+        items: {
+          unique:
+            'Kanavan nimestä luotava polku on yksilöllinen, ja sitä ei voi muuttaa myöhemmin. Näyttönimen voi muuttaa milloin tahansa.',
+          category: 'Valitse sopiva aiheluokka olemassa olevista aiheista',
+          icon: 'Valitse kuvake, joka kuvaa kanavan tarkoitusta',
+          slug: 'Kanavien URL-tunnukset luodaan automaattisesti nimistä',
+        },
+      },
+      success: 'Kanava "{name}" luotu onnistuneesti! Ohjataan...',
+    },
     noChannels: {
       title: 'Kanavia ei löytynyt',
       description: 'Luo ensimmäinen kanavasi aloittaaksesi.',
