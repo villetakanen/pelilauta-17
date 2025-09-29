@@ -5,7 +5,6 @@ import { logDebug, logError } from '@utils/logHelpers';
 import { tokenToUid } from '@utils/server/auth/tokenToUid';
 import type { APIContext } from 'astro';
 
-
 /**
  * Authentication middleware for admin endpoints
  */
@@ -180,7 +179,7 @@ export async function DELETE({ request }: APIContext): Promise<Response> {
 
     const data = metaDoc.data();
     const existingTopics = data?.topicsArray || [];
-    
+
     // Check if topic exists
     if (!existingTopics.includes(topicName)) {
       return new Response(JSON.stringify({ error: 'Topic not found' }), {
