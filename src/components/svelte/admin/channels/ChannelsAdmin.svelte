@@ -1,4 +1,5 @@
 <script lang="ts">
+import { authedFetch } from '@firebase/client/apiClient';
 import {
   addTopicFormOpen,
   forumTopics,
@@ -7,11 +8,9 @@ import {
 } from '@stores/admin/ChannelsAdminStore';
 import { t } from 'src/utils/i18n';
 import { logDebug, logError } from 'src/utils/logHelpers';
-
 import AddTopicForm from './AddTopicForm.svelte';
 import ChannelSettings from './ChannelSettings.svelte';
 import TopicToolbar from './TopicToolbar.svelte';
-    import { authedFetch } from '@firebase/client/apiClient';
 
 // Derive data from the subscribed store instead of local state
 const channels = $derived.by(() => $meta?.topics ?? []);
@@ -90,8 +89,6 @@ async function refreshAllChannels() {
 
     const result = await response.json();
     logDebug('ChannelsAdmin', 'Refresh completed:', result.message);
-
-
   } catch (err) {
     logError('ChannelsAdmin', 'Failed to refresh channels:', err);
   }
