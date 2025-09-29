@@ -1,0 +1,11 @@
+---
+const channel = Astro.params.channel;
+const page = Astro.params.page;
+
+// Redirect old paginated URLs to simplified channel page
+if (channel) {
+  return Astro.redirect(`/channels/${channel}`, 301);
+}
+
+return new Response(null, { status: 404 });
+---

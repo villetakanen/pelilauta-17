@@ -30,7 +30,7 @@ function inCategory(cat: string) {
         <ul>
           {inCategory(category).map((topic: Channel) => (
             <li>
-              <a href={`/channels/${topic.slug}/1`} class="tray-button">
+              <a href={`/channels/${topic.slug}`} class="tray-button">
                 <cn-icon noun={topic.icon} xsmall />
                 <span>
                   {topic.name} ({topic.threadCount})

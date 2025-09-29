@@ -26,7 +26,7 @@ const channel = `${thread?.channel || '-'}`;
     <p class="mb-0">
       <ProfileLink uid={author} client:only="svelte" /> 
       {t('threads:info.inTopic')}
-      <a href={`/channels/${channel}/1`} class="link">
+      <a href={`/channels/${channel}`} class="link">
         {channel.charAt(0).toUpperCase() + channel.slice(1)}
       </a>
       <div slot="actions" class="toolbar items-center">

@@ -1,16 +1,15 @@
 ---
 import { parseChannel } from 'src/schemas/ChannelSchema';
 import { t } from 'src/utils/i18n';
-import DeferredSection from '../../../components/server/app/DeferredSection.astro';
-import ChannelApp from '../../../components/server/ChannelApp/ChannelApp.astro';
-import ChannelTray from '../../../components/server/ChannelApp/ChannelTray.astro';
-import BackgroundPoster from '../../../components/server/ui/BackgroundPoster.astro';
-import ChannelFabs from '../../../components/svelte/threads/ChannelFabs.svelte';
-import PageWithTray from '../../../layouts/PageWithTray.astro';
+import DeferredSection from '../../components/server/app/DeferredSection.astro';
+import SimplifiedChannelApp from '../../components/server/ChannelApp/SimplifiedChannelApp.astro';
+import BackgroundPoster from '../../components/server/ui/BackgroundPoster.astro';
+import ChannelFabs from '../../components/svelte/threads/ChannelFabs.svelte';
+import Page from '../../layouts/Page.astro';
 
 const channelKey = Astro.params.channel || 'pelilauta';
-const page = Astro.params.page ? Number(Astro.params.page) : 1;
 
+// Remove page parameter handling - always start at page 1
 const origin = Astro.url.origin;
 const channelsResponse = await fetch(`${origin}/api/meta/channels.json`);
 const channels = await channelsResponse.json();
@@ -20,10 +19,6 @@ const channeldata = channels.find(
 
 if (!channeldata) {
   Astro.response.status = 404;
-  Astro.response.headers.set(
-    'Cache-Control',
-    's-maxage=60, stale-while-revalidate',
-  );
   return;
 }
 
@@ -31,18 +26,11 @@ const channel = parseChannel(channeldata);
 const title = `${t('app:shortname')} - ${channel.name}`;
 const shortTitle = channel.name;
 ---
-<PageWithTray title={title} shortTitle={shortTitle} description={channel.description}>
-
-  <!-- This loads the channel contents from the server based on channel metadata and
-       the desired start page. 
-  -->
-  <ChannelApp channel={channel} startAt={page} server:defer>
+<Page title={title} description={channel.description}>
+  <!-- Load first 11 threads server-side, then enable client-side loading -->
+  <SimplifiedChannelApp channel={channel} server:defer>
     <DeferredSection class="column-l" slot="fallback"/>
-  </ChannelApp>
-
-  <ChannelTray slot="app-tray" server:defer>
-    <cn-loader noun="discussion" x-large slot="fallback"/>
-  </ChannelTray>
+  </SimplifiedChannelApp>
 
   <ChannelFabs client:only="svelte" slot="fab-tray"/>
 
@@ -55,4 +43,4 @@ const shortTitle = channel.name;
   <p class="text-caption text-center" style="opacity:0.44" slot="app-footer-credits">
     Taustakuva © Juno Viinikka (<a href="https://linktr.ee/junowski">https://linktr.ee/junowski</a>)
   </p>
-</PageWithTray>
+</Page>
