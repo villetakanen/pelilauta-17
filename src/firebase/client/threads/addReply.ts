@@ -1,4 +1,3 @@
-import type { z } from 'astro/zod';
 import { NotificationRequestSchema } from 'src/schemas/NotificationSchema';
 import {
   REACTIONS_COLLECTION_NAME,
@@ -6,7 +5,7 @@ import {
 } from 'src/schemas/ReactionsSchema';
 import { REPLIES_COLLECTION, type Reply } from 'src/schemas/ReplySchema';
 import {
-  type ImageArraySchema,
+  type ImageArray,
   THREADS_COLLECTION_NAME,
   type Thread,
 } from 'src/schemas/ThreadSchema';
@@ -69,7 +68,7 @@ export async function addReply(
    * Step 2: Handle file uploads if any files are attached
    */
   if (files.length > 0) {
-    const uploadedImages: z.infer<typeof ImageArraySchema> = [];
+    const uploadedImages: ImageArray = [];
     for (const file of files) {
       const { downloadURL: url } = await addAssetToThread(thread.key, file);
       const alt = file.name;

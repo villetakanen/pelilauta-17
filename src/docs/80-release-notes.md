@@ -6,6 +6,9 @@ noun: 'monsters'
 ## Version 18
 
 ### 18.6.x (ongoing)
+- fix:(threads): New thread toolbar no longer shows too long select-boxes
+- fix: Select and input styling fixes for better UX from cyan design system latest beta
+- fix: Updated dependencies: Zod, Svelte, Astro etc.
 - fix(threads): Admin channels creation dialog moved to a modal page for better UX
 
 ### 18.6.0 (26.9.2025)

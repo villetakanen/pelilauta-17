@@ -8,7 +8,7 @@ import {
 } from 'src/schemas/ReactionsSchema';
 import { REPLIES_COLLECTION, type Reply } from 'src/schemas/ReplySchema';
 import {
-  type ImageArraySchema,
+  type ImageArray,
   THREADS_COLLECTION_NAME,
   type Thread,
   ThreadSchema,
@@ -17,7 +17,6 @@ import { createSnippet } from 'src/utils/contentHelpers';
 import { logDebug, logError, logWarn } from 'src/utils/logHelpers';
 import { tokenToUid } from 'src/utils/server/auth/tokenToUid';
 import { v4 as uuidv4 } from 'uuid';
-import type { z } from 'zod';
 import { serverApp, serverDB } from '../../../firebase/server';
 
 interface UploadedFile {
@@ -247,7 +246,7 @@ export async function POST({ request }: APIContext): Promise<Response> {
     });
 
     // 5. **CRITICAL TASK (SYNCHRONOUS)**: Upload files and create reply document
-    const uploadedImages: z.infer<typeof ImageArraySchema> = [];
+    const uploadedImages: ImageArray = [];
 
     // Upload files first (this is the potentially slow part we need to do synchronously)
     for (const file of files) {

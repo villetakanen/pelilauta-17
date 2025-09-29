@@ -107,12 +107,12 @@ export async function POST({ request }: APIContext): Promise<Response> {
       );
     } catch (error) {
       if (error instanceof ZodError) {
-        logWarn(endpointName, 'Invalid notification data:', error.errors);
+        logWarn(endpointName, 'Invalid notification data:', error.issues);
         return new Response(
           JSON.stringify({
             success: false,
             error: 'Invalid notification data',
-            details: error.errors,
+            details: error.issues,
           }),
           {
             status: 400,

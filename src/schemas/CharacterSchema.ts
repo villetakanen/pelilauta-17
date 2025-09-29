@@ -26,10 +26,12 @@ export const CharacterSchema = ContentEntrySchema.extend({
   systemKey: z.string().optional(),
 
   /** Character stats as key-value pairs. Values can be string, number, or boolean. */
-  stats: z.record(z.union([z.string(), z.number(), z.boolean()])).default({}),
+  stats: z
+    .record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
+    .default({}),
 
   /** URL for the character's avatar image. */
-  avatar: z.string().url().optional(),
+  avatar: z.string().url({ message: 'Invalid URL format' }).optional(),
 }).describe('A player character entry.');
 
 export type Character = z.infer<typeof CharacterSchema>;

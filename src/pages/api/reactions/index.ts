@@ -115,7 +115,7 @@ export async function POST(context: APIContext): Promise<Response> {
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
-      logWarn('ReactionsAPI', 'Invalid request body:', error.errors);
+      logWarn('ReactionsAPI', 'Invalid request body:', error.issues);
       return new Response(
         JSON.stringify({
           success: false,
