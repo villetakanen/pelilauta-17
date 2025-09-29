@@ -5,14 +5,19 @@ import { ContentEntrySchema } from './ContentEntry';
 
 export const THREADS_COLLECTION_NAME = 'stream';
 
-export const ImageArraySchema = z
-  .array(
-    z.object({
-      url: z.string(),
-      alt: z.string(),
-    }),
-  )
-  .default([]);
+// Define the base image array schema without default for type inference
+const BaseImageArraySchema = z.array(
+  z.object({
+    url: z.string(),
+    alt: z.string(),
+  }),
+);
+
+// Export the schema with default for validation
+export const ImageArraySchema = BaseImageArraySchema.default([]);
+
+// Export the type for use in code
+export type ImageArray = z.infer<typeof BaseImageArraySchema>;
 
 export const ThreadSchema = ContentEntrySchema.extend({
   title: z.string(),
@@ -20,7 +25,7 @@ export const ThreadSchema = ContentEntrySchema.extend({
   siteKey: z.string().optional(),
   youtubeId: z.string().optional(),
   poster: z.string().optional(), // URL for the poster image
-  images: ImageArraySchema.optional(),
+  images: BaseImageArraySchema.optional(), // Use base schema without default for optional field
   replyCount: z.number().optional(),
   lovedCount: z.number().optional(),
   createdAt: z.any().optional(),

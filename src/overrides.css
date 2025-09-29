@@ -11,3 +11,10 @@ kbd {
   font-family: var(--cn-font-family-monospace);
   color: var(--color-text-high);
 }
+label:has(select) {
+  flex-grow: 0;
+  width: auto;
+}
+label select {
+  width: auto;
+}

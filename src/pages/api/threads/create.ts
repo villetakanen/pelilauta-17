@@ -10,14 +10,13 @@ import { SUBSCRIPTIONS_FIRESTORE_PATH } from 'src/schemas/SubscriberSchema';
 import { TAG_FIRESTORE_COLLECTION, TagSchema } from 'src/schemas/TagSchema';
 import {
   createThread,
-  type ImageArraySchema,
+  type ImageArray,
   THREADS_COLLECTION_NAME,
   type Thread,
 } from 'src/schemas/ThreadSchema';
 import { logDebug, logError, logWarn } from 'src/utils/logHelpers';
 import { toDate } from 'src/utils/schemaHelpers';
 import { tokenToUid } from 'src/utils/server/auth/tokenToUid';
-import type { z } from 'zod';
 import { serverDB } from '../../../firebase/server';
 
 /**
@@ -366,7 +365,7 @@ export async function POST({ request }: APIContext): Promise<Response> {
     const threadKey = threadRef.id;
 
     // Upload files if any (this is the potentially slow part we need to do synchronously)
-    const uploadedImages: z.infer<typeof ImageArraySchema> = [];
+    const uploadedImages: ImageArray = [];
 
     if (files.length > 0) {
       for (const file of files) {
