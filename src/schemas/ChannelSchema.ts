@@ -13,7 +13,7 @@ export const EntryMetadataSchema = z.object({
 
 export const ChannelSchema = z.object({
   description: z.string(),
-  icon: z.string(),
+  icon: z.string().default('discussion'),
   name: z.string(),
   slug: z.string(),
   threadCount: z.number().default(0),

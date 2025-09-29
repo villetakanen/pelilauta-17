@@ -13,6 +13,42 @@ export const admin: Locale = {
     title: 'Channels',
     addChannel: 'Add Channel',
     refreshAll: 'Refresh All',
+    add: {
+      title: 'Add New Channel',
+      shortTitle: 'Add Channel',
+      description:
+        'Create a new forum channel with a name, topic category, and icon. The channel will be available immediately after creation.',
+      form: {
+        name: 'Channel Name',
+        namePlaceholder: 'Enter channel name',
+        nameRequired: 'Name and category are required.',
+        category: 'Topic Category',
+        categoryPlaceholder: 'Select a category',
+        categoryRequired: 'Topic Category',
+        categoryEmpty: 'No categories available',
+        categoryEmptyHelper:
+          'No topic categories found. Create a topic first in the main channels admin page.',
+        icon: 'Icon',
+        iconPlaceholder: 'Choose an icon...',
+        iconHelper: "Select an icon that represents the channel's purpose",
+        urlSlugPrefix: 'URL slug:',
+        actions: {
+          cancel: 'Cancel',
+          reset: 'Reset Form',
+          create: 'Create Channel',
+        },
+      },
+      guidelines: {
+        title: 'Channel Guidelines',
+        items: {
+          unique: 'Channel names should be descriptive and unique',
+          category: 'Choose an appropriate topic category from existing topics',
+          icon: "Select an icon that represents the channel's purpose",
+          slug: 'Channel slugs are automatically generated from names',
+        },
+      },
+      success: 'Channel "{name}" created successfully! Redirecting...',
+    },
     noChannels: {
       title: 'No Channels Found',
       description: 'Create your first channel to get started.',

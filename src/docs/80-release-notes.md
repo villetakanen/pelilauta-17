@@ -5,6 +5,9 @@ noun: 'monsters'
 ---
 ## Version 18
 
+### 18.6.x (ongoing)
+- fix(threads): Admin channels creation dialog moved to a modal page for better UX
+
 ### 18.6.0 (26.9.2025)
 - feat(threads): Admin channels tool topic management (add, reorder, delete) added
 - feat(threads): PBI-20 - Moved channels admin to non-local admin tools suite

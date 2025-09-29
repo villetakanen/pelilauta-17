@@ -7,12 +7,49 @@ export const admin: Locale = {
   shortcuts: {
     refreshAll: 'Päivitä kaikki',
     addChannel: 'Lisää kanava',
-    addTopic: 'Lisää aihe',
+    addTopic: 'Lisää alue',
   },
   channels: {
     title: 'Kanavat',
     addChannel: 'Lisää kanava',
     refreshAll: 'Päivitä kaikki',
+    add: {
+      title: 'Lisää kanava',
+      shortTitle: 'Lisää kanava',
+      description:
+        'Luo uusi kanava nimellä, aihealueella ja kuvakkeella. Kanava on käytettävissä heti - sen ilmestyminen foorumin etusivulle voi viedä hetken johtuen CDN-välimuistista.',
+      form: {
+        name: 'Kanavan nimi',
+        namePlaceholder: 'Syötä kanavan nimi',
+        nameRequired: 'Nimi ja kategoria ovat pakollisia.',
+        category: 'Aiheluokka',
+        categoryPlaceholder: 'Valitse kategoria',
+        categoryRequired: 'Aiheluokka',
+        categoryEmpty: 'Ei kategorioita saatavilla',
+        categoryEmptyHelper:
+          'Aiheluokkia ei löytynyt. Luo ensin aihe pääkanavien hallintasivulta.',
+        icon: 'Kuvake',
+        iconPlaceholder: 'Valitse kuvake...',
+        iconHelper: 'Valitse kuvake, joka kuvaa kanavan tarkoitusta',
+        urlSlugPrefix: 'URL-tunnus:',
+        actions: {
+          cancel: 'Peruuta',
+          reset: 'Tyhjennä lomake',
+          create: 'Luo kanava',
+        },
+      },
+      guidelines: {
+        title: 'Huomaa',
+        items: {
+          unique:
+            'Kanavan nimestä luotava polku on yksilöllinen, ja sitä ei voi muuttaa myöhemmin. Näyttönimen voi muuttaa milloin tahansa.',
+          category: 'Valitse sopiva aiheluokka olemassa olevista aiheista',
+          icon: 'Valitse kuvake, joka kuvaa kanavan tarkoitusta',
+          slug: 'Kanavien URL-tunnukset luodaan automaattisesti nimistä',
+        },
+      },
+      success: 'Kanava "{name}" luotu onnistuneesti! Ohjataan...',
+    },
     noChannels: {
       title: 'Kanavia ei löytynyt',
       description: 'Luo ensimmäinen kanavasi aloittaaksesi.',
@@ -55,16 +92,15 @@ export const admin: Locale = {
     },
   },
   topics: {
-    addTopic: 'Lisää aihe',
+    addTopic: 'Lisää alue',
     create: {
-      title: 'Luo uusi aihe',
-      name: 'Aiheen nimi',
-      placeholder: 'Syötä aiheen nimi',
-      slugPreview: 'URL luodaan automaattisesti',
-      description: 'Aiheet auttavat järjestämään kanavat loogisiin ryhmiin.',
-      save: 'Luo aihe',
-      success: 'Aihe "{name}" luotu onnistuneesti',
-      failed: 'Aiheen luominen epäonnistui',
+      title: 'Luo uusi alue',
+      name: 'Alueen nimi',
+      placeholder: 'Syötä alueen nimi',
+      description: 'Alueet auttavat järjestämään kanavat loogisiin ryhmiin.',
+      save: 'Luo alue',
+      success: 'Alue "{name}" luotu onnistuneesti',
+      failed: 'Alueen luominen epäonnistui',
     },
     moveUp: 'Siirrä aihetta ylös',
     moveDown: 'Siirrä aihetta alas',
