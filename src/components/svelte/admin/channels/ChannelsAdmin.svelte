@@ -11,6 +11,7 @@ import { logDebug, logError } from 'src/utils/logHelpers';
 import AddTopicForm from './AddTopicForm.svelte';
 import ChannelSettings from './ChannelSettings.svelte';
 import TopicToolbar from './TopicToolbar.svelte';
+    import { authedFetch } from '@firebase/client/apiClient';
 
 // Derive data from the subscribed store instead of local state
 const channels = $derived.by(() => $meta?.topics ?? []);
@@ -90,14 +91,9 @@ async function refreshAllChannels() {
     const result = await response.json();
     logDebug('ChannelsAdmin', 'Refresh completed:', result.message);
 
-    // The store subscription will automatically update with fresh statistics
-    // No need to manually reload
-    showSuccess(t('admin:channels.refresh.allSuccess'));
+
   } catch (err) {
     logError('ChannelsAdmin', 'Failed to refresh channels:', err);
-    const errorMessage =
-      err instanceof Error ? err.message : t('admin:channels.refresh.failed');
-    showError(errorMessage);
   }
 }
 
