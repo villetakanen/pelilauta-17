@@ -3,8 +3,8 @@ import type { Channel } from '@schemas/ChannelSchema';
 import type { Thread } from '@schemas/ThreadSchema';
 import { parseThread } from '@schemas/ThreadSchema';
 import { uid } from '@stores/session';
-import { t } from '@utils/i18n';
 import { toDisplayString } from '@utils/contentHelpers';
+import { t } from '@utils/i18n';
 import { logDebug, logError } from '@utils/logHelpers';
 import ProfileLink from '../app/ProfileLink.svelte';
 import ThreadSubscriber from './ThreadSubscriber.svelte';
@@ -16,7 +16,8 @@ interface Props {
   hasError: boolean;
 }
 
-const { channel, initialThreads, initialLastFlowTime, hasError }: Props = $props();
+const { channel, initialThreads, initialLastFlowTime, hasError }: Props =
+  $props();
 
 // Component state
 let threads = $state([...initialThreads]);
@@ -28,24 +29,24 @@ let isAuthenticated = $derived(!!$uid);
 
 async function loadMoreThreads() {
   if (isLoading || !hasMore) return;
-  
+
   isLoading = true;
   error = null;
-  
+
   try {
     const response = await fetch(
-      `/api/threads.json?channel=${channel.slug}&startAt=${lastFlowTime}&limit=11`
+      `/api/threads.json?channel=${channel.slug}&startAt=${lastFlowTime}&limit=11`,
     );
-    
+
     if (!response.ok) {
       throw new Error(`Failed to load threads: ${response.status}`);
     }
-    
+
     const threadsData = await response.json();
-    const newThreads = threadsData.map((thread: any) => 
-      parseThread(thread, thread.key)
+    const newThreads = threadsData.map((thread: any) =>
+      parseThread(thread, thread.key),
     );
-    
+
     if (newThreads.length > 0) {
       threads = [...threads, ...newThreads];
       lastFlowTime = newThreads[newThreads.length - 1].flowTime;
@@ -53,7 +54,7 @@ async function loadMoreThreads() {
     } else {
       hasMore = false;
     }
-    
+
     logDebug('ChannelThreadList', `Loaded ${newThreads.length} more threads`);
   } catch (err) {
     logError('ChannelThreadList', 'Failed to load more threads:', err);
