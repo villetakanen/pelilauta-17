@@ -18,10 +18,10 @@ test.describe('Channels Page', () => {
     await expect(channelCards).toHaveCount(4); // We know there are 4 channels from our test data
 
     // Verify specific channels are displayed
-    await expect(page.locator('a[href="/channels/pelilauta/1"]')).toBeVisible();
-    await expect(page.locator('a[href="/channels/yleinen/1"]')).toBeVisible();
+    await expect(page.locator('a[href="/channels/pelilauta"]')).toBeVisible();
+    await expect(page.locator('a[href="/channels/yleinen"]')).toBeVisible();
     await expect(
-      page.locator('a[href="/channels/test-channel/1"]'),
+      page.locator('a[href="/channels/test-channel"]'),
     ).toBeVisible();
 
     // Verify that channel information is displayed (latest threads)
@@ -64,7 +64,7 @@ test.describe('Channels Page', () => {
 
     // Find a channel with threads (like Pelilauta)
     const pelilautaCard = page.locator('article.cols-2').filter({
-      has: page.locator('a[href="/channels/pelilauta/1"]'),
+      has: page.locator('a[href="/channels/pelilauta"]'),
     });
 
     await expect(pelilautaCard).toBeVisible();
@@ -97,7 +97,7 @@ test.describe('Channels Page', () => {
 
     // Find the test channel which has no threads
     const testChannelCard = page.locator('article.cols-2').filter({
-      has: page.locator('a[href="/channels/test-channel/1"]'),
+      has: page.locator('a[href="/channels/test-channel"]'),
     });
 
     await expect(testChannelCard).toBeVisible();
@@ -125,17 +125,17 @@ test.describe('Channels Page', () => {
     ).toBeVisible();
 
     // Test channel navigation
-    const pelilautaLink = page.locator('a[href="/channels/pelilauta/1"]');
+    const pelilautaLink = page.locator('a[href="/channels/pelilauta"]');
     await expect(pelilautaLink).toBeVisible();
 
     // Click on a channel link and verify navigation works
     await pelilautaLink.click();
 
     // Wait for navigation to complete
-    await page.waitForURL('**/channels/pelilauta/1');
+    await page.waitForURL('**/channels/pelilauta');
 
     // Should navigate to the channel page
-    await expect(page.url()).toContain('/channels/pelilauta/1');
+    await expect(page.url()).toContain('/channels/pelilauta');
 
     // Go back to channels page
     await page.goBack();
