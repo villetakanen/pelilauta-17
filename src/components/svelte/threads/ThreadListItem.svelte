@@ -1,15 +1,15 @@
 <!-- src/components/svelte/threads/ThreadListItem.svelte -->
 <script lang="ts">
-    import type { Thread } from '@schemas/ThreadSchema';
-    import { toDisplayString } from '@utils/contentHelpers';
-    import { t }from '@utils/i18n';
-    import ProfileLink from '@svelte/app/ProfileLink.svelte';
-    import ThreadSubscriber from '@svelte/threads/ThreadSubscriber.svelte';
+import type { Thread } from '@schemas/ThreadSchema';
+import ProfileLink from '@svelte/app/ProfileLink.svelte';
+import ThreadSubscriber from '@svelte/threads/ThreadSubscriber.svelte';
+import { toDisplayString } from '@utils/contentHelpers';
+import { t } from '@utils/i18n';
 
-    interface Props {
-        thread: Thread;
-    }
-    const { thread }: Props = $props();
+interface Props {
+  thread: Thread;
+}
+const { thread }: Props = $props();
 </script>
 
 <article class="cols-2" id={`thread-${thread.key}`}>

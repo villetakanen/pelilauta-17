@@ -20,24 +20,26 @@ let newThreads = $state<Thread[]>([]);
 
 async function loadMore() {
   if (isLoading || !hasMore) return;
-  
+
   isLoading = true;
   error = null;
-  
+
   try {
     const response = await fetch(
-      `/api/threads.json?channel=${channelSlug}&startAt=${lastFlowTime}&limit=11`
+      `/api/threads.json?channel=${channelSlug}&startAt=${lastFlowTime}&limit=11`,
     );
-    
+
     if (!response.ok) {
       throw new Error(`Failed to load threads: ${response.status}`);
     }
-    
+
     const threadsData = await response.json();
-    const threads = threadsData.map((thread: any) => // Use any to avoid schema parsing issues on client
-      parseThread(thread, thread.key)
+    const threads = threadsData.map(
+      (
+        thread: any, // Use any to avoid schema parsing issues on client
+      ) => parseThread(thread, thread.key),
     );
-    
+
     if (threads.length > 0) {
       newThreads = [...newThreads, ...threads];
       lastFlowTime = threads[threads.length - 1].flowTime;
@@ -45,7 +47,7 @@ async function loadMore() {
     } else {
       hasMore = false;
     }
-    
+
     logDebug('ChannelLoadMore', `Loaded ${threads.length} more threads`);
   } catch (err) {
     logError('ChannelLoadMore', 'Failed to load more threads:', err);
