@@ -7,6 +7,7 @@ import { toDisplayString } from '@utils/contentHelpers';
 import { t } from '@utils/i18n';
 import { logDebug, logError } from '@utils/logHelpers';
 import ProfileLink from '../app/ProfileLink.svelte';
+import ChannelSearchBox from './ChannelSearchBox.svelte';
 import ThreadSubscriber from './ThreadSubscriber.svelte';
 
 interface Props {
@@ -68,7 +69,7 @@ async function loadMoreThreads() {
 {#if !hasError}
 <section class="content-listing">
   <header class="flex flex-row surface">
-    <div class="grow">
+    <div class="grow" style="flex-grow: 8;">
       <nav aria-label="Breadcrumb">
         <ol class="list-none breadcrumbs">
           <li>
@@ -79,24 +80,18 @@ async function loadMoreThreads() {
           </li>
         </ol>
       </nav>
-      <h1 class="text-h3">{channel.name}</h1>
+      <h1 class="text-h3 m-0">{channel.name}</h1>
     </div>
 
-    <!-- Search box, disabled for anonymous users -->
+    <!-- Channel-specific search box -->
     <div>
-      <div class="flex items-center bg-surface border border-color p-2 radius-m">
-        <input
-          type="search"
-          placeholder={`Search in ${channel.name}...`}
-          />
-          <cn-icon noun="search" small></cn-icon>
-        </div>
+      <ChannelSearchBox {channel} />
     </div>
   </header>
 
   <div class="listing-items">
     {#each threads as thread (thread.key)}
-      <article class="cols-2" id={`thread-${thread.key}`}>
+      <article class="cols-2 surface" id={`thread-${thread.key}`}>
         <div>
           <h4 class="downscaled m-0">
             <a href={`/threads/${thread.key}`} class="no-decoration">
@@ -128,13 +123,13 @@ async function loadMoreThreads() {
     
     <!-- Load more functionality -->
     {#if hasMore}
-      <div class="flex justify-center p-4">
+      <div class="flex items-center">
         <button 
           onclick={loadMoreThreads}
           disabled={isLoading}
-          class="px-4 py-2 bg-button text-button border-none radius-m cursor-pointer text-body disabled:opacity-60"
+          class="flex-none"
         >
-          {isLoading ? 'Loading...' : 'Load More Threads'}
+          {isLoading ? t('threads:channel.loading') : t('threads:channel.loadMore')}
         </button>
       </div>
     {/if}
@@ -146,7 +141,7 @@ async function loadMoreThreads() {
           onclick={loadMoreThreads} 
           class="px-2 py-1 bg-transparent text-primary border border-primary radius-s cursor-pointer text-caption"
         >
-          Retry
+          {t('threads:channel.retry')}
         </button>
       </div>
     {/if}
@@ -167,6 +162,6 @@ async function loadMoreThreads() {
 </section>
 {:else}
   <div class="flex justify-center items-center p-8">
-    <p class="text-error">Failed to load channel threads. Please try again later.</p>
+    <p class="text-error">{t('threads:channel.error')}</p>
   </div>
 {/if}

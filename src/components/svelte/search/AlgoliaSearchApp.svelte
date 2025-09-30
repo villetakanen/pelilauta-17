@@ -36,9 +36,31 @@ interface SearchResultData {
 
 // Component state
 let searchQuery = $state('');
+let channelFilter = $state('');
 let searchResults = $state<SearchResultData[] | null>(null);
 let isSearching = $state(false);
 let error = $state<string | null>(null);
+
+// Initialize from URL parameters
+$effect(() => {
+  if (typeof window !== 'undefined') {
+    const urlParams = new URLSearchParams(window.location.search);
+    const q = urlParams.get('q');
+    const channel = urlParams.get('channel');
+
+    if (q) {
+      searchQuery = q;
+    }
+    if (channel) {
+      channelFilter = channel;
+    }
+
+    // Auto-search if query parameter is present
+    if (q) {
+      handleSearch();
+    }
+  }
+});
 
 // Debug derived state
 const isButtonDisabled = $derived(isSearching || !searchQuery.trim());
@@ -54,16 +76,24 @@ async function handleSearch() {
   searchResults = null;
 
   try {
-    logDebug('AlgoliaSearchApp', 'Starting search for:', searchQuery);
+    logDebug(
+      'AlgoliaSearchApp',
+      'Starting search for:',
+      searchQuery,
+      'channel:',
+      channelFilter,
+    );
 
-    // Perform search - you may need to adjust the index name
+    // Build search request with optional channel filter
+    const searchRequest = {
+      indexName: 'pelilauta-entries',
+      query: searchQuery,
+      ...(channelFilter && { filters: `channel:${channelFilter}` }),
+    };
+
+    // Perform search
     const { results } = await client.search({
-      requests: [
-        {
-          indexName: 'pelilauta-entries',
-          query: searchQuery,
-        },
-      ],
+      requests: [searchRequest],
     });
 
     searchResults = results as SearchResultData[];
@@ -115,6 +145,28 @@ function handleKeyDown(event: KeyboardEvent) {
             {isSearching ? 'Searching...' : 'Search'}
           </button>
         </div>
+        
+        <!-- Channel filter indicator -->
+        {#if channelFilter}
+          <div class="flex items-center gap-2 mt-2 p-2 bg-surface-variant radius-s">
+            <cn-icon noun="filter" small></cn-icon>
+            <span class="text-caption">{t('search:channel.filterActive', { channel: channelFilter })}</span>
+            <button 
+              onclick={() => {
+                channelFilter = '';
+                if (typeof window !== 'undefined') {
+                  const url = new URL(window.location.href);
+                  url.searchParams.delete('channel');
+                  window.history.replaceState({}, '', url.toString());
+                }
+              }}
+              class="text-caption text-link border-none bg-transparent cursor-pointer"
+              aria-label="Clear channel filter"
+            >
+              {t('search:channel.clearFilter')}
+            </button>
+          </div>
+        {/if}
         
         {#if error}
           <div class="error-message">

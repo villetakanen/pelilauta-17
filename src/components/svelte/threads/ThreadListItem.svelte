@@ -12,7 +12,7 @@ interface Props {
 const { thread }: Props = $props();
 </script>
 
-<article class="cols-2" id={`thread-${thread.key}`}>
+<article class="cols-2 surface" id={`thread-${thread.key}`}>
     <div>
         <h4 class="downscaled m-0">
             <a href={`/threads/${thread.key}`} class="no-decoration">
