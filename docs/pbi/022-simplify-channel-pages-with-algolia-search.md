@@ -50,92 +50,107 @@ Simplify channel pages to use a single route with SSR + client-side "load more" 
 ## Acceptance Criteria
 
 ### Route Simplification
-- [ ] **Remove Page Parameter**: Change route from `/channels/[channel]/[page].astro` to `/channels/[channel].astro`
+- [x] **Remove Page Parameter**: Change route from `/channels/[channel]/[page].astro` to `/channels/[channel].astro`
 - [ ] **Redirect Old URLs**: Add redirect from `/channels/[channel]/[page]` to `/channels/[channel]` to maintain SEO
-- [ ] **Update Internal Links**: Ensure all internal links point to new simplified route structure
-- [ ] **Canonical URLs**: Set proper canonical URLs for SEO without page parameters
+- [x] **Update Internal Links**: Ensure all internal links point to new simplified route structure
+- [x] **Canonical URLs**: Set proper canonical URLs for SEO without page parameters
 
 ### Server-Side Rendering (First Load)
-- [ ] **SSR 11 Threads**: Server-render first 11 threads using existing `/api/threads.json` logic
-- [ ] **Cache Headers**: Proper cache headers for first page (longer cache) vs. API requests (shorter cache)
-- [ ] **SEO Optimization**: Meta tags, structured data, and OpenGraph for channel pages
-- [ ] **Performance**: Fast initial page load with meaningful content above the fold
+- [x] **SSR 11 Threads**: Server-render first 11 threads using existing `/api/threads.json` logic
+- [x] **Cache Headers**: Proper cache headers for first page (longer cache) vs. API requests (shorter cache)
+- [x] **SEO Optimization**: Meta tags, structured data, and OpenGraph for channel pages
+- [x] **Performance**: Fast initial page load with meaningful content above the fold
 
 ### Client-Side Load More Pattern
-- [ ] **Load More Button**: Replace pagination toolbar with "Load More" button at bottom
-- [ ] **FlowTime Continuation**: Use `lastThreadFlowTime` from current page to fetch next batch
-- [ ] **API Integration**: Use existing `/api/threads.json?channel=X&startAt=Y&limit=11` endpoint
-- [ ] **Loading States**: Show loading indicator while fetching additional content
-- [ ] **Error Handling**: Graceful handling of API failures with retry option
-- [ ] **End of Content**: Hide "Load More" button when no more content available
+- [x] **Load More Button**: Replace pagination toolbar with "Load More" button at bottom
+- [x] **FlowTime Continuation**: Use `lastThreadFlowTime` from current page to fetch next batch
+- [x] **API Integration**: Use existing `/api/threads.json?channel=X&startAt=Y&limit=11` endpoint
+- [x] **Loading States**: Show loading indicator while fetching additional content
+- [x] **Error Handling**: Graceful handling of API failures with retry option
+- [x] **End of Content**: Hide "Load More" button when no more content available
 
 ### Algolia Search Integration
-- [ ] **Channel Search Component**: Create simplified search component for channel context
-- [ ] **Authentication Required**: Search box only available to authenticated users (cost optimization)
+- [x] **Channel Search Component**: Create simplified search component for channel context
+- [x] **Authentication Required**: Search box only available to authenticated users (cost optimization)
 - [ ] **Pre-filled Channel Tag**: Automatically add channel filter to search queries
-- [ ] **Search Box Placement**: Add search box to channel page header/toolbar area (when authenticated)
+- [x] **Search Box Placement**: Add search box to channel page header/toolbar area (when authenticated)
 - [ ] **Search Results Integration**: Show search results in same layout as channel threads
 - [ ] **Toggle Search/Browse**: Allow users to switch between browsing and searching within channel
-- [ ] **Login Prompt**: Show login prompt/link when unauthenticated users try to access search
+- [x] **Login Prompt**: Show login prompt/link when unauthenticated users try to access search
 
 ### Content-Listing Layout Enhancement
-- [ ] **Proper CSS Container**: Use `content-listing` CSS class for better responsive layout
-- [ ] **Sidebar Integration**: Proper sidebar for channel info using content-listing structure
-- [ ] **Responsive Design**: Ensure layout works on mobile, tablet, and desktop
-- [ ] **Breadcrumb Navigation**: Clear breadcrumbs from home → channels → current channel
-- [ ] **Remove Channel Tray**: Simplify layout by removing unnecessary tray component
+- [x] **Proper CSS Container**: Use `content-listing` CSS class for better responsive layout
+- [x] **Sidebar Integration**: Proper sidebar for channel info using content-listing structure
+- [x] **Responsive Design**: Ensure layout works on mobile, tablet, and desktop
+- [x] **Breadcrumb Navigation**: Clear breadcrumbs from home → channels → current channel
+- [x] **Remove Channel Tray**: Simplify layout by removing unnecessary tray component
 
 ## Technical Implementation
 
 ### New Route Structure
 ```astro
-<!-- src/pages/channels/[channel].astro -->
+## Technical Implementation
+
+### Architectural Simplification
+
+**✅ IMPLEMENTED**: Single Svelte Component Approach
+
+Instead of the complex mix of Astro server components and Svelte client components originally proposed, we implemented a much simpler architecture:
+
+1. **Server-Side Data Fetching**: The Astro page (`/src/pages/channels/[channel].astro`) fetches initial threads server-side
+2. **Single Svelte Component**: One `ChannelThreadList.svelte` component handles all UI and client-side interactions
+3. **Props-Based Hydration**: Initial SSR data is passed as props to the Svelte component
+4. **Client-Side State Management**: Component manages its own state for load more functionality
+
+### Implementation Details
+
+#### Channel Route (`/src/pages/channels/[channel].astro`)
+```astro
 ---
-import { parseChannel } from 'src/schemas/ChannelSchema';
-import { t } from 'src/utils/i18n';
-import DeferredSection from '../../components/server/app/DeferredSection.astro';
-import SimplifiedChannelApp from '../../components/server/ChannelApp/SimplifiedChannelApp.astro';
-import BackgroundPoster from '../../components/server/ui/BackgroundPoster.astro';
-import ChannelFabs from '../../components/svelte/threads/ChannelFabs.svelte';
-import Page from '../../layouts/Page.astro';
+// Fetch initial 11 threads server-side for SSR
+let threads: Thread[] = [];
+let lastThreadFlowTime = 0;
+let hasError = false;
 
-const channelKey = Astro.params.channel || 'pelilauta';
-
-// Remove page parameter handling - always start at page 1
-const origin = Astro.url.origin;
-const channelsResponse = await fetch(`${origin}/api/meta/channels.json`);
-const channels = await channelsResponse.json();
-const channeldata = channels.find(
-  (channel: { slug: string }) => channel.slug === channelKey,
-);
-
-if (!channeldata) {
-  Astro.response.status = 404;
-  return;
+try {
+  const queryString = `${origin}/api/threads.json?channel=${channel.slug}&limit=11`;
+  const threadListResponse = await fetch(queryString);
+  if (threadListResponse.ok) {
+    const threadsJSON = await threadListResponse.json();
+    threads = threadsJSON.map((thread: Thread) => parseThread(thread, thread.key));
+    lastThreadFlowTime = threads[threads.length - 1]?.flowTime || 0;
+  }
+} catch (error) {
+  hasError = true;
 }
-
-const channel = parseChannel(channeldata);
-const title = `${t('app:shortname')} - ${channel.name}`;
-const shortTitle = channel.name;
 ---
+
 <Page title={title} description={channel.description}>
-  <!-- Load first 11 threads server-side, then enable client-side loading -->
-  <SimplifiedChannelApp channel={channel} server:defer>
-    <DeferredSection class="column-l" slot="fallback"/>
-  </SimplifiedChannelApp>
-
-  <ChannelFabs client:only="svelte" slot="fab-tray"/>
-
-  <BackgroundPoster
-      slot="app-background-poster"
-      src="/myrrys-proprietary/juno-viinikka/juno-viinikka-dragon-2.webp"
-      md="/myrrys-proprietary/juno-viinikka/juno-viinikka-dragon-2-960.webp"
-    />
-  
-  <p class="text-caption text-center" style="opacity:0.44" slot="app-footer-credits">
-    Taustakuva © Juno Viinikka (<a href="https://linktr.ee/junowski">https://linktr.ee/junowski</a>)
-  </p>
+  <ChannelThreadList 
+    channel={channel}
+    initialThreads={threads}
+    initialLastFlowTime={lastThreadFlowTime}
+    hasError={hasError}
+    client:load
+  />
 </Page>
+```
+
+#### Svelte Component (`/src/components/svelte/threads/ChannelThreadList.svelte`)
+- **Props Interface**: Receives channel data, initial threads, last flow time, and error state
+- **State Management**: Uses Svelte runes (`$state`, `$derived`) for reactive state
+- **Load More Logic**: Implements infinite scroll pattern with "Load More" button
+- **Integrated Search**: Shows search box for authenticated users
+- **Content-Listing Layout**: Proper responsive layout with sidebar
+- **Error Handling**: Graceful error states and retry functionality
+
+### Benefits Achieved
+
+1. **Simplified Architecture**: One component instead of multiple interconnected ones
+2. **Better Performance**: Proper SSR with efficient client-side hydration
+3. **Cleaner State Management**: All thread state lives in one place
+4. **Easier Maintenance**: Less files, clearer data flow
+5. **Modern UX**: Load more pattern instead of pagination
 ```
 
 ### Simplified Channel App Component
@@ -621,4 +636,34 @@ return new Response(null, { status: 404 });
 - [ ] All existing channel page URLs redirect correctly without broken links
 - [ ] SEO impact minimal with proper redirects and canonical URLs
 - [ ] No breaking changes to existing channel functionality
-- [ ] Documentation updated for new simplified channel page architecture
+- [x] Documentation updated for new simplified channel page architecture
+
+---
+
+## ✅ IMPLEMENTATION COMPLETED (September 30, 2025)
+
+### Architectural Simplification Achieved
+Instead of the complex component architecture originally proposed, we implemented a much simpler solution:
+
+**Before**: Complex mix of SimplifiedChannelApp.astro + ChannelLoadMore.svelte + ChannelSearchBox.astro + ThreadListItem.astro
+
+**After**: Single `ChannelThreadList.svelte` component that:
+- Receives SSR data as props from the Astro page
+- Manages all client-side state internally
+- Handles load more functionality
+- Includes integrated search box
+- Renders threads directly without separate components
+
+### Benefits Realized
+- **Reduced Complexity**: From 4+ interconnected components to 1 self-contained component
+- **Improved Maintainability**: Clearer data flow and single responsibility
+- **Better Performance**: Proper SSR with efficient client-side hydration
+- **Modern UX**: Load more pattern replaces pagination navigation
+- **Cleaner Architecture**: All thread-related logic in one place
+
+### Next Steps (Future PRs)
+- Add URL redirects from old paginated routes
+- Connect search box to actual Algolia search API
+- Implement search results display within the same layout
+
+**Key Implementation Insight**: The simpler single-component approach proved more maintainable than the originally planned multi-component architecture, demonstrating the value of architectural simplification during implementation.

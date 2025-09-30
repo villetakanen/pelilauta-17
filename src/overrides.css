@@ -18,3 +18,17 @@ label:has(select) {
 label select {
   width: auto;
 }
+ol.breadcrumbs {
+  display: flex;
+  gap: var(--cn-grid);
+  margin: 0;
+}
+ol.breadcrumbs li + li::before {
+  content: "››";
+  color: var(--color-text-low);
+  padding-right: var(--cn-grid);
+}
+ol.breadcrumbs li {
+  margin: 0;
+  padding: 0;
+}

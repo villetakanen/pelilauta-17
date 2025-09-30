@@ -1,10 +1,11 @@
 ---
 import { parseChannel } from 'src/schemas/ChannelSchema';
+import { parseThread, type Thread } from 'src/schemas/ThreadSchema';
 import { t } from 'src/utils/i18n';
-import DeferredSection from '../../components/server/app/DeferredSection.astro';
-import SimplifiedChannelApp from '../../components/server/ChannelApp/SimplifiedChannelApp.astro';
+import { logDebug, logError } from 'src/utils/logHelpers';
 import BackgroundPoster from '../../components/server/ui/BackgroundPoster.astro';
 import ChannelFabs from '../../components/svelte/threads/ChannelFabs.svelte';
+import ChannelThreadList from '../../components/svelte/threads/ChannelThreadList.svelte';
 import Page from '../../layouts/Page.astro';
 
 const channelKey = Astro.params.channel || 'pelilauta';
@@ -25,12 +26,48 @@ if (!channeldata) {
 const channel = parseChannel(channeldata);
 const title = `${t('app:shortname')} - ${channel.name}`;
 const shortTitle = channel.name;
+
+// Fetch initial threads server-side for SSR
+let threads: Thread[] = [];
+let lastThreadFlowTime = 0;
+let hasError = false;
+
+// Set cache headers for better performance
+Astro.response.headers.set(
+  'Cache-Control',
+  'public, max-age=300, s-maxage=600',
+);
+
+try {
+  const queryString = `${origin}/api/threads.json?channel=${channel.slug}&limit=11`;
+  logDebug('ChannelPage', 'Fetching initial threads:', queryString);
+
+  const threadListResponse = await fetch(queryString);
+  if (!threadListResponse.ok) {
+    throw new Error(`Failed to fetch threads: ${threadListResponse.status}`);
+  }
+
+  const threadsJSON = await threadListResponse.json();
+  threads = threadsJSON.map((thread: Thread) =>
+    parseThread(thread, thread.key),
+  );
+  lastThreadFlowTime = threads[threads.length - 1]?.flowTime || 0;
+
+  logDebug('ChannelPage', 'Loaded initial threads:', threads.length);
+} catch (error) {
+  logError('ChannelPage', 'Failed to load initial threads:', error);
+  hasError = true;
+}
 ---
 <Page title={title} description={channel.description}>
-  <!-- Load first 11 threads server-side, then enable client-side loading -->
-  <SimplifiedChannelApp channel={channel} server:defer>
-    <DeferredSection class="column-l" slot="fallback"/>
-  </SimplifiedChannelApp>
+  <!-- Single Svelte component handles everything -->
+  <ChannelThreadList 
+    channel={channel}
+    initialThreads={threads}
+    initialLastFlowTime={lastThreadFlowTime}
+    hasError={hasError}
+    client:load
+  />
 
   <ChannelFabs client:only="svelte" slot="fab-tray"/>
 
