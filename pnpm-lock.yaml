@@ -18,8 +18,8 @@ importers:
         specifier: 4.0.0-beta.32
         version: 4.0.0-beta.32(lato-font@3.0.0)
       '@11thdeg/cyan-lit':
-        specifier: 4.0.0-beta.19
-        version: 4.0.0-beta.19
+        specifier: 4.0.0-beta.20
+        version: 4.0.0-beta.20
       '@astrojs/check':
         specifier: ^0.9.4
         version: 0.9.4(typescript@5.9.2)
@@ -170,8 +170,8 @@ packages:
     peerDependencies:
       lato-font: '*'
 
-  '@11thdeg/cyan-lit@4.0.0-beta.19':
-    resolution: {integrity: sha512-9zTiXeWclE7Bdl8Xw2lPQc0hTciA+6xdS5voK3J0Df3licSfrGwF/aj+a2LkzbvyuZ6Xivo+uqVUPUAje+hxgA==}
+  '@11thdeg/cyan-lit@4.0.0-beta.20':
+    resolution: {integrity: sha512-azw3duYv5S4JbfaMQAQH9ceuvJGtVBq51sinzxlkFrhRVUBFcBUuL1ctDS16GTRbNVww5YZTZu3/xhKhJKJ46w==}
 
   '@algolia/abtesting@1.3.0':
     resolution: {integrity: sha512-KqPVLdVNfoJzX5BKNGM9bsW8saHeyax8kmPFXul5gejrSPN3qss7PgsFH5mMem7oR8tvjvNkia97ljEYPYCN8Q==}
@@ -7349,7 +7349,7 @@ snapshots:
     dependencies:
       lato-font: 3.0.0
 
-  '@11thdeg/cyan-lit@4.0.0-beta.19':
+  '@11thdeg/cyan-lit@4.0.0-beta.20':
     dependencies:
       lit: 3.3.1
 

@@ -503,34 +503,34 @@ return new Response(null, { status: 404 });
 ## Implementation Steps
 
 ### Phase 1: Route Simplification
-1. **Create New Route**: Implement `/channels/[channel].astro` without page parameter
-2. **SSR First Load**: Server-render first 11 threads using existing API logic  
-3. **Add Redirects**: Keep old route file to redirect paginated URLs
-4. **Update Navigation**: Change all internal links to use simplified routes
+- [x] 1. **Create New Route**: Implement `/channels/[channel].astro` without page parameter
+- [x] 2. **SSR First Load**: Server-render first 11 threads using existing API logic  
+- [x] 3. **Add Redirects**: Keep old route file to redirect paginated URLs
+- [x] 4. **Update Navigation**: Change all internal links to use simplified routes
 
 ### Phase 2: Load More Pattern
-5. **Client Component**: Create `ChannelLoadMore.svelte` for incremental loading
-6. **API Integration**: Use existing flowTime-based pagination API
-7. **Loading States**: Implement loading indicators and error handling
-8. **Thread Rendering**: Handle client-side thread list rendering
+- [x] 5. **Client Component**: Create `ChannelLoadMore.svelte` for incremental loading
+- [ ] 6. **API Integration**: Use existing flowTime-based pagination API
+- [ ] 7. **Loading States**: Implement loading indicators and error handling
+- [ ] 8. **Thread Rendering**: Handle client-side thread list rendering
 
 ### Phase 3: Search Integration  
-9. **Search Component**: Create channel-specific Algolia search component
-10. **Pre-filtering**: Automatically filter search results by channel tag
-11. **UI Integration**: Add search box to channel page header
-12. **Search Results**: Display search results in same layout as channel threads
+- [ ] 9. **Search Component**: Create channel-specific Algolia search component
+- [ ] 10. **Pre-filtering**: Automatically filter search results by channel tag
+- [ ] 11. **UI Integration**: Add search box to channel page header
+- [ ] 12. **Search Results**: Display search results in same layout as channel threads
 
 ### Phase 4: Content-Listing Enhancement
-13. **CSS Layout**: Apply proper `content-listing` container styling
-14. **Responsive Design**: Ensure mobile, tablet, desktop compatibility
-15. **Sidebar Integration**: Proper aside layout for channel information
-16. **Header Consistency**: Consistent breadcrumbs and navigation
+- [ ] 13. **CSS Layout**: Apply proper `content-listing` container styling
+- [ ] 14. **Responsive Design**: Ensure mobile, tablet, desktop compatibility
+- [ ] 15. **Sidebar Integration**: Proper aside layout for channel information
+- [ ] 16. **Header Consistency**: Consistent breadcrumbs and navigation
 
 ### Phase 5: Testing & Optimization
-17. **E2E Tests**: Test load more functionality and search integration
-18. **Performance**: Verify SSR performance and client-side loading speed
-19. **SEO Testing**: Ensure redirects work and canonical URLs are correct
-20. **Accessibility**: Test keyboard navigation and screen reader support
+- [ ] 17. **E2E Tests**: Test load more functionality and search integration
+- [ ] 18. **Performance**: Verify SSR performance and client-side loading speed
+- [ ] 19. **SEO Testing**: Ensure redirects work and canonical URLs are correct
+- [ ] 20. **Accessibility**: Test keyboard navigation and screen reader support
 
 ## Dependencies
 
