@@ -18,8 +18,7 @@ function handleSearch(event: Event) {
   if (!isAuthenticated) {
     // Redirect to login page with current location as redirect
     if (typeof window !== 'undefined') {
-      window.location.href =
-        '/login?redirect=' + encodeURIComponent(window.location.pathname);
+      window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
     }
     return;
   }

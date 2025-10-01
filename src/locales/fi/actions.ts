@@ -42,4 +42,7 @@ export const actions: Locale = {
   reset: 'Palauta',
   reposted: 'Jaettu uudelleen onnistuneesti',
   upload: 'Lataa',
+  loadMore: 'Lataa lisää',
+  loading: 'Ladataan...',
+  retry: 'Yritä uudelleen',
 };

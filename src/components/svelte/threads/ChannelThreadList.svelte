@@ -129,7 +129,12 @@ async function loadMoreThreads() {
           disabled={isLoading}
           class="flex-none"
         >
-          {isLoading ? t('threads:channel.loading') : t('threads:channel.loadMore')}
+          {#if isLoading}
+            <cn-loader noun={channel.icon}></cn-loader>
+          {:else}
+            <cn-icon noun={channel.icon}></cn-icon>
+          {/if}
+          <span>{isLoading ? t('actions:loading') : t('actions:loadMore')}</span>
         </button>
       </div>
     {/if}
@@ -141,7 +146,8 @@ async function loadMoreThreads() {
           onclick={loadMoreThreads} 
           class="px-2 py-1 bg-transparent text-primary border border-primary radius-s cursor-pointer text-caption"
         >
-          {t('threads:channel.retry')}
+          <cn-icon noun={channel.icon}></cn-icon>
+          <span>{t('actions:retry')}</span>
         </button>
       </div>
     {/if}
