@@ -44,8 +44,8 @@ async function loadMoreThreads() {
     }
 
     const threadsData = await response.json();
-    const newThreads = threadsData.map((thread: any) =>
-      parseThread(thread, thread.key),
+    const newThreads = threadsData.map((thread: Record<string, unknown>) =>
+      parseThread(thread, String(thread.key)),
     );
 
     if (newThreads.length > 0) {

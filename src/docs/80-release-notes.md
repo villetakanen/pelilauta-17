@@ -5,7 +5,11 @@ noun: 'monsters'
 ---
 ## Version 18
 
-### 18.6.x (ongoing)
+### 18.7.0 (ongoing)
+- feat(threads): Search a channel for threads by title and content using Algolia. 
+- feat(threads): Thread list infinite scroll instead of pagination
+- fix: moved patch-overrides to cyan-design-system to main design system
+- fix: latest cyan design system beta fixes and patches
 - fix:(threads): New thread toolbar no longer shows too long select-boxes
 - fix: Select and input styling fixes for better UX from cyan design system latest beta
 - fix: Updated dependencies: Zod, Svelte, Astro etc.

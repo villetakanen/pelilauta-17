@@ -36,8 +36,8 @@ async function loadMore() {
     const threadsData = await response.json();
     const threads = threadsData.map(
       (
-        thread: any, // Use any to avoid schema parsing issues on client
-      ) => parseThread(thread, thread.key),
+        thread: Record<string, unknown>, // Use any to avoid schema parsing issues on client
+      ) => parseThread(thread, String(thread.key)),
     );
 
     if (threads.length > 0) {

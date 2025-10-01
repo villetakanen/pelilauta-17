@@ -85,11 +85,32 @@ async function handleSearch() {
     );
 
     // Build search request with optional channel filter
-    const searchRequest = {
+    interface SearchRequest {
+      indexName: string;
+      query: string;
+      facetFilters?: string[][];
+    }
+
+    const searchRequest: SearchRequest = {
       indexName: 'pelilauta-entries',
       query: searchQuery,
-      ...(channelFilter && { filters: `channel:${channelFilter}` }),
     };
+
+    // Add facetFilters if channel is specified
+    if (channelFilter) {
+      searchRequest.facetFilters = [[`channel:${channelFilter}`]];
+      logDebug(
+        'AlgoliaSearchApp',
+        'Applied facetFilters:',
+        searchRequest.facetFilters,
+      );
+    }
+
+    logDebug(
+      'AlgoliaSearchApp',
+      'Search request:',
+      JSON.stringify(searchRequest, null, 2),
+    );
 
     // Perform search
     const { results } = await client.search({
@@ -97,7 +118,26 @@ async function handleSearch() {
     });
 
     searchResults = results as SearchResultData[];
-    logDebug('AlgoliaSearchApp', 'Search completed, results:', results);
+    logDebug(
+      'AlgoliaSearchApp',
+      'Search completed, results:',
+      JSON.stringify(results, null, 2),
+    );
+
+    // If we got results, log the first hit to see its structure
+    const firstResult = results[0] as SearchResultData;
+    if (firstResult?.hits?.length > 0) {
+      logDebug(
+        'AlgoliaSearchApp',
+        'First hit structure:',
+        JSON.stringify(firstResult.hits[0], null, 2),
+      );
+    } else {
+      logDebug(
+        'AlgoliaSearchApp',
+        'No hits returned. Try without channel filter to verify base search works.',
+      );
+    }
   } catch (err) {
     logError('AlgoliaSearchApp', 'Search failed:', err);
     error = err instanceof Error ? err.message : 'Search failed';
