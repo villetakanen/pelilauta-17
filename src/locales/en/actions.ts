@@ -40,4 +40,7 @@ export const actions: Locale = {
   reset: 'Reset',
   reposted: 'Reposted successfully',
   upload: 'Upload',
+  loadMore: 'Load more',
+  loading: 'Loading...',
+  retry: 'Retry',
 };
