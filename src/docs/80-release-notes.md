@@ -5,7 +5,7 @@ noun: 'monsters'
 ---
 ## Version 18
 
-### 18.7.0 (ongoing)
+### 18.7.0 (01.10.2025)
 - feat(threads): Search a channel for threads by title and content using Algolia. 
 - feat(threads): Thread list infinite scroll instead of pagination
 - fix: moved patch-overrides to cyan-design-system to main design system
