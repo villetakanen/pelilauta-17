@@ -1,6 +1,6 @@
 ---
 import type { ChannelWithStats } from 'src/schemas/ChannelSchema';
-import ChannelListInfoCell from './channelList/ChannelListInfoCell.astro';
+import ChannelListInfoCell from './ChannelListInfoCell.astro';
 
 interface Props {
   channelWithStats: ChannelWithStats;
@@ -8,7 +8,7 @@ interface Props {
 const { channelWithStats } = Astro.props;
 ---
 <article class="cols-2">
-  <div class="surface flex">
+  <div class="surface flex flex-row">
     <cn-icon noun={channelWithStats.icon} style="flex: 0 0 auto"></cn-icon>
     <div>
       <h3 class="text-h5 m-0">
