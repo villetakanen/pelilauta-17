@@ -10,3 +10,22 @@
   white-space: nowrap;
   width: 1px;
 }
+
+/* Patch: text area does not have full input styling */
+textarea {
+  line-height: var(--cn-line-height-text);
+  --cn-line-height-ui: var(
+    --cn-line-height-text
+  ); /* This is a legacy bug, as we no longer have separate line heights for text and UI inputs */
+}
+
+/* Modern way of saying justify-right */
+.items-end,
+.toolbar.items-end {
+  justify-content: flex-end;
+}
+
+/* Missing hover atomic */
+.hover-underline:hover {
+  text-decoration: underline;
+}
