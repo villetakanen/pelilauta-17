@@ -5,6 +5,12 @@ noun: 'monsters'
 ---
 ## Version 18
 
+### 18.7.1 (ongoing)
+- fix: Cyan Design System latest beta fixes and patches
+- fix(threads): Channels/Forum index UX polish and fixes
+- fix(threads): Channel admin tool now supports channel description editing
+- fix(threads): Channel admin tool channel name changing ux cleanup
+
 ### 18.7.0 (01.10.2025)
 - feat(threads): Search a channel for threads by title and content using Algolia. 
 - feat(threads): Thread list infinite scroll instead of pagination
