@@ -20,6 +20,13 @@ export interface SnippetOptions {
   headerClasses?: string[];
 
   /**
+   * CSS classes to add to paragraphs
+   * Set to empty array to disable paragraph styling
+   * @default []
+   */
+  paragraphClasses?: string[];
+
+  /**
    * Whether to preserve complete semantic blocks
    * @default true
    */
@@ -31,6 +38,7 @@ export interface SnippetOptions {
  *
  * - Renders markdown using marked
  * - Adds styling classes (text-h5 to headers)
+ * - Optionally adds styling classes to paragraphs (disabled by default)
  * - Intelligently truncates while preserving HTML structure
  * - Adds ellipsis when content is cut off
  *
@@ -42,9 +50,9 @@ export interface SnippetOptions {
  * ```typescript
  * const snippet = await createRichSnippet(
  *   '# Welcome\n\nThis is **bold** text.',
- *   { maxLength: 50 }
+ *   { maxLength: 50, paragraphClasses: ['text-small'] }
  * );
- * // Returns: '<h1 class="text-h5">Welcome</h1><p>This is <strong>bold</strong> text.</p>'
+ * // Returns: '<h1 class="text-h5">Welcome</h1><p class="text-small">This is <strong>bold</strong> text.</p>'
  * ```
  */
 export async function createRichSnippet(
@@ -55,6 +63,7 @@ export async function createRichSnippet(
     maxLength = 220,
     addEllipsis = true,
     headerClasses = ['text-h5'],
+    paragraphClasses = [],
     respectSemanticBoundaries = true,
   } = options;
 
@@ -65,8 +74,9 @@ export async function createRichSnippet(
   // Step 1: Render markdown to HTML
   const rawHtml = await marked.parse(markdownContent);
 
-  // Step 2: Add CSS classes to headers
-  const styledHtml = addHeaderClasses(rawHtml, headerClasses);
+  // Step 2: Add CSS classes to headers and paragraphs
+  let styledHtml = addHeaderClasses(rawHtml, headerClasses);
+  styledHtml = addParagraphClasses(styledHtml, paragraphClasses);
 
   // Step 3: Truncate intelligently if needed
   const visibleTextLength = getVisibleTextLength(styledHtml);
@@ -190,6 +200,39 @@ export function addHeaderClasses(html: string, classes: string[]): string {
         return match; // No new classes to add
       }
       return `<${tag} class="${existingClasses} ${newClasses.join(' ')}"`;
+    },
+  );
+
+  return result;
+}
+
+/**
+ * Adds CSS classes to paragraph tags in HTML string.
+ *
+ * @param html - HTML string to process
+ * @param classes - Array of CSS class names to add
+ * @returns HTML with classes added to paragraphs
+ */
+export function addParagraphClasses(html: string, classes: string[]): string {
+  if (!classes || classes.length === 0) {
+    return html;
+  }
+
+  const classString = classes.join(' ');
+
+  // Add classes to all paragraph tags that don't already have classes
+  let result = html.replace(/<p>/gi, `<p class="${classString}">`);
+
+  // For paragraphs that already have classes, append new classes (avoiding duplicates)
+  result = result.replace(
+    /<p\s+class="([^"]*)"/gi,
+    (match, existingClasses) => {
+      const existingSet = new Set(existingClasses.split(' ').filter(Boolean));
+      const newClasses = classes.filter((c) => !existingSet.has(c));
+      if (newClasses.length === 0) {
+        return match; // No new classes to add
+      }
+      return `<p class="${existingClasses} ${newClasses.join(' ')}"`;
     },
   );
 

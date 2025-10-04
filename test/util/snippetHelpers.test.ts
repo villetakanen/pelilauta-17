@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   addEllipsisToHtml,
   addHeaderClasses,
+  addParagraphClasses,
   createPlainSnippet,
   createRichSnippet,
   getVisibleTextLength,
@@ -39,6 +40,30 @@ describe('snippetHelpers', () => {
         headerClasses: ['custom-class', 'another-class'],
       });
       expect(result).toContain('custom-class another-class');
+    });
+
+    it('should not add paragraph classes by default', async () => {
+      const result = await createRichSnippet(
+        'This is a paragraph.\n\nAnother paragraph.',
+      );
+      expect(result).toContain('<p>This is a paragraph.</p>');
+      expect(result).toContain('<p>Another paragraph.</p>');
+      expect(result).not.toContain('class="text-small"');
+    });
+
+    it('should allow custom paragraph classes', async () => {
+      const result = await createRichSnippet('Simple text.', {
+        paragraphClasses: ['custom-p', 'another-p'],
+      });
+      expect(result).toContain('custom-p another-p');
+    });
+
+    it('should allow disabling paragraph classes', async () => {
+      const result = await createRichSnippet('Simple text.', {
+        paragraphClasses: [],
+      });
+      expect(result).toContain('<p>Simple text.</p>');
+      expect(result).not.toContain('class=');
     });
 
     it('should not truncate content shorter than maxLength', async () => {
@@ -287,6 +312,52 @@ This is **bold** and *italic* with [a link](https://example.com).
       const html = '<H1>Title</H1><H2>Subtitle</H2>';
       const result = addHeaderClasses(html, ['text-h5']);
       expect(result).toContain('class="text-h5"');
+    });
+  });
+
+  describe('addParagraphClasses', () => {
+    it('should add classes to p tags', () => {
+      const html = '<p>Content</p>';
+      const result = addParagraphClasses(html, ['text-small']);
+      expect(result).toBe('<p class="text-small">Content</p>');
+    });
+
+    it('should add classes to multiple paragraphs', () => {
+      const html = '<p>First</p><p>Second</p><p>Third</p>';
+      const result = addParagraphClasses(html, ['text-small']);
+      expect(result).toContain('<p class="text-small">First</p>');
+      expect(result).toContain('<p class="text-small">Second</p>');
+      expect(result).toContain('<p class="text-small">Third</p>');
+    });
+
+    it('should add multiple classes', () => {
+      const html = '<p>Text</p>';
+      const result = addParagraphClasses(html, ['text-small', 'color-muted']);
+      expect(result).toBe('<p class="text-small color-muted">Text</p>');
+    });
+
+    it('should append to existing classes', () => {
+      const html = '<p class="existing">Text</p>';
+      const result = addParagraphClasses(html, ['text-small']);
+      expect(result).toBe('<p class="existing text-small">Text</p>');
+    });
+
+    it('should not duplicate classes', () => {
+      const html = '<p class="text-small">Text</p>';
+      const result = addParagraphClasses(html, ['text-small']);
+      expect(result).toBe('<p class="text-small">Text</p>');
+    });
+
+    it('should return original HTML if no classes provided', () => {
+      const html = '<p>Text</p>';
+      const result = addParagraphClasses(html, []);
+      expect(result).toBe(html);
+    });
+
+    it('should handle case-insensitive tags', () => {
+      const html = '<P>Text</P>';
+      const result = addParagraphClasses(html, ['text-small']);
+      expect(result).toContain('class="text-small"');
     });
   });
 

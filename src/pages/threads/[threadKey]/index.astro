@@ -1,7 +1,7 @@
 ---
 import { ThreadSchema } from 'src/schemas/ThreadSchema';
-import { createSnippet } from 'src/utils/contentHelpers';
 import { t } from 'src/utils/i18n';
+import { createPlainSnippet } from 'src/utils/snippetHelpers';
 import DiscussionApp from '../../../components/server/DiscussionApp/DiscussionApp.astro';
 import ThreadArticle from '../../../components/server/ThreadsApp/ThreadArticle.astro';
 import ThreadInfoSection from '../../../components/server/ThreadsApp/ThreadInfoSection.astro';
@@ -27,7 +27,7 @@ const thread = ThreadSchema.parse(await threadResponse.json());
 
 const title = `${t('app:shortname')} - ${thread.channel}`;
 
-const snippet = createSnippet(thread.markdownContent || '');
+const snippet = createPlainSnippet(thread.markdownContent || '', 160);
 ---
 <Page title={title} description={snippet}>
   <div class="content-columns">

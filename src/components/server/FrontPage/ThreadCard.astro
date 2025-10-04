@@ -1,7 +1,7 @@
 ---
-import { marked } from 'marked';
 import type { Thread } from 'src/schemas/ThreadSchema';
 import { toDisplayString } from 'src/utils/contentHelpers';
+import { createRichSnippet } from 'src/utils/snippetHelpers';
 import ProfileLink from '../../svelte/app/ProfileLink.svelte';
 import ReactionButton from '../../svelte/app/ReactionButton.svelte';
 import CardSubscription from '../../svelte/frontpage/CardSubscription.svelte';
@@ -19,8 +19,10 @@ const poster = thread.poster
     ? thread.images[0].url
     : undefined;
 
-const md = thread.markdownContent || '';
-const snippet = await marked(md.slice(0, 220));
+const snippet = await createRichSnippet(thread.markdownContent || '', {
+  maxLength: 220,
+  headerClasses: ['text-h5'],
+});
 ---
 
 <div style="flex-basis: auto; width: 100%">

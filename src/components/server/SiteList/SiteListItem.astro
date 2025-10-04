@@ -1,7 +1,8 @@
 ---
 import { systemToNounMapping } from 'src/schemas/nouns';
 import type { Site } from 'src/schemas/SiteSchema';
-import { createSnippet, toDisplayString } from 'src/utils/contentHelpers';
+import { toDisplayString } from 'src/utils/contentHelpers';
+import { createPlainSnippet } from 'src/utils/snippetHelpers';
 
 interface Props {
   site: Site;
@@ -47,7 +48,7 @@ function systemToNoun(system?: string): string {
       <h4 class="downscaled">{site.name}</h4>
       {site.description && (
             <p class="downscaled">{
-              createSnippet(site.description, 220)
+              createPlainSnippet(site.description, 220)
             }</p>
           )}
     </div>
