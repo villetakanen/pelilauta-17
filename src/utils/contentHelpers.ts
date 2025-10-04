@@ -19,28 +19,3 @@ export function extractTags(content: string): string[] {
   const raw = tags ? [...new Set(tags)] : [];
   return raw.map((tag) => tag.replace('#', ''));
 }
-
-/**
- * @deprecated Use createRichSnippet() or createPlainSnippet() from snippetHelpers.ts instead
- *
- * Creates a [120] character long snippet from a markdown content.
- *
- * Changes all topics to bold, and removes all other markdown.
- *
- * Adds an ellipsis at the end if the snippet is cut off.
- *
- * @see {@link ../snippetHelpers.ts} for the new implementation
- */
-export function createSnippet(content: string, lenght = 120): string {
-  if (typeof console !== 'undefined' && console.warn) {
-    console.warn(
-      'createSnippet() is deprecated. Use createPlainSnippet() or createRichSnippet() from src/utils/snippetHelpers.ts instead.',
-    );
-  }
-  // const tags = extractTags(content);
-  const snippet = content.replace(/#([a-zA-Z0-9äöüÄÖÜ]+)/g, '<b>$1</b>');
-  const plainText = snippet.replace(/<[^>]*>/g, '');
-  return plainText.length > lenght
-    ? `${plainText.substring(0, lenght)}...`
-    : plainText;
-}
