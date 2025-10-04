@@ -5,8 +5,8 @@ import BackgroundPoster from '../../components/server/ui/BackgroundPoster.astro'
 import FrontpageFabs from '../../components/svelte/frontpage/FrontpageFabs.svelte';
 import Page from '../../layouts/Page.astro';
 
-const title = `${t('app:shortname')} - ${t('threads:forum.title')}`;
-const description = t('threads:forum.description');
+const title = t('seo:channels.title');
+const description = t('seo:channels.description');
 ---
 <Page title={title} description={description}>
   <!-- Direct SSR rendering - no defer needed with aggregated endpoint -->

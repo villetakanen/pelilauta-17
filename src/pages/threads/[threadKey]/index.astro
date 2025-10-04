@@ -25,7 +25,10 @@ if (!threadResponse.ok) {
 // we'll simply parse it to verify the structure.
 const thread = ThreadSchema.parse(await threadResponse.json());
 
-const title = `${t('app:shortname')} - ${thread.channel}`;
+// SEO-optimized title and description
+const title = thread.title
+  ? `${thread.title} - ${t('app:shortname')}`
+  : `${t('app:shortname')} - ${thread.channel}`;
 
 const snippet = createPlainSnippet(thread.markdownContent || '', 160);
 ---

@@ -21,6 +21,9 @@ const changes = $derived(
   name !== channel.name || description !== (channel.description || ''),
 );
 
+const descriptionLength = $derived(description.length);
+const isDescriptionLong = $derived(descriptionLength > 160);
+
 let isSaving = $state(false);
 let isRefreshing = $state(false);
 let isDeleting = $state(false);
@@ -186,6 +189,12 @@ async function handleDelete() {
           bind:value={description}
         ></textarea>
       </label>
+      <div class="text-small {isDescriptionLong ? 'text-warning' : 'text-low'}">
+          {descriptionLength}/160 {t('admin:channels.edit.characters')}
+          {#if isDescriptionLong}
+            <span class="text-warning">({t('admin:channels.edit.tooLong')})</span>
+          {/if}
+        </div>
 
       <div class="toolbar items-end">
         <button 

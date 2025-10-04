@@ -29,3 +29,9 @@ textarea {
 .hover-underline:hover {
   text-decoration: underline;
 }
+
+/* Patch: add missing text color */
+.text-warning {
+  color: var(--color-on-error, var(--chroma-warning));
+  font-weight: bold;
+}

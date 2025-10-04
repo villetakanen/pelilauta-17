@@ -411,12 +411,12 @@ const description = profile.bio?.trim()
 
 ### Implementation Checklist
 
-- [ ] **Create i18n SEO file** (`src/locales/fi/seo.ts`) with all static descriptions
+- [x] **Create i18n SEO file** (`src/locales/fi/seo.ts`) with all static descriptions ✅ Oct 4, 2025
 - [ ] **Audit all public pages** (create spreadsheet with findings)
-- [ ] **Front page**: Add i18n description
-- [ ] **Channel index**: Add i18n description or verify existing
-- [ ] **Channel pages**: Verify description quality, truncate if needed
-- [ ] **Thread pages**: Already done ✅ (PBI-023)
+- [x] **Front page**: Add i18n description ✅ Oct 4, 2025
+- [x] **Channel index**: Add i18n description ✅ Oct 4, 2025
+- [x] **Channel pages**: Verify description quality, truncate if needed ✅ Oct 4, 2025
+- [x] **Thread pages**: Verified PBI-023 implementation working, improved title ✅ Oct 4, 2025
 - [ ] **Site list**: Add i18n description
 - [ ] **Site pages**: Verify description from site.description, add i18n fallback, truncate if needed
 - [ ] **Site wiki pages**: Verify page descriptions with i18n fallback

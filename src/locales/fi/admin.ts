@@ -80,6 +80,9 @@ export const admin: Locale = {
       namePrompt: 'Muokkaa kanavan nimeä (nykyinen: "{current}"):',
       success: 'Kanava päivitetty onnistuneesti',
       failed: 'Kanavan päivittäminen epäonnistui',
+      name: 'Kanavan nimi',
+      characters: 'merkkiä',
+      tooLong: 'yli suositellun pituuden, katkaistaan hakukoneissa',
     },
     create: {
       success: 'Kanava "{name}" luotu onnistuneesti',
