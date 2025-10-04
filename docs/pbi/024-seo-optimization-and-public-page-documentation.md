@@ -1,12 +1,89 @@
 # PBI-024: SEO Optimization and Public Page Documentation
 
-**Status:** 🔵 Not Started  
+**Status:** � In Progress - Phase 1 Complete  
 **Priority:** High  
-**Estimated Effort:** 1 sprint (1-2 weeks)
+**Estimated Effort:** 1 sprint (1-2 weeks)  
+**Phase 1 Completed:** October 4, 2025
 
 **User Story:** As a content creator and site operator, I want all public-facing pages to have proper SEO metadata (descriptions, Open Graph tags, canonical URLs) and proper indexing controls, so that our content is discoverable in search engines while keeping private/admin pages hidden, and I want comprehensive documentation of our public page structure for maintainability.
 
 ---
+
+## Implementation Progress
+
+### ✅ Phase 1: Public Page Tree Documentation (COMPLETED - Oct 4, 2025)
+
+**Deliverables:**
+- ✅ Created comprehensive documentation: `src/docs/77-public-pages-seo.md` (600+ lines)
+- ✅ Documented all primary public pages (high SEO priority)
+  - Front page, channels, threads, sites, library, tags, docs
+  - Current status assessment for each page
+  - Specific recommendations for improvements
+- ✅ Documented secondary public pages (medium SEO priority)
+  - User profiles, search, login, EULA, error pages
+  - SEO considerations for each page type
+- ✅ Comprehensive list of non-indexable pages (~40+ routes)
+  - Admin section (all routes)
+  - User settings & authentication
+  - Content creation workflows
+  - Site management tools
+  - Editing & deletion pages
+- ✅ SEO best practices section
+  - Description guidelines (150-160 chars)
+  - Title formatting conventions
+  - Image requirements (Open Graph)
+  - Snippet utility usage patterns
+- ✅ Page hierarchy tree visualization with status indicators
+- ✅ Implementation checklists organized by priority
+- ✅ robots.txt configuration recommendations
+- ✅ Testing & verification guidelines
+
+**Key Findings:**
+1. **Critical SEO Gaps Identified:**
+   - Front page (/) missing description entirely - highest traffic page
+   - Sites index (/sites) missing description - major navigation
+   - Tag pages (/tags/[tag]) using generic description
+   - Profile pages (/profiles/[uid]) missing dynamic descriptions
+   
+2. **Localization Strategy Defined:**
+   - Recommend i18n for all static SEO content (consistency with existing patterns)
+   - Primary language: Finnish (fi-FI) for better Google rankings in Finland
+   - Create dedicated `seo` namespace in i18n files
+   - Use `createPlainSnippet()` for user-generated dynamic content
+   - Hybrid approach for pages with optional user content (fallback to i18n)
+   
+3. **Indexing Control Audit Needed:**
+   - 4 pages confirmed with noSharing (settings, create character, keeper, admin channels)
+   - 36+ routes need verification for noSharing implementation
+   - All admin/* routes must be verified
+   - All create/* and edit/delete routes need checking
+
+4. **Quality Issues:**
+   - Channel descriptions may exceed recommended length
+   - Site/wiki pages lack page-specific descriptions
+   - Dynamic content pages need i18n fallback descriptions
+   - Some i18n descriptions need SEO review
+
+5. **Already Optimized:**
+   - Thread pages (/threads/[threadKey]) properly using createPlainSnippet() from PBI-023 ✅
+
+6. **Documentation Statistics:**
+   - ~15-20 main public routes identified
+   - ~40+ private routes requiring noSharing
+   - 1 route fully optimized, 3 good, 5-7 need work, 4-5 critical issues
+   - Clear priority ranking for Phase 2 implementation
+   - Comprehensive i18n examples and patterns documented
+
+**Files Created:**
+1. `src/docs/77-public-pages-seo.md` - Complete SEO documentation and audit
+
+**Testing Approach Documented:**
+- Manual verification steps (view source, check meta tags)
+- Automated E2E test structure for indexing controls
+- Google Search Console integration guidelines
+- robots.txt configuration
+
+### 🔄 Phase 2: SEO Metadata Audit & Fixes (NOT STARTED)
 
 ## Problem Statement
 
@@ -192,6 +269,52 @@ This document describes the public-facing page structure of Pelilauta, including
 
 ## Phase 2: SEO Metadata Audit & Fixes
 
+### Prerequisites
+
+**Create i18n SEO Namespace:**
+Before implementing page fixes, create a centralized i18n file for all static SEO content:
+
+```typescript
+// src/locales/fi/seo.ts
+export default {
+  frontPage: {
+    title: 'Pelilauta - Roolipelaamisen yhteisö',
+    description: 'Suomalainen roolipelaamisen yhteisö. Keskustele peleistä, jaa kampanjawikejä ja hallinnoi hahmojasi. Liity tuhansien pelaajien joukkoon!',
+  },
+  sites: {
+    title: 'Kampanjasivustot',
+    description: 'Selaa yhteisön kampanjawikejä ja pelisivustoja. Luo ja jaa omia roolipelien maailmoja, NPC:itä, sijainteja ja peliresursseja.',
+    fallback: '{{name}} - Roolipelin kampanjasivusto Pelilaudalla',
+  },
+  tag: {
+    description: 'Keskustelut aiheesta #{{tag}}. Tutustu yhteisön keskusteluihin ja jaa omia ajatuksiasi Pelilaudan roolipelifoorumilla.',
+  },
+  profile: {
+    fallback: '{{nick}} - Pelilaudan yhteisön jäsen ja roolipelien harrastaja',
+  },
+  search: {
+    title: 'Haku',
+    description: 'Hae Pelilaudan sisällöstä: keskustelut, kampanjasivustot ja roolipeliresurssit. Löydä vastaukset kysymyksiisi.',
+  },
+  login: {
+    description: 'Kirjaudu Pelilautaan keskustellaksesi, luodaksesi sivustoja ja hallitaksesi hahmojasi.',
+  },
+  eula: {
+    description: 'Pelilauta käyttöehdot ja käyttöoikeussopimus. Tutustu ehtoihin ennen palvelun käyttöä.',
+  },
+  error404: {
+    description: 'Etsimääsi sivua ei löydy. Palaa Pelilaudan etusivulle selailemaan keskusteluja ja kampanjasivustoja.',
+  },
+};
+```
+
+**Why i18n for SEO?**
+- ✅ **Consistency**: Matches existing i18n patterns in the codebase
+- ✅ **Maintainability**: All SEO text centralized in one place
+- ✅ **Future-proof**: Ready for internationalization (en/fi/etc)
+- ✅ **Language matching**: Finnish descriptions for Finnish site = better Google rankings
+- ✅ **Team collaboration**: Non-technical team members can edit SEO text easily
+
 ### Audit Process
 
 1. **Create Audit Spreadsheet/Checklist**
@@ -217,11 +340,14 @@ This document describes the public-facing page structure of Pelilauta, including
 
 **Front Page (index.astro):**
 ```astro
-// Current: May lack proper description
-// Proposed:
+// Current: Missing description
+// Proposed: Use i18n
+import { t } from '@utils/i18n';
+
 <Page 
-  title="Pelilauta - RPG Community"
-  description="Finnish role-playing game community for discussions, campaign wikis, and character management. Join thousands of gamers sharing stories and adventures."
+  title={t('seo:frontPage.title')}
+  description={t('seo:frontPage.description')}
+  search
 >
 ```
 
@@ -230,71 +356,90 @@ This document describes the public-facing page structure of Pelilauta, including
 // Current: Uses channel.description (good)
 // Verify: Description length is appropriate (150-160 chars)
 // Consider: Truncate long descriptions with createPlainSnippet()
+const description = channel.description.length > 160
+  ? createPlainSnippet(channel.description, 160)
+  : channel.description;
 ```
 
 **Site List (sites/index.astro):**
 ```astro
-// Current: May lack description
-// Proposed:
+// Current: Missing description
+// Proposed: Use i18n
+import { t } from '@utils/i18n';
+
 <Page 
-  title="Campaign Wikis - Pelilauta"
-  description="Browse community game wikis and campaign sites. Create and share your own RPG campaign worlds, NPCs, locations, and game resources."
+  title={t('seo:sites.title')}
+  description={t('seo:sites.description')}
 >
 ```
 
 **Character Library (library/characters.astro):**
 ```astro
-// Current: Has description (verify quality)
-// Review: Ensure description is compelling and SEO-friendly
+// Current: Has description from i18n (verify quality)
+// Review: Ensure seo:library.description is SEO-optimized
+const description = t('seo:library.description');
 ```
 
 **Documentation Pages (docs/[id].astro):**
 ```astro
 // Dynamic descriptions based on document content
 // Use createPlainSnippet() for document preview
+const description = doc.description || 
+  createPlainSnippet(doc.content, 160);
 ```
 
 **Tag Pages (tags/[tag].astro):**
 ```astro
 // Current: "A list of threads with this tag" (too generic)
-// Proposed: Use createPlainSnippet() from top threads or
-// "Discussions tagged #${tag} - explore conversations about ${tag} in the Pelilauta RPG community"
+// Proposed: Use i18n template
+import { t } from '@utils/i18n';
+
+const description = t('seo:tag.description', { tag });
+// i18n: "Keskustelut aiheesta #{{tag}}. Tutustu yhteisön keskusteluihin..."
 ```
 
 **Profile Pages (profiles/[uid].astro):**
 ```astro
-// Dynamic descriptions based on user bio
-// Use createPlainSnippet(profile.bio, 160) or fallback
+// Dynamic descriptions based on user bio with i18n fallback
+import { createPlainSnippet } from '@utils/snippetHelpers';
+import { t } from '@utils/i18n';
+
+const description = profile.bio?.trim()
+  ? createPlainSnippet(profile.bio, 160)
+  : t('seo:profile.fallback', { nick: profile.nick });
 ```
 
 ### Implementation Checklist
 
+- [ ] **Create i18n SEO file** (`src/locales/fi/seo.ts`) with all static descriptions
 - [ ] **Audit all public pages** (create spreadsheet with findings)
-- [ ] **Front page**: Add/improve description
-- [ ] **Channel index**: Add/improve description
+- [ ] **Front page**: Add i18n description
+- [ ] **Channel index**: Add i18n description or verify existing
 - [ ] **Channel pages**: Verify description quality, truncate if needed
 - [ ] **Thread pages**: Already done ✅ (PBI-023)
-- [ ] **Site list**: Add/improve description
-- [ ] **Site pages**: Verify description from site.description, truncate if needed
-- [ ] **Site wiki pages**: Verify page descriptions
-- [ ] **Tag pages**: Improve generic description
-- [ ] **Character library**: Verify description quality
-- [ ] **Profile pages**: Add dynamic descriptions using user bio
+- [ ] **Site list**: Add i18n description
+- [ ] **Site pages**: Verify description from site.description, add i18n fallback, truncate if needed
+- [ ] **Site wiki pages**: Verify page descriptions with i18n fallback
+- [ ] **Tag pages**: Add i18n template description
+- [ ] **Character library**: Verify i18n description quality
+- [ ] **Profile pages**: Add dynamic descriptions using user bio with i18n fallback
 - [ ] **Documentation pages**: Add/improve descriptions
-- [ ] **Login page**: Add appropriate description
-- [ ] **EULA page**: Add appropriate description
-- [ ] **Search page**: Add description (note: low unique content)
-- [ ] **404/403 pages**: Add appropriate descriptions
+- [ ] **Login page**: Add i18n description
+- [ ] **EULA page**: Add i18n description
+- [ ] **Search page**: Add i18n description
+- [ ] **404/403 pages**: Add i18n descriptions
+- [ ] **Update existing i18n files** if they have SEO content in other namespaces
 
 ### SEO Enhancement Examples
 
 ```astro
 ---
-// Example 1: Static description with SEO focus
+// Example 1: Static description with i18n (RECOMMENDED)
 import Page from '@layouts/Page.astro';
+import { t } from '@utils/i18n';
 
-const title = 'Campaign Wikis';
-const description = 'Explore community RPG campaign wikis. Create wiki sites for your tabletop games, manage NPCs, locations, and shared game resources.';
+const title = t('seo:frontPage.title');
+const description = t('seo:frontPage.description');
 ---
 
 <Page {title} {description}>
@@ -307,11 +452,12 @@ const description = 'Explore community RPG campaign wikis. Create wiki sites for
 // Example 2: Dynamic description using snippet utility
 import Page from '@layouts/Page.astro';
 import { createPlainSnippet } from '@utils/snippetHelpers';
+import { t } from '@utils/i18n';
 
 const site = await getSite(siteKey);
 const description = site.description 
   ? createPlainSnippet(site.description, 160)
-  : `${site.name} - A role-playing game campaign wiki on Pelilauta`;
+  : t('seo:site.fallback', { name: site.name });
 ---
 
 <Page title={site.name} {description}>
@@ -321,14 +467,30 @@ const description = site.description
 
 ```astro
 ---
-// Example 3: Description with fallback
+// Example 3: Hybrid approach for tag pages
+import Page from '@layouts/Page.astro';
+import { t } from '@utils/i18n';
+
+const description = t('seo:tag.description', { tag });
+// i18n template: "Keskustelut aiheesta #${tag}. Tutustu yhteisön keskusteluihin Pelilaudan roolipelifoorumilla."
+---
+
+<Page title={`#${tag} - Pelilauta`} {description}>
+  <!-- Page content -->
+</Page>
+```
+
+```astro
+---
+// Example 4: User-generated content with i18n fallback
 import Page from '@layouts/Page.astro';
 import { createPlainSnippet } from '@utils/snippetHelpers';
+import { t } from '@utils/i18n';
 
 const user = await getProfile(uid);
-const description = user.bio
+const description = user.bio?.trim()
   ? createPlainSnippet(user.bio, 160)
-  : `${user.nick} - Pelilauta community member and role-playing game enthusiast`;
+  : t('seo:profile.fallback', { nick: user.nick });
 ---
 
 <Page title={user.nick} {description}>
