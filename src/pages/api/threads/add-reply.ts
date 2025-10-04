@@ -13,9 +13,9 @@ import {
   type Thread,
   ThreadSchema,
 } from 'src/schemas/ThreadSchema';
-import { createSnippet } from 'src/utils/contentHelpers';
 import { logDebug, logError, logWarn } from 'src/utils/logHelpers';
 import { tokenToUid } from 'src/utils/server/auth/tokenToUid';
+import { createPlainSnippet } from 'src/utils/snippetHelpers';
 import { v4 as uuidv4 } from 'uuid';
 import { serverApp, serverDB } from '../../../firebase/server';
 
@@ -123,7 +123,7 @@ function executeBackgroundTasks(
             targetType: 'thread.reply',
             targetKey: thread.key,
             targetTitle,
-            message: createSnippet(markdownContent, 120),
+            message: createPlainSnippet(markdownContent, 120),
           },
           recipients: [thread.owners[0]], // Only notify the thread creator
           from: author,

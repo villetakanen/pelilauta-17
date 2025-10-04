@@ -9,8 +9,8 @@ import {
   THREADS_COLLECTION_NAME,
   type Thread,
 } from 'src/schemas/ThreadSchema';
-import { createSnippet } from 'src/utils/contentHelpers';
 import { logWarn } from 'src/utils/logHelpers';
+import { createPlainSnippet } from 'src/utils/snippetHelpers';
 import { authedPost } from '../apiClient';
 import { addAssetToThread } from './addAssetToThread';
 
@@ -125,7 +125,7 @@ export async function addReply(
       targetType: 'thread.reply',
       targetKey: thread.key,
       targetTitle,
-      message: createSnippet(markdownContent, 120), // Fixed typo
+      message: createPlainSnippet(markdownContent, 120), // Fixed typo
     },
     // Intentionally only notify the first owner of the thread (i.e.)
     // the thread creator, not all owners.

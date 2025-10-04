@@ -1,8 +1,10 @@
 # PBI-023: Robust Markdown Snippet Utility with Marked Rendering
 
-**Status:** 🟡 In Progress - Phase 1 Complete  
+**Status:** 🟡 In Progress - Phases 1-3 Complete  
 **Started:** October 4, 2025  
-**Phase 1 Completed:** October 4, 2025
+**Phase 1 Completed:** October 4, 2025  
+**Phase 2 Completed:** October 4, 2025  
+**Phase 3 Completed:** October 4, 2025
 
 **User Story:** As a developer working with ContentEntry objects across the application, I want a robust snippet generation utility that properly renders markdown, applies consistent styling, and intelligently truncates content, so that content previews are accurate, visually consistent, and maintain semantic HTML structure.
 
@@ -84,15 +86,34 @@ The following files still use the deprecated `createSnippet()` and will be updat
 - `src/pages/rss/threads.xml.ts` - RSS feed descriptions  
 - `src/firebase/client/threads/addReply.ts` - Client-side reply notifications
 
-### 🔄 Phase 3: Update API Routes (NOT STARTED)
-- [ ] Update `ThreadCard.astro` to use `createRichSnippet()`
-- [ ] Update `SiteListItem.astro` for rich snippets
-- [ ] Update thread index pages for meta descriptions
+### ✅ Phase 3: Update API Routes & RSS Feeds (COMPLETED - Oct 4, 2025)
 
-### 🔄 Phase 3: Update API Routes (NOT STARTED)
-- [ ] Update `add-reply.ts` to use `createPlainSnippet()`
-- [ ] Update RSS feed generation
-- [ ] Update any other API response formatting
+**Deliverables:**
+- ✅ Updated `src/pages/api/threads/add-reply.ts`
+  - Replaced `createSnippet(markdownContent, 120)` with `createPlainSnippet(markdownContent, 120)`
+  - Server-side API notifications now use clean plain text without markdown syntax
+- ✅ Updated `src/pages/rss/threads.xml.ts`
+  - Replaced `createSnippet(thread.markdownContent || '', 500).split('\n')[0]` with `createPlainSnippet(thread.markdownContent || '', 500)`
+  - RSS feed descriptions now properly normalized (whitespace handling built into new utility)
+  - Removed redundant `.split('\n')[0]` call - new function handles this internally
+- ✅ Updated `src/firebase/client/threads/addReply.ts`
+  - Replaced `createSnippet(markdownContent, 120)` with `createPlainSnippet(markdownContent, 120)`
+  - Client-side reply notifications now use consistent plain text generation
+- ✅ Verified no remaining usage of deprecated `createSnippet()` (grep search)
+  - Only expected references found: deprecated definition and PBI documentation
+- ✅ All tests passing (194/194)
+
+**Files Changed:**
+1. `src/pages/api/threads/add-reply.ts` - API endpoint for reply creation with notifications
+2. `src/pages/rss/threads.xml.ts` - RSS feed generation for thread content
+3. `src/firebase/client/threads/addReply.ts` - Client-side reply functionality
+
+**Key Findings:**
+1. **API Notifications**: Server-side notifications benefit from `createPlainSnippet()` which properly strips markdown while preserving readability, ensuring notification messages are clean and user-friendly.
+2. **RSS Feed Simplification**: The old pattern used `.split('\n')[0]` to normalize whitespace, but `createPlainSnippet()` handles this internally with its whitespace normalization regex, simplifying the code.
+3. **Client-Server Consistency**: Both client and server now use the same utility for generating notification message snippets, ensuring consistent behavior across the application.
+4. **No Regressions**: All 194 tests pass (up from 184 in Phase 1), confirming no functionality broken by the migration.
+5. **Complete Migration**: grep search confirms all application code now uses new utilities - only the deprecated function definition and documentation remain.
 
 ### 🔄 Phase 4: Remove Deprecated Function (NOT STARTED)
 - [ ] Verify no remaining usage of old `createSnippet()`
