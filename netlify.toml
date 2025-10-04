@@ -5,12 +5,13 @@
 [build.environment]
   NODE_VERSION = "20"
 
-# PBI-005
+# PBI-005, PBI-024: Front page caching for users and SEO crawlers
 [[headers]]
   for = "/"
   [headers.values]
     Cache-Control = "s-maxage=300, stale-while-revalidate=86400"
     # 5 min cache, 24h stale-while-revalidate
+    # Allows fresh content for users while ensuring crawlers get fast responses
 
 [[headers]]
   for = "/manifest.webmanifest"

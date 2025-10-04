@@ -6,16 +6,21 @@ import TopThreadsStream from '../components/server/FrontPage/TopThreadsStream.as
 import BackgroundPoster from '../components/server/ui/BackgroundPoster.astro';
 import FrontpageFabs from '../components/svelte/frontpage/FrontpageFabs.svelte';
 import Page from '../layouts/Page.astro';
+import { t } from '../utils/i18n';
 
 // Set a short cache time for the front page
 Astro.response.headers.set(
   'Cache-Control',
   's-maxage=1, stale-while-revalidate',
 );
+
+const title = t('seo:frontPage.title');
+const description = t('seo:frontPage.description');
 ---
 <Page
   search 
-  title={import.meta.env.PUBLIC_APP_NAME}>
+  {title}
+  {description}>
     <div class="content-columns">
       
       <TopThreadsStream/>

@@ -5,6 +5,7 @@ import { characters } from './characters';
 import { entries } from './entries';
 import { login } from './login';
 import { search } from './search';
+import { seo } from './seo';
 import { site } from './site';
 import { threads } from './threads';
 
@@ -23,6 +24,7 @@ export const en: Locale = {
   entries,
   login,
   search,
+  seo,
   site,
   threads,
 };
