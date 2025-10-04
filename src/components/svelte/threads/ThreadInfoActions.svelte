@@ -4,6 +4,7 @@ import type { Thread } from 'src/schemas/ThreadSchema';
 import { pushSnack } from 'src/utils/client/snackUtils';
 import { t } from 'src/utils/i18n';
 import { showAdminTools, uid } from '../../../stores/session';
+import ThreadAdminActions from './ThreadAdminActions.svelte';
 
 interface Props {
   thread?: Thread; // Keep optional to handle potential undefined cases gracefully
@@ -48,23 +49,7 @@ async function onsubmit(e: Event) {
         {t('actions:delete')} 
       </a>
     {/if}
-    {#if $showAdminTools}
-      <h4 class="downscaled m-0">
-        <cn-icon noun="admin"></cn-icon>
-        {t('threads:info.actions.admin.title')}</h4>
-      <form {onsubmit} class="flex flex-col"> 
-        <button class="text" type="submit">
-          <cn-icon noun="send"></cn-icon>
-          <span>{t('threads:info.actions.admin.repost')}</span>
-        </button>
-      </form>
-      <a
-        href={`/threads/${thread?.key}/confirmDelete`}
-        class="button text-center text"
-      >
-        {t('actions:delete')} 
-      </a>
-    {/if}
+    <ThreadAdminActions {thread}/>
   </section>
 {/if}
   
