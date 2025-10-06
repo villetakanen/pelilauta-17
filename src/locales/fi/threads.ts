@@ -1,6 +1,9 @@
 import type { Locale } from 'src/utils/i18n';
 
 export const threads: Locale = {
+  card: {
+    inChannel: 'Aiheessa ',
+  },
   fork: {
     title: 'Jaa uutena lankana',
     quoted: 'Lainaus',

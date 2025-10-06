@@ -6,6 +6,7 @@ noun: 'monsters'
 ## Version 18
 
 ### 18.7.x (ongoing)
+- fix: Small polish to front page thread cards, for better intra-site links.
 - fix: First part of PBI-25: SEO and Social media imprivements (index, channels, channel, thread)
 - fix: Session snack bar now uses CDS 4.0 snackbar component correctly
 - fix(threads): Admin tools uses the accordion component for better UX and visual consistency
