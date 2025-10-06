@@ -282,7 +282,7 @@ export default {
     description: 'Suomalainen roolipelaamisen yhteisö. Keskustele peleistä, jaa kampanjawikejä ja hallinnoi hahmojasi. Liity tuhansien pelaajien joukkoon!',
   },
   sites: {
-    title: 'Kampanjasivustot',
+    title: 'Sivustot, pelit ja kampajat',
     description: 'Selaa yhteisön kampanjawikejä ja pelisivustoja. Luo ja jaa omia roolipelien maailmoja, NPC:itä, sijainteja ja peliresursseja.',
     fallback: '{{name}} - Roolipelin kampanjasivusto Pelilaudalla',
   },

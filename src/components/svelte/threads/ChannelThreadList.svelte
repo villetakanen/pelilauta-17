@@ -3,12 +3,10 @@ import type { Channel } from '@schemas/ChannelSchema';
 import type { Thread } from '@schemas/ThreadSchema';
 import { parseThread } from '@schemas/ThreadSchema';
 import { uid } from '@stores/session';
-import { toDisplayString } from '@utils/contentHelpers';
 import { t } from '@utils/i18n';
 import { logDebug, logError } from '@utils/logHelpers';
-import ProfileLink from '../app/ProfileLink.svelte';
 import ChannelSearchBox from './ChannelSearchBox.svelte';
-import ThreadSubscriber from './ThreadSubscriber.svelte';
+import ThreadListItem from './ThreadListItem.svelte';
 
 interface Props {
   channel: Channel;
@@ -26,7 +24,6 @@ let lastFlowTime = $state(initialLastFlowTime);
 let isLoading = $state(false);
 let hasMore = $state(initialThreads.length === 11);
 let error = $state<string | null>(null);
-let isAuthenticated = $derived(!!$uid);
 
 async function loadMoreThreads() {
   if (isLoading || !hasMore) return;
@@ -91,34 +88,7 @@ async function loadMoreThreads() {
 
   <div class="listing-items">
     {#each threads as thread (thread.key)}
-      <article class="cols-2 surface" id={`thread-${thread.key}`}>
-        <div>
-          <h4 class="downscaled m-0">
-            <a href={`/threads/${thread.key}`} class="no-decoration">
-              {thread.title}
-            </a>
-          </h4>
-          <p class="text-caption m-0">
-            <ProfileLink uid={thread.author} />
-            {#if thread.tags}
-              {#each thread.tags as tag}
-                <span class="pill">
-                  {tag}
-                </span>
-              {/each}
-            {/if}
-          </p>
-          <ThreadSubscriber {thread} />
-        </div>
-
-        <!-- Grid col 2 -->
-        <div class="border-l pl-2">
-          <a href={`/threads/${thread.key}#discussion`}>
-            {t('threads:info.flowTime', { time: toDisplayString(thread.flowTime) })}<br>
-            {t('threads:info.replies', { count: thread.replyCount || 0 })}
-          </a>
-        </div>
-      </article>
+      <ThreadListItem {thread} />
     {/each}
     
     <!-- Load more functionality -->
