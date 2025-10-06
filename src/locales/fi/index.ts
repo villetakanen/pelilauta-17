@@ -10,6 +10,7 @@ import { meta } from './meta';
 import { navigation } from './navigation';
 import { profile } from './profile';
 import { search } from './search';
+import { seo } from './seo';
 import { settings } from './settings';
 import { site } from './site';
 import { social } from './social';
@@ -28,6 +29,7 @@ export const fi: Locale = {
   navigation,
   profile,
   search,
+  seo,
   settings,
   site,
   social,

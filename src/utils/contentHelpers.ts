@@ -19,19 +19,3 @@ export function extractTags(content: string): string[] {
   const raw = tags ? [...new Set(tags)] : [];
   return raw.map((tag) => tag.replace('#', ''));
 }
-
-/**
- * Creates a [120] character long snippet from a markdown content.
- *
- * Changes all topics to bold, and removes all other markdown.
- *
- * Adds an ellipsis at the end if the snippet is cut off.
- */
-export function createSnippet(content: string, lenght = 120): string {
-  // const tags = extractTags(content);
-  const snippet = content.replace(/#([a-zA-Z0-9äöüÄÖÜ]+)/g, '<b>$1</b>');
-  const plainText = snippet.replace(/<[^>]*>/g, '');
-  return plainText.length > lenght
-    ? `${plainText.substring(0, lenght)}...`
-    : plainText;
-}

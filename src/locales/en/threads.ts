@@ -64,6 +64,7 @@ export const threads: Locale = {
   confirmDelete: {
     title: 'Confirm deletion',
     success: 'Thread deleted',
+    error: 'Failed to delete thread',
     message:
       'Are you sure you want to permanently delete this thread? The thread cannot be restored.',
   },

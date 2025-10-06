@@ -80,6 +80,10 @@ export const admin: Locale = {
       namePrompt: 'Edit channel name (current: "{current}"):',
       success: 'Channel updated successfully',
       failed: 'Failed to update channel',
+      name: 'Channel Name',
+      characters: 'characters',
+      tooLong:
+        'exceeds recommended length, will be truncated in search engines',
     },
     create: {
       success: 'Channel "{name}" created successfully',

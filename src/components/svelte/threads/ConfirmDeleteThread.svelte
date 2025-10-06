@@ -37,11 +37,18 @@ async function onsubmit(e: Event) {
     window.location.href = '/';
   } catch (e: unknown) {
     if (e instanceof Error) {
-      logError(e);
-      pushSnack(t('app:error.generic'));
+      logError('ConfirmDeleteThread', 'Failed to delete thread:', e);
+      pushSnack({
+        message: t('threads:confirmDelete.error'),
+      });
     } else {
-      logError(new Error('Unknown error occurred during thread deletion'));
-      pushSnack(t('app:error.generic'));
+      logError(
+        'ConfirmDeleteThread',
+        'Unknown error occurred during thread deletion',
+      );
+      pushSnack({
+        message: t('threads:confirmDelete.error'),
+      });
     }
   }
 }

@@ -59,6 +59,7 @@ export const threads: Locale = {
   confirmDelete: {
     title: 'Vahvista poisto',
     success: 'Keskustelu poistettu',
+    error: 'Keskustelun poistaminen epäonnistui',
     message:
       'Oletko varma, että haluat poistaa tämän keskustelun pysyvästi. Keskustelua ei voi palauttaa.',
   },

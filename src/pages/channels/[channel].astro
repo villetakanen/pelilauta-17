@@ -3,6 +3,7 @@ import { parseChannel } from 'src/schemas/ChannelSchema';
 import { parseThread, type Thread } from 'src/schemas/ThreadSchema';
 import { t } from 'src/utils/i18n';
 import { logDebug, logError } from 'src/utils/logHelpers';
+import { createPlainSnippet } from 'src/utils/snippetHelpers';
 import BackgroundPoster from '../../components/server/ui/BackgroundPoster.astro';
 import ChannelFabs from '../../components/svelte/threads/ChannelFabs.svelte';
 import ChannelThreadList from '../../components/svelte/threads/ChannelThreadList.svelte';
@@ -24,8 +25,14 @@ if (!channeldata) {
 }
 
 const channel = parseChannel(channeldata);
-const title = `${t('app:shortname')} - ${channel.name}`;
+const title = `${channel.name} - ${t('app:shortname')}`;
 const shortTitle = channel.name;
+
+// Ensure description is SEO-optimized (150-160 chars)
+const description =
+  channel.description.length > 160
+    ? createPlainSnippet(channel.description, 160)
+    : channel.description;
 
 // Fetch initial threads server-side for SSR
 let threads: Thread[] = [];
@@ -59,7 +66,7 @@ try {
   hasError = true;
 }
 ---
-<Page title={title} description={channel.description}>
+<Page title={title} description={description}>
   <!-- Single Svelte component handles everything -->
   <ChannelThreadList 
     channel={channel}

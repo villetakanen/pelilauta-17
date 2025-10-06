@@ -4,8 +4,8 @@ import type { APIContext } from 'astro';
 import { marked } from 'marked';
 import { parseThread, type Thread } from 'src/schemas/ThreadSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
-import { createSnippet } from 'src/utils/contentHelpers';
 import { t } from 'src/utils/i18n';
+import { createPlainSnippet } from 'src/utils/snippetHelpers';
 
 export async function GET({ request }: APIContext) {
   /*if (import.meta.env.SECRET_FEATURE_FLAG_RSS !== 'true') {
@@ -29,9 +29,7 @@ export async function GET({ request }: APIContext) {
     allThreads.map(async (thread) => ({
       title: thread.title,
       link: `/threads/${thread.key}`,
-      description: createSnippet(thread.markdownContent || '', 500).split(
-        '\n',
-      )[0],
+      description: createPlainSnippet(thread.markdownContent || '', 500),
       content: await marked(thread.markdownContent || ''),
       pubDate: new Date(thread.createdAt),
       enclosure: thread.images?.[0]?.url
