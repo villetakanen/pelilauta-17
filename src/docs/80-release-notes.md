@@ -5,7 +5,10 @@ noun: 'monsters'
 ---
 ## Version 18
 
-### 18.7.1 (ongoing)
+### 18.7.x (ongoing)
+- fix: First part of PBI-25: SEO and Social media imprivements (index, channels, channel, thread)
+- fix: Session snack bar now uses CDS 4.0 snackbar component correctly
+- fix(threads): Admin tools uses the accordion component for better UX and visual consistency
 - fix: Cyan Design System latest beta fixes and patches
 - fix(threads): Channels/Forum index UX polish and fixes
 - fix(threads): Channel admin tool now supports channel description editing
