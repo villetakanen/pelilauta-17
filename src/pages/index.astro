@@ -16,11 +16,13 @@ Astro.response.headers.set(
 
 const title = t('seo:frontPage.title');
 const description = t('seo:frontPage.description');
+const image = `${Astro.url.origin}/myrrys-proprietary/juno-viinikka/juno-viinikka-dragon-1.webp`;
 ---
 <Page
   search 
   {title}
-  {description}>
+  {description}
+  {image}>
     <div class="content-columns">
       
       <TopThreadsStream/>
