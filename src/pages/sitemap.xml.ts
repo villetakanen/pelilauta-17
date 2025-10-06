@@ -7,8 +7,7 @@ export async function GET({ request }: APIContext) {
   const staticPages = [
     { url: '/', priority: '0.9' },
     { url: '/sites', priority: '0.8' },
-    { url: '/channels', priority: '0.8' },
-    { url: '/library/characters', priority: '0.7' },
+    { url: '/channels', priority: '0.8' }
   ];
 
   // Fetch all public sites
