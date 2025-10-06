@@ -35,3 +35,7 @@ textarea {
   color: var(--color-on-error, var(--chroma-warning));
   font-weight: bold;
 }
+
+.no-decoration {
+  text-decoration: none;
+}

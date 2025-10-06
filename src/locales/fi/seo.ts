@@ -1,6 +1,6 @@
 export const seo = {
   frontPage: {
-    title: 'Pelilauta - Roolipelifoorumi ja kampanjatyökalut',
+    title: 'Pelilauta',
     description:
       'Keskustele roolipeleistä, luo kampanjawikejä ja hallinnoi hahmojasi. Suomalainen roolipelisivusto pelaajilta pelaajille.',
   },
@@ -10,7 +10,7 @@ export const seo = {
       'Selaa keskustelualueita ja osallistu roolipelikeskusteluihin. Etsi vastauksia kysymyksiisi tai käynnistä uusi keskustelu.',
   },
   sites: {
-    title: 'Kampanjasivustot',
+    title: 'Sivustot ja pelit',
     description:
       'Selaa kampanjawikejä ja pelisivustoja. Luo ja jaa omia roolipelien maailmoja, NPC:itä, sijainteja ja peliresursseja.',
     fallback:
