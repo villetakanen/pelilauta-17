@@ -3,6 +3,14 @@ import type { APIContext } from 'astro';
 export async function GET({ request }: APIContext) {
   const origin = new URL(request.url).origin;
 
+  // Static important pages (PBI-026)
+  const staticPages = [
+    { url: '/', priority: '0.9' },
+    { url: '/sites', priority: '0.8' },
+    { url: '/channels', priority: '0.8' },
+    { url: '/library/characters', priority: '0.7' },
+  ];
+
   // Fetch all public sites
   const publicSitesResponse = await fetch(`${origin}/api/sites`);
   const publicSitesJson = await publicSitesResponse.json();
@@ -19,9 +27,9 @@ export async function GET({ request }: APIContext) {
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
         <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-          <url><loc>${origin}/</loc></url>
-          ${publicSites.map((site: string) => `<url><loc>${origin}${site}</loc></url>`).join('')}
-          ${publicThreads.map((thread: string) => `<url><loc>${origin}${thread}</loc></url>`).join('')}
+          ${staticPages.map((page) => `<url><loc>${origin}${page.url}</loc><priority>${page.priority}</priority></url>`).join('')}
+          ${publicSites.map((site: string) => `<url><loc>${origin}${site}</loc><priority>0.6</priority></url>`).join('')}
+          ${publicThreads.map((thread: string) => `<url><loc>${origin}${thread}</loc><priority>0.5</priority></url>`).join('')}
         </urlset>`;
 
   return new Response(sitemap, {
