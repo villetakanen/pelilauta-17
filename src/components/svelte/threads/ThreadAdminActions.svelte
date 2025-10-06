@@ -2,6 +2,7 @@
 import type { Thread } from '@schemas/ThreadSchema';
 import { meta, metaLoading } from '@stores/admin/ChannelsAdminStore';
 import { showAdminTools } from '@stores/session';
+import { t } from '@utils/i18n';
 import { logDebug, logError } from '@utils/logHelpers';
 
 interface Props {
@@ -66,6 +67,13 @@ async function handleChannelChange(event: Event) {
     class="border radius-m"
     title="ADMIN" 
     noun="admin">
+
+    <a
+        href={`/threads/${thread?.key}/confirmDelete`}
+        class="button text-center text"
+      >
+        {t('actions:delete')} 
+      </a>
     
     <label>
       Move to channel:

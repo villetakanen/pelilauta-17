@@ -68,6 +68,11 @@ async function testSSRNoAuth() {
       </a>
     </li>
     <li>
+      <a href="/admin/snackbar-test">
+        <cn-icon noun="info" small></cn-icon> Snackbar Test
+      </a>
+    </li>
+    <li>
       <button onclick={testSSRAuth}>
         <cn-icon noun="adventurer" small></cn-icon> Test SSR Auth
       </button>

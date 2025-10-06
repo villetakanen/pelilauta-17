@@ -6,7 +6,7 @@ window.addEventListener('load', () => {
   const message = JSON.parse(sessionStorage.getItem('snack'));
   if (message) {
     console.debug('Dispatching snackbar message', message);
-    window.dispatchEvent(new CustomEvent('cn-snackbar-add', { detail: message }));
+    document.dispatchEvent(new CustomEvent('cn-snackbar-add', { detail: message }));
     sessionStorage.removeItem('snack');
   }
 });
