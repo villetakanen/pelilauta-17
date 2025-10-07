@@ -1,9 +1,11 @@
+import { log } from 'node:console';
 import type { APIContext } from 'astro';
 import {
   TAG_FIRESTORE_COLLECTION,
   type Tag,
   TagSchema,
 } from 'src/schemas/TagSchema';
+import { getTagDisplayInfo, resolveTagSynonym } from 'src/schemas/TagSynonyms';
 import { serverDB } from '../../../firebase/server';
 
 /* type Thread = {
@@ -47,32 +49,51 @@ async function fetchThreads(tag: string) {
 export async function GET({ params }: APIContext): Promise<Response> {
   const { tag } = params;
 
+  if (!tag) {
+    return new Response('Tag required', { status: 400 });
+  }
+
+  // Resolve synonym to canonical tag
+  const canonicalTag = resolveTagSynonym(tag);
+  const tagInfo = getTagDisplayInfo(canonicalTag);
+
+  // Fetch entries for canonical tag AND its synonyms
+  const allTags = tagInfo
+    ? [canonicalTag, ...tagInfo.synonyms]
+    : [canonicalTag];
+
+  log(`Fetching entries for tags: ${allTags.join(', ')}`);
+
+  // Query for all variations using array-contains-any
   const docs = await serverDB
     .collection(TAG_FIRESTORE_COLLECTION)
-    .where('tags', 'array-contains', tag)
+    .where('tags', 'array-contains-any', allTags)
+    .orderBy('flowTime', 'desc')
+    .limit(50)
     .get();
 
   const response = {
     entries: [] as Tag[],
+    canonical: canonicalTag,
+    displayName: tagInfo?.displayName || canonicalTag,
+    description: tagInfo?.description,
+    synonymCount: tagInfo?.synonyms.length || 0,
   };
+
   for (const doc of docs.docs) {
-    console.log(doc);
     const data = doc.data();
     response.entries.push(TagSchema.parse(data));
   }
 
-  // The same should be done for the other entries with tags, but
-  // for now, we will just return the threads with the tag
-
   if (response.entries.length === 0) {
-    return new Response('No tags found', { status: 404 });
+    return new Response('No entries found', { status: 404 });
   }
 
   return new Response(JSON.stringify(response), {
     status: 200,
     headers: {
       'Content-Type': 'application/json',
-      'Cache-Control': 's-maxage=10, stale-while-revalidate',
+      'Cache-Control': 's-maxage=300, stale-while-revalidate=1800', // 5min cache, 30min stale
     },
   });
 }

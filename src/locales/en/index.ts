@@ -8,6 +8,7 @@ import { login } from './login';
 import { search } from './search';
 import { seo } from './seo';
 import { site } from './site';
+import { tag } from './tag';
 import { threads } from './threads';
 
 export const en: Locale = {
@@ -28,5 +29,6 @@ export const en: Locale = {
   search,
   seo,
   site,
+  tag,
   threads,
 };

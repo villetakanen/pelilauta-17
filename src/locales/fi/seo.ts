@@ -17,8 +17,11 @@ export const seo = {
       '{name} - Roolipelin kampanjasivusto Pelilaudalla. Tutustu peliin, hahmoihin ja tarinoihin.',
   },
   tag: {
+    title: 'Aihe',
     description:
       'Keskustelut aiheesta #{tag}. Tutustu keskusteluihin ja jaa omia ajatuksiasi Pelilaudan roolipelifoorumilla.',
+    fallback:
+      'Selaa keskusteluja ja kampanjasivustoja aiheesta #{tag}. Löydä inspiraatiota ja jaa omia ideoitasi.',
   },
   library: {
     title: 'Kirjasto',
