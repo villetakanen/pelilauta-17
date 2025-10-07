@@ -3,10 +3,12 @@ import { actions } from './actions';
 import { admin } from './admin';
 import { characters } from './characters';
 import { entries } from './entries';
+import { frontPage } from './frontPage';
 import { login } from './login';
 import { search } from './search';
 import { seo } from './seo';
 import { site } from './site';
+import { tag } from './tag';
 import { threads } from './threads';
 
 export const en: Locale = {
@@ -22,9 +24,11 @@ export const en: Locale = {
   },
   characters,
   entries,
+  frontPage,
   login,
   search,
   seo,
   site,
+  tag,
   threads,
 };

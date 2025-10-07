@@ -17,8 +17,11 @@ export const seo = {
       '{name} - RPG campaign site on Pelilauta. Explore the game, characters, and stories.',
   },
   tag: {
+    title: 'Topic',
     description:
       'Discussions about #{tag}. Explore conversations and share your thoughts on Pelilauta RPG forums.',
+    fallback:
+      'Browse discussions and campaign sites about #{tag}. Find inspiration and share your ideas.',
   },
   library: {
     title: 'Library',

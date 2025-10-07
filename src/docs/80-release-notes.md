@@ -5,7 +5,9 @@ noun: 'monsters'
 ---
 ## Version 18
 
-### 18.7.x (ongoing)
+### 18.8.0 (ongoing)
+- feat: Support for tag synonyms
+- feat: Front page featured tags
 - fix: Text updates for SEO and clarity
 - fix(threads): Minor visual polish to channel thread cards
 - fix: Small polish to front page thread cards, for better intra-site links.
