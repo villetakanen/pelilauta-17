@@ -4,6 +4,7 @@ import { admin } from './admin';
 import { app } from './app';
 import { characters } from './characters';
 import { entries } from './entries';
+import { frontPage } from './frontPage';
 import { library } from './library';
 import { login } from './login';
 import { meta } from './meta';
@@ -23,6 +24,7 @@ export const fi: Locale = {
   app,
   characters,
   entries,
+  frontPage,
   library,
   login,
   meta,

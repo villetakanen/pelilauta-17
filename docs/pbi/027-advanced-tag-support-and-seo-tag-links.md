@@ -699,7 +699,7 @@ await purgeTagCaches(thread.tags);
 ## Implementation Checklist
 
 ### Phase 1: Front Page Featured Tags (2 days)
-- [ ] Add i18n keys for featured tags section
+- [x] Add i18n keys for featured tags section
 - [ ] Create FeaturedTags component (Astro or Svelte)
 - [ ] Determine final tag list and icon mapping
 - [ ] Add component to front page layout

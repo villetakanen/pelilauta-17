@@ -3,6 +3,7 @@ import { actions } from './actions';
 import { admin } from './admin';
 import { characters } from './characters';
 import { entries } from './entries';
+import { frontPage } from './frontPage';
 import { login } from './login';
 import { search } from './search';
 import { seo } from './seo';
@@ -22,6 +23,7 @@ export const en: Locale = {
   },
   characters,
   entries,
+  frontPage,
   login,
   search,
   seo,
