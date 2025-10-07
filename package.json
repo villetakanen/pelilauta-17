@@ -25,7 +25,7 @@
   "dependencies": {
     "@11thdeg/cn-d20-ability-score": "4.0.0-beta.5",
     "@11thdeg/cn-editor": "4.0.0-beta.16",
-    "@11thdeg/cyan-css": "4.0.0-beta.34",
+    "@11thdeg/cyan-css": "4.0.0-beta.35",
     "@11thdeg/cyan-lit": "4.0.0-beta.22",
     "@astrojs/check": "^0.9.4",
     "@astrojs/netlify": "^6.5.11",
