@@ -24,28 +24,30 @@ export type TagSynonym = z.infer<typeof TagSynonymSchema>;
  */
 export const TAG_SYNONYMS: TagSynonym[] = [
   {
-    canonicalTag: 'd&d',
+    canonicalTag: 'd%26d',
     displayName: 'D&D',
     synonyms: [
       'dnd',
+      'd&d',
       'dungeons & dragons',
       'dungeons and dragons',
       'dd',
       'd and d',
+      'deddu',
     ],
-    description: 'Dungeons & Dragons keskustelut, kampanjat ja resurssit',
+    description: 'Dungeons & Dragons keskustelut, kampanjat ja materiaalit',
     icon: 'd20',
   },
   {
     canonicalTag: 'pathfinder',
     displayName: 'Pathfinder',
-    synonyms: ['pathfinder 2e', 'pf2e', 'pathfinder 1e', 'pf1e', 'pf'],
+    synonyms: ['pathfinder 2e', 'pf2e', 'pathfinder 1e', 'pf1e', 'pf', 'päffä'],
     description: 'Pathfinder-roolipeli, säännöt, hahmot ja seikkailut',
     icon: 'compass',
   },
   {
     canonicalTag: 'legendoja %26 lohikäärmeitä',
-    displayName: 'Legendoja ja lohikäärmeitä',
+    displayName: 'Legendoja & lohikäärmeitä',
     synonyms: [
       'legendoja ja lohikäärmeita',
       'l&l',
@@ -59,24 +61,22 @@ export const TAG_SYNONYMS: TagSynonym[] = [
     icon: 'll-ampersand',
   },
   {
-    canonicalTag: 'vampire',
-    displayName: 'Vampire',
-    synonyms: ['vampire the masquerade', 'vtm', 'v5', 'vampyyri', 'vampyyrit'],
-    description: 'Vampire: The Masquerade ja muut vampyyriroolipelit',
-    icon: 'blood',
-  },
-  {
     canonicalTag: 'pbta',
     displayName: 'PbtA',
-    synonyms: ['powered by the apocalypse', 'apocalypse world', 'pbta-pelit'],
+    synonyms: [
+      'powered by the apocalypse',
+      'apocalypse world',
+      'pbta-pelit',
+      'FitD',
+    ],
     description: 'Powered by the Apocalypse -järjestelmän pelit ja keskustelut',
-    icon: 'book',
+    icon: 'books',
   },
   {
     canonicalTag: 'call+of+cthulhu',
     displayName: 'Call of Cthulhu',
-    synonyms: ['coc', 'cthulhu', 'call of cthulu', 'lovecraft'],
-    description: 'Call of Cthulhu -kauhuroolipeli ja Lovecraftin maailmat',
+    synonyms: ['coc', 'cthulhu', 'call of cthulu', 'delta green', 'dg'],
+    description: 'Call of Cthulhu ja muut sen sukulaiset',
     icon: 'tentacles',
   },
 ];
