@@ -700,12 +700,12 @@ await purgeTagCaches(thread.tags);
 
 ### Phase 1: Front Page Featured Tags (2 days)
 - [x] Add i18n keys for featured tags section
-- [ ] Create FeaturedTags component (Astro or Svelte)
-- [ ] Determine final tag list and icon mapping
-- [ ] Add component to front page layout
-- [ ] Test responsive layout
-- [ ] Verify all tag links work correctly
-- [ ] Check SEO meta tags in HTML source
+- [x] Create FeaturedTags component (Astro or Svelte)
+- [x] Determine final tag list and icon mapping
+- [x] Add component to front page layout
+- [x] Test responsive layout
+- [x] Verify all tag links work correctly
+- [x] Check SEO meta tags in HTML source
 
 ### Phase 2: Tag Synonym System (3 days)
 - [ ] Create `TagSynonyms.ts` schema with synonym definitions
