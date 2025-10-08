@@ -41,4 +41,3 @@ auth.json
 /playwright/.cache/
 
 playwright/.auth
-src/data/available-icons.json
