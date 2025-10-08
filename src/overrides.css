@@ -24,6 +24,16 @@ textarea {
 .toolbar.items-end {
   justify-content: flex-end;
 }
+.flex.items-start {
+  justify-content: flex-start;
+}
+.flex.items-start > * {
+  align-self: flex-start;
+  flex-grow: 0;
+}
+.flex > .cn-chip {
+  flex: none;
+}
 
 /* Missing hover atomic */
 .hover-underline:hover {

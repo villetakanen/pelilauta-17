@@ -15,8 +15,8 @@ importers:
         specifier: 4.0.0-beta.16
         version: 4.0.0-beta.16
       '@11thdeg/cyan-css':
-        specifier: 4.0.0-beta.34
-        version: 4.0.0-beta.34(lato-font@3.0.0)
+        specifier: 4.0.0-beta.35
+        version: 4.0.0-beta.35(lato-font@3.0.0)
       '@11thdeg/cyan-lit':
         specifier: 4.0.0-beta.22
         version: 4.0.0-beta.22
@@ -165,8 +165,8 @@ packages:
   '@11thdeg/cn-editor@4.0.0-beta.16':
     resolution: {integrity: sha512-Ck9On+c/sRo13CsqJxshnhd/i6BTcwu1Svao+koB0PPyiHPnoBZYSaXe0gHvshVqd3fT28b9otqRdBhsSvMvZQ==}
 
-  '@11thdeg/cyan-css@4.0.0-beta.34':
-    resolution: {integrity: sha512-asvbzMvga2sMuk6FCKiF5JFEvr+wuK4dUKnpa6n5uOttMovA3S3U+jwwH4z8t1OUSHZkUiRW97qi+UEj2sa2Cg==}
+  '@11thdeg/cyan-css@4.0.0-beta.35':
+    resolution: {integrity: sha512-3c6WbymWZSNO3qzZmjaSrWVVAX1Z39LbiyRUA09cUNbSOh3cD6fVaGlO0Rmye7AWvI1U3UX7xL6ieu9FptwV5w==}
     peerDependencies:
       lato-font: '*'
 
@@ -7345,7 +7345,7 @@ snapshots:
       turndown: 7.2.1
       turndown-plugin-gfm: 1.0.2
 
-  '@11thdeg/cyan-css@4.0.0-beta.34(lato-font@3.0.0)':
+  '@11thdeg/cyan-css@4.0.0-beta.35(lato-font@3.0.0)':
     dependencies:
       lato-font: 3.0.0
 
