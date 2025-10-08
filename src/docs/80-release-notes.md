@@ -5,7 +5,12 @@ noun: 'monsters'
 ---
 ## Version 18
 
-### 18.8.0 (ongoing)
+### 18.8.x (ongoing)
+- fix: tags use cn-chip style from Cyan Design System 4.0
+- fix: tag rendering in snippets and thread content now uses a DRY utility component
+- fix: Profile page SEO improvements
+
+### 18.8.0 (07.10.2025)
 - feat: Support for tag synonyms
 - feat: Front page featured tags
 - fix: Text updates for SEO and clarity

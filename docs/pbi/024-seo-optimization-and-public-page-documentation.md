@@ -40,10 +40,10 @@
 
 **Key Findings:**
 1. **Critical SEO Gaps Identified:**
-   - Front page (/) missing description entirely - highest traffic page
+   - Front page (/) missing description entirely - highest traffic page ✅ Fixed Oct 4, 2025
    - Sites index (/sites) missing description - major navigation
-   - Tag pages (/tags/[tag]) using generic description
-   - Profile pages (/profiles/[uid]) missing dynamic descriptions
+   - Tag pages (/tags/[tag]) using generic description ✅ Fixed Oct 8, 2025 (PBI-27)
+   - Profile pages (/profiles/[uid]) missing dynamic descriptions ✅ Fixed Oct 8, 2025
    
 2. **Localization Strategy Defined:**
    - Recommend i18n for all static SEO content (consistency with existing patterns)
@@ -171,7 +171,6 @@ This document should include:
 /sites/[siteKey]            - Individual site home
 /sites/[siteKey]/[pageKey]  - Site wiki pages
 /tags/[tag]                 - Tag-based thread listings
-/library/characters         - Public character library
 /docs/[id]                  - Documentation pages
 ```
 
@@ -186,6 +185,7 @@ This document should include:
 **Non-Indexable Pages (noSharing=true Required):**
 ```
 /admin/*                    - All admin pages
+/library/*                  - User library (authenticated only)
 /settings                   - User settings
 /create-profile             - Profile creation
 /onboarding                 - User onboarding
@@ -417,12 +417,11 @@ const description = profile.bio?.trim()
 - [x] **Channel index**: Add i18n description ✅ Oct 4, 2025
 - [x] **Channel pages**: Verify description quality, truncate if needed ✅ Oct 4, 2025
 - [x] **Thread pages**: Verified PBI-023 implementation working, improved title ✅ Oct 4, 2025
+- [x] **Tag pages**: Add i18n template description ✅ Oct 8, 2025 (completed in PBI-27)
 - [ ] **Site list**: Add i18n description
 - [ ] **Site pages**: Verify description from site.description, add i18n fallback, truncate if needed
 - [ ] **Site wiki pages**: Verify page descriptions with i18n fallback
-- [ ] **Tag pages**: Add i18n template description
-- [ ] **Character library**: Verify i18n description quality
-- [ ] **Profile pages**: Add dynamic descriptions using user bio with i18n fallback
+- [x] **Profile pages**: Add dynamic descriptions using user bio with i18n fallback ✅ Oct 8, 2025
 - [ ] **Documentation pages**: Add/improve descriptions
 - [ ] **Login page**: Add i18n description
 - [ ] **EULA page**: Add i18n description
@@ -539,6 +538,9 @@ const description = user.bio?.trim()
 - [ ] `/logout.astro` - noSharing verification
 - [ ] `/403.astro` - noSharing verification ✅
 - [ ] `/404.astro` - noSharing consideration (may be indexable for SEO)
+
+**User Library (Authenticated Only):**
+- [x] `/library/characters.astro` - noSharing verification ✅ Oct 8, 2025
 
 **Content Creation:**
 - [ ] `/create/thread.astro` - noSharing verification
