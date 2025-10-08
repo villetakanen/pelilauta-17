@@ -29,13 +29,5 @@ const figures =
   )}
   { figures.length > 0 && <cn-lightbox images={JSON.stringify(figures)}></cn-lightbox> }
   <section set:html={htmlContent} />
-  { thread.tags && thread.tags.length > 0 &&
-    <div class="tags flex">
-      {thread.tags.map((tag) => (
-        <a href={`/tags/${tag}`} class="cn-tag">
-          {tag}
-        </a>
-      ))}
-    </div>
-  }
+  
 </article>

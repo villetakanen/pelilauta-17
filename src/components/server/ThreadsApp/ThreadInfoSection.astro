@@ -5,6 +5,7 @@ import { t } from 'src/utils/i18n';
 import ProfileLink from '../../svelte/app/ProfileLink.svelte';
 import ReactionButton from '../../svelte/app/ReactionButton.svelte';
 import ThreadInfoActions from '../../svelte/threads/ThreadInfoActions.svelte';
+import EntryTagsSection from '../app/EntryTagsSection.astro';
 
 interface Props {
   thread: Thread;
@@ -42,5 +43,8 @@ const channel = `${thread?.channel || '-'}`;
       </div>
      </p>
     </cn-card>
+
+  
+  { thread.tags && <EntryTagsSection tags={thread.tags} />}
   <ThreadInfoActions {thread} client:only="svelte" />
 </section>
