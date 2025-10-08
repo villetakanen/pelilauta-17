@@ -83,21 +83,28 @@ function parseUrl(tag: Tag) {
   <div class="content-columns">
     <article class="column-l">
       <header style="margin-bottom: calc(2 * var(--cn-grid))">
-        {tagInfo?.icon && <cn-icon noun={tagInfo.icon} />}
-        <h1>{displayName}</h1>
+        <h1>
+          {tagInfo?.icon && <cn-icon noun={tagInfo.icon} />}
+          {displayName}
+        </h1>
+        
+        <!-- If we are on popular tag, we get a host of extra description -->
         {tagInfo?.description && (
-          <p class="text-caption">{tagInfo.description}</p>
+          <p>{tagInfo.description}</p>
         )}
+
+
         {tagInfo?.synonyms && tagInfo.synonyms.length > 0 && (
-          <p class="text-caption text-low">
-            {t('tag:synonymsInfo', { count: tagInfo.synonyms.length })} (
+          <p class="text-low">
+            {t('tag:synonymsInfo', { count: tagInfo.synonyms.length })}:
+          </p>
+          <div class="flex">
             {tagInfo.synonyms.map((syn, index) => (
-              <span>
-                #{syn}{index < tagInfo.synonyms.length - 1 ? ', ' : ''}
+              <span class="cn-chip">
+                #{syn}
               </span>
             ))}
-            )
-          </p>
+          </div>
         )}
       </header>
 

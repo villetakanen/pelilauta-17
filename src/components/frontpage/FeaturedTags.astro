@@ -31,7 +31,7 @@ const featuredTags = [
   
   <div class="flex flex-wrap">
     {featuredTags.map((item) => (
-      <a href={`/tags/${encodeURIComponent(item.tag)}`}>
+      <a href={`/tags/${encodeURIComponent(item.tag)}`} class="cn-chip flex-none">
         <cn-icon noun={item.icon} xsmall />
         <span>{item.displayName}</span>
       </a>

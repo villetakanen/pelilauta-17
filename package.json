@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "npm run generate:icons && astro check && astro build && npm run generateSW",
+    "build": "astro check && astro build && npm run generateSW",
     "preview": "astro preview",
     "astro": "astro",
     "generate:icons": "node scripts/generate-icons.mjs",
