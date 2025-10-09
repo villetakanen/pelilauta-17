@@ -1,9 +1,10 @@
 <script lang="ts">
 import { CnToggleButton } from '@11thdeg/cyan-lit';
-import type { Site } from 'src/schemas/SiteSchema';
-import { t } from 'src/utils/i18n';
-import { site, update } from '../../../stores/site';
-import SitePageSelect from './SitePageSelect.svelte';
+import type { Site } from '@schemas/SiteSchema';
+import { site, update } from '@stores/site';
+import { t } from '@utils/i18n';
+import SitePageSelect from '../SitePageSelect.svelte';
+import SiteHomepageSelect from './SiteHomepageSelect.svelte';
 
 interface Props {
   site: Site;
@@ -76,6 +77,26 @@ async function setSidebarKey(key: string) {
     ></cn-toggle-button>
     </fieldset>
 
+    
+
+    <fieldset>
+      <legend>{t('site:options.extras')}</legend>
+
+    <cn-toggle-button 
+      label={t('entries:site.customPageKeys')}
+      pressed={$site.usePlainTextURLs || undefined}
+      onchange={(e: Event) => setOption('usePlainTextURLs', (e.target as CnToggleButton).pressed)}
+    ></cn-toggle-button>
+
+    <p class="downscaled text-low">{t('site:create.plaintexturls.description')}</p>
+    </fieldset>
+  </article>
+  <section>
+    <h2>{t('site:options.navigation.title')}</h2>
+    <p class="text-small">
+      {t('site:options.navigation.description')}
+    </p>
+
     <fieldset>
       <legend>{t('site:options.sidebar')}</legend>
       <cn-toggle-button 
@@ -92,20 +113,13 @@ async function setSidebarKey(key: string) {
           label={t('site:options.sidebarPage')}
           placeholder={t('site:options.useDefaultSidebar')}
         />
-        <p class="downscaled text-low">{t('site:options.sidebarPageDescription')}</p>
+        <p class="text-small text-low">{t('site:options.sidebarPageDescription')}</p>
       {/if}
     </fieldset>
 
     <fieldset>
-      <legend>{t('site:options.extras')}</legend>
-
-    <cn-toggle-button 
-      label={t('entries:site.customPageKeys')}
-      pressed={$site.usePlainTextURLs || undefined}
-      onchange={(e: Event) => setOption('usePlainTextURLs', (e.target as CnToggleButton).pressed)}
-    ></cn-toggle-button>
-
-    <p class="downscaled text-low">{t('site:create.plaintexturls.description')}</p>
+      <legend>{t('site:options.homepage')}</legend>
+      <SiteHomepageSelect />
     </fieldset>
-  </article>
+  </section>
 </div>

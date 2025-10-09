@@ -22,6 +22,7 @@ const pageRefsAsOptions = $derived.by(() => {
 
 <label>{label}
   <select
+    style="width: 100%;"
     onchange={(e) => setSelectedPageKey((e.target as HTMLSelectElement).value)}
   >
     <option value="">{placeholder || t('site:options.selectPage')}</option>

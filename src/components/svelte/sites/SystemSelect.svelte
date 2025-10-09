@@ -17,6 +17,7 @@ const noun = $derived.by(() => {
   <label class="grow">
     {t('entries:site.system')}
     <select
+      style="width:100%"
       value={system}
       onchange={(event:Event) => setSystem((event.target as HTMLSelectElement).value)}>
       
