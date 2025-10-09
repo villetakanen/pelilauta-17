@@ -41,7 +41,8 @@ const revision = Number(
   shortTitle={t('site:page.history.title')} 
   description={site.description} 
   noun={noun} 
-  {image}>
+  {image}
+  noSharing={true}>
 
     <PageHistoryApp {site} {page} {revision} client:only="svelte"/>
 

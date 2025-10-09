@@ -19,7 +19,9 @@ if (!session) {
   );
 }
 ---
-<ModalPage title={title} shortTitle={shortTitle} noSharing={true}>
+const shortTitle = t('create:character.shortTitle');
+---
+<ModalPage title={title} shortTitle={shortTitle}>
   <BetaHeader />
   <CreateCharacterWizard siteKey={siteKey} client:only="svelte" />
 </ModalPage>

@@ -30,6 +30,7 @@ const title = `${site.name} – ${t('site:assets.title')}`;
   title={title}
   description={site.description}
   image={site.backgroundURL}
+  noSharing={true}
 >
   <SiteTray slot="app-tray" site={site}/>
   <AssetList site={site} client:only="svelte"/>

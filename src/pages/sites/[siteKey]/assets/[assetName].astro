@@ -26,7 +26,8 @@ const title = `${site.name} – ${assetName}`;
 <PageWithTray
   title={title}
   description={site.description}
-  image={site.backgroundURL}>
+  image={site.backgroundURL}
+  noSharing={true}>
   <SiteTray slot="app-tray" site={site}/>
 
   <AssetEditor site={site} assetName={`${assetName}`} />
