@@ -38,7 +38,8 @@ setPageCacheHeaders(Astro.response, siteKey, homePageKey, true);
   title={site.name}
   noun={noun}
   description={site.description}
-  image={image}>
+  image={image}
+  noSharing={site.hidden}>
   <SiteStoreInitializer {site} client:only="svelte" />
   <SiteTray slot="app-tray" {site} />
   <PageApp {site} {page} />

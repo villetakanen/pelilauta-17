@@ -392,6 +392,48 @@ Choose based on: public vs authenticated, static vs interactive, full-page vs mo
 
 Routes with editors and modals should check if the user is authenticated before rendering.
 
+### Layout-Based SEO Architecture
+
+**CRITICAL PRINCIPLE: Authenticated layouts automatically enforce non-indexable behavior.**
+
+- **ModalPage**: Always sets `noSharing={true}` - no prop needed
+  - Modal-like authenticated interfaces (settings, creation flows, deletion confirmations)
+  - Never indexable by search engines
+  - Do NOT pass `noSharing` prop to ModalPage - it's redundant
+
+- **EditorPage**: Always adds robots noindex via EditorHead
+  - Content editing interfaces (page editor, character editor, etc.)
+  - Never indexable by search engines
+  - SEO blocking is automatic
+
+- **Page & PageWithTray**: Support optional `noSharing` prop
+  - Public pages: omit `noSharing` prop (default: indexable)
+  - Private pages: use `noSharing={true}` or conditional `noSharing={site.hidden}`
+  - Flexible for mixed public/private content
+
+**Why this pattern?**
+- ✅ **Foolproof**: Impossible to accidentally index authenticated interfaces
+- ✅ **Consistent**: All modals/editors blocked the same way
+- ✅ **Clean**: No redundant props on every modal/editor route
+- ✅ **Maintainable**: Change once in layout, applies everywhere
+
+```astro
+// ✅ Correct - ModalPage auto-blocks indexing
+<ModalPage title="Settings">
+
+// ❌ Wrong - Don't add redundant noSharing to ModalPage
+<ModalPage title="Settings" noSharing={true}>
+
+// ✅ Correct - EditorPage auto-blocks indexing
+<EditorPage title="Edit Page">
+
+// ✅ Correct - Public page, indexable
+<Page title="Front Page" description="...">
+
+// ✅ Correct - Private page, blocked
+<PageWithTray title="Dashboard" noSharing={true}>
+```
+
 ## SEO Best Practices
 
 ### The `noSharing` Prop

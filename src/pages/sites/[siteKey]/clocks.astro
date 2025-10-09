@@ -36,6 +36,7 @@ if (!site) {
   title={title}
   description={site.description}
   image={image}
+  noSharing={true}
 >
   <SiteTray slot="app-tray" site={site}/>
   <ClocksApp site={site} client:only="svelte"/>

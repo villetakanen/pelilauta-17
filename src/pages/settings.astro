@@ -18,7 +18,7 @@ const title = `${t('app:shortname')} - ${t('app:settings.title')}`;
 const description = t('settings:description');
 const debug = import.meta.env.SECRET_FEATURE_FLAG_DEBUG === 'true';
 ---
-<ModalPage title={title} description={description} noSharing>
+<ModalPage title={title} description={description}>
   <SettingsAppT client:only="svelte"/>
   <div>{debug && <span>DEBUG MODE ACTIVE</span>}</div>
 </ModalPage>

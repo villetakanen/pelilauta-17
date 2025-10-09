@@ -14,7 +14,7 @@ if (siteResponse.status === 404) {
 
 const site = parseSite(toClientEntry(await siteResponse.json()), siteKey);
 ---
-<PageWithTray>
+<PageWithTray noSharing={true}>
   <SiteTray slot="app-tray" site={site}/>
   <SiteDataApp site={site} client:only="svelte" />
 </PageWithTray>

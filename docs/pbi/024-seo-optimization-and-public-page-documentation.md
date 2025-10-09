@@ -13,6 +13,8 @@
 
 ### ✅ Phase 1: Public Page Tree Documentation (COMPLETED - Oct 4, 2025)
 
+### 🔄 Phase 2: SEO Metadata Audit & Fixes (IN PROGRESS - Started Oct 8, 2025)
+
 **Deliverables:**
 - ✅ Created comprehensive documentation: `src/docs/77-public-pages-seo.md` (600+ lines)
 - ✅ Documented all primary public pages (high SEO priority)
@@ -82,6 +84,77 @@
 - Automated E2E test structure for indexing controls
 - Google Search Console integration guidelines
 - robots.txt configuration
+
+### 🔄 Phase 2: SEO Metadata Audit & Fixes (IN PROGRESS - Started Oct 8, 2025)
+
+**Deliverables:**
+- ✅ Enhanced ModalPage layout to always block indexing (Oct 9, 2025)
+  - **BREAKING CHANGE**: ModalPages now ALWAYS use noSharing={true}
+  - Removed noSharing prop from ModalPage interface (redundant)
+  - ModalPages are popup-like authenticated interfaces, never indexable
+- ✅ Added robots meta tag to EditorHead for all editor pages (Oct 8, 2025)
+- ✅ Implemented site.hidden SEO control for public site pages (Oct 8, 2025)
+  - Site homepage: noSharing={site.hidden}
+  - Site wiki pages: noSharing={site.hidden}
+  - Site characters: noSharing={site.hidden}
+  - Site TOC: noSharing={site.hidden}
+- ✅ Added noSharing={true} to all site management pages (Oct 8, 2025)
+  - settings, options, import, members, data
+  - assets (index and individual)
+  - clocks, handouts
+  - create/* (page, handout, clock)
+  - toc/settings
+  - [pageKey]/edit, delete, history
+- 🔄 Sites SEO improvements in progress
+
+**Key Findings:**
+
+1. **Site Hidden Field Implementation:**
+   - Sites have a `hidden` boolean field in the schema (default: true for new sites)
+   - API endpoint `/api/sites` filters by `hidden: false` to show only public sites
+   - Public site pages now respect this field with `noSharing={site.hidden}`
+   - This prevents search engines from indexing private campaign sites
+
+2. **Layout Enhancements:**
+   - **ModalPage**: Now ALWAYS blocks indexing (noSharing={true} hardcoded)
+     - ModalPages are popup-like authenticated interfaces, similar to EditorPage
+     - Removed redundant noSharing prop from interface
+     - All modal pages are now consistently non-indexable
+   - **EditorHead**: Automatically adds robots noindex tag (all editors are private)
+   - **BaseHead**: Already properly handles noSharing prop
+
+3. **Site-Related Pages Indexing Control:**
+   - **Public pages** (conditional on site.hidden):
+     - `/sites/[siteKey]` - Site homepage
+     - `/sites/[siteKey]/[pageKey]` - Wiki pages
+     - `/sites/[siteKey]/characters` - Character listing
+     - `/sites/[siteKey]/toc` - Table of contents
+   - **Private pages** (always blocked via ModalPage or EditorHead):
+     - All ModalPage routes automatically non-indexable
+     - All EditorPage routes automatically non-indexable
+     - No need to manually specify noSharing on these pages
+
+4. **Sites Index SEO:**
+   - `/sites` already has proper i18n description from PBI-026
+   - Uses seo:sites.title and seo:sites.description
+   - Cache headers properly configured for performance
+
+**Files Modified:**
+1. `src/layouts/ModalPage.astro` - Added noSharing, description, image props
+2. `src/components/server/BaseHead/EditorHead.astro` - Added robots noindex meta tag
+3. `src/pages/sites/[siteKey]/index.astro` - Added noSharing={site.hidden}
+4. `src/pages/sites/[siteKey]/[pageKey]/index.astro` - Added noSharing={site.hidden}
+5. `src/pages/sites/[siteKey]/characters.astro` - Added noSharing={site.hidden}
+6. `src/pages/sites/[siteKey]/toc/index.astro` - Added noSharing={site.hidden}
+7. Site management pages (11 files) - Added noSharing={true}
+
+**SEO Best Practice Applied:**
+- **Layout-level enforcement**: ModalPage and EditorPage layouts enforce noSharing automatically
+- **Principle**: Popup-like authenticated interfaces should never be indexed, similar to admin panels
+- Hidden sites (private campaigns) are not indexed by search engines
+- Public sites are discoverable and indexable
+- All site management/editing interfaces are blocked from indexing via layout enforcement
+- Consistent implementation: public content is indexable, tools/admin/modals are not
 
 ### 🔄 Phase 2: SEO Metadata Audit & Fixes (NOT STARTED)
 
@@ -418,8 +491,8 @@ const description = profile.bio?.trim()
 - [x] **Channel pages**: Verify description quality, truncate if needed ✅ Oct 4, 2025
 - [x] **Thread pages**: Verified PBI-023 implementation working, improved title ✅ Oct 4, 2025
 - [x] **Tag pages**: Add i18n template description ✅ Oct 8, 2025 (completed in PBI-27)
-- [ ] **Site list**: Add i18n description
-- [ ] **Site pages**: Verify description from site.description, add i18n fallback, truncate if needed
+- [x] **Site list**: Add i18n description ✅ Oct 8, 2025 (already in PBI-026)
+- [x] **Site pages**: Implement site.hidden SEO control ✅ Oct 8, 2025
 - [ ] **Site wiki pages**: Verify page descriptions with i18n fallback
 - [x] **Profile pages**: Add dynamic descriptions using user bio with i18n fallback ✅ Oct 8, 2025
 - [ ] **Documentation pages**: Add/improve descriptions
@@ -501,6 +574,20 @@ const description = user.bio?.trim()
 
 ## Phase 3: Indexing Control Verification
 
+### Site-Related Pages Status
+
+**Public Site Pages (conditional indexing based on site.hidden):**
+- [x] `/sites/[siteKey]/index.astro` - Site homepage ✅ Oct 8, 2025
+- [x] `/sites/[siteKey]/[pageKey]/index.astro` - Wiki pages ✅ Oct 8, 2025
+- [x] `/sites/[siteKey]/characters.astro` - Character listing ✅ Oct 8, 2025
+- [x] `/sites/[siteKey]/toc/index.astro` - Table of contents ✅ Oct 8, 2025
+
+**Private Site Management Pages (always noSharing={true}):**
+- [x] All site management pages verified ✅ Oct 8, 2025
+- [x] All creation workflows verified ✅ Oct 8, 2025
+- [x] All editing/deletion pages verified ✅ Oct 8, 2025
+- [x] EditorHead auto-blocks all editor pages ✅ Oct 8, 2025
+
 ### Audit Process
 
 1. **Identify All Non-Public Routes**
@@ -548,19 +635,19 @@ const description = user.bio?.trim()
 - [ ] `/create/character.astro` - noSharing verification ✅
 
 **Site Management:**
-- [ ] `/sites/[siteKey]/keeper.astro` - noSharing verification ✅
-- [ ] `/sites/[siteKey]/settings.astro` - noSharing verification
-- [ ] `/sites/[siteKey]/options.astro` - noSharing verification
-- [ ] `/sites/[siteKey]/import.astro` - noSharing verification
-- [ ] `/sites/[siteKey]/data.astro` - noSharing verification
-- [ ] `/sites/[siteKey]/members.astro` - noSharing verification
-- [ ] `/sites/[siteKey]/clocks.astro` - noSharing verification
-- [ ] `/sites/[siteKey]/assets/*.astro` - noSharing verification
-- [ ] `/sites/[siteKey]/handouts/*.astro` - noSharing verification ✅
-- [ ] `/sites/[siteKey]/create/*.astro` - noSharing verification
-- [ ] `/sites/[siteKey]/[pageKey]/edit.astro` - noSharing verification
-- [ ] `/sites/[siteKey]/[pageKey]/delete.astro` - noSharing verification
-- [ ] `/sites/[siteKey]/[pageKey]/history.astro` - noSharing consideration
+- [x] `/sites/[siteKey]/keeper.astro` - noSharing verification ✅ (already implemented)
+- [x] `/sites/[siteKey]/settings.astro` - noSharing verification ✅ Oct 8, 2025
+- [x] `/sites/[siteKey]/options.astro` - noSharing verification ✅ Oct 8, 2025
+- [x] `/sites/[siteKey]/import.astro` - noSharing verification ✅ Oct 8, 2025
+- [x] `/sites/[siteKey]/data.astro` - noSharing verification ✅ Oct 8, 2025
+- [x] `/sites/[siteKey]/members.astro` - noSharing verification ✅ Oct 8, 2025
+- [x] `/sites/[siteKey]/clocks.astro` - noSharing verification ✅ Oct 8, 2025
+- [x] `/sites/[siteKey]/assets/*.astro` - noSharing verification ✅ Oct 8, 2025
+- [x] `/sites/[siteKey]/handouts/*.astro` - noSharing verification ✅ (already implemented)
+- [x] `/sites/[siteKey]/create/*.astro` - noSharing verification ✅ Oct 8, 2025
+- [x] `/sites/[siteKey]/[pageKey]/edit.astro` - noSharing verification ✅ Oct 8, 2025 (EditorHead)
+- [x] `/sites/[siteKey]/[pageKey]/delete.astro` - noSharing verification ✅ Oct 8, 2025
+- [x] `/sites/[siteKey]/[pageKey]/history.astro` - noSharing consideration ✅ Oct 8, 2025 (noSharing={true})
 
 **Character Management:**
 - [ ] `/characters/[key]/edit.astro` - noSharing verification

@@ -42,7 +42,7 @@ const image = site.avatarURL || site.posterURL || site.backgroundURL;
 const isHomepage = pageKey === site.homepage;
 setPageCacheHeaders(Astro.response, siteKey, pageKey, isHomepage);
 ---
-<PageWithTray title={title} description={site.description} noun={noun} image={image}>
+<PageWithTray title={title} description={site.description} noun={noun} image={image} noSharing={site.hidden}>
   <SiteStoreInitializer {site} client:only="svelte" />
   <SiteTray slot="app-tray" site={site}/>
   <PageApp site={site} page={page} />

@@ -65,6 +65,7 @@ const image = site.avatarURL || site.posterURL || site.backgroundURL;
   title={title}
   description={site.description}
   image={image}
+  noSharing={site.hidden}
 >
   <SiteTray slot="app-tray" site={site}/>
   
