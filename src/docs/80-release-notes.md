@@ -6,6 +6,8 @@ noun: 'monsters'
 ## Version 18
 
 ### 18.8.x (ongoing)
+- fix(sites): Non-listed sites settings moved to a bespoke component, polished UI and UX
+- fix(sites): Settings page now has SSR auth in place
 - fix(sites): Nonlisted sites ask not to be indexed by search engines
 - fix: Sites have proper SEO/social media meta tags and fallbacks if desctriptions etc. are missing
 - fix: tags use cn-chip style from Cyan Design System 4.0

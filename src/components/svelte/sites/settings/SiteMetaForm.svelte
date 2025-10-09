@@ -1,10 +1,12 @@
 <script lang="ts">
+import type { CnToggleButton } from '@11thdeg/cyan-lit';
 import type { Site } from 'src/schemas/SiteSchema';
 import { pushSnack } from 'src/utils/client/snackUtils';
 import { t } from 'src/utils/i18n';
 import { update } from '../../../../stores/site';
 import LicenseSelect from '../assets/LicenseSelect.svelte';
 import SystemSelect from '../SystemSelect.svelte';
+import SiteExtraSettingsPane from './SiteExtraSettingsPane.svelte';
 import SiteHomepageSelect from './SiteHomepageSelect.svelte';
 
 interface Props {
@@ -44,11 +46,6 @@ function setLicense(e: Event) {
   license = value;
 }
 
-async function setHidden(e: Event) {
-  const value = (e.target as CyanToggleButton).pressed;
-  hidden = value;
-  await update({ hidden: value });
-}
 function reset() {
   name = site.name;
 }
@@ -84,7 +81,6 @@ async function handleSubmit(e: Event) {
     onreset={reset}
   >
     <h2>{t('site:settings.meta.title')}</h2>
-    <fieldset>
       <label>{t('entries:site.name')}
         <input
           type="text"
@@ -111,18 +107,11 @@ async function handleSubmit(e: Event) {
         {homepage}
         {setHomepage}/>
       <LicenseSelect value={license} onchange={setLicense}/>
-    </fieldset>
     <div class="toolbar justify-end">
       <button type="button" onclick={reset} class="text" disabled={!dirty}>{t('actions:reset')}</button>
       <button type="submit" disabled={!dirty}>{t('actions:save')}</button>
     </div>
   </form>
-  <h3>{t('site:settings.meta.extra')}</h3>
-  <cn-toggle-button
-    label={t('entries:site.hidden')}
-    pressed={hidden}
-    onchange={setHidden}></cn-toggle-button>
-  <p class="downscaled mt-0 pt-0 px-1">
-    {t('site:create.hidden.description')}
-  </p>
+  
+  <SiteExtraSettingsPane />
 </section>

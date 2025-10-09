@@ -1,19 +1,36 @@
 ---
-import { parseSite } from 'src/schemas/SiteSchema';
-import { toClientEntry } from 'src/utils/client/entryUtils';
+import { getSiteData } from '@firebase/server/sites';
+import { verifySession } from '@utils/server/auth/verifySession';
+import { verifySiteAccess } from '@utils/server/auth/verifySiteAccess';
 import SettingsApp from '../../../components/svelte/sites/settings/SettingsApp.svelte';
 import ModalPage from '../../../layouts/ModalPage.astro';
 
 const { siteKey } = Astro.params;
 
-const origin = new URL(Astro.request.url).origin;
+// Verify authentication
+const session = await verifySession(Astro);
+if (!session?.uid) {
+  return Astro.redirect(
+    `/login?redirect=${encodeURIComponent(Astro.url.pathname)}`,
+  );
+}
 
-// Fetch site data from the api
-const siteResponse = await fetch(`${origin}/api/sites/${siteKey}`);
-if (siteResponse.status === 404) {
+if (!siteKey) {
+  return new Response('Bad request', { status: 400 });
+}
+
+// Fetch site data server-side
+const site = await getSiteData(siteKey);
+
+if (!site) {
   return Astro.redirect('/404');
 }
-const site = parseSite(toClientEntry(await siteResponse.json()), siteKey);
+
+// Verify site access - only owners and players can access settings
+const siteAccess = await verifySiteAccess(site, session.uid);
+if (!siteAccess.isMember) {
+  return new Response('Forbidden', { status: 403 });
+}
 ---
 
 <ModalPage>

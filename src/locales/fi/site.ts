@@ -24,6 +24,34 @@ export const site: Locale = {
     empty: 'Sivustolla ei ole vielä hahmoja',
     count: '{count} hahmoa',
   },
+  create: {
+    title: 'Luo sivusto',
+    description:
+      'Voit luoda Pelilaudalle uuden sivuston pelillesi tai kampanjallesi. Sivusto luodaan alla olevaan osoitteeseen, joka muodostetaan pelin nimestä tai automaattisesti.',
+    url: 'URL',
+    page: {
+      title: 'Luo sivu',
+      missing: 'Sivua {name} ei vielä ole olemassa, voit luoda sen alta.',
+      duplicateKey: 'Sivu osoitteessa {key} on jo olemassa.',
+      duplicateKeyLink: 'Avaa sivu',
+    },
+    system: {
+      description:
+        'Pelisi tai kampanjasi luokittelu. Käytetään pelien listauksessa ja sivuston ulkoasussa.',
+    },
+    errors: {
+      reserved:
+        'Sivuston osoite on varattu. Vaihda sivuston nimeä, tai luo sivu ilman luettavia osoitteita.',
+    },
+    hidden: {
+      description:
+        'Sivuston voi piilottaa julkisista listauksista, jolloin se näkyy listauksissa vain sivuston omistajille ja pelaajille - ja verkon hakukoneita pyydetään jättämään sivusto listaamatta. Sivuston sivuja voi tästä huolimatta jakaa suoralla osoitteella.',
+    },
+    plaintexturls: {
+      description:
+        'Voit ottaa luettavat osoitteet pois käytöstä, jolloin pelilauta muodostaa sivustolle ja sen sivuille automaattiset osoitteet. Tämä voi olla höydyllistä jos haluat tehdä sivustosta vaikeasti löydettävän.',
+    },
+  },
   data: {
     title: 'Tuo & vie',
     description: 'Työkalut sivuston tietojen tuontiin ja vientiin',
@@ -151,34 +179,7 @@ export const site: Locale = {
       clocks: 'Kellot',
     },
   },
-  create: {
-    title: 'Luo sivusto',
-    description:
-      'Voit luoda Pelilaudalle uuden sivuston pelillesi tai kampanjallesi. Sivusto luodaan alla olevaan osoitteeseen, joka muodostetaan pelin nimestä tai automaattisesti.',
-    url: 'URL',
-    page: {
-      title: 'Luo sivu',
-      missing: 'Sivua {name} ei vielä ole olemassa, voit luoda sen alta.',
-      duplicateKey: 'Sivu osoitteessa {key} on jo olemassa.',
-      duplicateKeyLink: 'Avaa sivu',
-    },
-    system: {
-      description:
-        'Pelisi tai kampanjasi luokittelu. Käytetään pelien listauksessa ja sivuston ulkoasussa.',
-    },
-    errors: {
-      reserved:
-        'Sivuston osoite on varattu. Vaihda sivuston nimeä, tai luo sivu ilman luettavia osoitteita.',
-    },
-    hidden: {
-      description:
-        'Sivuston voi piilottaa julkisista listauksista, jolloin se näkyy listauksissa vain sivuston omistajille ja pelaajille. Sivuston sivuja voi tästä huolimatta jakaa suoralla osoitteella.',
-    },
-    plaintexturls: {
-      description:
-        'Voit ottaa luettavat osoitteet pois käytöstä, jolloin pelilauta muodostaa sivustolle ja sen sivuille automaattiset osoitteet. Tämä voi olla höydyllistä jos haluat tehdä sivustosta vaikeasti löydettävän.',
-    },
-  },
+
   dangerZone: {
     title: 'Poista sivusto',
     description:
