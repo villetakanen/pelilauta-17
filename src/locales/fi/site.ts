@@ -133,6 +133,13 @@ export const site: Locale = {
     sidebarPageDescription:
       'Valitse mukautettu sivu sivupalkkia varten. Jos sivua ei valita, käytetään oletussivupalkkia.',
     useDefaultSidebar: 'Käytä oletussivupalkkia',
+    homepage: 'Etusivu',
+    homepageDescription:
+      'Voit valita minkä tahansa sivuston sivun etusivuksi. Etusivu näytetään, kun sivusto avataan ilman tarkempaa osoitetta.',
+    navigation: {
+      title: 'Rakenne',
+      description: 'Sivuston navigaatioon ja rakenteeseen liittyvät asetukset.',
+    },
   },
   page: {
     migrateContentInfo:

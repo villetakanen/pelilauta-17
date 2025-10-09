@@ -1,5 +1,4 @@
 <script lang="ts">
-import type { CnToggleButton } from '@11thdeg/cyan-lit';
 import type { Site } from 'src/schemas/SiteSchema';
 import { pushSnack } from 'src/utils/client/snackUtils';
 import { t } from 'src/utils/i18n';
@@ -7,7 +6,6 @@ import { update } from '../../../../stores/site';
 import LicenseSelect from '../assets/LicenseSelect.svelte';
 import SystemSelect from '../SystemSelect.svelte';
 import SiteExtraSettingsPane from './SiteExtraSettingsPane.svelte';
-import SiteHomepageSelect from './SiteHomepageSelect.svelte';
 
 interface Props {
   site: Site;
@@ -102,10 +100,6 @@ async function handleSubmit(e: Event) {
       <SystemSelect
         {system}
         {setSystem}/>
-      <SiteHomepageSelect
-        {site} 
-        {homepage}
-        {setHomepage}/>
       <LicenseSelect value={license} onchange={setLicense}/>
     <div class="toolbar justify-end">
       <button type="button" onclick={reset} class="text" disabled={!dirty}>{t('actions:reset')}</button>
