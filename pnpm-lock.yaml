@@ -12,8 +12,8 @@ importers:
         specifier: 4.0.0-beta.5
         version: 4.0.0-beta.5
       '@11thdeg/cn-editor':
-        specifier: 4.0.0-beta.17
-        version: 4.0.0-beta.17
+        specifier: 4.0.0-beta.18
+        version: 4.0.0-beta.18
       '@11thdeg/cyan-css':
         specifier: 4.0.0-beta.35
         version: 4.0.0-beta.35(lato-font@3.0.0)
@@ -162,8 +162,8 @@ packages:
   '@11thdeg/cn-d20-ability-score@4.0.0-beta.5':
     resolution: {integrity: sha512-rVuUVHFDJmhuWRYBDIWhv2y3HbimNXI+I3FlhTwddtaLKwvEneZqNIS3zzg7huweqdIp8SJ7IhW9+AGAdWZoHQ==}
 
-  '@11thdeg/cn-editor@4.0.0-beta.17':
-    resolution: {integrity: sha512-OpzIbhhknY7qhTjZ9cXWvumxF++aj0uI/8fv8vQ1ORLN7Xoqv1X7Y5qOwDEp919N/r8Dk2L3MGcgCYdq01EL+Q==}
+  '@11thdeg/cn-editor@4.0.0-beta.18':
+    resolution: {integrity: sha512-zs9Tq5c8tKDucLyn+oXJY2uhDLKH5AhKw2SJDXntoaE44BOHnD2YxJ8/m+9p1wvCMZ9hlzAuqsIz/5Bia/IdoQ==}
 
   '@11thdeg/cyan-css@4.0.0-beta.35':
     resolution: {integrity: sha512-3c6WbymWZSNO3qzZmjaSrWVVAX1Z39LbiyRUA09cUNbSOh3cD6fVaGlO0Rmye7AWvI1U3UX7xL6ieu9FptwV5w==}
@@ -7331,7 +7331,7 @@ snapshots:
     dependencies:
       lit: 3.3.1
 
-  '@11thdeg/cn-editor@4.0.0-beta.17':
+  '@11thdeg/cn-editor@4.0.0-beta.18':
     dependencies:
       '@codemirror/commands': 6.9.0
       '@codemirror/lang-markdown': 6.4.0
