@@ -1,7 +1,7 @@
 {
   "name": "Pelilauta",
   "type": "module",
-  "version": "18.8.3",
+  "version": "18.8.4",
   "engines": {
     "node": ">=20.0.0"
   },
@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@11thdeg/cn-d20-ability-score": "4.0.0-beta.5",
-    "@11thdeg/cn-editor": "4.0.0-beta.17",
+    "@11thdeg/cn-editor": "4.0.0-beta.18",
     "@11thdeg/cyan-css": "4.0.0-beta.35",
     "@11thdeg/cyan-lit": "4.0.0-beta.23",
     "@astrojs/check": "^0.9.4",
