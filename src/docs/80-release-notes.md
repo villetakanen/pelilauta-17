@@ -6,6 +6,8 @@ noun: 'monsters'
 ## Version 18
 
 ### 18.8.x (ongoing)
+- fix: Multiple updates to cn-editor web component to fix various focus issues and memory leaks
+- fix(sites): Site meta data form ux and ui polish
 - fix(sites): Site navigation options moved to options page from the settings page - this collates all navigation options in one place.
 - fix(sites): Non-listed sites settings moved to a bespoke component, polished UI and UX
 - fix(sites): Settings page now has SSR auth in place
