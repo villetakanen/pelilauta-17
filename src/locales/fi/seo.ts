@@ -66,4 +66,8 @@ export const seo = {
     fallback:
       'Pelilaudan dokumentaatio ja ohjeet. Opi käyttämään sivustoa ja luomaan sisältöä.',
   },
+  description: {
+    length:
+      'Suosittelemme kuvauksessa olevan 120-160 merkkiä. Tekstin pituus: {length} / 160',
+  },
 };
