@@ -163,6 +163,7 @@ export const site: Locale = {
     meta: {
       extra: 'Lisäasetukset',
       title: 'Sivuston tiedot',
+      fieldset: 'Sivuston perusasetukset',
       configuration: 'Asetukset',
       saved: 'Asetukset tallennettu',
     },

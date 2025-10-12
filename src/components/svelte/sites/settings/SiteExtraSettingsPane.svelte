@@ -1,7 +1,14 @@
 <script lang="ts">
 import type { CnToggleButton } from '@11thdeg/cyan-lit';
 
-// This is a child component of SettingsApp.svelte, which sets up the site store
+/**
+ * Extra settings panel for site configuration.
+ *
+ * NOTE: This component uses direct updates via the site store (not siteEditorStore).
+ * Unlike the metadata form which uses optimistic updates with preview functionality,
+ * these settings are applied immediately without local state management.
+ * This is intentional - extra settings don't need preview/reset/dirty tracking.
+ */
 import { site, update } from '@stores/site';
 import { t } from '@utils/i18n';
 
