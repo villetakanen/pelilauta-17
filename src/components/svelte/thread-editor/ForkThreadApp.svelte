@@ -1,5 +1,4 @@
 <script lang="ts">
-import type { CnEditor } from '@11thdeg/cn-editor';
 import { submitReply } from 'src/firebase/client/threads/submitReply';
 import { CHANNEL_DEFAULT_SLUG, type Channels } from 'src/schemas/ChannelSchema';
 import type { Reply } from 'src/schemas/ReplySchema';
@@ -13,6 +12,7 @@ import MarkdownContent from '../app/MarkdownContent.svelte';
 import ProfileLink from '../app/ProfileLink.svelte';
 import ChannelSelect from './ChannelSelect.svelte';
 import { submitThreadUpdate } from './submitThreadUpdate';
+import CodeMirrorEditor from '../CodeMirrorEditor/CodeMirrorEditor.svelte';
 
 interface Props {
   thread: Thread;
@@ -74,9 +74,8 @@ function onChannelChange(event: Event) {
     handleChange();
   }
 }
-function onContentChange(event: Event) {
-  const editor = event.target as CnEditor;
-  markdownContent = editor.value;
+function onContentChange(event: CustomEvent<string>) {
+  markdownContent = event.detail;
   handleChange();
 }
 function onTitleChange(event: Event) {
@@ -124,13 +123,13 @@ function handleChange() {
   </div>
 
   <section class="grow">
-    <cn-editor
-      value={markdownContent}
+    <CodeMirrorEditor
+      bind:value={markdownContent}
       name="markdownContent"
       disabled={saving}
       oninput={onContentChange}
       placeholder={t('entries:thread.placeholders.content')}
-    ></cn-editor>
+    />
   </section>
 
     <div class="toolbar">
