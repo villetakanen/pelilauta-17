@@ -1,7 +1,46 @@
 # PBI-028: Include Site Pages in Sitemap
 
 ## Status
-Open
+✅ Complete - Implemented October 14, 2025
+
+## Implementation Summary (October 14, 2025)
+
+### Changes Made
+**Site Pages in Sitemap** ✅
+- Modified `src/pages/sitemap.xml.ts` to iterate through `pageRefs` array from public sites
+- Generate page URLs in format: `/sites/{siteKey}/{pageKey}`
+- Set priority to 0.5 (same as threads, lower than site landing pages)
+- Handles sites without `pageRefs` gracefully
+- No additional API calls needed - uses existing site data
+
+### Technical Implementation
+```typescript
+// Generate URLs for all pages in public sites (PBI-028)
+const publicSitePages: string[] = [];
+for (const site of publicSitesJson) {
+  if (site.pageRefs && Array.isArray(site.pageRefs)) {
+    for (const pageRef of site.pageRefs) {
+      publicSitePages.push(`/sites/${site.key}/${pageRef.key}`);
+    }
+  }
+}
+```
+
+### Testing & Validation
+- ✅ Biome linting passed
+- ✅ Astro type checking passed (0 errors)
+- ✅ Full build completed successfully
+- ✅ URL format validated: `/sites/{siteKey}/{pageKey}`
+- ✅ XML structure maintained correctly
+- ✅ Handles edge cases (sites without pageRefs)
+
+### Impact
+- Improved SEO for all wiki pages and content within public sites
+- Better discoverability through search engines
+- Scalable solution that works automatically for all public sites
+- Efficient implementation without additional API overhead
+
+---
 
 ## Priority
 Medium
