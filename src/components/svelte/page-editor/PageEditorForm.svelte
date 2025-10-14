@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { CnEditor } from 'cn-editor/src/cn-editor';
+import type { CnEditor as CnEditorElement } from '@11thdeg/cn-editor';
 import type { Page } from 'src/schemas/PageSchema';
 import type { Site } from 'src/schemas/SiteSchema';
 import { pushSessionSnack, pushSnack } from 'src/utils/client/snackUtils';
@@ -8,6 +8,7 @@ import { t } from 'src/utils/i18n';
 import { logError } from 'src/utils/logHelpers';
 import { onMount } from 'svelte';
 import { uid } from '../../../stores/session';
+import CnEditor from '../app/CnEditor.svelte';
 import WithAuth from '../app/WithAuth.svelte';
 import { submitPageUpdate } from './submitPageUpdate';
 
@@ -88,7 +89,7 @@ async function handleSubmission(event: Event) {
 
 function handleEditorChange(event: Event) {
   hasChanges = true;
-  editorValue = (event.target as CnEditor).value;
+  editorValue = (event.target as CnEditorElement).value;
   tags = extractTags(editorValue || '');
 }
 </script>
@@ -130,8 +131,7 @@ function handleEditorChange(event: Event) {
       </div>
     {/if}
 
-
-      <cn-editor
+      <CnEditor
         id="page-editor"
         gutter
         disabled={saving}
@@ -139,7 +139,7 @@ function handleEditorChange(event: Event) {
         oninput={handleEditorChange}
         onchange={handleEditorChange}
         placeholder={t('entries:page.markdownContent')}
-      ></cn-editor>
+      />
 
     {#if tags && tags.length > 0}
     <section class="tags py-1 elevation-1 flex">

@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { CnEditor } from '@11thdeg/cn-editor/';
+import type { CnEditor as CnEditorElement } from '@11thdeg/cn-editor';
 import {
   character,
   loading,
@@ -7,6 +7,7 @@ import {
   update,
 } from 'src/stores/characters/characterStore';
 import { t } from 'src/utils/i18n';
+import CnEditor from '../../app/CnEditor.svelte';
 
 export interface Props {
   characterKey: string;
@@ -23,7 +24,7 @@ $effect(() => {
 });
 
 async function handleMarkdownInput(event: Event) {
-  const target = event.target as CnEditor;
+  const target = event.target as CnEditorElement;
   const content = target.value;
   if (content !== $character?.markdownContent) {
     dirty = true;
@@ -46,13 +47,13 @@ async function handleSubmit(event: Event) {
     {#if $loading}
       <cn-loader></cn-loader>
     {:else if $character}
-      <cn-editor
+      <CnEditor
         value={$character.markdownContent || ''}
         name="markdownContent"
         disabled={saving}
         oninput={handleMarkdownInput}
         placeholder={t('entries:thread.placeholders.content')}
-      ></cn-editor>
+      />
       <div class="toolbar">
         <button
           type="submit"

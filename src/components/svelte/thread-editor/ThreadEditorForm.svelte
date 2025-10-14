@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { CnEditor } from 'cn-editor/src/cn-editor';
+import type { CnEditor as CnEditorElement } from '@11thdeg/cn-editor';
 import type { Channel } from 'src/schemas/ChannelSchema';
 import type { Thread } from 'src/schemas/ThreadSchema';
 import { pushSnack } from 'src/utils/client/snackUtils';
@@ -9,6 +9,7 @@ import { logDebug, logError } from 'src/utils/logHelpers';
 import { onMount } from 'svelte';
 import { uid } from '../../../stores/session';
 import AddFilesButton from '../app/AddFilesButton.svelte';
+import CnEditor from '../app/CnEditor.svelte';
 import ChannelSelect from './ChannelSelect.svelte';
 import { submitThreadUpdate } from './submitThreadUpdate';
 
@@ -80,7 +81,7 @@ async function handleChange() {
 }
 
 async function handleContentChange(event: InputEvent) {
-  const editor = event.target as CnEditor;
+  const editor = event.target as CnEditorElement;
   const content = editor.value;
   tags = extractTags(content);
   handleChange();
@@ -142,13 +143,13 @@ function onAddFiles(newFiles: File[]) {
     </section>
   {/if}
 
-    <cn-editor
+    <CnEditor
       value={thread?.markdownContent || ''}
       name="markdownContent"
       disabled={saving}
       oninput={handleContentChange}
       placeholder={t('entries:thread.placeholders.content')}
-    ></cn-editor>
+    />
 
 
   {#if tags.length > 0}

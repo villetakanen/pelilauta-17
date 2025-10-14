@@ -1,10 +1,11 @@
 <script lang="ts">
-import type { CnEditor } from 'cn-editor/src/cn-editor';
+import type { CnEditor as CnEditorElement } from '@11thdeg/cn-editor';
 import type { Handout } from 'src/schemas/HandoutSchema';
 import type { Site } from 'src/schemas/SiteSchema';
 import { update } from 'src/stores/site/handouts';
 import { t } from 'src/utils/i18n';
 import { uid } from '../../../../stores/session';
+import CnEditor from '../../app/CnEditor.svelte';
 import WithAuth from '../../app/WithAuth.svelte';
 
 interface Props {
@@ -28,7 +29,7 @@ function titleChanged(e: Event) {
   title = (e.target as HTMLInputElement).value;
 }
 function markdownContentChanged(e: Event) {
-  markdownContent = (e.target as CnEditor).value;
+  markdownContent = (e.target as CnEditorElement).value;
 }
 
 async function handleSubmit(e: Event) {
@@ -55,10 +56,10 @@ async function handleSubmit(e: Event) {
       </label>
     </div>
     
-    <cn-editor
+    <CnEditor
       value={handout.markdownContent}
       oninput={markdownContentChanged}
-    ></cn-editor>
+    />
 
     <div class="toolbar justify-end">
       <a href={`/sites/${site.key}/handouts/${handout.key}`} class="text button">

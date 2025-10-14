@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { CnEditor } from '@11thdeg/cn-editor';
+import type { CnEditor as CnEditorElement } from '@11thdeg/cn-editor';
 import { submitReply } from 'src/firebase/client/threads/submitReply';
 import { CHANNEL_DEFAULT_SLUG, type Channels } from 'src/schemas/ChannelSchema';
 import type { Reply } from 'src/schemas/ReplySchema';
@@ -9,6 +9,7 @@ import { extractTags } from 'src/utils/contentHelpers';
 import { t } from 'src/utils/i18n';
 import { logDebug, logError } from 'src/utils/logHelpers';
 import { uid } from '../../../stores/session';
+import CnEditor from '../app/CnEditor.svelte';
 import MarkdownContent from '../app/MarkdownContent.svelte';
 import ProfileLink from '../app/ProfileLink.svelte';
 import ChannelSelect from './ChannelSelect.svelte';
@@ -75,7 +76,7 @@ function onChannelChange(event: Event) {
   }
 }
 function onContentChange(event: Event) {
-  const editor = event.target as CnEditor;
+  const editor = event.target as CnEditorElement;
   markdownContent = editor.value;
   handleChange();
 }
@@ -124,13 +125,13 @@ function handleChange() {
   </div>
 
   <section class="grow">
-    <cn-editor
+    <CnEditor
       value={markdownContent}
       name="markdownContent"
       disabled={saving}
       oninput={onContentChange}
       placeholder={t('entries:thread.placeholders.content')}
-    ></cn-editor>
+    />
   </section>
 
     <div class="toolbar">
