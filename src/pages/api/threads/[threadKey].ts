@@ -115,19 +115,17 @@ export async function PUT({ params, request }: APIContext): Promise<Response> {
     updateData.updatedAt = FieldValue.serverTimestamp();
 
     // Only update flowTime if not a silent update
-   //if (!body.silent) {
+    //if (!body.silent) {
     //  updateData.flowTime = FieldValue.serverTimestamp();
     //}
 
     // 6. Update thread document, silence is handled in toFirestoreEntry - which also converts
     // Zod Entry and its children to Firestore compatible format
     await threadRef.update(
-      toFirestoreEntry(
-        updateData, 
-        { 
-          silent: body.silent || false 
-        }
-      ));
+      toFirestoreEntry(updateData, {
+        silent: body.silent || false,
+      }),
+    );
 
     logDebug(endpointName, 'Thread document updated', { threadKey });
 
