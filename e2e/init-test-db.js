@@ -77,17 +77,12 @@ const publicTestSite = {
   createdAt: FieldValue.serverTimestamp(),
   updatedAt: FieldValue.serverTimestamp(),
   flowTime: FieldValue.serverTimestamp(),
-  owners: [
-    'e2e-test-owner',
-    'H3evfU7BDmec9KkotRiTV41YECg1',
-  ],
+  owners: ['e2e-test-owner', 'H3evfU7BDmec9KkotRiTV41YECg1'],
   homepage: 'public-page',
   hidden: false, // Public site for sitemap testing
   sortOrder: 'name',
   usePlainTextURLs: true,
-  pageCategories: [
-    { slug: 'general', name: 'General' },
-  ],
+  pageCategories: [{ slug: 'general', name: 'General' }],
   pageRefs: [
     {
       key: 'public-page',
@@ -114,7 +109,8 @@ const publicTestPage = {
   siteKey: publicTestSite.key,
   name: 'Public Page',
   createdAt: FieldValue.serverTimestamp(),
-  markdownContent: '# Public Page\n\nThis is a public page for sitemap testing.',
+  markdownContent:
+    '# Public Page\n\nThis is a public page for sitemap testing.',
   owners: ['e2e-test-owner', 'H3evfU7BDmec9KkotRiTV41YECg1'],
   category: 'general',
   tags: ['e2e', 'public', 'sitemap'],
@@ -132,7 +128,8 @@ const anotherPublicTestPage = {
   siteKey: publicTestSite.key,
   name: 'Another Public Page',
   createdAt: FieldValue.serverTimestamp(),
-  markdownContent: '# Another Public Page\n\nAnother public page for sitemap testing.',
+  markdownContent:
+    '# Another Public Page\n\nAnother public page for sitemap testing.',
   owners: ['e2e-test-owner', 'H3evfU7BDmec9KkotRiTV41YECg1'],
   category: 'general',
   tags: ['e2e', 'public', 'sitemap'],
