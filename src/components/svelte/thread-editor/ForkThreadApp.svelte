@@ -10,9 +10,9 @@ import { logDebug, logError } from 'src/utils/logHelpers';
 import { uid } from '../../../stores/session';
 import MarkdownContent from '../app/MarkdownContent.svelte';
 import ProfileLink from '../app/ProfileLink.svelte';
+import CodeMirrorEditor from '../CodeMirrorEditor/CodeMirrorEditor.svelte';
 import ChannelSelect from './ChannelSelect.svelte';
 import { submitThreadUpdate } from './submitThreadUpdate';
-import CodeMirrorEditor from '../CodeMirrorEditor/CodeMirrorEditor.svelte';
 
 interface Props {
   thread: Thread;

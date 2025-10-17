@@ -8,8 +8,8 @@ import { logError } from 'src/utils/logHelpers';
 import { onMount } from 'svelte';
 import { uid } from '../../../stores/session';
 import WithAuth from '../app/WithAuth.svelte';
-import { submitPageUpdate } from './submitPageUpdate';
 import CodeMirrorEditor from '../CodeMirrorEditor/CodeMirrorEditor.svelte';
+import { submitPageUpdate } from './submitPageUpdate';
 
 /**
  * This _client side_ component is used to render the form for editing a page.

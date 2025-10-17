@@ -10,10 +10,10 @@
   --_cn-editor-border: var(--cn-editor-border, none);
   --_cn-editor-border-bottom: var(--cn-border);
   --_cn-editor-border-radius: var(--cn-border-radius-field, 0 1rem 0 0);
-  
+
   /* Caret color with light-dark() function for theme switching */
   --color-caret: light-dark(var(--chroma-primary-90), var(--chroma-primary-30));
-  
+
   /* Markdown syntax colors */
   --color-on-code-strong: light-dark(
     var(--chroma-primary-80),

@@ -8,9 +8,9 @@ import { logDebug, logError } from 'src/utils/logHelpers';
 import { onMount } from 'svelte';
 import { uid } from '../../../stores/session';
 import AddFilesButton from '../app/AddFilesButton.svelte';
+import CodeMirrorEditor from '../CodeMirrorEditor/CodeMirrorEditor.svelte';
 import ChannelSelect from './ChannelSelect.svelte';
 import { submitThreadUpdate } from './submitThreadUpdate';
-import CodeMirrorEditor from '../CodeMirrorEditor/CodeMirrorEditor.svelte';
 
 interface Props {
   thread?: Thread;

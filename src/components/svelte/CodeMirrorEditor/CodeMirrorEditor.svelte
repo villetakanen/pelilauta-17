@@ -1,8 +1,11 @@
 <script lang="ts">
-import { onMount, onDestroy } from 'svelte';
-import { EditorView } from '@codemirror/view';
-import { EditorState, Compartment } from '@codemirror/state';
-import { placeholder as cmPlaceholder, lineNumbers } from '@codemirror/view';
+import { Compartment, EditorState } from '@codemirror/state';
+import {
+  placeholder as cmPlaceholder,
+  EditorView,
+  lineNumbers,
+} from '@codemirror/view';
+import { onDestroy, onMount } from 'svelte';
 import { createEditorState } from './codemirror-config';
 import type { CodeMirrorEditorProps } from './types';
 
@@ -22,7 +25,7 @@ let {
   oninput,
   onchange,
   onblur,
-  onfocus
+  onfocus,
 }: Props = $props();
 
 // Component state
@@ -38,46 +41,40 @@ const gutterCompartment = new Compartment();
 // Reactivity: Update editor when props change
 $effect(() => {
   if (!editorView) return;
-  
+
   // Update content if changed externally
   const currentDoc = editorView.state.doc.toString();
   if (value !== currentDoc) {
     editorView.dispatch({
-      changes: { from: 0, to: currentDoc.length, insert: value }
+      changes: { from: 0, to: currentDoc.length, insert: value },
     });
   }
 });
 
 $effect(() => {
   if (!editorView) return;
-  
+
   // Update placeholder
   editorView.dispatch({
-    effects: placeholderCompartment.reconfigure(
-      cmPlaceholder(placeholder)
-    )
+    effects: placeholderCompartment.reconfigure(cmPlaceholder(placeholder)),
   });
 });
 
 $effect(() => {
   if (!editorView) return;
-  
+
   // Update disabled state
   editorView.dispatch({
-    effects: disabledCompartment.reconfigure(
-      EditorState.readOnly.of(disabled)
-    )
+    effects: disabledCompartment.reconfigure(EditorState.readOnly.of(disabled)),
   });
 });
 
 $effect(() => {
   if (!editorView) return;
-  
+
   // Update gutter
   editorView.dispatch({
-    effects: gutterCompartment.reconfigure(
-      gutter ? lineNumbers() : []
-    )
+    effects: gutterCompartment.reconfigure(gutter ? lineNumbers() : []),
   });
 });
 
@@ -115,15 +112,15 @@ onMount(() => {
           onchange?.(new CustomEvent('change', { detail: value }));
         }
         onblur?.(new FocusEvent('blur'));
-      }
-    }
+      },
+    },
   );
-  
+
   editorView = new EditorView({
     state,
-    parent: editorContainer
+    parent: editorContainer,
   });
-  
+
   if (autofocus) {
     editorView.focus();
   }
@@ -141,7 +138,7 @@ export function focus(): void {
 export function select(): void {
   if (editorView) {
     editorView.dispatch({
-      selection: { anchor: 0, head: editorView.state.doc.length }
+      selection: { anchor: 0, head: editorView.state.doc.length },
     });
     editorView.focus();
   }
