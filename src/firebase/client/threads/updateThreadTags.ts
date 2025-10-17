@@ -1,3 +1,8 @@
+// DEPRECATED: This function is obsolete
+// Tag index updates are now handled automatically by the server-side API
+// when using updateThreadApi() to update threads
+// This file is kept for backward compatibility only
+
 import { TAG_FIRESTORE_COLLECTION, TagSchema } from 'src/schemas/TagSchema';
 import type { Thread } from 'src/schemas/ThreadSchema';
 import { logError, logWarn } from 'src/utils/logHelpers';
@@ -36,7 +41,16 @@ async function setTags(thread: Partial<Thread>) {
   }
 }
 
+/**
+ * @deprecated This function is obsolete. Tag index updates are now handled
+ * automatically by the server-side API when using updateThreadApi().
+ * This function is kept for backward compatibility only.
+ */
 export async function updateThreadTags(thread: Partial<Thread>) {
+  logWarn(
+    'updateThreadTags',
+    'DEPRECATED: This function is obsolete. Tag updates are now handled by updateThreadApi().',
+  );
   const tags = thread.tags;
   if (!thread.key) {
     logWarn('updateThreadTags', 'Thread key is required for a tags update');
