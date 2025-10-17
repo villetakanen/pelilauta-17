@@ -1,11 +1,11 @@
 <script lang="ts">
-import type { CnEditor } from 'cn-editor/src/cn-editor';
 import type { Handout } from 'src/schemas/HandoutSchema';
 import type { Site } from 'src/schemas/SiteSchema';
 import { update } from 'src/stores/site/handouts';
 import { t } from 'src/utils/i18n';
 import { uid } from '../../../../stores/session';
 import WithAuth from '../../app/WithAuth.svelte';
+import CodeMirrorEditor from '../../CodeMirrorEditor/CodeMirrorEditor.svelte';
 
 interface Props {
   handout: Handout;
@@ -27,8 +27,8 @@ const visible = $derived.by(() => {
 function titleChanged(e: Event) {
   title = (e.target as HTMLInputElement).value;
 }
-function markdownContentChanged(e: Event) {
-  markdownContent = (e.target as CnEditor).value;
+function markdownContentChanged(e: CustomEvent<string>) {
+  markdownContent = e.detail;
 }
 
 async function handleSubmit(e: Event) {
@@ -55,10 +55,10 @@ async function handleSubmit(e: Event) {
       </label>
     </div>
     
-    <cn-editor
-      value={handout.markdownContent}
+    <CodeMirrorEditor
+      bind:value={markdownContent}
       oninput={markdownContentChanged}
-    ></cn-editor>
+    />
 
     <div class="toolbar justify-end">
       <a href={`/sites/${site.key}/handouts/${handout.key}`} class="text button">
