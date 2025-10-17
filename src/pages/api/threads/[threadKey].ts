@@ -11,6 +11,7 @@ import {
   type Thread,
   ThreadSchema,
 } from '@schemas/ThreadSchema';
+import { toFirestoreEntry } from '@utils/client/toFirestoreEntry';
 import { logDebug, logError, logWarn } from '@utils/logHelpers';
 import { toDate } from '@utils/schemaHelpers';
 import { tokenToUid } from '@utils/server/auth/tokenToUid';
@@ -114,12 +115,19 @@ export async function PUT({ params, request }: APIContext): Promise<Response> {
     updateData.updatedAt = FieldValue.serverTimestamp();
 
     // Only update flowTime if not a silent update
-    if (!body.silent) {
-      updateData.flowTime = FieldValue.serverTimestamp();
-    }
+   //if (!body.silent) {
+    //  updateData.flowTime = FieldValue.serverTimestamp();
+    //}
 
-    // 6. Update thread document
-    await threadRef.update(updateData);
+    // 6. Update thread document, silence is handled in toFirestoreEntry - which also converts
+    // Zod Entry and its children to Firestore compatible format
+    await threadRef.update(
+      toFirestoreEntry(
+        updateData, 
+        { 
+          silent: body.silent || false 
+        }
+      ));
 
     logDebug(endpointName, 'Thread document updated', { threadKey });
 
