@@ -6,6 +6,8 @@ noun: 'monsters'
 ## Version 18
 
 ### 18.8.x (ongoing)
+- fix: Moved CodeMirror to a local library component, removing the dependency to @11thdeg/cn-editor web component. CodeMirror is a large package intended for standalone use, and has various issues with shadow DOM and focus management if capsulated to a lit wrapper component. See PBI-029 for details.
+- fix(sites): Public site pages are now included in the sitemap.xml for better SEO and discoverability. See PBI-028 for details.
 - fix: Multiple updates to cn-editor web component to fix various focus issues and memory leaks
 - fix(sites): Site meta data form ux and ui polish
 - fix(sites): Site navigation options moved to options page from the settings page - this collates all navigation options in one place.

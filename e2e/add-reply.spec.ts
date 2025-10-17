@@ -46,27 +46,16 @@ test.describe('Reply Submission UX Improvements', () => {
     // Fill in the thread title
     await page.fill('input[name="title"]', uniqueThreadTitle);
 
-    // Wait for cn-editor to be visible and CodeMirror to load
-    await page.waitForSelector('cn-editor', {
+    // Wait for CodeMirror editor to be visible and ready
+    await page.waitForSelector('.cm-editor', {
       state: 'attached',
       timeout: 15000,
     });
-    await page.waitForSelector('cn-editor .cm-editor', { timeout: 15000 });
 
-    // Set cn-editor content using evaluate with proper event triggering
-    await page.evaluate((content) => {
-      const editor = document.querySelector('cn-editor') as HTMLElement & {
-        value?: string;
-        dispatchEvent?: (event: Event) => void;
-      };
-      if (editor && 'value' in editor) {
-        editor.value = content;
-        // Trigger all the necessary events for form recognition
-        editor.dispatchEvent(new Event('input', { bubbles: true }));
-        editor.dispatchEvent(new Event('change', { bubbles: true }));
-        editor.dispatchEvent(new Event('blur', { bubbles: true }));
-      }
-    }, 'This is a test thread created for testing reply functionality.');
+    // Set CodeMirror content by clicking into the editor and typing
+    const editor = page.locator('.cm-content');
+    await editor.click();
+    await editor.fill('This is a test thread created for testing reply functionality.');
 
     // Wait for the send button to be enabled (form validation should kick in)
     await expect(page.getByTestId('send-thread-button')).toBeEnabled();
@@ -165,27 +154,16 @@ test.describe('Reply Submission UX Improvements', () => {
     // Fill in the thread title
     await page.fill('input[name="title"]', uniqueThreadTitle);
 
-    // Wait for cn-editor to be visible and CodeMirror to load
-    await page.waitForSelector('cn-editor', {
+    // Wait for CodeMirror editor to be visible and ready
+    await page.waitForSelector('.cm-editor', {
       state: 'attached',
       timeout: 15000,
     });
-    await page.waitForSelector('cn-editor .cm-editor', { timeout: 15000 });
 
-    // Set cn-editor content using evaluate with proper event triggering
-    await page.evaluate((content) => {
-      const editor = document.querySelector('cn-editor') as HTMLElement & {
-        value?: string;
-        dispatchEvent?: (event: Event) => void;
-      };
-      if (editor && 'value' in editor) {
-        editor.value = content;
-        // Trigger all the necessary events for form recognition
-        editor.dispatchEvent(new Event('input', { bubbles: true }));
-        editor.dispatchEvent(new Event('change', { bubbles: true }));
-        editor.dispatchEvent(new Event('blur', { bubbles: true }));
-      }
-    }, 'This is a test thread for testing file upload with replies.');
+    // Set CodeMirror content by clicking into the editor and typing
+    const editor = page.locator('.cm-content');
+    await editor.click();
+    await editor.fill('This is a test thread for testing file upload with replies.');
 
     // Wait for the send button to be enabled
     await expect(page.getByTestId('send-thread-button')).toBeEnabled();
@@ -309,24 +287,16 @@ test.describe('Reply Submission UX Improvements', () => {
     // Fill in the thread title
     await page.fill('input[name="title"]', uniqueThreadTitle);
 
-    await page.waitForSelector('cn-editor', {
+    // Wait for CodeMirror editor to be visible and ready
+    await page.waitForSelector('.cm-editor', {
       state: 'attached',
       timeout: 15000,
     });
-    await page.waitForSelector('cn-editor .cm-editor', { timeout: 15000 });
 
-    await page.evaluate((content) => {
-      const editor = document.querySelector('cn-editor') as HTMLElement & {
-        value?: string;
-        dispatchEvent?: (event: Event) => void;
-      };
-      if (editor && 'value' in editor) {
-        editor.value = content;
-        editor.dispatchEvent(new Event('input', { bubbles: true }));
-        editor.dispatchEvent(new Event('change', { bubbles: true }));
-        editor.dispatchEvent(new Event('blur', { bubbles: true }));
-      }
-    }, 'Thread for testing reply validation.');
+    // Set CodeMirror content by clicking into the editor and typing
+    const editor = page.locator('.cm-content');
+    await editor.click();
+    await editor.fill('Thread for testing reply validation.');
 
     // Wait for the send button to be enabled
     await expect(page.getByTestId('send-thread-button')).toBeEnabled();
