@@ -56,7 +56,9 @@ test('can create a thread successfully', async ({ page }) => {
   // Set CodeMirror content by clicking into the editor and typing
   const editor = page.locator('.cm-content');
   await editor.click();
-  await editor.fill('This is a test thread created by the E2E test suite. It should be automatically cleaned up after the test runs.');
+  await editor.fill(
+    'This is a test thread created by the E2E test suite. It should be automatically cleaned up after the test runs.',
+  );
 
   // Wait for the send button to be enabled (form validation should kick in)
   await expect(page.getByTestId('send-thread-button')).toBeEnabled();

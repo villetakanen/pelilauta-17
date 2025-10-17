@@ -55,7 +55,9 @@ test.describe('Reply Submission UX Improvements', () => {
     // Set CodeMirror content by clicking into the editor and typing
     const editor = page.locator('.cm-content');
     await editor.click();
-    await editor.fill('This is a test thread created for testing reply functionality.');
+    await editor.fill(
+      'This is a test thread created for testing reply functionality.',
+    );
 
     // Wait for the send button to be enabled (form validation should kick in)
     await expect(page.getByTestId('send-thread-button')).toBeEnabled();
@@ -163,7 +165,9 @@ test.describe('Reply Submission UX Improvements', () => {
     // Set CodeMirror content by clicking into the editor and typing
     const editor = page.locator('.cm-content');
     await editor.click();
-    await editor.fill('This is a test thread for testing file upload with replies.');
+    await editor.fill(
+      'This is a test thread for testing file upload with replies.',
+    );
 
     // Wait for the send button to be enabled
     await expect(page.getByTestId('send-thread-button')).toBeEnabled();
