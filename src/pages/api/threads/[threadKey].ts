@@ -5,10 +5,263 @@ import {
   type Channel,
   ChannelSchema,
 } from '@schemas/ChannelSchema';
-import { THREADS_COLLECTION_NAME, ThreadSchema } from '@schemas/ThreadSchema';
-import { logError, logWarn } from '@utils/logHelpers';
+import { TAG_FIRESTORE_COLLECTION, TagSchema } from '@schemas/TagSchema';
+import {
+  THREADS_COLLECTION_NAME,
+  type Thread,
+  ThreadSchema,
+} from '@schemas/ThreadSchema';
+import { logDebug, logError, logWarn } from '@utils/logHelpers';
+import { toDate } from '@utils/schemaHelpers';
 import { tokenToUid } from '@utils/server/auth/tokenToUid';
 import type { APIContext } from 'astro';
+import { FieldValue } from 'firebase-admin/firestore';
+
+/**
+ * Update an existing thread
+ * PUT /api/threads/[threadKey]
+ */
+export async function PUT({ params, request }: APIContext): Promise<Response> {
+  const endpointName = 'updateThread';
+  const { threadKey } = params;
+
+  if (!threadKey) {
+    return new Response(JSON.stringify({ error: 'Thread key required' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  // 1. Authenticate user
+  const uid = await tokenToUid(request);
+  if (!uid) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  try {
+    // 2. Parse request body
+    const body = await request.json();
+
+    logDebug(endpointName, 'Update request received', {
+      threadKey,
+      uid,
+      fields: Object.keys(body),
+    });
+
+    // 3. Get existing thread
+    const threadRef = serverDB
+      .collection(THREADS_COLLECTION_NAME)
+      .doc(threadKey);
+    const threadDoc = await threadRef.get();
+
+    if (!threadDoc.exists) {
+      return new Response(JSON.stringify({ error: 'Thread not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    const existingThread = threadDoc.data() as Thread;
+
+    // 4. Verify ownership
+    if (!existingThread.owners?.includes(uid)) {
+      logWarn(endpointName, 'Unauthorized update attempt', {
+        threadKey,
+        uid,
+        owners: existingThread.owners,
+      });
+      return new Response(
+        JSON.stringify({ error: 'Forbidden: Not thread owner' }),
+        {
+          status: 403,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      );
+    }
+
+    // 5. Validate and prepare update data
+    const allowedFields = [
+      'title',
+      'markdownContent',
+      'channel',
+      'tags',
+      'youtubeId',
+      'poster',
+      'public',
+    ];
+
+    const updateData: Partial<Thread> & Record<string, unknown> = {};
+
+    for (const field of allowedFields) {
+      if (body[field] !== undefined) {
+        updateData[field] = body[field];
+      }
+    }
+
+    // Parse tags if provided as JSON string
+    if (typeof updateData.tags === 'string') {
+      try {
+        updateData.tags = JSON.parse(updateData.tags as string);
+      } catch {
+        logWarn(endpointName, 'Invalid tags JSON format');
+      }
+    }
+
+    // Add server timestamps
+    updateData.updatedAt = FieldValue.serverTimestamp();
+
+    // Only update flowTime if not a silent update
+    if (!body.silent) {
+      updateData.flowTime = FieldValue.serverTimestamp();
+    }
+
+    // 6. Update thread document
+    await threadRef.update(updateData);
+
+    logDebug(endpointName, 'Thread document updated', { threadKey });
+
+    // 7. Get updated thread for post-processing
+    const updatedDoc = await threadRef.get();
+    const updatedThread = {
+      key: threadKey,
+      ...updatedDoc.data(),
+    } as Thread;
+
+    // 8. Return success immediately (background tasks run async)
+    const response = new Response(
+      JSON.stringify({
+        success: true,
+        threadKey,
+        message: 'Thread updated successfully',
+      }),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+        },
+      },
+    );
+
+    // 9. Execute background tasks asynchronously
+    executeUpdateBackgroundTasks(threadKey, updatedThread, existingThread);
+
+    return response;
+  } catch (error) {
+    logError(endpointName, 'Failed to update thread:', error);
+    return new Response(
+      JSON.stringify({
+        error: 'Internal server error',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
+  }
+}
+
+/**
+ * Background tasks after thread update
+ */
+function executeUpdateBackgroundTasks(
+  threadKey: string,
+  updatedThread: Thread,
+  existingThread: Thread,
+): void {
+  Promise.resolve().then(async () => {
+    try {
+      // Task 1: Update tag index if tags or title changed
+      if (
+        JSON.stringify(updatedThread.tags) !==
+          JSON.stringify(existingThread.tags) ||
+        updatedThread.title !== existingThread.title
+      ) {
+        if (updatedThread.tags && updatedThread.tags.length > 0) {
+          const tagData = TagSchema.parse({
+            key: threadKey,
+            title: updatedThread.title,
+            type: 'thread',
+            author: updatedThread.owners[0] || '',
+            tags: updatedThread.tags,
+            flowTime: toDate(updatedThread.flowTime).getTime(),
+          });
+
+          await serverDB
+            .collection(TAG_FIRESTORE_COLLECTION)
+            .doc(threadKey)
+            .set(tagData);
+
+          logDebug('updateThread:background', 'Updated tag index', {
+            threadKey,
+          });
+        } else {
+          // Remove from tag index if no tags
+          await serverDB
+            .collection(TAG_FIRESTORE_COLLECTION)
+            .doc(threadKey)
+            .delete();
+
+          logDebug('updateThread:background', 'Removed from tag index', {
+            threadKey,
+          });
+        }
+      }
+
+      // Task 2: Purge thread cache (only if netlify-cache is available)
+      try {
+        const { NetlifyCachePurger } = await import(
+          'src/lib/server/netlify-cache'
+        );
+        const purger = new NetlifyCachePurger();
+
+        if (purger.isConfigured()) {
+          const cacheTags = [`thread-${threadKey}`];
+
+          // Add tag cache tags if tags changed
+          if (
+            JSON.stringify(updatedThread.tags) !==
+            JSON.stringify(existingThread.tags)
+          ) {
+            const allTags = [
+              ...(updatedThread.tags || []),
+              ...(existingThread.tags || []),
+            ];
+            const uniqueTags = [...new Set(allTags)];
+            cacheTags.push(
+              ...uniqueTags.map((tag) => `tag-${tag.toLowerCase()}`),
+            );
+          }
+
+          await purger.purgeTags(cacheTags);
+
+          logDebug('updateThread:background', 'Cache purged', {
+            threadKey,
+            tagCount: cacheTags.length,
+          });
+        }
+      } catch (error) {
+        // Cache purging is optional - log but don't fail
+        logWarn(
+          'updateThread:background',
+          'Cache purging not available or failed:',
+          error,
+        );
+      }
+    } catch (error) {
+      logError('updateThread:background', 'Background task failed:', error);
+    }
+  });
+}
+
+/**
+ * PATCH is an alias for PUT (partial updates)
+ */
+export const PATCH = PUT;
 
 export async function DELETE({ request, params }: APIContext) {
   const { threadKey } = params;
