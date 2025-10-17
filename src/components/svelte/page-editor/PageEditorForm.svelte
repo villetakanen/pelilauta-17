@@ -1,5 +1,4 @@
 <script lang="ts">
-import type { CnEditor } from 'cn-editor/src/cn-editor';
 import type { Page } from 'src/schemas/PageSchema';
 import type { Site } from 'src/schemas/SiteSchema';
 import { pushSessionSnack, pushSnack } from 'src/utils/client/snackUtils';
@@ -9,6 +8,7 @@ import { logError } from 'src/utils/logHelpers';
 import { onMount } from 'svelte';
 import { uid } from '../../../stores/session';
 import WithAuth from '../app/WithAuth.svelte';
+import CodeMirrorEditor from '../CodeMirrorEditor/CodeMirrorEditor.svelte';
 import { submitPageUpdate } from './submitPageUpdate';
 
 /**
@@ -17,7 +17,7 @@ import { submitPageUpdate } from './submitPageUpdate';
  * Fields supported
  * - title (textfield)
  * - page-category (select, if categories are available)
- * - content (cn-editor)
+ * - content (CodeMirrorEditor)
  * - tags (auto-generated from content)
  * - insert an asset from the site media library
  *
@@ -86,9 +86,9 @@ async function handleSubmission(event: Event) {
   }
 }
 
-function handleEditorChange(event: Event) {
+function handleEditorChange(event: CustomEvent<string>) {
   hasChanges = true;
-  editorValue = (event.target as CnEditor).value;
+  editorValue = event.detail;
   tags = extractTags(editorValue || '');
 }
 </script>
@@ -131,15 +131,14 @@ function handleEditorChange(event: Event) {
     {/if}
 
 
-      <cn-editor
-        id="page-editor"
+      <CodeMirrorEditor
+        bind:value={editorValue}
         gutter
         disabled={saving}
-        value={editorValue}
         oninput={handleEditorChange}
         onchange={handleEditorChange}
         placeholder={t('entries:page.markdownContent')}
-      ></cn-editor>
+      />
 
     {#if tags && tags.length > 0}
     <section class="tags py-1 elevation-1 flex">

@@ -24,6 +24,16 @@ export async function GET({ request }: APIContext) {
     (site: { key: string }) => `/sites/${site.key}`,
   );
 
+  // Generate URLs for all pages in public sites (PBI-028)
+  const publicSitePages: string[] = [];
+  for (const site of publicSitesJson) {
+    if (site.pageRefs && Array.isArray(site.pageRefs)) {
+      for (const pageRef of site.pageRefs) {
+        publicSitePages.push(`/sites/${site.key}/${pageRef.key}`);
+      }
+    }
+  }
+
   // Fetch latest public threads
   const publicThreadsResponse = await fetch(`${origin}/api/threads.json`);
   const publicThreadsJson = await publicThreadsResponse.json();
@@ -36,6 +46,7 @@ export async function GET({ request }: APIContext) {
           ${staticPages.map((page) => `<url><loc>${origin}${page.url}</loc><priority>${page.priority}</priority></url>`).join('')}
           ${featuredTags.map((tag) => `<url><loc>${origin}${tag.url}</loc><priority>${tag.priority}</priority></url>`).join('')}
           ${publicSites.map((site: string) => `<url><loc>${origin}${site}</loc><priority>0.6</priority></url>`).join('')}
+          ${publicSitePages.map((page: string) => `<url><loc>${origin}${page}</loc><priority>0.5</priority></url>`).join('')}
           ${publicThreads.map((thread: string) => `<url><loc>${origin}${thread}</loc><priority>0.5</priority></url>`).join('')}
         </urlset>`;
 

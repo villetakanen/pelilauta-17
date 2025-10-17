@@ -1,5 +1,4 @@
 <script lang="ts">
-import type { CnEditor } from 'cn-editor/src/cn-editor';
 import type { Channel } from 'src/schemas/ChannelSchema';
 import type { Thread } from 'src/schemas/ThreadSchema';
 import { pushSnack } from 'src/utils/client/snackUtils';
@@ -9,6 +8,7 @@ import { logDebug, logError } from 'src/utils/logHelpers';
 import { onMount } from 'svelte';
 import { uid } from '../../../stores/session';
 import AddFilesButton from '../app/AddFilesButton.svelte';
+import CodeMirrorEditor from '../CodeMirrorEditor/CodeMirrorEditor.svelte';
 import ChannelSelect from './ChannelSelect.svelte';
 import { submitThreadUpdate } from './submitThreadUpdate';
 
@@ -26,6 +26,7 @@ let changed = $state(false);
 let files = $state<File[]>([]);
 let existingImages = $state<Array<{ url: string; alt: string }>>([]);
 let tags = $state<string[]>(thread?.tags || []);
+let markdownContent = $state(thread?.markdownContent || '');
 
 // Derived state
 const previews = $derived.by(() => {
@@ -56,7 +57,7 @@ async function handleSubmit(event: Event) {
   const data: Partial<Thread> = {
     title: form.get('title') as string,
     channel: form.get('channel') as string,
-    markdownContent: form.get('markdownContent') as string,
+    markdownContent: markdownContent,
     tags,
     owners: [$uid],
   };
@@ -79,9 +80,9 @@ async function handleChange() {
   }
 }
 
-async function handleContentChange(event: InputEvent) {
-  const editor = event.target as CnEditor;
-  const content = editor.value;
+async function handleContentChange(event: CustomEvent<string>) {
+  const content = event.detail;
+  markdownContent = content;
   tags = extractTags(content);
   handleChange();
 }
@@ -142,13 +143,13 @@ function onAddFiles(newFiles: File[]) {
     </section>
   {/if}
 
-    <cn-editor
-      value={thread?.markdownContent || ''}
+    <CodeMirrorEditor
+      bind:value={markdownContent}
       name="markdownContent"
       disabled={saving}
       oninput={handleContentChange}
       placeholder={t('entries:thread.placeholders.content')}
-    ></cn-editor>
+    />
 
 
   {#if tags.length > 0}

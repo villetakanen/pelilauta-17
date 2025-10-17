@@ -11,9 +11,6 @@ importers:
       '@11thdeg/cn-d20-ability-score':
         specifier: 4.0.0-beta.5
         version: 4.0.0-beta.5
-      '@11thdeg/cn-editor':
-        specifier: 4.0.0-beta.18
-        version: 4.0.0-beta.18
       '@11thdeg/cyan-css':
         specifier: 4.0.0-beta.35
         version: 4.0.0-beta.35(lato-font@3.0.0)
@@ -35,6 +32,24 @@ importers:
       '@atproto/api':
         specifier: ^0.15.14
         version: 0.15.14
+      '@codemirror/commands':
+        specifier: ^6.8.1
+        version: 6.9.0
+      '@codemirror/lang-markdown':
+        specifier: ^6.3.2
+        version: 6.4.0
+      '@codemirror/language':
+        specifier: ^6.11.0
+        version: 6.11.3
+      '@codemirror/state':
+        specifier: ^6.5.2
+        version: 6.5.2
+      '@codemirror/view':
+        specifier: ^6.36.8
+        version: 6.38.5
+      '@lezer/highlight':
+        specifier: ^1.2.1
+        version: 1.2.1
       '@nanostores/persistent':
         specifier: ^1.1.0
         version: 1.1.0(nanostores@1.0.1)
@@ -53,6 +68,9 @@ importers:
       astro:
         specifier: ^5.14.1
         version: 5.14.1(@netlify/blobs@10.0.11)(@types/node@24.0.0)(jiti@2.6.0)(rollup@2.79.2)(terser@5.39.2)(typescript@5.9.2)(yaml@2.8.1)
+      codemirror:
+        specifier: ^6.0.1
+        version: 6.0.2
       diff:
         specifier: ^8.0.2
         version: 8.0.2
@@ -161,9 +179,6 @@ packages:
 
   '@11thdeg/cn-d20-ability-score@4.0.0-beta.5':
     resolution: {integrity: sha512-rVuUVHFDJmhuWRYBDIWhv2y3HbimNXI+I3FlhTwddtaLKwvEneZqNIS3zzg7huweqdIp8SJ7IhW9+AGAdWZoHQ==}
-
-  '@11thdeg/cn-editor@4.0.0-beta.18':
-    resolution: {integrity: sha512-zs9Tq5c8tKDucLyn+oXJY2uhDLKH5AhKw2SJDXntoaE44BOHnD2YxJ8/m+9p1wvCMZ9hlzAuqsIz/5Bia/IdoQ==}
 
   '@11thdeg/cyan-css@4.0.0-beta.35':
     resolution: {integrity: sha512-3c6WbymWZSNO3qzZmjaSrWVVAX1Z39LbiyRUA09cUNbSOh3cD6fVaGlO0Rmye7AWvI1U3UX7xL6ieu9FptwV5w==}
@@ -7330,20 +7345,6 @@ snapshots:
   '@11thdeg/cn-d20-ability-score@4.0.0-beta.5':
     dependencies:
       lit: 3.3.1
-
-  '@11thdeg/cn-editor@4.0.0-beta.18':
-    dependencies:
-      '@codemirror/commands': 6.9.0
-      '@codemirror/lang-markdown': 6.4.0
-      '@codemirror/language': 6.11.3
-      '@codemirror/state': 6.5.2
-      '@codemirror/view': 6.38.5
-      '@lezer/highlight': 1.2.1
-      codemirror: 6.0.2
-      dompurify: 3.2.7
-      lit: 3.3.1
-      turndown: 7.2.1
-      turndown-plugin-gfm: 1.0.2
 
   '@11thdeg/cyan-css@4.0.0-beta.35(lato-font@3.0.0)':
     dependencies:

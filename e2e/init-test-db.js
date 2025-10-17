@@ -70,6 +70,78 @@ await serverDB.collection('sites').doc(testSite.key).set(testSite);
 console.log('Test site created:', testSite.key);
 console.log('Site owners:', testSite.owners);
 
+// Create a public test site for sitemap testing
+const publicTestSite = {
+  key: 'e2e-public-test-site',
+  name: 'The E2E Public Test Site',
+  createdAt: FieldValue.serverTimestamp(),
+  updatedAt: FieldValue.serverTimestamp(),
+  flowTime: FieldValue.serverTimestamp(),
+  owners: ['e2e-test-owner', 'H3evfU7BDmec9KkotRiTV41YECg1'],
+  homepage: 'public-page',
+  hidden: false, // Public site for sitemap testing
+  sortOrder: 'name',
+  usePlainTextURLs: true,
+  pageCategories: [{ slug: 'general', name: 'General' }],
+  pageRefs: [
+    {
+      key: 'public-page',
+      name: 'Public Page',
+      author: 'e2e-test-owner',
+      category: 'general',
+      flowTime: 0,
+    },
+    {
+      key: 'another-public-page',
+      name: 'Another Public Page',
+      author: 'e2e-test-owner',
+      category: 'general',
+      flowTime: 0,
+    },
+  ],
+};
+await serverDB.collection('sites').doc(publicTestSite.key).set(publicTestSite);
+console.log('Public test site created:', publicTestSite.key);
+
+// Create pages for the public test site
+const publicTestPage = {
+  key: 'public-page',
+  siteKey: publicTestSite.key,
+  name: 'Public Page',
+  createdAt: FieldValue.serverTimestamp(),
+  markdownContent:
+    '# Public Page\n\nThis is a public page for sitemap testing.',
+  owners: ['e2e-test-owner', 'H3evfU7BDmec9KkotRiTV41YECg1'],
+  category: 'general',
+  tags: ['e2e', 'public', 'sitemap'],
+};
+await serverDB
+  .collection('sites')
+  .doc(publicTestSite.key)
+  .collection('pages')
+  .doc(publicTestPage.key)
+  .set(publicTestPage);
+console.log('Public test page created:', publicTestPage.key);
+
+const anotherPublicTestPage = {
+  key: 'another-public-page',
+  siteKey: publicTestSite.key,
+  name: 'Another Public Page',
+  createdAt: FieldValue.serverTimestamp(),
+  markdownContent:
+    '# Another Public Page\n\nAnother public page for sitemap testing.',
+  owners: ['e2e-test-owner', 'H3evfU7BDmec9KkotRiTV41YECg1'],
+  category: 'general',
+  tags: ['e2e', 'public', 'sitemap'],
+};
+await serverDB
+  .collection('sites')
+  .doc(publicTestSite.key)
+  .collection('pages')
+  .doc(anotherPublicTestPage.key)
+  .set(anotherPublicTestPage);
+console.log('Another public test page created:', anotherPublicTestPage.key);
+
 const testSitePages = await serverDB
   .collection('sites')
   .doc(testSite.key)

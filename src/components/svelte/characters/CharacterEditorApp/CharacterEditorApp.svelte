@@ -1,5 +1,4 @@
 <script lang="ts">
-import type { CnEditor } from '@11thdeg/cn-editor/';
 import {
   character,
   loading,
@@ -7,6 +6,7 @@ import {
   update,
 } from 'src/stores/characters/characterStore';
 import { t } from 'src/utils/i18n';
+import CodeMirrorEditor from '../../CodeMirrorEditor/CodeMirrorEditor.svelte';
 
 export interface Props {
   characterKey: string;
@@ -22,9 +22,15 @@ $effect(() => {
   subscribe(characterKey);
 });
 
-async function handleMarkdownInput(event: Event) {
-  const target = event.target as CnEditor;
-  const content = target.value;
+$effect(() => {
+  // Initialize markdownContent when character data loads
+  if ($character && !dirty) {
+    markdownContent = $character.markdownContent || '';
+  }
+});
+
+async function handleMarkdownInput(event: CustomEvent<string>) {
+  const content = event.detail;
   if (content !== $character?.markdownContent) {
     dirty = true;
     markdownContent = content;
@@ -46,13 +52,13 @@ async function handleSubmit(event: Event) {
     {#if $loading}
       <cn-loader></cn-loader>
     {:else if $character}
-      <cn-editor
-        value={$character.markdownContent || ''}
+      <CodeMirrorEditor
+        bind:value={markdownContent}
         name="markdownContent"
         disabled={saving}
         oninput={handleMarkdownInput}
         placeholder={t('entries:thread.placeholders.content')}
-      ></cn-editor>
+      />
       <div class="toolbar">
         <button
           type="submit"

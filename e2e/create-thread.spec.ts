@@ -47,27 +47,18 @@ test('can create a thread successfully', async ({ page }) => {
   // Fill in the thread title
   await page.fill('input[name="title"]', uniqueThreadTitle);
 
-  // Wait for cn-editor to be visible and CodeMirror to load
-  await page.waitForSelector('cn-editor', {
+  // Wait for CodeMirror editor to be visible and ready
+  await page.waitForSelector('.cm-editor', {
     state: 'attached',
     timeout: 15000,
   });
-  await page.waitForSelector('cn-editor .cm-editor', { timeout: 15000 });
 
-  // Set cn-editor content using evaluate with proper event triggering
-  await page.evaluate((content) => {
-    const editor = document.querySelector('cn-editor') as HTMLElement & {
-      value?: string;
-      dispatchEvent?: (event: Event) => void;
-    };
-    if (editor && 'value' in editor) {
-      editor.value = content;
-      // Trigger all the necessary events for form recognition
-      editor.dispatchEvent(new Event('input', { bubbles: true }));
-      editor.dispatchEvent(new Event('change', { bubbles: true }));
-      editor.dispatchEvent(new Event('blur', { bubbles: true }));
-    }
-  }, 'This is a test thread created by the E2E test suite. It should be automatically cleaned up after the test runs.');
+  // Set CodeMirror content by clicking into the editor and typing
+  const editor = page.locator('.cm-content');
+  await editor.click();
+  await editor.fill(
+    'This is a test thread created by the E2E test suite. It should be automatically cleaned up after the test runs.',
+  );
 
   // Wait for the send button to be enabled (form validation should kick in)
   await expect(page.getByTestId('send-thread-button')).toBeEnabled();
