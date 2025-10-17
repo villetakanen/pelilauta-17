@@ -186,7 +186,7 @@ function executeUpdateBackgroundTasks(
             key: threadKey,
             title: updatedThread.title,
             type: 'thread',
-            author: updatedThread.owners[0] || '',
+            author: updatedThread.owners?.[0] || '',
             tags: updatedThread.tags,
             flowTime: toDate(updatedThread.flowTime).getTime(),
           });
@@ -215,7 +215,7 @@ function executeUpdateBackgroundTasks(
       // Task 2: Purge thread cache (only if netlify-cache is available)
       try {
         const { NetlifyCachePurger } = await import(
-          'src/lib/server/netlify-cache'
+          '../../../lib/server/netlify-cache'
         );
         const purger = new NetlifyCachePurger();
 

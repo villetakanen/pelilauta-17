@@ -36,14 +36,12 @@ export async function updateThreadApi(
 
     const token = await getIdToken(auth.currentUser);
 
-    // Prepare request body
+    // Prepare request body (exclude key, include silent flag)
+    const { key: _, ...bodyWithoutKey } = thread;
     const body = {
-      ...thread,
+      ...bodyWithoutKey,
       silent,
     };
-
-    // Remove key from body as it's in the URL
-    delete body.key;
 
     // Make the API request
     const response = await fetch(`/api/threads/${thread.key}`, {
