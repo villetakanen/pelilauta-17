@@ -29,12 +29,12 @@ async function handleChannelChange(event: Event) {
   updating = true;
 
   try {
-    const { updateThread } = await import(
-      '@firebase/client/threads/updateThread'
+    const { updateThreadApi } = await import(
+      '@firebase/client/threads/updateThreadApi'
     );
 
     // Silent update - don't update timestamps
-    await updateThread(
+    await updateThreadApi(
       {
         key: thread.key,
         channel: newChannel,

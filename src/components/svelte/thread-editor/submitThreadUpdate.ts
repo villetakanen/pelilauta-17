@@ -72,8 +72,8 @@ export async function submitThreadUpdate(
   const { createThreadApi } = await import(
     '../../../firebase/client/threads/createThreadApi.ts'
   );
-  const { updateThread } = await import(
-    'src/firebase/client/threads/updateThread'
+  const { updateThreadApi } = await import(
+    '../../../firebase/client/threads/updateThreadApi.ts'
   );
 
   if (!data.title || !data.markdownContent || !data.channel || !data.owners) {
@@ -82,8 +82,8 @@ export async function submitThreadUpdate(
 
   // Handle thread updates (e.g., editing a thread)
   if (data.key) {
-    // the updateThread function requires the thread key to be set in the thread object
-    await updateThread(data);
+    // Use the new API endpoint for thread updates
+    await updateThreadApi(data);
     return data.key;
   }
 
