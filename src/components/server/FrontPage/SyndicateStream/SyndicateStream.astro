@@ -1,5 +1,4 @@
 ---
-import Parser from 'rss-parser';
 import { t } from 'src/utils/i18n';
 import { logError } from 'src/utils/logHelpers';
 import SyndicatePost from './SyndicatePost.astro';
@@ -11,24 +10,33 @@ type RSSItem = {
   contentSnippet: string;
 };
 
+type FeedData = {
+  myrrys: RSSItem[];
+  roolipelitiedotus: RSSItem[];
+};
+
 let posts: RSSItem[] = [];
 let posts2: RSSItem[] = [];
 
 try {
-  // We want to grab the myrrys.com RSS feed and post the latest 3 posts in this stream.
-  const parser = new Parser();
-  const feed = await parser.parseURL('https://www.myrrys.com/blog/rss.xml');
-  posts = feed.items.slice(0, 3) as RSSItem[];
-  posts.sort(
-    (a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime(),
-  );
+  // Fetch from our cached API instead of external feeds directly
+  // Use AbortController to timeout the request after 5 seconds
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-  // We want to grab the https://roolipelitiedotus.fi/feed/ RSS feed and post the latest 3 posts in this stream.
-  const parser2 = new Parser();
-  const feed2 = await parser2.parseURL('https://roolipelitiedotus.fi/feed/');
-  posts2 = feed2.items.slice(0, 3) as RSSItem[];
-} catch (e) {
-  logError(e);
+  const response = await fetch(`${Astro.url.origin}/api/rss-feeds.json`, {
+    signal: controller.signal,
+  });
+
+  clearTimeout(timeoutId);
+
+  if (response.ok) {
+    const feedData: FeedData = await response.json();
+    posts = feedData.myrrys || [];
+    posts2 = feedData.roolipelitiedotus || [];
+  }
+} catch (error) {
+  logError('SyndicateStream', 'Failed to fetch RSS feeds', error);
 }
 ---
 <div class="column-s flex flex-col">
