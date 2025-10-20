@@ -295,9 +295,9 @@ pnpm outdated | grep -E "^\s+\w+\s+\d+\.\d+\.\d+\s+→\s+\d+\."
   - [ ] Verify focus moves to main content
 
 ### Best Practices (Target: 95+)
-- [ ] **Security Headers** (1-2 hours)
-  - [ ] Add CSP to netlify.toml
-  - [ ] Add other security headers
+- [x] **Security Headers** (1-2 hours)
+  - [x] Add CSP to netlify.toml
+  - [x] Add other security headers
   - [ ] Deploy to staging
   - [ ] Test Firebase auth works
   - [ ] Test Sentry works

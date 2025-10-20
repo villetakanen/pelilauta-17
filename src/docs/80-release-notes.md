@@ -6,6 +6,7 @@ noun: 'monsters'
 ## Version 18
 
 ### 18.8.x (ongoing)
+- fix: CSP header added to netlify.toml for better security
 - fix: Added missing aria-labels to various icon-only buttons for better accessibility
 - fix: Front page RSS feed generation happens and is cached server-side for better performance and reliability
 - fix(threads): Thread updates moved to server-side API endpoint for better consistency and auth handling
