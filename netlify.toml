@@ -58,32 +58,33 @@
   [headers.values]
     Cache-Control = "no-cache, no-store, must-revalidate"
 
-# PBI-034: Security Headers
-[[headers]]
-  for = "/*"
-  [headers.values]
-    # Content Security Policy
-    Content-Security-Policy = """
-      default-src 'self';
-      script-src 'self' 'unsafe-inline' 'unsafe-eval' 
-        https://simpleanalyticscdn.com 
-        https://browser.sentry-cdn.com 
-        https://*.firebaseio.com;
-      style-src 'self' 'unsafe-inline';
-      img-src 'self' data: https: blob:;
-      font-src 'self' data:;
-      connect-src 'self' 
-        https://*.firebaseio.com 
-        https://*.googleapis.com 
-        https://simpleanalyticscdn.com
-        https://sentry.io;
-      worker-src 'self' blob:;
-      frame-ancestors 'self';
-    """
-    
-    # Security Headers
-    X-Content-Type-Options = "nosniff"
-    X-Frame-Options = "SAMEORIGIN"
-    X-XSS-Protection = "1; mode=block"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+# PBI-034: Security Headers (production only to avoid blocking local dev)
+[context.production]
+  [[context.production.headers]]
+    for = "/*"
+    [context.production.headers.values]
+      # Content Security Policy
+      Content-Security-Policy = """
+        default-src 'self';
+        script-src 'self' 'unsafe-inline' 'unsafe-eval' 
+          https://simpleanalyticscdn.com 
+          https://browser.sentry-cdn.com 
+          https://*.firebaseio.com;
+        style-src 'self' 'unsafe-inline';
+        img-src 'self' data: https: blob:;
+        font-src 'self' data:;
+        connect-src 'self' 
+          https://*.firebaseio.com 
+          https://*.googleapis.com 
+          https://simpleanalyticscdn.com
+          https://sentry.io;
+        worker-src 'self' blob:;
+        frame-ancestors 'self';
+      """
+      
+      # Security Headers
+      X-Content-Type-Options = "nosniff"
+      X-Frame-Options = "SAMEORIGIN"
+      X-XSS-Protection = "1; mode=block"
+      Referrer-Policy = "strict-origin-when-cross-origin"
+      Permissions-Policy = "camera=(), microphone=(), geolocation=()"
