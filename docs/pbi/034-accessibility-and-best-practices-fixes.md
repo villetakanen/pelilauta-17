@@ -259,11 +259,11 @@ pnpm outdated | grep -E "^\s+\w+\s+\d+\.\d+\.\d+\s+→\s+\d+\."
 ## Implementation Checklist
 
 ### Accessibility (Target: 95+)
-- [ ] **ARIA Labels** (1-2 hours)
-  - [ ] Audit all icon-only buttons
-  - [ ] Add `aria-label` to FrontpageFabs buttons
-  - [ ] Add `aria-label` to EditorTools buttons
-  - [ ] Add `aria-label` to navigation icons
+- [x] **ARIA Labels** (1-2 hours)
+  - [x] Audit all icon-only buttons
+  - [x] Add `aria-label` to FrontpageFabs buttons
+  - [x] Add `aria-label` to EditorTools buttons
+  - [x] Add `aria-label` to navigation icons
   - [ ] Test with screen reader (VoiceOver on macOS)
 
 - [ ] **Color Contrast** (2-3 hours)

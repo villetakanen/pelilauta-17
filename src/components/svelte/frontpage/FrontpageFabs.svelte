@@ -11,6 +11,7 @@ const visible = $derived.by(() => {
   <a
     href="/create/thread"
     class="button fab"
+    aria-label={t('actions:create.thread')}
     data-testid="createDiscussionFab">
 
     <cn-icon noun="send" small></cn-icon>
