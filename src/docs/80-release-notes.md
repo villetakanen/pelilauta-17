@@ -6,6 +6,9 @@ noun: 'monsters'
 ## Version 18
 
 ### 18.8.x (ongoing)
+- fix: CSP header added to netlify.toml for better security
+- fix: Added missing aria-labels to various icon-only buttons for better accessibility
+- fix: Front page RSS feed generation happens and is cached server-side for better performance and reliability
 - fix(threads): Thread updates moved to server-side API endpoint for better consistency and auth handling
 - fix: Moved CodeMirror to a local library component, removing the dependency to @11thdeg/cn-editor web component. CodeMirror is a large package intended for standalone use, and has various issues with shadow DOM and focus management if capsulated to a lit wrapper component. See PBI-029 for details.
 - fix(sites): Public site pages are now included in the sitemap.xml for better SEO and discoverability. See PBI-028 for details.

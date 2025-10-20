@@ -9,12 +9,6 @@ import FrontpageFabs from '../components/svelte/frontpage/FrontpageFabs.svelte';
 import Page from '../layouts/Page.astro';
 import { t } from '../utils/i18n';
 
-// Set a short cache time for the front page
-Astro.response.headers.set(
-  'Cache-Control',
-  's-maxage=1, stale-while-revalidate',
-);
-
 const title = t('seo:frontPage.title');
 const description = t('seo:frontPage.description');
 const image = `${Astro.url.origin}/myrrys-proprietary/juno-viinikka/juno-viinikka-dragon-1.webp`;

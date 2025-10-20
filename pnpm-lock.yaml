@@ -11,6 +11,9 @@ importers:
       '@11thdeg/cn-d20-ability-score':
         specifier: 4.0.0-beta.5
         version: 4.0.0-beta.5
+      '@11thdeg/cn-story-clock':
+        specifier: 4.0.0-beta.10
+        version: 4.0.0-beta.10
       '@11thdeg/cyan-css':
         specifier: 4.0.0-beta.35
         version: 4.0.0-beta.35(lato-font@3.0.0)
@@ -179,6 +182,9 @@ packages:
 
   '@11thdeg/cn-d20-ability-score@4.0.0-beta.5':
     resolution: {integrity: sha512-rVuUVHFDJmhuWRYBDIWhv2y3HbimNXI+I3FlhTwddtaLKwvEneZqNIS3zzg7huweqdIp8SJ7IhW9+AGAdWZoHQ==}
+
+  '@11thdeg/cn-story-clock@4.0.0-beta.10':
+    resolution: {integrity: sha512-ata77Q0/AduOaFwy8iL3bYshETUihl7vV3qjiy7K2woHimA7JQtOtBdFElgKNAZ+3vqqGqcmqS7+XVBuTpiT9Q==}
 
   '@11thdeg/cyan-css@4.0.0-beta.35':
     resolution: {integrity: sha512-3c6WbymWZSNO3qzZmjaSrWVVAX1Z39LbiyRUA09cUNbSOh3cD6fVaGlO0Rmye7AWvI1U3UX7xL6ieu9FptwV5w==}
@@ -6493,6 +6499,9 @@ packages:
     peerDependencies:
       typescript: '>=4.8.4'
 
+  ts-key-enum@3.0.13:
+    resolution: {integrity: sha512-2J5QVm+HLfToI6IpJQADzYYWvJQ0P9i8qV0loewy5UQ9PBcwILkw09te/+NPu6aw8OXIn9jVYOT6xCBZnGg8Yg==}
+
   tsconfck@3.1.5:
     resolution: {integrity: sha512-CLDfGgUp7XPswWnezWwsCRxNmgQjhYq3VXHM0/XIRxhVrKw0M1if9agzryh1QS3nxjCROvV+xWxoJO1YctzzWg==}
     engines: {node: ^18 || >=20}
@@ -7345,6 +7354,11 @@ snapshots:
   '@11thdeg/cn-d20-ability-score@4.0.0-beta.5':
     dependencies:
       lit: 3.3.1
+
+  '@11thdeg/cn-story-clock@4.0.0-beta.10':
+    dependencies:
+      lit: 3.3.1
+      ts-key-enum: 3.0.13
 
   '@11thdeg/cyan-css@4.0.0-beta.35(lato-font@3.0.0)':
     dependencies:
@@ -14816,6 +14830,8 @@ snapshots:
   ts-api-utils@2.1.0(typescript@5.9.2):
     dependencies:
       typescript: 5.9.2
+
+  ts-key-enum@3.0.13: {}
 
   tsconfck@3.1.5(typescript@5.9.2):
     optionalDependencies:
