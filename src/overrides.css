@@ -2,7 +2,6 @@ body {
   font-display: swap; /* Ensure text is visible while web fonts are loading */
 }
 
-
 /* Hiding class, making content visible only to screen readers but not visually */
 /* "sr" meaning "screen-reader" */
 
