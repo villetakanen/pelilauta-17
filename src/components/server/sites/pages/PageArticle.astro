@@ -1,6 +1,6 @@
 ---
-import type { Page } from 'src/schemas/PageSchema';
-import type { Site } from 'src/schemas/SiteSchema';
+import type { Page } from '@schemas/PageSchema';
+import type { Site } from '@schemas/SiteSchema';
 import PageArticleFooter from './PageArticleFooter.astro';
 
 interface Props {
@@ -19,13 +19,6 @@ const elevation = site.posterURL ? 'surface' : 'elevation-1';
     style="min-height: 70dvh" 
     set:html={page.htmlContent}>
   </div>
-
-  <!-- Display page tags if any -->
-  {page.tags ? <div class="toolbar justify-start">
-    {page.tags.map((tag) => (
-      <a href={`/tags/${tag.toLowerCase()}`} class="cn-tag">{tag}</a>
-    ))} 
-  </div> : ''}
 
   <PageArticleFooter page={page} site={site}/>
 </article>

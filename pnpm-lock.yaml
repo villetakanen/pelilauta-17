@@ -15,11 +15,11 @@ importers:
         specifier: 4.0.0-beta.10
         version: 4.0.0-beta.10
       '@11thdeg/cyan-css':
-        specifier: 4.0.0-beta.36
-        version: 4.0.0-beta.36(lato-font@3.0.0)
+        specifier: 4.0.0-beta.37
+        version: 4.0.0-beta.37(lato-font@3.0.0)
       '@11thdeg/cyan-lit':
-        specifier: 4.0.0-beta.24
-        version: 4.0.0-beta.24
+        specifier: 4.0.0-beta.25
+        version: 4.0.0-beta.25
       '@astrojs/check':
         specifier: ^0.9.4
         version: 0.9.4(typescript@5.9.2)
@@ -186,13 +186,13 @@ packages:
   '@11thdeg/cn-story-clock@4.0.0-beta.10':
     resolution: {integrity: sha512-ata77Q0/AduOaFwy8iL3bYshETUihl7vV3qjiy7K2woHimA7JQtOtBdFElgKNAZ+3vqqGqcmqS7+XVBuTpiT9Q==}
 
-  '@11thdeg/cyan-css@4.0.0-beta.36':
-    resolution: {integrity: sha512-Gk/3SNLQVrNCPF3CIyTB/y/1BFqyix4o1EaqeJ3qPDtxjUT4kuIgR668XQCIP9ZipQc9yIOSm0Nz+ELg3DD/5A==}
+  '@11thdeg/cyan-css@4.0.0-beta.37':
+    resolution: {integrity: sha512-qnRMlkmZXP75qUBG77Ly1GzkjBENI6fjl3Uz/HCAnWrbNsWPIbMcrIUoh7r5a47jvA5GF0mff8Vbx1VilVQgRA==}
     peerDependencies:
       lato-font: '*'
 
-  '@11thdeg/cyan-lit@4.0.0-beta.24':
-    resolution: {integrity: sha512-DAkiRU6S0mdb8Ut5XSknMJUlGqQZjFZQT/6rlXgNwMFgzryARz2rMes6Pt39coX4m+Y3W593/l90xl5n35xT/w==}
+  '@11thdeg/cyan-lit@4.0.0-beta.25':
+    resolution: {integrity: sha512-EvQXSiRdhvrhiUggw8Ni9W4kuawq4B8VkN0acGyDf2E4qkQfAZGWnHKKT6nBXC8ZH7so49a9yGh6VSDYtTGWbQ==}
 
   '@algolia/abtesting@1.3.0':
     resolution: {integrity: sha512-KqPVLdVNfoJzX5BKNGM9bsW8saHeyax8kmPFXul5gejrSPN3qss7PgsFH5mMem7oR8tvjvNkia97ljEYPYCN8Q==}
@@ -7360,11 +7360,11 @@ snapshots:
       lit: 3.3.1
       ts-key-enum: 3.0.13
 
-  '@11thdeg/cyan-css@4.0.0-beta.36(lato-font@3.0.0)':
+  '@11thdeg/cyan-css@4.0.0-beta.37(lato-font@3.0.0)':
     dependencies:
       lato-font: 3.0.0
 
-  '@11thdeg/cyan-lit@4.0.0-beta.24':
+  '@11thdeg/cyan-lit@4.0.0-beta.25':
     dependencies:
       lit: 3.3.1
 

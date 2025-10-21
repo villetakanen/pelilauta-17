@@ -1,9 +1,9 @@
 ---
 import EntryTagsSection from '@components/server/app/EntryTagsSection.astro';
-import type { Page } from 'src/schemas/PageSchema';
-import type { Site } from 'src/schemas/SiteSchema';
-import { toDisplayString } from 'src/utils/contentHelpers';
-import { t } from 'src/utils/i18n';
+import type { Page } from '@schemas/PageSchema';
+import type { Site } from '@schemas/SiteSchema';
+import { toDisplayString } from '@utils/contentHelpers';
+import { t } from '@utils/i18n';
 
 interface Props {
   page: Page;
@@ -15,29 +15,34 @@ const { page, site } = Astro.props as Props;
 const showLicenseAsLink = site.license?.startsWith('cc') as boolean;
 const showLicenseAsText = !showLicenseAsLink && site.license !== '0';
 ---
-<footer class="downscaled toolbar border-t mt-2">
+<footer class="mt-2 mb--2">
+  {page.tags && page.tags.length > 0 && (
+    <section class="border-t">
+      <EntryTagsSection tags={page.tags} />
+    </section>
+  )}
 
-  <p class="m-0 p-0">
+  <nav class="toolbar border-t mt-2">
+  <p class="m-0 p-0 text-small">
     {toDisplayString(page.flowTime)}
   </p>
   
-  {showLicenseAsText && <p>
+  {showLicenseAsText && <p class="p-0 m-0 text-small">
     {t('site:license.forText')} {t('site:license.' + site.license)} {site.license}
   </p>}
-  {showLicenseAsLink && <p>
+  {showLicenseAsLink && <p class="p-0 m-0 text-small">
     <a href={t('site:license.links.' + site.license)} target="_blank" rel="noopener noreferrer">
       {t('site:license.forText')} 
       {t('site:license.' + site.license)}
     </a>
   </p>}
 
-  {page.tags && page.tags.length > 0 && (
-    <EntryTagsSection tags={page.tags} />
-  )}
+  
 
-  <p class="m-0 p-0">
+  <p class="m-0 p-0 text-small">
     <a href={`/sites/${site.key}/${page.key}/history`}>
       {t('site:page.history.title')}
     </a>
   </p>
+  </nav>
 </footer>

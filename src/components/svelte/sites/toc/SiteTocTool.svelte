@@ -21,12 +21,9 @@ const sortOrder = $state(site.sortOrder);
 //let chapters:CategoryRef[] = $state(site.pageCategories || []);
 
 const sortOrderOptions = new Map<string, string>([
-  [SiteSortOrderSchema.Values.name, t('entries:site.sortOrders.name')],
-  [
-    SiteSortOrderSchema.Values.createdAt,
-    t('entries:site.sortOrders.createdAt'),
-  ],
-  [SiteSortOrderSchema.Values.flowTime, t('entries:site.sortOrders.flowTime')],
+  ['name' as SiteSortOrder, t('entries:site.sortOrders.name')],
+  ['createdAt' as SiteSortOrder, t('entries:site.sortOrders.createdAt')],
+  ['flowTime' as SiteSortOrder, t('entries:site.sortOrders.flowTime')],
 ]);
 
 async function setSortOrder(e: Event) {

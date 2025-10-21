@@ -6,6 +6,8 @@ noun: 'monsters'
 ## Version 18
 
 ### 18.8.x (ongoing)
+- fix: Site TOC editor regression from zod upgrade fixed
+- fix: Updating threads now uses server-side API for timestamps
 - fix: Small lighthouse improvements, mainly related to font loading and syncidaction referral icons
 - fix: CSP header added to netlify.toml for better security
 - fix: Added missing aria-labels to various icon-only buttons for better accessibility
