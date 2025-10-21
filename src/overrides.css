@@ -1,3 +1,7 @@
+.mb--2 {
+  margin-bottom: calc(-2 * var(--cn-grid));
+}
+
 /* Hiding class, making content visible only to screen readers but not visually */
 /* "sr" meaning "screen-reader" */
 
