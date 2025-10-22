@@ -1,4 +1,5 @@
 import { type Page, PageSchema, parsePage } from 'src/schemas/PageSchema';
+import { uid } from 'src/stores/session';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { logDebug } from 'src/utils/logHelpers';
 import { addPageRevision } from './addPageRevision';
@@ -34,6 +35,11 @@ export async function updatePage(
     'src/utils/client/toFirestoreEntry'
   );
   const db = getFirestore();
+  const u = uid.get();
+
+  if (!u) {
+    throw new Error('Cannot update page: user not authenticated');
+  }
 
   // Lets first get the page document
   const pageRef = doc(db, 'sites', siteKey, 'pages', pageKey);
@@ -52,8 +58,19 @@ export async function updatePage(
   // We'll add a revision to the page history
   await addPageRevision(current, changes);
 
+  // Prepare updated changes with author
+  const updatedChanges = {
+    ...changes,
+    author: u,
+  };
+
+  // Ensure editor is in owners array
+  if (!current.owners.includes(u)) {
+    updatedChanges.owners = [...current.owners, u];
+  }
+
   // Then we'll update the page document with the changes
-  await updateDoc(pageRef, toFirestoreEntry(changes));
+  await updateDoc(pageRef, toFirestoreEntry(updatedChanges));
 
   logDebug('Page document and history updated');
 

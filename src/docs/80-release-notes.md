@@ -5,7 +5,9 @@ noun: 'monsters'
 ---
 ## Version 18
 
-### 18.8.x (ongoing)
+### 18.9.0 (ongoing)
+- feat: ContentEntry schema tracks last editor in `author` field
+- fix(sites): Page add and update functions now set the `author` field on ContentEntry documents to the latest editor's uid
 - fix: Site TOC editor regression from zod upgrade fixed
 - fix: Updating threads now uses server-side API for timestamps
 - fix: Small lighthouse improvements, mainly related to font loading and syncidaction referral icons

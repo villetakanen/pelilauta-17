@@ -1,4 +1,9 @@
 import { expect, test } from '@playwright/test';
+import { cert, initializeApp } from 'firebase-admin/app';
+import { getFirestore } from 'firebase-admin/firestore';
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { authenticate } from './authenticate-e2e';
 
 test.setTimeout(120000); // Increase timeout for authentication and navigation
@@ -27,4 +32,64 @@ test('Page name can be changed', async ({ page }) => {
 
   // Expect the submit button to be enabled, as there are changes
   await expect(page.getByTestId('save-button')).toBeEnabled();
+});
+
+test('Page update sets author to current user', async ({ page }) => {
+  await authenticate(page); // Use default existing user (sator@iki.fi)
+  
+  // Navigate to the test page editor
+  await page.goto('http://localhost:4321/sites/e2e-test-site/test-page/edit');
+  
+  // Wait for the page to load
+  await expect(page.getByTestId('setting-navigation-button')).toBeVisible();
+  
+  // Get the current user's UID from the session store (stored in localStorage)
+  const currentUid = await page.evaluate(() => {
+    return localStorage.getItem('session-uid');
+  });
+  
+  expect(currentUid).toBeTruthy();
+  console.log('Current user UID:', currentUid);
+  
+  // Make a change to the page name
+  await page.getByTestId('page-name').fill('Updated Test Page');
+  
+  // Click save button
+  await page.getByTestId('save-button').click();
+  
+  // Wait for navigation (the page redirects after save)
+  await page.waitForURL(/\/sites\/e2e-test-site\/test-page\?flowtime=\d+/);
+  
+  // Wait a bit for the update to complete
+  await page.waitForTimeout(2000);
+  
+  // Verify the author field was set in Firestore
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
+  const serviceAccountPath = join(__dirname, '../server_principal.json');
+  const serviceAccount = JSON.parse(readFileSync(serviceAccountPath, 'utf8'));
+  
+  const serverApp = initializeApp(
+    {
+      credential: cert(serviceAccount),
+    },
+    `test-${Date.now()}`, // Unique app name to avoid conflicts
+  );
+  
+  const serverDB = getFirestore(serverApp);
+  
+  const pageDoc = await serverDB
+    .collection('sites')
+    .doc('e2e-test-site')
+    .collection('pages')
+    .doc('test-page')
+    .get();
+  
+  const pageData = pageDoc.data();
+  
+  // Verify author is set to the current user
+  expect(pageData?.author).toBe(currentUid);
+  
+  // Verify the user is in the owners array
+  expect(pageData?.owners).toContain(currentUid);
 });
