@@ -1,5 +1,5 @@
 ---
-import FeaturedTags from '../components/frontpage/FeaturedTags.astro';
+import FeaturedTags from '@components/server/FrontPage/FeaturedTags.astro';
 import DeferredSection from '../components/server/app/DeferredSection.astro';
 import SyndicateStream from '../components/server/FrontPage/SyndicateStream/SyndicateStream.astro';
 import TopSitesStream from '../components/server/FrontPage/TopSitesStream.astro';
@@ -20,18 +20,20 @@ const image = `${Astro.url.origin}/myrrys-proprietary/juno-viinikka/juno-viinikk
   {image}>
     <div class="content-columns">
       
-      <TopThreadsStream/>
+      <section class="column-m">
+        <TopThreadsStream/>
+        <FeaturedTags />
+      </section>
+
       
       
       
       <SyndicateStream server:defer>
         <DeferredSection class="column-s" slot="fallback" />
       </SyndicateStream>
-      <div class="column-s">
-      <TopSitesStream />
-
-      <FeaturedTags />
-      </div>
+      <section class="column-s">
+        <TopSitesStream />
+      </section>
 
     </div>
     <FrontpageFabs client:only="svelte" slot="fab-tray"/>
