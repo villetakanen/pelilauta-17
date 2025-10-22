@@ -66,7 +66,9 @@ export async function addPage(
   const pageWithAuthor = {
     ...page,
     author: u,
-    owners: page.owners?.includes(u) ? page.owners : [...(page.owners || []), u],
+    owners: page.owners?.includes(u)
+      ? page.owners
+      : [...(page.owners || []), u],
   };
 
   const key = await addPageToFirestore(siteKey, pageWithAuthor, slug);

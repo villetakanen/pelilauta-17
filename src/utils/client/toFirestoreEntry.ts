@@ -49,11 +49,13 @@ export function toFirestoreEntry(
   params: Params = { silent: false },
 ) {
   const entryWithAuthor = entry as Partial<ContentEntry>;
-  
+
   if (!params.silent)
     return {
       ...entry,
-      author: entryWithAuthor.author || (entry.owners && entry.owners.length > 0 ? entry.owners[0] : '-'),
+      author:
+        entryWithAuthor.author ||
+        (entry.owners && entry.owners.length > 0 ? entry.owners[0] : '-'),
       createdAt: entry.createdAt
         ? new Timestamp(entry.createdAt.getTime() / 1000, 0)
         : serverTimestamp(),

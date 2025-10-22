@@ -1,5 +1,5 @@
+import { PageSchema, parsePage } from 'src/schemas/PageSchema';
 import { describe, expect, it } from 'vitest';
-import { parsePage, PageSchema } from 'src/schemas/PageSchema';
 
 describe('PageSchema with author field', () => {
   it('should accept author field', () => {
