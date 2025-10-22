@@ -7,8 +7,9 @@ noun: 'monsters'
 
 ### 18.9.0 (ongoing)
 - feat: ContentEntry schema tracks last editor in `author` field
+- fix: updated front page section order
 - fix(sites): Page add and update functions now set the `author` field on ContentEntry documents to the latest editor's uid
-- fix: Site TOC editor regression from zod upgrade fixed
+- fix: Site TOC editor regression from zod upgrade fixeds
 - fix: Updating threads now uses server-side API for timestamps
 - fix: Small lighthouse improvements, mainly related to font loading and syncidaction referral icons
 - fix: CSP header added to netlify.toml for better security
