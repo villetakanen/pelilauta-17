@@ -5,7 +5,10 @@ noun: 'monsters'
 ---
 ## Version 18
 
-### 18.9.0 (ongoing)
+### 18.9.x (ongoing)
+* fix: Site theming settings are usable on small screens again
+
+### 18.9.0 (23.10.2025)
 - feat: ContentEntry schema tracks last editor in `author` field
 - fix: Tags are now normalized to lowercase everywhere using shared helper
 - fix: updated front page section order

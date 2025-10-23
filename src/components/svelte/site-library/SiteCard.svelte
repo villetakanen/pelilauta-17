@@ -18,7 +18,7 @@ const plays = $derived(() => site.players?.includes($uid));
   cover={site.posterURL || undefined}
 >
   <p>{site.description}</p>
-  <div slot="actions" class="flex toolbar">
+  <div slot="actions" class="toolbar">
     {#if owns()}
       <cn-icon noun="avatar"></cn-icon>
     {/if}

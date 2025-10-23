@@ -67,25 +67,27 @@ async function deleteImage() {
 
 <form
   onsubmit={onsubmit}
-  class="flex flex-no-wrap p-2"
+  class="elevation-1 radius-l mb-2"
 >
+  <div class="flex flex-row p-2">
   {#if preview}
     <img
       src={preview}
       alt={t('app:meta.preview')}
-      class="icon-large flex-none"
+      class="icon flex-none border"
       style="align-self: flex-start;justify-self: center;flex-grow: 0;"
      />
   {:else}
-    <cn-icon noun="assets" large class="flex-none" style="align-self: flex-start;justify-self: center;flex-grow: 0;"></cn-icon>
+    <cn-icon noun="assets" class="flex-none" style="align-self: flex-start;justify-self: center;flex-grow: 0;"></cn-icon>
   {/if}
   
-  <div>
+  
     <label>{t(`entries:site.${imageField}`)}
       <input type="file" accept="image/*" onchange={fileChanged} />
     </label>
-    
-    <div class="toolbar justify-end">
+
+  </div>  
+    <div class="toolbar">
       <button type="button" disabled={!site[imageField]} onclick={deleteImage} class="text">
         {t('actions:delete')}
       </button>
@@ -97,6 +99,5 @@ async function deleteImage() {
           {t('actions:upload')}
         </button>
       </div>
-  </div>
 </form>
 

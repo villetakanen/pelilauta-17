@@ -33,9 +33,13 @@ async function onSubmit(e: Event) {
 }
 </script>
 
-<section class="elevation-1 border-radius p-1">
-  <h2>{t('app:meta.dangerZone')}</h2>
-  <h3>{t('site:dangerZone.title')}</h3>
+<cn-accordion 
+    class="border radius-m"
+    label={t('app:meta.dangerZone')} 
+    noun="monsters">
+
+    <section class="surface radius-m warning">
+    <h3>{t('site:dangerZone.title')}</h3>
   <p class="italic">{t('site:dangerZone.description')}</p>
   <form onsubmit={onSubmit}>
     <input
@@ -56,4 +60,5 @@ async function onSubmit(e: Event) {
       </button>
     </div>
   </form>
-</section>
+  </section>
+</cn-accordion>
