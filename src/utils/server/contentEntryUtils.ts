@@ -25,7 +25,7 @@ export function toFirestoreContentEntry(
       tags: normalizedTags,
       author:
         entry.author ||
-        (entry.owners && entry.owners.length > 0 ? entry.owners[0] : '-'),
+        (entry.owners && entry.owners.length > 0 ? entry.owners[0] : ''),
       createdAt: entry.createdAt
         ? Timestamp.fromMillis(entry.createdAt.getTime())
         : FieldValue.serverTimestamp(),
@@ -40,6 +40,6 @@ export function toFirestoreContentEntry(
   return {
     ...rest,
     tags: normalizedTags,
-    author: entry.author || (entry.owners ? entry.owners[0] : '-'),
+    author: entry.author || (entry.owners ? entry.owners[0] : ''),
   };
 }

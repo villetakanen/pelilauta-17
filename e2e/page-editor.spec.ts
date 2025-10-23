@@ -87,6 +87,9 @@ test('Page update sets author to current user', async ({ page }) => {
 
   const pageData = pageDoc.data();
 
+  // Verify the page name was updated
+  expect(pageData?.name).toBe('Updated Test Page');
+
   // Verify author is set to the current user
   expect(pageData?.author).toBe(currentUid);
 

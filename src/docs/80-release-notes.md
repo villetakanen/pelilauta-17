@@ -10,7 +10,7 @@ noun: 'monsters'
 - fix: Tags are now normalized to lowercase everywhere using shared helper
 - fix: updated front page section order
 - fix(sites): Page add and update functions now set the `author` field on ContentEntry documents to the latest editor's uid
-- fix: Site TOC editor regression from zod upgrade fixeds
+- fix: Site TOC editor regression from zod upgrade fixed
 - fix: Updating threads now uses server-side API for timestamps
 - fix: Small lighthouse improvements, mainly related to font loading and syncidaction referral icons
 - fix: CSP header added to netlify.toml for better security
