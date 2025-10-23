@@ -7,7 +7,7 @@ import {
   type Reactions,
 } from 'src/schemas/ReactionsSchema';
 import { SUBSCRIPTIONS_FIRESTORE_PATH } from 'src/schemas/SubscriberSchema';
-import { TAG_FIRESTORE_COLLECTION, TagSchema } from 'src/schemas/TagSchema';
+import { TAG_FIRESTORE_COLLECTION } from 'src/schemas/TagSchema';
 import {
   createThread,
   type ImageArray,
@@ -17,6 +17,7 @@ import {
 import { logDebug, logError, logWarn } from 'src/utils/logHelpers';
 import { toDate } from 'src/utils/schemaHelpers';
 import { tokenToUid } from 'src/utils/server/auth/tokenToUid';
+import { toTagData } from 'src/utils/shared/toTagData';
 import { serverDB } from '../../../firebase/server';
 
 /**
@@ -153,14 +154,12 @@ function executeBackgroundTasks(
       // Task 3: Process and update thread tags
       if (thread.tags && thread.tags.length > 0) {
         try {
-          const tagData = TagSchema.parse({
-            key: threadKey,
-            title: thread.title,
-            type: 'thread',
-            author: uid,
-            tags: thread.tags,
-            flowTime: toDate(thread.flowTime).getTime(),
-          });
+          const tagData = toTagData(
+            { ...thread, owners: [uid] },
+            threadKey,
+            'thread',
+            toDate(thread.flowTime).getTime(),
+          );
 
           await serverDB
             .collection(TAG_FIRESTORE_COLLECTION)

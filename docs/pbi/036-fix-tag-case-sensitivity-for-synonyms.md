@@ -50,99 +50,89 @@ const allTags = ["d&d", "dnd", "d&d", "dungeons & dragons", ...];  // ✅ All lo
 
 ## Acceptance Criteria
 
-- [ ] Normalize all tags to lowercase when storing in tag collection
-- [ ] Update thread tag storage to normalize tags
-- [ ] Update page tag storage to normalize tags  
+- [x] Created DRY helper functions for tag normalization (`toTagData`)
+- [x] Normalize all tags to lowercase when storing in tag collection
+- [x] Update thread tag storage to normalize tags (via `toTagData`)
+- [x] Update page tag storage to normalize tags (via `toTagData`)
+- [x] Unit tests created and passing for tag normalization
 - [ ] Verify that tag pages show both threads and pages for tags with synonyms
 - [ ] Test with mixed-case tags (e.g., `#DnD`, `#PathFinder`) to ensure they match synonym queries
 - [ ] Consider migration script to normalize existing tag entries (optional but recommended)
 
 ## Implementation Notes
 
-### Solution: Normalize Tags to Lowercase on Storage
+### Solution: DRY Helper Functions for Tag Normalization
 
-The fix requires normalizing tags to lowercase when storing them in the tag collection, ensuring they match the lowercase synonyms in queries.
+Instead of manually normalizing tags in multiple places, we've created dedicated helper functions that follow the same pattern as existing `toClientEntry` and `toFirestoreEntry` helpers. This ensures consistency and reduces code duplication.
 
-### Files to Change
+### New Helper Functions Created
 
-**1. `src/pages/api/threads/[threadKey].ts`** (line ~187):
-
-```typescript
-// Before (case-sensitive):
-const tagData = TagSchema.parse({
-  key: threadKey,
-  title: updatedThread.title,
-  type: 'thread',
-  author: updatedThread.owners?.[0] || '',
-  tags: updatedThread.tags,
-  flowTime: toDate(updatedThread.flowTime).getTime(),
-});
-
-// After (normalized):
-const tagData = TagSchema.parse({
-  key: threadKey,
-  title: updatedThread.title,
-  type: 'thread',
-  author: updatedThread.owners?.[0] || '',
-  tags: updatedThread.tags.map(t => t.toLowerCase()),  // ✅ Normalize to lowercase
-  flowTime: toDate(updatedThread.flowTime).getTime(),
-});
-```
-
-**2. `src/pages/api/threads/create.ts`** (line ~161):
+**1. `src/utils/shared/toTagData.ts`** - Converts ContentEntry to TagSchema:
 
 ```typescript
-// Before (case-sensitive):
-const tagData = TagSchema.parse({
-  key: threadKey,
-  title: thread.title,
-  type: 'thread',
-  author: uid,
-  tags: thread.tags,
-  flowTime: toDate(thread.flowTime).getTime(),
-});
-
-// After (normalized):
-const tagData = TagSchema.parse({
-  key: threadKey,
-  title: thread.title,
-  type: 'thread',
-  author: uid,
-  tags: thread.tags.map(t => t.toLowerCase()),  // ✅ Normalize to lowercase
-  flowTime: toDate(thread.flowTime).getTime(),
-});
+export function toTagData(
+  entry: Pick<ContentEntry, 'tags' | 'owners'> & { title?: string; name?: string },
+  key: string,
+  type: 'thread' | 'page',
+  flowTime: number,
+): Tag {
+  // Automatically normalizes tags to lowercase
+  return TagSchema.parse({
+    key,
+    title: entry.title || entry.name || '',
+    type,
+    author: entry.owners?.[0] || '',
+    tags: entry.tags?.map(t => t.toLowerCase()) || [],
+    flowTime,
+  });
+}
 ```
 
-**3. `src/firebase/client/page/updatePageTags.ts`** (line ~25):
+**Benefits:**
+- ✅ Single source of truth for tag normalization
+- ✅ Can't forget to normalize tags (happens automatically)
+- ✅ Type-safe with TypeScript
+- ✅ Easy to test and maintain
+- ✅ Works for both client and server-side code
+
+**2. `src/utils/client/contentEntryUtils.ts`** - Client-side ContentEntry conversion:
 
 ```typescript
-// Before (case-sensitive):
-const tagData = TagSchema.parse({
-  key: `${page.siteKey}/${page.key}`,
-  title: page.name,
-  type: 'page',
-  author: page.owners[0] || '',
-  tags: page.tags,
-  flowTime: page.flowTime,
-});
-
-// After (normalized):
-const tagData = TagSchema.parse({
-  key: `${page.siteKey}/${page.key}`,
-  title: page.name,
-  type: 'page',
-  author: page.owners[0] || '',
-  tags: page.tags.map(t => t.toLowerCase()),  // ✅ Normalize to lowercase
-  flowTime: page.flowTime,
-});
+export function toClientContentEntry(entry: Record<string, unknown>): ContentEntry {
+  // Extends toClientEntry with ContentEntry-specific handling
+  // Normalizes tags to lowercase
+}
 ```
 
-**4. `src/firebase/client/threads/updateThreadTags.ts`** (line ~26) (if still in use):
+**3. `src/utils/server/contentEntryUtils.ts`** - Server-side ContentEntry conversion:
 
 ```typescript
-// Same pattern - normalize tags to lowercase
-tags: thread.tags.map(t => t.toLowerCase()),
+export function toFirestoreContentEntry(
+  entry: Partial<ContentEntry>,
+  params: Params = { silent: false },
+) {
+  // Server-side version with tag normalization
+  // Normalizes tags to lowercase when storing
+}
 ```
+
+### Files Changed
+
+**1. `src/pages/api/threads/[threadKey].ts`**:
+- Uses `toTagData()` helper instead of manual TagSchema.parse
+- Tags automatically normalized
+
+**2. `src/pages/api/threads/create.ts`**:
+- Uses `toTagData()` helper instead of manual TagSchema.parse
+- Tags automatically normalized
+
+**3. `src/firebase/client/page/updatePageTags.ts`**:
+- Uses `toTagData()` helper instead of manual TagSchema.parse
+- Tags automatically normalized
+
+**4. `src/firebase/client/threads/updateThreadTags.ts`** (deprecated):
+- Updated for consistency even though deprecated
+- Uses `toTagData()` helper
 
 ### Important: Display vs Storage
 
@@ -216,11 +206,11 @@ for (const doc of tagDocs.docs) {
 
 **2-3 hours** (including testing and migration)
 
-- 30 min: Code fixes (4 files)
+- ✅ 1 hour: Create DRY helper functions and update code (5 files)
+- ✅ 30 min: Unit tests for helper functions
 - 30 min: Local testing with mixed-case tags
-- 1 hour: Migration script to normalize existing entries
-- 30 min: Run migration and verify production data
-- 30 min: Post-migration verification
+- 1 hour: Migration script to normalize existing entries (if needed)
+- 30 min: Run migration and verify production data (if needed)
 
 ## Additional Context
 

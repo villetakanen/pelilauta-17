@@ -3,10 +3,11 @@
 // when using updateThreadApi() to update threads
 // This file is kept for backward compatibility only
 
-import { TAG_FIRESTORE_COLLECTION, TagSchema } from 'src/schemas/TagSchema';
+import { TAG_FIRESTORE_COLLECTION } from 'src/schemas/TagSchema';
 import type { Thread } from 'src/schemas/ThreadSchema';
 import { logError, logWarn } from 'src/utils/logHelpers';
 import { toDate } from 'src/utils/schemaHelpers';
+import { toTagData } from 'src/utils/shared/toTagData';
 
 async function removeTags(key: string) {
   // remove the page tags entry from the tags collection
@@ -22,14 +23,12 @@ async function setTags(thread: Partial<Thread>) {
   // set the page tags entry to the tags collection
   const { getFirestore, setDoc, doc } = await import('firebase/firestore');
 
-  const tagData = TagSchema.parse({
-    key: `${thread.key}`,
-    title: thread.title,
-    type: 'thread',
-    author: thread.owners?.[0] || '',
-    tags: thread.tags,
-    flowTime: toDate(thread.flowTime).getTime(),
-  });
+  const tagData = toTagData(
+    { ...thread, owners: thread.owners || [] },
+    `${thread.key}`,
+    'thread',
+    toDate(thread.flowTime).getTime(),
+  );
 
   try {
     await setDoc(

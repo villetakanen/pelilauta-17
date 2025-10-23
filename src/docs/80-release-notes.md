@@ -7,6 +7,7 @@ noun: 'monsters'
 
 ### 18.9.0 (ongoing)
 - feat: ContentEntry schema tracks last editor in `author` field
+- fix: Tags are now normalized to lowercase everywhere using shared helper
 - fix: updated front page section order
 - fix(sites): Page add and update functions now set the `author` field on ContentEntry documents to the latest editor's uid
 - fix: Site TOC editor regression from zod upgrade fixeds
