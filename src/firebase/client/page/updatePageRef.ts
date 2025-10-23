@@ -3,7 +3,7 @@ import type { Page } from 'src/schemas/PageSchema';
 export async function updatePageRef(page: Page) {
   const { addPageRef } = await import('./addPageRef');
 
-  const { key, name, flowTime, category, owners } = page;
+  const { key, name, flowTime, category, author } = page;
 
   await addPageRef(
     {
@@ -11,7 +11,7 @@ export async function updatePageRef(page: Page) {
       name,
       flowTime,
       category: category || '-',
-      author: owners[0] || '-',
+      author: author || '-',
     },
     page.siteKey,
   );

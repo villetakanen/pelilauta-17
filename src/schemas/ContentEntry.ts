@@ -10,6 +10,7 @@ export const ContentEntrySchema = EntrySchema.extend({
   content: z.string().optional(), // Legacy content field
   images: z.array(z.string()).optional(),
   owners: z.array(z.string()),
+  author: z.string().optional(), // Track last editor
 });
 
 export type ContentEntry = z.infer<typeof ContentEntrySchema>;

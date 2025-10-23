@@ -1,6 +1,7 @@
 import type { Page } from 'src/schemas/PageSchema';
-import { TAG_FIRESTORE_COLLECTION, TagSchema } from 'src/schemas/TagSchema';
+import { TAG_FIRESTORE_COLLECTION } from 'src/schemas/TagSchema';
 import { logError } from 'src/utils/logHelpers';
+import { toTagData } from 'src/utils/shared/toTagData';
 
 async function removeTags(key: string) {
   // remove the page tags entry from the tags collection
@@ -16,14 +17,12 @@ async function setTags(page: Page) {
   // set the page tags entry to the tags collection
   const { getFirestore, setDoc, doc } = await import('firebase/firestore');
 
-  const tagData = TagSchema.parse({
-    key: `${page.siteKey}/${page.key}`,
-    title: page.name,
-    type: 'page',
-    author: page.owners[0] || '',
-    tags: page.tags,
-    flowTime: page.flowTime,
-  });
+  const tagData = toTagData(
+    page,
+    `${page.siteKey}/${page.key}`,
+    'page',
+    page.flowTime,
+  );
 
   try {
     await setDoc(

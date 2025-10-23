@@ -5,7 +5,7 @@ import {
   type Channel,
   ChannelSchema,
 } from '@schemas/ChannelSchema';
-import { TAG_FIRESTORE_COLLECTION, TagSchema } from '@schemas/TagSchema';
+import { TAG_FIRESTORE_COLLECTION } from '@schemas/TagSchema';
 import {
   THREADS_COLLECTION_NAME,
   type Thread,
@@ -15,6 +15,7 @@ import { logDebug, logError, logWarn } from '@utils/logHelpers';
 import { toDate } from '@utils/schemaHelpers';
 import { tokenToUid } from '@utils/server/auth/tokenToUid';
 import { toFirestoreEntry } from '@utils/server/toFirestoreEntry';
+import { toTagData } from '@utils/shared/toTagData';
 import type { APIContext } from 'astro';
 
 /**
@@ -179,14 +180,12 @@ function executeUpdateBackgroundTasks(
         updatedThread.title !== existingThread.title
       ) {
         if (updatedThread.tags && updatedThread.tags.length > 0) {
-          const tagData = TagSchema.parse({
-            key: threadKey,
-            title: updatedThread.title,
-            type: 'thread',
-            author: updatedThread.owners?.[0] || '',
-            tags: updatedThread.tags,
-            flowTime: toDate(updatedThread.flowTime).getTime(),
-          });
+          const tagData = toTagData(
+            updatedThread,
+            threadKey,
+            'thread',
+            toDate(updatedThread.flowTime).getTime(),
+          );
 
           await serverDB
             .collection(TAG_FIRESTORE_COLLECTION)

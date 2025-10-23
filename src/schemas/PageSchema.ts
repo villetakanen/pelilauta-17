@@ -44,6 +44,15 @@ export const parsePage = (
     }
   }
 
+  // Ensure author is set (fallback to owners[0] for backward compatibility)
+  const owners =
+    typeof data.owners === 'string'
+      ? [data.owners]
+      : data.owners
+        ? data.owners
+        : [];
+  const author = data.author || owners[0] || '';
+
   try {
     return PageSchema.parse({
       ...data,
@@ -51,16 +60,12 @@ export const parsePage = (
         data.siteKey && typeof data.siteKey === 'string'
           ? data.siteKey
           : siteKey,
-      owners:
-        typeof data.owners === 'string'
-          ? [data.owners]
-          : data.owners
-            ? data.owners
-            : [],
+      owners,
       flowTime: toDate(data.flowTime).getTime(),
       key,
       revisionHistory,
       markdownContent: data.markdownContent || '',
+      author,
     });
   } catch (err: unknown) {
     if (err instanceof z.ZodError) {
