@@ -1,8 +1,8 @@
 <script lang="ts">
+import { generateSrcset, netlifyImage } from '@utils/images/netlifyImage';
 import type { Site } from 'src/schemas/SiteSchema';
 import { toDisplayString } from 'src/utils/contentHelpers';
 import { systemToNoun } from 'src/utils/schemaHelpers';
-import { netlifyImage, generateSrcset } from '@utils/images/netlifyImage';
 import { uid } from '../../../stores/session';
 
 interface Props {
