@@ -1,8 +1,8 @@
 ---
+import { generateSrcset, netlifyImage } from '@utils/images/netlifyImage';
 import type { Site } from 'src/schemas/SiteSchema';
 import { toDisplayString } from 'src/utils/contentHelpers';
 import { systemToNoun } from 'src/utils/schemaHelpers';
-import { netlifyImage, generateSrcset } from '@utils/images/netlifyImage';
 import SiteOwnerToken from '../../svelte/sites/SiteOwnerToken.svelte';
 
 interface Props {
