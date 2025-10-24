@@ -3,6 +3,21 @@ body {
   --cn-story-clock-tick-color: var(--color-text);
   --cn-story-clock-slice-color: var(--color-surface-1);
 }
+main > footer {
+  text-shadow: 1px 1px 12px var(--color-background);
+}
+main > footer cn-avatar {
+  text-shadow: none;
+}
+main > footer a {
+  color: light-dark(
+    var(--chroma-surface-90),
+    var(--chroma-surface-10)
+  );
+}
+main > footer h4 {
+  margin-bottom: var(--cn-grid);
+}
 
 /* Font performance: Add font-display swap to Lato font faces from lato-font npm package */
 @font-face {
