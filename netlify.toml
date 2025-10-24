@@ -18,6 +18,13 @@
   [headers.values]
     Content-Type = "application/manifest+json"
 
+# PBI-037: Netlify Image CDN optimization caching
+[[headers]]
+  for = "/.netlify/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    X-Content-Type-Options = "nosniff"
+
 # More specific API routes first
 
 [[headers]]
