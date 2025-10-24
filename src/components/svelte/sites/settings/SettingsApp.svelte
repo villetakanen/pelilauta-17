@@ -27,6 +27,8 @@ const allow = $derived.by(() => {
     <SiteMetaForm site={$site}/>
     <SiteThemingSection site={$site}/>
     <SiteTocRegenSection site={$site}/>
+  </div>
+  <div class="content-columns">
     <SiteDangerZoneSection site={$site}/>
   </div>
 </WithAuth>
