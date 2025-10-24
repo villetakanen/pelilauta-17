@@ -8,12 +8,9 @@ interface Props {
   site: Site;
 }
 const { site, page } = Astro.props as Props;
-const elevation = site.posterURL ? 'surface' : 'elevation-1';
 ---
 
-<article 
-  class={`column-l ${elevation}`} 
-  style="padding: calc(4 * var(--cn-grid))">
+<article class="surface column-l">
 
   <div 
     style="min-height: 70dvh" 
