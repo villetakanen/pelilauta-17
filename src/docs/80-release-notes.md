@@ -6,6 +6,9 @@ noun: 'monsters'
 ## Version 18
 
 ### 18.9.x (ongoing)
+* fix(sites): clocks-pages import cn-story-clock web component, so its available locally
+* fix: Main footer area contrast improved for better accessibility
+* fix: Thread and Site card images are now properly cached on CDN and served with correct caching headers
 * fix: Site theming settings are usable on small screens again
 
 ### 18.9.0 (23.10.2025)
