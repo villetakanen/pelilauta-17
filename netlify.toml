@@ -5,6 +5,13 @@
 [build.environment]
   NODE_VERSION = "20"
 
+# PBI-037: Netlify Image CDN remote image domains
+[images]
+  remote_images = [
+    "https://storage.googleapis.com/*",
+    "https://firebasestorage.googleapis.com/*"
+  ]
+
 # PBI-005, PBI-024: Front page caching for users and SEO crawlers
 [[headers]]
   for = "/"
