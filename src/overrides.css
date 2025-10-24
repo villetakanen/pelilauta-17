@@ -1,67 +1,7 @@
-.mb--2 {
-  margin-bottom: calc(-2 * var(--cn-grid));
-}
-
-/* Hiding class, making content visible only to screen readers but not visually */
-/* "sr" meaning "screen-reader" */
-
-.sr-only:not(:focus):not(:active) {
-  clip: rect(0 0 0 0);
-  clip-path: inset(50%);
-  height: 1px;
-  overflow: hidden;
-  position: absolute;
-  white-space: nowrap;
-  width: 1px;
-}
-label select {
-  min-width: auto;
-  width: 100%;
-}
-
-/* Patch: text area does not have full input styling */
-textarea {
-  line-height: var(--cn-line-height-text);
-  --cn-line-height-ui: var(
-    --cn-line-height-text
-  ); /* This is a legacy bug, as we no longer have separate line heights for text and UI inputs */
-}
-
-/* Modern way of saying justify-right */
-.items-end,
-.toolbar.items-end {
-  justify-content: flex-end;
-}
-.flex.items-start {
-  justify-content: flex-start;
-}
-.flex.items-start > * {
-  align-self: flex-start;
-  flex-grow: 0;
-}
-.flex > .cn-chip {
-  flex: none;
-}
-
-/* Missing hover atomic */
-.hover-underline:hover {
-  text-decoration: underline;
-}
-
-/* Patch: add missing text color */
-.text-warning {
-  color: var(--color-on-error, var(--chroma-warning));
-  font-weight: bold;
-}
-
-.no-decoration {
-  text-decoration: none;
-}
-
-/* Patch: fieldset is missing rounded corners */
-fieldset {
-  border-radius: var(--cn-border-radius-medium);
-  border: 1px solid var(--color-border);
+body {
+  --cn-story-clock-border-color: var(--color-border);
+  --cn-story-clock-tick-color: var(--color-text);
+  --cn-story-clock-slice-color: var(--color-surface-1);
 }
 
 /* Font performance: Add font-display swap to Lato font faces from lato-font npm package */
