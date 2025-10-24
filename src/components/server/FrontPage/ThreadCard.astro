@@ -3,6 +3,7 @@ import { t } from '@utils/i18n';
 import type { Thread } from 'src/schemas/ThreadSchema';
 import { toDisplayString } from 'src/utils/contentHelpers';
 import { createRichSnippet } from 'src/utils/snippetHelpers';
+import { netlifyImage, generateSrcset } from '@utils/images/netlifyImage';
 import ProfileLink from '../../svelte/app/ProfileLink.svelte';
 import ReactionButton from '../../svelte/app/ReactionButton.svelte';
 import CardSubscription from '../../svelte/frontpage/CardSubscription.svelte';
@@ -14,11 +15,29 @@ export interface Props {
 
 const { thread, noun } = Astro.props;
 
-const poster = thread.poster
+const posterUrl = thread.poster
   ? thread.poster
   : thread.images && thread.images.length > 0
     ? thread.images[0].url
     : undefined;
+
+// Generate optimized image URLs for the thread poster
+// Cards are 170-450px wide, so we use appropriate sizes
+// Only use Netlify CDN in production (not available in local dev)
+const isProduction = import.meta.env.PROD;
+const poster = posterUrl
+  ? isProduction
+    ? netlifyImage(posterUrl, { width: 450, format: 'webp', quality: 85 })
+    : posterUrl
+  : undefined;
+const posterSrcset = posterUrl
+  ? isProduction
+    ? generateSrcset(posterUrl, [170, 300, 450], {
+        format: 'webp',
+        quality: 85,
+      })
+    : undefined
+  : undefined;
 
 const snippet = await createRichSnippet(thread.markdownContent || '', {
   maxLength: 220,
@@ -33,7 +52,9 @@ const channelSlug = channel.toLowerCase().replace(/\s+/g, '-');
   <cn-card 
     href={`/threads/${thread.key}`} 
     title={thread.title} 
-    cover={poster} 
+    cover={poster}
+    srcset={posterSrcset}
+    sizes="(max-width: 768px) 100vw, 450px"
     elevation="1" 
     {noun}
     id={`thread-card-${thread.key}`} 
