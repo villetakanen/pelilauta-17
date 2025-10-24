@@ -13,7 +13,12 @@ Pelilauta-17 currently implements file uploads in **three distinct patterns** ac
 2. **Server-side uploads** (Threads, Replies) - Multipart form data handled by API routes
 3. **Markdown imports** (Site pages) - Text file processing without storage upload
 
-This document analyzes each pattern's strengths, weaknesses, and provides recommendations for standardization and future development.
+**Critical Finding:** These patterns **cannot be fully unified** due to architectural constraints. Thread and reply uploads must remain server-side because they are part of longer multi-document transactions that use waterfall API patterns and early-response patterns. Moving these to client-side would create race conditions and "ghost images" in Storage.
+
+This document analyzes each pattern's strengths, weaknesses, and provides recommendations for:
+- **Standardizing client-side uploads** for Sites and Profiles (independent operations)
+- **Optimizing server-side uploads** for Threads and Replies (transactional operations)
+- **Establishing a decision framework** for future upload features
 
 ---
 
@@ -325,7 +330,7 @@ if (!file.type.startsWith('image/')) {
 
 ### Missing Security Measures
 
-1. **No Storage Security Rules file found** - Critical security gap
+1. **Storage Security Rules managed externally** - Rules exist but not in this repository
 2. **No server-side size validation** - Client can bypass limits
 3. **No virus/malware scanning** - All uploads trusted
 4. **No rate limiting** - Can spam uploads
@@ -370,6 +375,61 @@ Typical: 5-15 seconds for 5MB image
 2. **No chunked uploads** - Large files timeout
 3. **No upload progress feedback** for server uploads
 4. **FormData size limits** restrict file sizes (~10MB)
+
+---
+
+## Decision Framework: Client-Side vs Server-Side Uploads
+
+Use this framework to decide which upload pattern to use for new features:
+
+### Choose **Client-Side Upload** when:
+
+✅ Upload is independent (no transaction dependencies)  
+✅ Single document update (e.g., profile avatar, site theme image)  
+✅ User can retry on failure without side effects  
+✅ No complex validation needed beyond type/size  
+✅ Immediate feedback to user is important  
+✅ Entity is owned by single user (easy authorization)
+
+**Examples:** Profile avatars, site assets, standalone images
+
+### Choose **Server-Side Upload** when:
+
+⚠️ Part of multi-document transaction  
+⚠️ Dependent on other operations (e.g., thread reply count update)  
+⚠️ Complex validation or processing required  
+⚠️ Need rollback capability if related operations fail  
+⚠️ Waterfall API pattern (operation N depends on result of operation N-1)  
+⚠️ Early response pattern (return before all background tasks complete)
+
+**Examples:** Thread replies, thread creation, complex page updates
+
+### Hybrid Approach (Advanced):
+
+For some cases, you can use a hybrid approach:
+
+```typescript
+// 1. Client uploads image first
+const imageUrl = await uploadAssetClientSide(file);
+
+// 2. Client calls API with URL (not file)
+const response = await fetch('/api/threads/add-reply', {
+  method: 'POST',
+  body: JSON.stringify({
+    content: '...',
+    imageUrl: imageUrl,  // Already uploaded
+  }),
+});
+
+// 3. If API fails, client deletes uploaded image
+if (!response.ok) {
+  await deleteAssetClientSide(imageUrl);
+}
+```
+
+**⚠️ Caution:** This adds complexity and still has race conditions (what if client crashes before cleanup?). Only use if performance gains significantly outweigh risks.
+
+**Better alternative:** Optimize server-side pattern (streaming, parallel processing, early response).
 
 ---
 
@@ -446,13 +506,210 @@ uploadAvatar(file: File)
 
 ## Recommendations
 
-### 1. Standardize on Client-Side Uploads ⭐ PRIORITY
+### ⚠️ Critical Architectural Constraint: Thread Transactions
+
+**IMPORTANT:** Thread updates and replies **cannot be migrated to client-side uploads** due to transactional requirements.
+
+**The Problem:**
+
+Thread operations involve complex multi-document transactions:
+```typescript
+// Simplified example of thread reply transaction
+async function addReply(threadKey: string, reply: Reply, images: File[]) {
+  // 1. Upload images to Storage
+  const imageUrls = await uploadImages(images);
+  
+  // 2. Create reply document
+  await db.collection('replies').add({ ...reply, images: imageUrls });
+  
+  // 3. Update thread document (increment reply count, update timestamps)
+  await db.collection('threads').doc(threadKey).update({ 
+    replyCount: increment(1),
+    lastActivity: serverTimestamp() 
+  });
+  
+  // 4. Update user statistics
+  await db.collection('profiles').doc(uid).update({
+    replyCount: increment(1)
+  });
+  
+  // 5. Send notifications to subscribers
+  await notifySubscribers(threadKey, reply);
+  
+  // 6. Return early (optimistic response)
+  return { success: true, replyId: '...' };
+  
+  // 7. Background tasks continue (cache invalidation, search indexing, etc.)
+}
+```
+
+**Why Client-Side Upload Fails:**
+
+1. **Race Condition:** If client uploads images first, then calls API:
+   ```
+   Client: Upload image → Get URL → Call API → API starts transaction
+   Problem: If API transaction fails, image is orphaned in Storage
+   ```
+
+2. **Ghost Images:** If transaction returns early and fails later:
+   ```
+   Server: Return success → Client shows image → Background task fails
+   Problem: Image exists in Storage but not in Firestore
+   ```
+
+3. **Waterfall Dependencies:** Subsequent operations depend on previous results:
+   ```
+   Upload → Get URL → Create reply doc → Update thread → Update stats
+   Problem: Cannot parallelize or split across client/server boundary
+   ```
+
+4. **Rollback Complexity:** Client-side uploads cannot be part of Firestore transactions:
+   ```
+   Firestore transactions can rollback database changes
+   Storage uploads cannot be rolled back automatically
+   Problem: Inconsistent state between Storage and Firestore
+   ```
+
+**The Solution:**
+
+**Keep server-side uploads for threads** to maintain transactional integrity:
+- Server handles entire operation atomically (or as close as possible)
+- If any step fails, server can clean up uploaded images
+- Client receives response only after critical operations complete
+- Background tasks can continue after response without affecting consistency
+
+**Pattern Separation:**
+
+| Entity Type | Upload Pattern | Reason |
+|-------------|----------------|--------|
+| **Sites** | Client-side ✅ | Assets are independent, no complex transactions |
+| **Profiles** | Client-side ✅ | Avatar is single field update, no dependencies |
+| **Threads/Replies** | Server-side ⚠️ | Part of multi-step transactions, dependencies |
+| **Pages** | Either ⚠️ | Simple updates can use client-side, complex edits need server-side |
+
+**Revised Recommendation:**
+
+Do NOT attempt to unify all uploads to client-side. Instead:
+1. Use client-side for **independent, single-document operations** (Sites, Profiles)
+2. Use server-side for **transactional, multi-document operations** (Threads, Replies)
+3. Optimize server-side pattern (see "Server-Side Upload Optimizations" below)
+
+---
+
+### Server-Side Upload Optimizations
+
+Since threads must use server-side uploads, optimize the pattern:
+
+#### 1. Streaming Uploads (Reduce Memory Usage)
+
+```typescript
+// Instead of loading entire file into memory:
+const buffer = Buffer.from(await file.arrayBuffer()); // ❌ 2x memory usage
+
+// Stream directly to Storage:
+const stream = Readable.from(file.stream()); // ✅ Minimal memory
+await bucket.file(storagePath).save(stream);
+```
+
+#### 2. Parallel Processing (Reduce Latency)
+
+```typescript
+// Instead of sequential:
+for (const file of files) {
+  await uploadFile(file); // ❌ Slow
+}
+
+// Upload in parallel:
+await Promise.all(
+  files.map(file => uploadFile(file)) // ✅ Fast
+);
+```
+
+#### 3. Early Response Pattern (Better UX)
+
+```typescript
+// Return to client ASAP, continue background processing:
+async function addReply(data: ReplyData) {
+  // 1. Critical operations (must complete)
+  const images = await uploadImages(data.files);
+  const replyId = await createReplyDoc({ ...data, images });
+  await updateThreadDoc(data.threadKey);
+  
+  // 2. Return early
+  const response = { success: true, replyId };
+  
+  // 3. Background operations (fire and forget)
+  queueBackgroundTasks({
+    updateUserStats: true,
+    sendNotifications: true,
+    invalidateCache: true,
+    updateSearchIndex: true,
+  });
+  
+  return response;
+}
+```
+
+#### 4. Cleanup on Failure
+
+```typescript
+async function addReplyWithCleanup(data: ReplyData) {
+  const uploadedFiles: string[] = [];
+  
+  try {
+    // Upload images, track paths
+    for (const file of data.files) {
+      const path = await uploadFile(file);
+      uploadedFiles.push(path);
+    }
+    
+    // Create reply doc
+    await createReplyDoc({ ...data, images: uploadedFiles });
+    
+    return { success: true };
+    
+  } catch (error) {
+    // Cleanup uploaded files on failure
+    await Promise.all(
+      uploadedFiles.map(path => deleteFile(path))
+    );
+    
+    throw error;
+  }
+}
+```
+
+#### 5. Image Optimization on Server
+
+Since images must go through server, optimize there:
+
+```typescript
+import sharp from 'sharp'; // Add to dependencies
+
+async function processImage(file: File): Promise<Buffer> {
+  const buffer = Buffer.from(await file.arrayBuffer());
+  
+  return await sharp(buffer)
+    .resize(1920, null, { withoutEnlargement: true })
+    .webp({ quality: 85 })
+    .toBuffer();
+}
+```
+
+---
+
+### 1. Standardize on Client-Side Uploads (REVISED: Sites & Profiles Only) ⭐ PRIORITY
 
 **Rationale:**
-- Better performance (direct to Storage)
-- Lower server costs
-- Better user experience (faster uploads)
-- Scalability (offload from server)
+- Better performance (direct to Storage) for independent operations
+- Lower server costs for non-transactional uploads
+- Better user experience (faster uploads) where safe
+- Scalability (offload from server) for simple operations
+
+**Scope Limitation:**
+- ✅ **Use client-side:** Sites, Profiles (independent, single-document updates)
+- ❌ **Use server-side:** Threads, Replies (transactional, multi-document operations)
+- ⚠️ **Evaluate case-by-case:** Pages, Characters, and other complex entities
 
 **Implementation:**
 ```typescript
@@ -516,15 +773,20 @@ async function uploadAsset(
 ```
 
 **Migration Path:**
-1. Create new standardized upload utility
-2. Migrate Sites to use new utility (already client-side)
-3. Migrate Threads to client-side uploads
-4. Deprecate server-side upload endpoints
-5. Keep server-side only for special cases (virus scanning, admin tools)
+1. Create new standardized upload utility for client-side uploads
+2. Migrate Sites to use new utility (already client-side, just standardize)
+3. Migrate Profiles to use new utility (already client-side, just standardize)
+4. Optimize server-side pattern for Threads/Replies (see "Server-Side Upload Optimizations")
+5. ~~Do NOT migrate Threads to client-side~~ - Keep server-side for transactional integrity
+6. Evaluate other entities (Pages, Characters) on case-by-case basis
 
-### 2. Implement Firebase Storage Security Rules ⭐ CRITICAL
+### 2. Review and Update Firebase Storage Security Rules ⭐ CRITICAL
 
-**Create:** `storage.rules`
+**Note:** Storage security rules exist but are managed outside this repository. Review and update them as needed.
+
+**Recommended rules structure:**
+
+**Create/Update:** `storage.rules` (in Firebase Console or separate infrastructure repo)
 
 ```javascript
 rules_version = '2';
@@ -906,7 +1168,7 @@ async function cleanupOrphanedAssets(): Promise<void> {
 ## Migration Checklist
 
 ### Phase 1: Security & Consistency (Weeks 1-2)
-- [ ] Create and deploy `storage.rules`
+- [ ] Review and update `storage.rules` (managed externally)
 - [ ] Fix thread creation URL generation (use public URLs)
 - [ ] Add server-side type validation to `create.ts`
 - [ ] Standardize error messages across all upload components
@@ -919,14 +1181,20 @@ async function cleanupOrphanedAssets(): Promise<void> {
 - [ ] Update `uploadAvatar` to use standard utility
 - [ ] Update all UI components to use `AddFilesButton` or standardized versions
 
-### Phase 3: Thread Migration (Weeks 5-6)
-- [ ] Create `uploadThreadImage` using client-side pattern
-- [ ] Update `ReplyDialog` to use client-side upload
-- [ ] Update `ThreadEditorForm` to use client-side upload
-- [ ] Deprecate server-side upload in `add-reply.ts` (keep for backward compatibility)
-- [ ] Deprecate server-side upload in `create.ts` (keep for backward compatibility)
+### Phase 3: Thread Migration - ⚠️ BLOCKED BY ARCHITECTURAL CONSTRAINTS
+- [ ] ~~Create `uploadThreadImage` using client-side pattern~~ **NOT FEASIBLE**
+- [ ] ~~Update `ReplyDialog` to use client-side upload~~ **NOT FEASIBLE**
+- [ ] ~~Update `ThreadEditorForm` to use client-side upload~~ **NOT FEASIBLE**
+- [ ] Keep server-side upload in `add-reply.ts` (required for transaction integrity)
+- [ ] Keep server-side upload in `create.ts` (required for transaction integrity)
+
+**Reason:** Thread updates and replies are part of longer Firestore transactions that can return early. Moving uploads to client-side would create race conditions where uploaded images become orphans if transactions fail, or "ghost images" appear in Storage if Firestore updates fail. The waterfall API pattern requires server-side uploads to maintain transactional consistency.
 
 ### Phase 4: Enhanced Features (Weeks 7-8)
+- [ ] Implement `netlifyImage()` utility for image optimization
+- [ ] Configure Astro image service for Netlify (optional)
+- [ ] Update thread image display to use Netlify CDN
+- [ ] Update site asset display to use Netlify CDN
 - [ ] Implement progress tracking with `uploadBytesResumable`
 - [ ] Add upload progress UI components
 - [ ] Implement validation API endpoint
@@ -1034,12 +1302,367 @@ test('should upload image to thread reply', async ({ page }) => {
 
 ---
 
+## Netlify Image CDN Integration
+
+**Context:** The application runs on Netlify and has `@netlify/images` package installed. Most upload issues are image-related, and we should leverage Netlify's built-in image optimization.
+
+### Current State
+
+**Status:** `@netlify/images@1.2.8` is installed but **not actively used** for serving images.
+
+**Current image serving:**
+- Images uploaded to Firebase Storage get direct URLs
+- No automatic optimization, resizing, or format conversion at delivery time
+- Manual WebP conversion happens only at upload time (client-side only)
+- Every image size/format variation requires a new upload
+
+### Netlify Image CDN Capabilities
+
+Netlify provides automatic image optimization through URL parameters:
+
+```html
+<!-- Original Firebase Storage URL -->
+<img src="https://storage.googleapis.com/bucket/Threads/abc/image.jpg" />
+
+<!-- With Netlify Image CDN (if properly configured) -->
+<img src="https://yoursite.netlify.app/.netlify/images?url=https://storage.googleapis.com/bucket/Threads/abc/image.jpg&w=800&fm=webp" />
+```
+
+**Features:**
+- ✅ Automatic WebP/AVIF conversion based on browser support
+- ✅ Dynamic resizing (`w=`, `h=`, `fit=`)
+- ✅ Quality adjustment (`q=`)
+- ✅ Format conversion (`fm=webp`, `fm=avif`)
+- ✅ Automatic caching at CDN edge
+- ✅ No build-time processing needed (on-demand)
+
+**URL Parameters:**
+```
+?url=<image-url>     # Source image URL (must be from allowed domain)
+&w=800               # Width in pixels
+&h=600               # Height in pixels
+&fit=cover           # Resize mode: cover, contain, fill, inside, outside
+&position=center     # Crop position when using fit=cover
+&fm=webp             # Format: auto, webp, avif, jpg, png
+&q=80                # Quality: 1-100
+```
+
+### Recommended Architecture
+
+**Option 1: Transparent Proxy Pattern** (Recommended for transactional uploads)
+
+```typescript
+// Server-side upload remains unchanged
+// Add image transformation helper for display
+
+// src/utils/images/netlifyImage.ts
+export function netlifyImage(
+  firebaseUrl: string,
+  options: {
+    width?: number;
+    height?: number;
+    format?: 'webp' | 'avif' | 'auto';
+    quality?: number;
+    fit?: 'cover' | 'contain';
+  } = {}
+): string {
+  const params = new URLSearchParams();
+  params.set('url', firebaseUrl);
+  
+  if (options.width) params.set('w', options.width.toString());
+  if (options.height) params.set('h', options.height.toString());
+  if (options.format) params.set('fm', options.format);
+  if (options.quality) params.set('q', options.quality.toString());
+  if (options.fit) params.set('fit', options.fit);
+  
+  return `/.netlify/images?${params.toString()}`;
+}
+```
+
+**Usage in components:**
+
+```svelte
+<script lang="ts">
+import { netlifyImage } from '@utils/images/netlifyImage';
+
+interface Props {
+  imageUrl: string;
+}
+const { imageUrl }: Props = $props();
+
+// Generate responsive srcset
+const thumbnailUrl = netlifyImage(imageUrl, { width: 400, format: 'webp' });
+const mediumUrl = netlifyImage(imageUrl, { width: 800, format: 'webp' });
+const largeUrl = netlifyImage(imageUrl, { width: 1600, format: 'webp' });
+</script>
+
+<img
+  src={mediumUrl}
+  srcset="{thumbnailUrl} 400w, {mediumUrl} 800w, {largeUrl} 1600w"
+  sizes="(max-width: 768px) 100vw, 800px"
+  alt="..."
+  loading="lazy"
+/>
+```
+
+**Option 2: Astro Image Integration** (For SSR pages)
+
+```typescript
+// astro.config.mjs
+import netlify from '@astrojs/netlify';
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  // ... existing config
+  
+  image: {
+    service: {
+      entrypoint: '@astrojs/netlify/image-service',
+    },
+    domains: ['storage.googleapis.com'],
+  },
+});
+```
+
+**Usage in Astro components:**
+
+```astro
+---
+import { Image } from 'astro:assets';
+
+const imageUrl = 'https://storage.googleapis.com/.../image.jpg';
+---
+
+<Image
+  src={imageUrl}
+  alt="..."
+  width={800}
+  height={600}
+  format="webp"
+  loading="lazy"
+/>
+```
+
+### Benefits for Image-Heavy Operations
+
+**1. Thread Images (Server-side uploads remain)**
+
+```typescript
+// Upload: Still server-side (for transaction integrity)
+// BUT: Display uses Netlify CDN
+
+// Before: Direct Firebase URL
+<img src="https://storage.googleapis.com/.../thread-image.jpg" />
+
+// After: Netlify-optimized
+<img src="/.netlify/images?url=...&w=800&fm=webp&q=85" />
+```
+
+**Savings:**
+- 60-80% file size reduction (AVIF/WebP vs JPEG)
+- Responsive image delivery (right size for viewport)
+- Browser-specific optimization (AVIF for Chrome, WebP fallback)
+- CDN caching reduces Firebase bandwidth costs
+
+**2. Site Assets (Client-side uploads)**
+
+```typescript
+// Option A: Skip client-side WebP conversion
+// Let Netlify handle it at display time
+// (Upload original JPEG/PNG, serve optimized)
+
+// Option B: Still convert at upload for storage savings
+// PLUS Netlify optimization for delivery
+// (Best of both worlds: small storage + optimized delivery)
+```
+
+**3. Profile Avatars**
+
+```typescript
+// Multiple sizes without multiple uploads
+const avatar = netlifyImage(user.avatarURL, { width: 48, format: 'webp' });  // Nav bar
+const avatarLarge = netlifyImage(user.avatarURL, { width: 200, format: 'webp' });  // Profile page
+```
+
+### Implementation Roadmap
+
+**Phase 1: Non-Breaking Addition (Week 1)**
+1. Create `netlifyImage()` helper utility
+2. Add Astro image service configuration (optional)
+3. Document usage patterns for developers
+
+**Phase 2: Gradual Rollout (Weeks 2-4)**
+1. Update thread image display components to use `netlifyImage()`
+2. Update site asset display to use `netlifyImage()`
+3. Update profile avatar display to use `netlifyImage()`
+4. A/B test performance improvements
+
+**Phase 3: Optimization (Weeks 5-6)**
+1. Remove client-side WebP conversion (optional - Netlify handles it)
+2. Implement responsive image srcsets
+3. Add lazy loading and modern loading strategies
+4. Configure Netlify CDN cache headers
+
+**Phase 4: Monitoring (Ongoing)**
+1. Track Firebase Storage bandwidth reduction
+2. Monitor Netlify image transformation usage
+3. Analyze page load performance improvements
+4. Adjust quality/size parameters based on metrics
+
+### Configuration Requirements
+
+**1. Netlify Configuration**
+
+Update `netlify.toml`:
+```toml
+# Enable image CDN for Firebase Storage
+[[redirects]]
+  from = "/.netlify/images"
+  to = "/.netlify/images"
+  status = 200
+  force = true
+  
+  # Allow Firebase Storage as image source
+  [redirects.headers]
+    X-Robots-Tag = "noindex"
+
+# Optional: Add cache headers for transformed images
+[[headers]]
+  for = "/.netlify/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+```
+
+**2. Firebase Storage CORS**
+
+Ensure Firebase Storage allows Netlify Image CDN requests:
+```json
+[
+  {
+    "origin": ["https://*.netlify.app", "https://yourdomain.com"],
+    "method": ["GET", "HEAD"],
+    "maxAgeSeconds": 3600
+  }
+]
+```
+
+**3. Content Security Policy**
+
+Update CSP to allow Netlify images (already configured in `netlify.toml`):
+```
+img-src 'self' data: https: blob:;
+```
+
+### Cost Analysis
+
+**Current costs (per 1000 thread images viewed):**
+- Firebase Storage bandwidth: 1000 × 5MB = 5GB
+- Cost: ~$0.10/GB = $0.50
+
+**With Netlify Image CDN:**
+- Firebase Storage bandwidth (first request): 1000 × 5MB = 5GB
+- Netlify image transformations: 1000 operations
+- Netlify CDN cache hits (subsequent): 0GB from Firebase
+- Average response size (AVIF): 1000 × 1.5MB = 1.5GB
+
+**Projected savings:**
+- 70% reduction in delivered bandwidth (5GB → 1.5GB)
+- 90%+ cache hit rate on popular images
+- Faster page loads (smaller files + CDN edge delivery)
+- Reduced Firebase costs over time
+
+### Caveats and Considerations
+
+**1. External Domain Limitation**
+
+Netlify Image CDN works best with:
+- ✅ Images hosted on Netlify itself
+- ✅ External URLs from allowed domains (Firebase Storage)
+- ❌ May have rate limits or restrictions per plan
+
+**2. Build Time vs Request Time**
+
+- **Astro `<Image>`**: Processes at build time (SSG) or request time (SSR)
+- **`/.netlify/images` endpoint**: Always at request time (on-demand)
+- **Recommendation**: Use `/.netlify/images` for user-uploaded content
+
+**3. Original File Size Still Matters**
+
+Netlify can't work miracles:
+- Still optimize at upload (resize to 1920px max)
+- Still convert to WebP/AVIF if possible
+- Netlify adds responsive delivery on top
+
+**4. Firebase Storage Still Needed**
+
+This is **not a replacement** for Firebase Storage:
+- Firebase Storage: Source of truth, permanent storage
+- Netlify Image CDN: Delivery optimization layer
+
+### Testing Strategy
+
+**1. Unit Tests**
+
+```typescript
+// test/utils/netlifyImage.test.ts
+import { netlifyImage } from '@utils/images/netlifyImage';
+
+describe('netlifyImage', () => {
+  it('should generate valid Netlify image URL', () => {
+    const url = netlifyImage('https://storage.googleapis.com/.../image.jpg', {
+      width: 800,
+      format: 'webp',
+    });
+    
+    expect(url).toContain('/.netlify/images');
+    expect(url).toContain('w=800');
+    expect(url).toContain('fm=webp');
+  });
+});
+```
+
+**2. Performance Tests**
+
+```typescript
+// e2e/image-performance.spec.ts
+test('should load optimized images faster', async ({ page }) => {
+  await page.goto('/threads/test-thread');
+  
+  // Check that images use Netlify CDN
+  const img = page.locator('article img').first();
+  const src = await img.getAttribute('src');
+  expect(src).toContain('/.netlify/images');
+  
+  // Check file size is reasonable
+  const response = await page.request.get(src);
+  expect(response.headers()['content-type']).toContain('webp');
+});
+```
+
+### Alternative: Cloudflare Images
+
+If Netlify Image CDN limitations are a concern, consider:
+
+**Cloudflare Images:**
+- More generous limits
+- Better control over transformations
+- Additional cost ($5/month + $1 per 100k images)
+- Requires separate service integration
+
+**Trade-offs:**
+- ✅ Better: More features, higher limits, dedicated service
+- ❌ Worse: Additional cost, more complex setup, another dependency
+
+---
+
 ## Future Enhancements
 
-### 1. Image CDN Integration
-- CloudFlare Images or imgix for automatic optimization
-- Dynamic resizing based on viewport
-- WebP/AVIF serving based on browser support
+### 1. ~~Image CDN Integration~~ ✅ See "Netlify Image CDN Integration" Section
+- ~~CloudFlare Images or imgix for automatic optimization~~
+- ~~Dynamic resizing based on viewport~~
+- ~~WebP/AVIF serving based on browser support~~
+
+**Status:** Covered in dedicated section above. Use Netlify Image CDN as first choice.
 
 ### 2. Virus Scanning
 - Integrate ClamAV or cloud service
