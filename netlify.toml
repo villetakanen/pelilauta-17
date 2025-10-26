@@ -91,7 +91,8 @@
         font-src 'self' data:;
         connect-src 'self' 
           https://*.firebaseio.com 
-          https://*.googleapis.com 
+          https://*.googleapis.com
+          https://apis.google.com
           https://*.simpleanalyticscdn.com
           https://sentry.io;
         worker-src 'self' blob:;
