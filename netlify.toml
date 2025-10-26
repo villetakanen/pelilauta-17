@@ -84,7 +84,8 @@
           https://*.simpleanalyticscdn.com 
           https://browser.sentry-cdn.com 
           https://*.firebaseio.com
-          https://storage.googleapis.com;
+          https://storage.googleapis.com
+          https://apis.google.com;
         style-src 'self' 'unsafe-inline';
         img-src 'self' data: https: blob:;
         font-src 'self' data:;
