@@ -33,6 +33,11 @@ export const ThreadSchema = ContentEntrySchema.extend({
   quoteRef: z.string().optional(),
   author: z.string().optional(),
 
+  // Bluesky syndication tracking
+  blueskyPostUrl: z.string().url().optional(), // https://bsky.app/profile/[handle]/post/[rkey]
+  blueskyPostUri: z.string().optional(), // at://did:plc:xxx/app.bsky.feed.post/yyy
+  blueskyPostCreatedAt: z.any().optional(), // When post was created
+
   // Override owners to ensure at least one owner (the thread author)
   owners: z.array(z.string()).min(1, 'Please add at least one thread owner.'),
 });

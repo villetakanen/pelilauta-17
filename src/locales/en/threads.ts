@@ -14,6 +14,8 @@ export const threads: Locale = {
     createdAt: 'Created {time}',
     flowTime: 'Updated {time}',
     loveCount: '{count} likes',
+    blueskyTitle: 'Bluesky',
+    viewOnBluesky: 'View on Bluesky',
     actions: {
       title: 'Actions',
       admin: {

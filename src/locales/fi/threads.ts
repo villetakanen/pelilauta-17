@@ -17,6 +17,8 @@ export const threads: Locale = {
     createdAt: 'Luotu {time}',
     flowTime: 'Päivitetty {time}',
     loveCount: '{count} tykkäystä',
+    blueskyTitle: 'Bluesky',
+    viewOnBluesky: 'Katso Blueskyssa',
     actions: {
       title: 'Toiminnot',
       admin: {

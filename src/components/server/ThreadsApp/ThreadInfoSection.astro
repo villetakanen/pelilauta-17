@@ -16,35 +16,75 @@ const { thread } = Astro.props;
 const author = `${thread?.owners[0] || ''}`;
 const channel = `${thread?.channel || '-'}`;
 ---
+
 <section class="column-s">
-  <cn-card
-    title={t('threads:info.title')}
-    noun='discussion'
-  >
-    <p>
-      {toDisplayString(thread.flowTime)}
-    </p>
-    <p class="mb-0">
-      <ProfileLink uid={author} client:only="svelte" /> 
-      {t('threads:info.inTopic')}
-      <a href={`/channels/${channel}`} class="link">
-        {channel.charAt(0).toUpperCase() + channel.slice(1)}
-      </a>
-      <div slot="actions" class="toolbar items-center">
-        <div class="flex align-center">
-          <cn-icon noun="send" small />
-          <span class="text-caption decoration-none">
-            {thread.replyCount}
-          </span>
-        </div>
-        <ReactionButton target="thread" key={thread.key} 
-          title={thread.title}
-          client:only="svelte" />
-      </div>
-     </p>
+    <cn-card title={t("threads:info.title")} noun="discussion">
+        <p>
+            {toDisplayString(thread.flowTime)}
+        </p>
+        <p class="mb-0">
+            <ProfileLink uid={author} client:only="svelte" />
+            {t("threads:info.inTopic")}
+            <a href={`/channels/${channel}`} class="link">
+                {channel.charAt(0).toUpperCase() + channel.slice(1)}
+            </a>
+            <div slot="actions" class="toolbar items-center">
+                <div class="flex align-center">
+                    <cn-icon noun="send" small></cn-icon>
+                    <span class="text-caption decoration-none">
+                        {thread.replyCount}
+                    </span>
+                </div>
+                <ReactionButton
+                    target="thread"
+                    key={thread.key}
+                    title={thread.title}
+                    client:only="svelte"
+                />
+            </div>
+        </p>
     </cn-card>
 
-  
-  { thread.tags && <EntryTagsSection tags={thread.tags} />}
-  <ThreadInfoActions {thread} client:only="svelte" />
+    {thread.tags && <EntryTagsSection tags={thread.tags} />}
+
+    <!-- Bluesky Embed -->
+    {
+        thread.blueskyPostUrl && (
+            <cn-card
+                title={t("threads:info.blueskyTitle")}
+                noun="share"
+                class="mt-2"
+            >
+                <blockquote
+                    class="bluesky-embed"
+                    data-bluesky-uri={
+                        thread.blueskyPostUri || thread.blueskyPostUrl
+                    }
+                >
+                    <p>
+                        <a
+                            href={thread.blueskyPostUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            {t("threads:info.viewOnBluesky")}
+                        </a>
+                    </p>
+                </blockquote>
+            </cn-card>
+        )
+    }
+
+    <ThreadInfoActions {thread} client:only="svelte" />
 </section>
+
+<!-- Bluesky embed script -->
+<script is:inline src="https://embed.bsky.app/static/embed.js" async></script>
+
+<style>
+    /* Ensure the embed fits within the card */
+    .bluesky-embed {
+        margin: 0;
+        max-width: 100%;
+    }
+</style>
