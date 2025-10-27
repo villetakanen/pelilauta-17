@@ -21,7 +21,7 @@ async function getAuthenticatedAgent(): Promise<AtpAgent> {
   const password =
     process.env.SECRET_bsky_password ?? import.meta.env.SECRET_bsky_password;
 
-  logDebug(identifier, password);
+  logDebug('Bluesky login attempt for handle:', identifier);
 
   if (!identifier || !password) {
     logError(
@@ -92,7 +92,7 @@ export async function postToBluesky(
       hasEmbed: !!postRecord.embed,
     });
 
-    if (!postRecord === undefined || !postRecord.text) {
+    if (!postRecord || !postRecord.text) {
       logError('Post record is undefined or empty. Cannot post to Bluesky.');
       return null;
     }

@@ -1,10 +1,15 @@
 ---
+import { isAdmin } from '@firebase/server/admin';
+import { verifySession } from '@utils/server/auth/verifySession';
+import { fetchBskyPost } from '@utils/server/bsky/fetchBskyPost';
 import type { Thread } from 'src/schemas/ThreadSchema';
 import { toDisplayString } from 'src/utils/contentHelpers';
 import { t } from 'src/utils/i18n';
 import ProfileLink from '../../svelte/app/ProfileLink.svelte';
 import ReactionButton from '../../svelte/app/ReactionButton.svelte';
+import BlueskyCard from '../../svelte/threads/BlueskyCard.svelte';
 import ThreadInfoActions from '../../svelte/threads/ThreadInfoActions.svelte';
+import BlueskyPostCard from '../app/BlueskyPostCard.astro';
 import EntryTagsSection from '../app/EntryTagsSection.astro';
 
 interface Props {
@@ -15,76 +20,65 @@ const { thread } = Astro.props;
 
 const author = `${thread?.owners[0] || ''}`;
 const channel = `${thread?.channel || '-'}`;
+
+// Check if current user is author or admin
+const session = await verifySession(Astro);
+const currentUid = session?.uid || '';
+const userIsAdmin = currentUid ? await isAdmin(currentUid) : false;
+const isAuthorOrAdmin = thread.owners.includes(currentUid) || userIsAdmin;
+
+// Check if Bluesky feature is enabled
+const bskyFeatureEnabled = import.meta.env.FEATURE_BSKY === 'true';
+
+// Fetch Bluesky post data if we have a post URI
+let blueskyPost = null;
+if (thread.blueskyPostUri) {
+  blueskyPost = await fetchBskyPost(thread.blueskyPostUri);
+}
 ---
 
-<section class="column-s">
-    <cn-card title={t("threads:info.title")} noun="discussion">
-        <p>
-            {toDisplayString(thread.flowTime)}
-        </p>
-        <p class="mb-0">
-            <ProfileLink uid={author} client:only="svelte" />
-            {t("threads:info.inTopic")}
-            <a href={`/channels/${channel}`} class="link">
-                {channel.charAt(0).toUpperCase() + channel.slice(1)}
-            </a>
-            <div slot="actions" class="toolbar items-center">
-                <div class="flex align-center">
-                    <cn-icon noun="send" small></cn-icon>
-                    <span class="text-caption decoration-none">
-                        {thread.replyCount}
-                    </span>
-                </div>
-                <ReactionButton
-                    target="thread"
-                    key={thread.key}
-                    title={thread.title}
-                    client:only="svelte"
-                />
-            </div>
-        </p>
-    </cn-card>
+<section class="column-s flex flex-col">
+  <cn-card title={t("threads:info.title")} noun="discussion">
+    <p>
+      {toDisplayString(thread.flowTime)}
+    </p>
+    <p class="mb-0">
+      <ProfileLink uid={author} client:only="svelte" />
+      {t("threads:info.inTopic")}
+      <a href={`/channels/${channel}`} class="link">
+        {channel.charAt(0).toUpperCase() + channel.slice(1)}
+      </a>
+      <div slot="actions" class="toolbar items-center">
+        <div class="flex align-center">
+          <cn-icon noun="send" small></cn-icon>
+          <span class="text-caption decoration-none">
+            {thread.replyCount}
+          </span>
+        </div>
+        <ReactionButton
+          target="thread"
+          key={thread.key}
+          title={thread.title}
+          client:only="svelte"
+        />
+      </div>
+    </p>
+  </cn-card>
 
-    {thread.tags && <EntryTagsSection tags={thread.tags} />}
+  {thread.tags && <EntryTagsSection tags={thread.tags} />}
 
-    <!-- Bluesky Embed -->
-    {
-        thread.blueskyPostUrl && (
-            <cn-card
-                title={t("threads:info.blueskyTitle")}
-                noun="share"
-                class="mt-2"
-            >
-                <blockquote
-                    class="bluesky-embed"
-                    data-bluesky-uri={
-                        thread.blueskyPostUri || thread.blueskyPostUrl
-                    }
-                >
-                    <p>
-                        <a
-                            href={thread.blueskyPostUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            {t("threads:info.viewOnBluesky")}
-                        </a>
-                    </p>
-                </blockquote>
-            </cn-card>
-        )
-    }
+  {
+    blueskyPost && thread.blueskyPostUrl ? (
+      <BlueskyPostCard post={blueskyPost} postUrl={thread.blueskyPostUrl} />
+    ) : (
+      <BlueskyCard
+        thread={thread}
+        isAuthorOrAdmin={isAuthorOrAdmin}
+        bskyFeatureEnabled={bskyFeatureEnabled}
+        client:only="svelte"
+      />
+    )
+  }
 
-    <ThreadInfoActions {thread} client:only="svelte" />
+  <ThreadInfoActions {thread} client:only="svelte" />
 </section>
-
-<!-- Bluesky embed script -->
-<script is:inline src="https://embed.bsky.app/static/embed.js" async></script>
-
-<style>
-    /* Ensure the embed fits within the card */
-    .bluesky-embed {
-        margin: 0;
-        max-width: 100%;
-    }
-</style>

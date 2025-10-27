@@ -78,4 +78,12 @@ export const threads: Locale = {
   snacks: {
     replyDeleted: 'Message deleted',
   },
+  share: {
+    description:
+      'Share this thread to the Bluesky community and reach more players.',
+    button: 'Share on Bluesky',
+    sharing: 'Sharing...',
+    success: 'Thread shared successfully! Page will refresh...',
+    error: 'Error sharing',
+  },
 };

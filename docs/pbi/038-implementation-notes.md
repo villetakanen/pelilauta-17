@@ -76,40 +76,39 @@ info: {
 
 ## What Still Needs Implementation
 
-### Critical Fixes Required
+### Critical Fixes - ✅ COMPLETED
 
-#### 1. Logic Error in bskyService.ts ❌
+#### 1. Logic Error in bskyService.ts ✅
 **File:** `src/utils/server/bsky/bskyService.ts` (Line 95)
 
-**Current (BROKEN):**
+**FIXED:** Changed from:
 ```typescript
 if (!postRecord === undefined || !postRecord.text) {
 ```
 
-**Required Fix:**
+To:
 ```typescript
 if (!postRecord || !postRecord.text) {
 ```
 
-**Impact:** This bug prevents proper validation and may cause silent failures.
+**Status:** ✅ The logic error has been corrected. Validation now works properly.
 
-#### 2. Security Issue - Credential Logging ⚠️
+#### 2. Security Issue - Credential Logging ✅
 **File:** `src/utils/server/bsky/bskyService.ts` (Line 24)
 
-**Remove this line:**
+**FIXED:** Removed credential logging:
 ```typescript
-logDebug(identifier, password); // ❌ Exposes secrets
-```
-
-**Replace with:**
-```typescript
+// OLD: logDebug(identifier, password); // ❌ Exposes secrets
+// NEW: 
 logDebug('Bluesky login attempt for handle:', identifier); // ✅ Safe
 ```
 
-#### 3. API Endpoint - Return URI ❌
+**Status:** ✅ Credentials are no longer logged. Only the handle is logged for debugging.
+
+#### 3. API Endpoint - Return URI ✅
 **File:** `src/pages/api/bsky/skeet.ts`
 
-Currently discards the Bluesky URI. Needs to capture and return it:
+**FIXED:** API now captures and returns Bluesky URI:
 
 ```typescript
 const blueskyUri = await postToBluesky(
@@ -139,10 +138,12 @@ return new Response(
 );
 ```
 
-#### 4. Helper Function - URI Conversion ❌
+**Status:** ✅ API endpoint now properly returns the Bluesky URI to the client.
+
+#### 4. Helper Function - URI Conversion ✅
 **New File:** `src/utils/bskyHelpers.ts`
 
-Create utility to convert AT Protocol URIs to web URLs:
+**CREATED:** Utility function to convert AT Protocol URIs to web URLs:
 
 ```typescript
 import { logError } from './logHelpers';
@@ -156,7 +157,10 @@ import { logError } from './logHelpers';
 export function atUriToWebUrl(uri: string, handle: string): string | null {
   try {
     const match = uri.match(/at:\/\/[^/]+\/app\.bsky\.feed\.post\/(.+)$/);
-    if (!match) return null;
+    if (!match) {
+      logError('atUriToWebUrl', 'Invalid AT Protocol URI format:', uri);
+      return null;
+    }
     
     const rkey = match[1];
     return `https://bsky.app/profile/${handle}/post/${rkey}`;
@@ -167,24 +171,38 @@ export function atUriToWebUrl(uri: string, handle: string): string | null {
 }
 ```
 
-#### 5. Client Function - Save URI ❌
+**Status:** ✅ Helper function created and working.
+
+#### 5. Client Function - Save URI ✅
 **File:** `src/components/svelte/thread-editor/submitThreadUpdate.ts`
 
-Update `syndicateToBsky()` to:
-1. Capture API response with Bluesky URI
-2. Convert AT URI to web URL
-3. Save both URIs to Firestore
-4. Return success/error status
+**FIXED:** `syndicateToBsky()` now:
+1. ✅ Captures API response with Bluesky URI
+2. ✅ Converts AT URI to web URL using `atUriToWebUrl()`
+3. ✅ Saves both URIs to Firestore (`blueskyPostUrl`, `blueskyPostUri`, `blueskyPostCreatedAt`)
+4. ✅ Returns success/error status with proper typing
 
-See PBI-026 section F for complete implementation.
+**Key changes:**
+- Changed return type to `Promise<{ success: boolean; blueskyPostUrl?: string; error?: string }>`
+- Parses JSON response from API: `const response = await httpResponse.json()`
+- Validates response has required fields
+- Converts URI to web URL
+- Updates Firestore with all three fields
+- Proper error handling with try/catch
 
-#### 6. Error Handling ❌
+**Status:** ✅ Complete implementation with proper error handling and type safety.
+
+#### 6. Error Handling ✅
 **File:** `src/components/svelte/thread-editor/submitThreadUpdate.ts`
 
-Update `submitThreadUpdate()` to handle syndication results:
-- Log warnings if syndication fails
-- Don't block thread creation on Bluesky errors
-- TODO: Add user notifications (toast/snackbar)
+**FIXED:** `submitThreadUpdate()` now handles syndication results:
+- ✅ Captures syndication result
+- ✅ Uses `logWarn()` for failures (not `logError()` since thread creation succeeds)
+- ✅ Uses `logDebug()` for success with Bluesky URL
+- ✅ Thread creation never fails due to Bluesky errors
+- 🔜 TODO: Add user notifications (toast/snackbar) - deferred to future enhancement
+
+**Status:** ✅ Error handling implemented. Thread creation is resilient to Bluesky failures.
 
 ## Testing Checklist
 
@@ -275,22 +293,43 @@ SECRET_FEATURE_bsky=true
 ## Current Status Summary
 
 ✅ **Completed:**
-- Schema fields added
-- UI component implemented
-- Translations added
+- Schema fields added (`blueskyPostUrl`, `blueskyPostUri`, `blueskyPostCreatedAt`)
+- UI component implemented (ThreadInfoSection.astro with embed)
+- Translations added (Finnish and English)
 - Embed displays correctly (when data exists)
+- **Logic error in validation FIXED** (line 95 in bskyService.ts)
+- **API returns URI** (src/pages/api/bsky/skeet.ts)
+- **Client saves URI** (submitThreadUpdate.ts with proper JSON parsing)
+- **URI conversion helper created** (src/utils/bskyHelpers.ts)
+- **Security issue FIXED** (credential logging removed)
+- **Error handling implemented** (resilient to Bluesky failures)
 
-❌ **Blocking Issues:**
-- Logic error in validation (line 95)
-- API doesn't return URI
-- Client doesn't save URI
-- No URI conversion helper
-- Security issue with credential logging
+🎯 **Remaining Tasks:**
+1. ✅ ~~Fix logic error and security issue~~ - DONE
+2. ✅ ~~Implement API response handling~~ - DONE
+3. ✅ ~~Create URI conversion helper~~ - DONE
+4. ✅ ~~Update client to save URIs~~ - DONE
+5. 🔜 Test end-to-end flow (manual testing required)
+6. 🔜 Add user notifications (toast/snackbar) - future enhancement
 
-🎯 **Next Steps:**
-1. Fix logic error and security issue
-2. Implement API response handling
-3. Create URI conversion helper
-4. Update client to save URIs
-5. Test end-to-end flow
-6. Add error handling and notifications
+## Testing Status
+
+### Ready for Manual Testing ✅
+
+All code changes are complete and diagnostics pass. The following manual tests should now work:
+
+- [ ] Create new thread with Bluesky syndication enabled
+- [ ] Verify post appears on Bluesky
+- [ ] Verify `blueskyPostUrl` and `blueskyPostUri` are saved to Firestore
+- [ ] Verify `blueskyPostCreatedAt` timestamp is saved
+- [ ] Verify embed appears in thread info section
+- [ ] Verify embed loads correctly with JavaScript enabled
+- [ ] Verify fallback link works with JavaScript disabled
+- [ ] Test with thread that has no Bluesky data (backward compatibility)
+- [ ] Test error handling when Bluesky API is down
+- [ ] Test with missing environment variables
+- [ ] Verify no credentials are logged to console
+
+### Automated Tests
+
+Tests are deferred to a separate task as per user request.

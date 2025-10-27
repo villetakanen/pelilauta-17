@@ -5,7 +5,10 @@ noun: 'monsters'
 ---
 ## Version 18
 
-### 18.9.x (ongoing)
+### 18.10.0 (ongoing)
+* feat(threads): Bluesky posts can be added retroactively for a thread
+* feat(threads): Show BSKY stats (likes, reposts, replies) on thread page for BSKY linked threads
+* fix(threads): BSKY post creation flow bug fixes and polish
 * fix(sites): clocks-pages import cn-story-clock web component, so its available locally
 * fix: Main footer area contrast improved for better accessibility
 * fix: Thread and Site card images are now properly cached on CDN and served with correct caching headers
@@ -51,7 +54,7 @@ noun: 'monsters'
 - fix(threads): Channel admin tool channel name changing ux cleanup
 
 ### 18.7.0 (01.10.2025)
-- feat(threads): Search a channel for threads by title and content using Algolia. 
+- feat(threads): Search a channel for threads by title and content using Algolia.
 - feat(threads): Thread list infinite scroll instead of pagination
 - fix: moved patch-overrides to cyan-design-system to main design system
 - fix: latest cyan design system beta fixes and patches
@@ -113,7 +116,7 @@ noun: 'monsters'
 - fix: Settings tool no longer subscribes to firebase directly, instead it uses the nanostore profile data. Expected to fix Sentry:PELILAUTA-4K, caused by firebase client side error only visible in the said route.
 - fix: Removed deprecated authz code from SettingsTool
 - fix: Removed extraneous DELETE /api/session calls caused by a race condition in the auth store (PBI 014)
-- fix: Cyan Design System 4.0.0 latest beta patches 
+- fix: Cyan Design System 4.0.0 latest beta patches
 - fix: Libary updates for CVS issues and security patches
 - fix: Library page auth redirect moved to server-side to prevent content flash for unauthenticated users (PBI 011)
 - fix: Restored and simplified lefthook commit hooks and commitlint configuration for faster local checks (PBI 012)
@@ -125,7 +128,7 @@ noun: 'monsters'
 - fix: User settings page uses SSR guard to hide the page from unauthenticated users (more of an aesthetic fix, as you can't have settings to access without being logged in)
 
 ### 18.0.8 (8.9.2025)
-- fix: Page edit bypasses cache by adding `flowtime` query param to URL 
+- fix: Page edit bypasses cache by adding `flowtime` query param to URL
 - fix: Cyan Design System BREAKING CHANGES: remove `Open sans` font usage, replace with `Lato` font universally.
 - fix: Cyan Design System beta updates and fixes
 - fix: Optimized font loading for better load-times.
@@ -137,7 +140,7 @@ noun: 'monsters'
 - fix: Add and update some English and Finnish locale strings related to characters, tools and page UI
 
 ### 18.0.0-beta.2 (29.8.2025)
-- fix: Move thread creation to server-side to ensure authenticated, stable thread creation 
+- fix: Move thread creation to server-side to ensure authenticated, stable thread creation
 - fix: API tests are no longer part of the default test suite; improved test coverage and harnessing
 - fix: Adding comments now works correctly
 
@@ -148,4 +151,3 @@ noun: 'monsters'
 
 
 See: https://github.com/villetakanen/pelilauta-16 for older releases.
-

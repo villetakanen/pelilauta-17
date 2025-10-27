@@ -2,7 +2,7 @@ import { authedPost } from 'src/firebase/client/apiClient';
 import { type Channel, ChannelSchema } from 'src/schemas/ChannelSchema';
 import { PROFILES_COLLECTION_NAME } from 'src/schemas/ProfileSchema';
 import type { Thread } from 'src/schemas/ThreadSchema';
-import { logError } from 'src/utils/logHelpers';
+import { logDebug, logError, logWarn } from 'src/utils/logHelpers';
 
 async function getProfile(uid: string) {
   const { db } = await import('../../../firebase/client');
@@ -35,7 +35,7 @@ async function getProfile(uid: string) {
 export async function syndicateToBsky(
   thread: Thread,
   uid: string,
-): Promise<void> {
+): Promise<{ success: boolean; blueskyPostUrl?: string; error?: string }> {
   const profile = await getProfile(uid);
 
   // Fetch channels from the server
@@ -50,19 +50,64 @@ export async function syndicateToBsky(
     channels.find((channel: Channel) => channel.slug === thread.channel)
       ?.name || thread.channel;
 
-  if (!thread.markdownContent) return;
+  if (!thread.markdownContent) {
+    return { success: false, error: 'No content to syndicate' };
+  }
 
   const text = `${profile?.nick || 'Pelilauta'} loi uuden ketjun aiheessa: ${channelTitle}\n\n #roolipelit #pelilauta #roolipelsky`;
   const linkUrl = `https://pelilauta.social/threads/${thread.key}`;
   const linkTitle = thread.title;
   const linkDescription = `${thread.markdownContent.substring(0, 220)}...`;
 
-  await authedPost(`${window.location.origin}/api/bsky/skeet`, {
-    text,
-    linkUrl,
-    linkTitle,
-    linkDescription,
-  });
+  try {
+    // Post to Bluesky and capture the response
+    const httpResponse = await authedPost(
+      `${window.location.origin}/api/bsky/skeet`,
+      {
+        text,
+        linkUrl,
+        linkTitle,
+        linkDescription,
+      },
+    );
+
+    const response = await httpResponse.json();
+
+    if (!response.success || !response.blueskyUri) {
+      logError('syndicateToBsky', 'Failed to post to Bluesky:', response.error);
+      return { success: false, error: response.error || 'Unknown error' };
+    }
+
+    // Convert AT Protocol URI to web URL
+    const { atUriToWebUrl } = await import('src/utils/bskyHelpers');
+    const blueskyPostUrl = atUriToWebUrl(
+      response.blueskyUri,
+      profile?.username || 'pelilauta.social',
+    );
+
+    if (!blueskyPostUrl) {
+      logError('syndicateToBsky', 'Failed to convert Bluesky URI to URL');
+      return { success: false, error: 'Failed to generate post URL' };
+    }
+
+    // Save Bluesky data to Firestore
+    const { db } = await import('../../../firebase/client');
+    const { doc, updateDoc } = await import('firebase/firestore');
+    const { THREADS_COLLECTION_NAME } = await import(
+      'src/schemas/ThreadSchema'
+    );
+
+    await updateDoc(doc(db, THREADS_COLLECTION_NAME, thread.key), {
+      blueskyPostUrl,
+      blueskyPostUri: response.blueskyUri,
+      blueskyPostCreatedAt: new Date(),
+    });
+
+    return { success: true, blueskyPostUrl };
+  } catch (error) {
+    logError('syndicateToBsky', 'Exception during Bluesky syndication:', error);
+    return { success: false, error: 'Network or server error' };
+  }
 }
 
 export async function submitThreadUpdate(
@@ -96,7 +141,25 @@ export async function submitThreadUpdate(
     key: threadKey,
   } as Thread;
 
-  await syndicateToBsky(postedThread, data.owners[0]);
+  // Syndicate to Bluesky and handle the result
+  const syndicationResult = await syndicateToBsky(postedThread, data.owners[0]);
+
+  if (!syndicationResult.success) {
+    // Don't fail the entire operation, just log the error
+    logWarn(
+      'submitThreadUpdate',
+      'Bluesky syndication failed:',
+      syndicationResult.error,
+    );
+    // TODO: Show user notification that syndication failed
+  } else {
+    logDebug(
+      'submitThreadUpdate',
+      'Bluesky syndication succeeded:',
+      syndicationResult.blueskyPostUrl,
+    );
+    // TODO: Show user notification with link to Bluesky post
+  }
 
   return threadKey;
 }
