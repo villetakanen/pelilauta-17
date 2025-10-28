@@ -69,7 +69,11 @@ if (thread.blueskyPostUri) {
 
   {
     blueskyPost && thread.blueskyPostUrl ? (
-      <BlueskyPostCard post={blueskyPost} postUrl={thread.blueskyPostUrl} />
+      <BlueskyPostCard
+        post={blueskyPost}
+        postUrl={thread.blueskyPostUrl}
+        server:defer
+      />
     ) : (
       <BlueskyCard
         thread={thread}

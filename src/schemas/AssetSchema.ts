@@ -1,31 +1,20 @@
 import { logError } from 'src/utils/logHelpers';
 import { z } from 'zod';
+import { LICENSE_KEYS, LicenseSchema } from './LicenseSchema';
 
 export const ASSETS_COLLECTION_NAME = 'assets';
 
-export const ASSET_LICENSES = z
-  .enum([
-    '0',
-    'cc-by',
-    'cc-by-sa',
-    'cc-by-nc',
-    'cc-by-nc-sa',
-    'cc0',
-    'public-domain',
-    'OGL',
-  ])
-  .default('0');
+/**
+ * @deprecated Use LICENSE_KEYS from LicenseSchema instead
+ * Kept for backward compatibility during migration
+ */
+export const ASSET_LICENSES_KEYS = LICENSE_KEYS;
 
-export const ASSET_LICENSES_KEYS = [
-  '0',
-  'cc-by',
-  'cc-by-sa',
-  'cc-by-nc',
-  'cc-by-nc-sa',
-  'cc0',
-  'public-domain',
-  'OGL',
-];
+/**
+ * @deprecated Use LicenseSchema from LicenseSchema instead
+ * Kept for backward compatibility during migration
+ */
+export const ASSET_LICENSES = LicenseSchema;
 
 export const AssetSchema = z.object({
   url: z.string(),
