@@ -3,7 +3,9 @@
 **Status:** Ready for Development  
 **Priority:** Medium  
 **Estimated Effort:** 10-14 hours  
-**Labels:** `refactoring`, `assets`, `technical-debt`, `site-assets`, `licensing`
+**Labels:** `refactoring`, `assets`, `technical-debt`, `site-assets`, `licensing`, `backwards-compatible`
+
+**Note:** All changes maintain data backwards-compatibility. Phase 4 involves internal API signature changes only (not a conventional-commits BREAKING CHANGE).
 
 ## User Story
 
@@ -816,20 +818,24 @@ export async function deleteSiteAsset(
 
 **Status:** Complete - See `docs/pbi/039-phase2-implementation.md` for details
 
-### Phase 3: Add Shared Upload Utilities ⏳ NEXT
-1. Create `assetUploadHelpers.ts`
-2. Add unit tests for utilities
-3. No breaking changes yet
+### Phase 3: Add Shared Upload Utilities ✅ COMPLETE
+1. ✅ Create `assetUploadHelpers.ts` with validation functions
+2. ✅ Add `validateFileSize()` and `validateFileType()` functions
+3. ✅ Add `generateStoragePath()` function
+4. ✅ Add `uploadToStorage()` function
+5. ✅ Add `getImageDimensions()` function
+6. ✅ Create comprehensive test suite (34 tests)
+7. ✅ No breaking changes
 
-**Blockers:** None - ready to implement
+**Status:** Complete - See `docs/pbi/039-phase3-implementation.md` for details
 
-### Phase 4: Update Upload Functions ⚠️ BREAKING CHANGES
-1. Update `addAssetToSite()` signature (breaking change)
+### Phase 4: Update Upload Functions (Internal API Refactor) ⏳ NEXT
+1. Update `addAssetToSite()` signature (internal API change)
 2. Update `addAssetToThread()` to use utilities
 3. Update all call sites to pass `uploadedBy`
 4. Deploy
 
-**Requires:** Phase 3 completion
+**Blockers:** None - ready to implement
 
 ### Phase 5: Make Schema Fields Required ⏳ FUTURE
 1. Run Firestore migration to backfill missing fields on existing assets
@@ -1158,18 +1164,29 @@ interface SiteMetadata {
 - **Security:** File type validation prevents malicious uploads (frontend only - backend rules needed)
 - **Thread Assets:** Thread uploads remain server-side due to transactional constraints (see file-upload-analysis.md)
 
-## Breaking Changes
+## API Changes
 
-### Immediate (Phase 4)
-- `addAssetToSite()` signature changes to require `uploadedBy: string` parameter
-- Components calling `addAssetToSite()` must pass user ID from `$uid` store
-- Asset metadata now requires `storagePath`, `mimetype`, `size`, `uploadedAt`, `uploadedBy`
+### Phase 4: Internal API Refactor (Non-Breaking from Data Perspective)
+
+**Note:** This is NOT a conventional-commits "BREAKING CHANGE" because:
+- ✅ **Data schema remains backwards-compatible** (all new fields are optional)
+- ✅ **No external API changes** (internal helper function only)
+- ✅ **Legacy data continues to work** with new code
+- ✅ **New data works** with legacy code (extra fields ignored)
+- ✅ **No database migration required** for system to function
+- ⚠️ **Internal function signature changes** (3 call sites in our codebase)
+
+**Changes:**
+- `addAssetToSite()` signature adds required `uploadedBy: string` parameter
+- Components calling `addAssetToSite()` must pass user ID from `$uid` store (3 call sites)
+- New assets will include full metadata (`storagePath`, `mimetype`, `size`, `uploadedAt`, `uploadedBy`)
+- Legacy assets continue to work (missing fields are optional in schema)
 
 ### Future (Phase 6, after migration period)
 - `ASSET_LICENSES` and `ASSET_LICENSES_KEYS` will be removed from `AssetSchema`
 - All imports must use `LICENSE_KEYS` and `LicenseSchema` from `LicenseSchema.ts`
 
-All call sites have been identified and will be updated in Phase 4 of the migration.
+**Impact:** 3 internal call sites need updating (TypeScript compiler will identify them). Can be completed in a single atomic commit.
 
 ## Benefits of Shared License Schema
 

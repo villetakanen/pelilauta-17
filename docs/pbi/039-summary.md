@@ -88,9 +88,10 @@ Comprehensive Product Backlog Item covering:
 - Create `assetUploadHelpers.ts`
 - Validation, path generation, dimension extraction
 
-### Phase 4: Update Upload Functions ⚠️
-- Breaking change: `addAssetToSite()` requires `uploadedBy`
-- All components updated to pass user ID
+### Phase 4: Update Upload Functions (Internal API Refactor) ⏳
+- Internal API change: `addAssetToSite()` requires `uploadedBy` parameter
+- All components updated to pass user ID (3 call sites)
+- **Not a conventional-commits BREAKING CHANGE** - data remains backwards-compatible
 
 ### Phase 5: Make Fields Required ⏳
 - Run Firestore migration script
@@ -194,16 +195,19 @@ To implement the full PBI:
 ## Risk Assessment
 
 **Low Risk:**
-- Backward compatibility maintained throughout
+- Data backwards-compatibility maintained throughout all phases
 - Gradual migration allows testing between phases
-- No breaking changes until Phase 4 (clearly marked)
-- Existing assets continue to work
+- Phase 4 is internal API refactor only (3 call sites, single commit)
+- Existing assets continue to work with new code
+- New assets work with legacy code (extra fields ignored)
 
 **Medium Risk:**
-- Phase 4 breaking changes require all components updated simultaneously
+- Phase 4 requires updating 3 call sites simultaneously (TypeScript enforces this)
 - Firestore migration script in Phase 5 needs careful testing
 
 **Mitigation:**
 - Comprehensive testing strategy defined
 - Migration examples provided for developers
 - Deprecated exports keep old code working during transition
+- TypeScript compiler identifies all call sites that need updating
+- All changes can be made in single atomic commit
