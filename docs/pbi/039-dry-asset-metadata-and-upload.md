@@ -799,39 +799,53 @@ export async function deleteSiteAsset(
 
 ## Migration Plan
 
-### Phase 1: Create Shared License Schema (Non-breaking)
-1. Create `LicenseSchema.ts` with shared constants
-2. Update `AssetSchema.ts` to re-export for backward compatibility
-3. Deploy - all existing imports continue to work
-4. Update component imports gradually (optional during this phase)
+### Phase 1: Create Shared License Schema (Non-breaking) ✅ COMPLETE
+1. ✅ Create `LicenseSchema.ts` with shared constants
+2. ✅ Update `AssetSchema.ts` to re-export for backward compatibility
+3. ✅ Deploy - all existing imports continue to work
+4. ✅ Update component imports gradually (optional during this phase)
 
-### Phase 2: Add New Asset Metadata Fields (Non-breaking)
-1. Update `AssetSchema` to make new fields optional with defaults
-2. Deploy schema changes
-3. Existing data continues to work
+**Status:** Complete - See implementation in `src/schemas/LicenseSchema.ts`
 
-### Phase 3: Add Shared Upload Utilities
+### Phase 2: Add New Asset Metadata Fields (Non-breaking) ✅ COMPLETE
+1. ✅ Update `AssetSchema` to make new fields optional with defaults
+2. ✅ Add `createAssetMetadata()` helper function
+3. ✅ Create comprehensive test suite (18 tests)
+4. ✅ Deploy schema changes
+5. ✅ Existing data continues to work
+
+**Status:** Complete - See `docs/pbi/039-phase2-implementation.md` for details
+
+### Phase 3: Add Shared Upload Utilities ⏳ NEXT
 1. Create `assetUploadHelpers.ts`
 2. Add unit tests for utilities
 3. No breaking changes yet
 
-### Phase 4: Update Upload Functions
+**Blockers:** None - ready to implement
+
+### Phase 4: Update Upload Functions ⚠️ BREAKING CHANGES
 1. Update `addAssetToSite()` signature (breaking change)
 2. Update `addAssetToThread()` to use utilities
 3. Update all call sites to pass `uploadedBy`
 4. Deploy
 
-### Phase 5: Make Schema Fields Required
+**Requires:** Phase 3 completion
+
+### Phase 5: Make Schema Fields Required ⏳ FUTURE
 1. Run Firestore migration to backfill missing fields on existing assets
 2. Update schema to make fields required
 3. Deploy
 
-### Phase 6: Cleanup
+**Requires:** Phase 4 completion + production data migration
+
+### Phase 6: Cleanup ⏳ FUTURE
 1. Remove deprecated `ASSET_LICENSES` and `ASSET_LICENSES_KEYS` exports
 2. Update all imports to use `LicenseSchema` directly
 3. Remove old duplicated validation code
 4. Update tests
 5. Update documentation
+
+**Requires:** All components migrated to new imports
 
 ## Testing Strategy
 
