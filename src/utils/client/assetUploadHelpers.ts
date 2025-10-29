@@ -1,7 +1,6 @@
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { app } from 'src/firebase/client';
-import { logDebug, logError } from 'src/utils/logHelpers';
-import { v4 as uuidv4 } from 'uuid';
+import { app } from "src/firebase/client";
+import { logDebug, logError } from "src/utils/logHelpers";
+import { v4 as uuidv4 } from "uuid";
 
 /**
  * Maximum allowed file size for asset uploads (10MB)
@@ -64,7 +63,7 @@ export function validateFileSize(
  */
 export function validateFileType(file: File, allowedTypes: string[]): void {
   const isAllowed = allowedTypes.some((pattern) => {
-    if (pattern.endsWith('/*')) {
+    if (pattern.endsWith("/*")) {
       const prefix = pattern.slice(0, -2);
       return file.type.startsWith(prefix);
     }
@@ -73,7 +72,7 @@ export function validateFileType(file: File, allowedTypes: string[]): void {
 
   if (!isAllowed) {
     throw new Error(
-      `File type "${file.type}" is not allowed. Allowed types: ${allowedTypes.join(', ')}`,
+      `File type "${file.type}" is not allowed. Allowed types: ${allowedTypes.join(", ")}`,
     );
   }
 }
@@ -91,7 +90,7 @@ export function validateFileType(file: File, allowedTypes: string[]): void {
  * // Returns: "Sites/site123/550e8400-e29b-41d4-a716-446655440000-image.png"
  */
 export function generateStoragePath(
-  category: 'Sites' | 'Threads' | 'Profiles',
+  category: "Sites" | "Threads" | "Profiles",
   categoryId: string,
   filename: string,
 ): string {
@@ -116,21 +115,23 @@ export async function uploadToStorage(
   file: File,
   storagePath: string,
 ): Promise<StorageUploadResult> {
-  const { getStorage } = await import('firebase/storage');
+  const { getStorage, ref, uploadBytes, getDownloadURL } = await import(
+    "firebase/storage"
+  );
   const storage = getStorage(app);
   const storageRef = ref(storage, storagePath);
 
   try {
-    logDebug('uploadToStorage', `Uploading to: ${storagePath}`);
+    logDebug("uploadToStorage", `Uploading to: ${storagePath}`);
 
     await uploadBytes(storageRef, file);
     const downloadURL = await getDownloadURL(storageRef);
 
-    logDebug('uploadToStorage', `Upload successful: ${downloadURL}`);
+    logDebug("uploadToStorage", `Upload successful: ${downloadURL}`);
 
     return { downloadURL, storagePath };
   } catch (error) {
-    logError('uploadToStorage', 'Upload failed:', error);
+    logError("uploadToStorage", "Upload failed:", error);
     throw error;
   }
 }
@@ -151,7 +152,7 @@ export async function uploadToStorage(
 export async function getImageDimensions(
   file: File,
 ): Promise<ImageDimensions | undefined> {
-  if (!file.type.startsWith('image/')) {
+  if (!file.type.startsWith("image/")) {
     return undefined;
   }
 
