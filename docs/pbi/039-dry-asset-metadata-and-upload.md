@@ -829,15 +829,17 @@ export async function deleteSiteAsset(
 
 **Status:** Complete - See `docs/pbi/039-phase3-implementation.md` for details
 
-### Phase 4: Update Upload Functions (Internal API Refactor) ⏳ NEXT
-1. Update `addAssetToSite()` signature (internal API change)
-2. Update `addAssetToThread()` to use utilities
-3. Update all call sites to pass `uploadedBy`
-4. Deploy
+### Phase 4: Update Upload Functions (Internal API Refactor) ✅ COMPLETE
+1. ✅ Update `addAssetToSite()` signature (internal API change)
+2. ✅ Update `addAssetToThread()` to use utilities
+3. ✅ Update all call sites to pass `uploadedBy` (2 components)
+4. ✅ Update `deleteSiteAsset()` to match spec
+5. ✅ All tests pass (297 tests)
+6. ✅ Build succeeds with no errors
 
-**Blockers:** None - ready to implement
+**Status:** Complete - See `docs/pbi/039-phase4-implementation.md` for details
 
-### Phase 5: Make Schema Fields Required ⏳ FUTURE
+### Phase 5: Make Schema Fields Required ⏳ NEXT
 1. Run Firestore migration to backfill missing fields on existing assets
 2. Update schema to make fields required
 3. Deploy

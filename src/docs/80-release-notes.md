@@ -5,9 +5,10 @@ noun: 'monsters'
 ---
 ## Version 18
 
-### 18.10.0 (ongoing)
+### 18.10.0 (29.10.2025)
 * feat(threads): Bluesky posts can be added retroactively for a thread
 * feat(threads): Show BSKY stats (likes, reposts, replies) on thread page for BSKY linked threads
+* fix: Asset uploads for threads, sites and avatars now all use standardized schema for metadata and storage paths
 * fix(threads): BSKY post creation flow bug fixes and polish
 * fix(sites): clocks-pages import cn-story-clock web component, so its available locally
 * fix: Main footer area contrast improved for better accessibility

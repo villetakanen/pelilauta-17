@@ -93,7 +93,7 @@ export function createAssetMetadata(
   uploadedBy: string,
   additionalData?: Partial<Asset>,
 ): Asset {
-  return parseAsset({
+  const metadata: Record<string, unknown> = {
     url,
     storagePath,
     name: additionalData?.name || file.name,
@@ -103,7 +103,16 @@ export function createAssetMetadata(
     size: file.size,
     uploadedAt: new Date().toISOString(),
     uploadedBy,
-    width: additionalData?.width,
-    height: additionalData?.height,
-  });
+  };
+
+  // Only include width and height if they are defined (not undefined)
+  // Firestore doesn't accept undefined values
+  if (additionalData?.width !== undefined) {
+    metadata.width = additionalData.width;
+  }
+  if (additionalData?.height !== undefined) {
+    metadata.height = additionalData.height;
+  }
+
+  return parseAsset(metadata);
 }

@@ -15,36 +15,26 @@ const { site }: Props = $props();
 const visible = $derived.by(() => site.owners.includes($uid));
 
 async function uploadFiles(files: FileList) {
+  if (!$uid) {
+    logWarn('UploadAssetFab', 'Cannot upload: user not authenticated');
+    return;
+  }
+
   for (const file of files) {
-    if (file.type.startsWith('image/')) {
-      const resizedFile = await resizeImage(file);
-      // Check the file size, reject if it's too big (e.g., 10MB)
-      if (resizedFile.size > 10 * 1024 * 1024) {
-        throw new Error('File is too big');
-      }
-      // Upload the resized file
-      await addAssetToSite(site, resizedFile);
-      pushSnack(t('site:assets.upload.success', { file: file.name }));
-    } else if (
-      file.type === 'application/pdf' ||
-      file.type === 'text/plain' ||
-      file.type === 'text/markdown'
-    ) {
-      // Handle PDF, text, and markdown files
-      console.log('PDF/Text/Markdown file:', file);
+    try {
+      let fileToUpload = file;
 
-      // Check the file size, reject if it's too big (e.g., 10MB)
-      if (file.size > 10 * 1024 * 1024) {
-        throw new Error('File is too big');
+      // Resize images before upload
+      if (file.type.startsWith('image/')) {
+        fileToUpload = await resizeImage(file);
       }
 
-      // Upload the file
-      await addAssetToSite(site, file);
+      // Upload with user ID (validation happens in addAssetToSite)
+      await addAssetToSite(site, fileToUpload, $uid);
       pushSnack(t('site:assets.upload.success', { file: file.name }));
-    } else {
-      pushSnack(
-        t('site:assets.upload.error.invalidFileType', { file: file.type }),
-      );
+    } catch (error) {
+      logWarn('UploadAssetFab', `Failed to upload ${file.name}:`, error);
+      pushSnack(t('site:assets.upload.error', { file: file.name }));
     }
   }
 }
@@ -69,18 +59,15 @@ function handleButtonClick() {
 </script>
 
 {#if visible}
-<input
-  id="file-input-fab"
-  type="file"
-  onchange={handleFileChange}
-  style='display: none'
-  accept="image/*,video/*,audio/*,application/pdf,application/zip"
-/>
-<button 
-  class="fab" 
-  onclick={handleButtonClick}
-  type="button">
-  <cn-icon noun="assets"></cn-icon>
-  <span>{t('actions:upload')}</span>
-</button>
+  <input
+    id="file-input-fab"
+    type="file"
+    onchange={handleFileChange}
+    style="display: none"
+    accept="image/*,video/*,audio/*,application/pdf,application/zip"
+  />
+  <button class="fab" onclick={handleButtonClick} type="button">
+    <cn-icon noun="assets"></cn-icon>
+    <span>{t("actions:upload")}</span>
+  </button>
 {/if}
