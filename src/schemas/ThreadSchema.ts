@@ -34,7 +34,7 @@ export const ThreadSchema = ContentEntrySchema.extend({
   author: z.string().optional(),
 
   // Bluesky syndication tracking
-  blueskyPostUrl: z.string().url().optional(), // https://bsky.app/profile/[handle]/post/[rkey]
+  blueskyPostUrl: z.url().optional(), // https://bsky.app/profile/[handle]/post/[rkey]
   blueskyPostUri: z.string().optional(), // at://did:plc:xxx/app.bsky.feed.post/yyy
   blueskyPostCreatedAt: z.any().optional(), // When post was created
 

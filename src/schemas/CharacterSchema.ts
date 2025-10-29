@@ -31,7 +31,7 @@ export const CharacterSchema = ContentEntrySchema.extend({
     .default({}),
 
   /** URL for the character's avatar image. */
-  avatar: z.string().url({ message: 'Invalid URL format' }).optional(),
+  avatar: z.url().optional(),
 }).describe('A player character entry.');
 
 export type Character = z.infer<typeof CharacterSchema>;
