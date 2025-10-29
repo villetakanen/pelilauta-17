@@ -51,15 +51,6 @@ async function handleShare() {
 }
 </script>
 
-ööö
-
-{#if bskyFeatureEnabled}
-  bskyFeatureEnabled
-{/if}
-{#if isAuthorOrAdmin}
-  isAuthorOrAdmin
-{/if}
-
 {#if bskyFeatureEnabled && isAuthorOrAdmin}
   <cn-card title={t("threads:info.blueskyTitle")} noun="share" class="mt-2">
     <p class="text-caption mb-2">
