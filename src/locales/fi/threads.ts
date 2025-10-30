@@ -17,6 +17,8 @@ export const threads: Locale = {
     createdAt: 'Luotu {time}',
     flowTime: 'Päivitetty {time}',
     loveCount: '{count} tykkäystä',
+    blueskyTitle: 'Bluesky',
+    viewOnBluesky: 'Katso Blueskyssa',
     actions: {
       title: 'Toiminnot',
       admin: {
@@ -73,5 +75,12 @@ export const threads: Locale = {
   },
   snacks: {
     replyDeleted: 'Viesti poistettu',
+  },
+  share: {
+    description: 'Jaa tämä ketju Bluesky-yhteisöön ja tavoita lisää pelaajia.',
+    button: 'Jaa Blueskyssa',
+    sharing: 'Jaetaan...',
+    success: 'Ketju jaettu onnistuneesti! Sivu päivittyy...',
+    error: 'Virhe jaettaessa',
   },
 };

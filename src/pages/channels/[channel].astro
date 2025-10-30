@@ -26,7 +26,6 @@ if (!channeldata) {
 
 const channel = parseChannel(channeldata);
 const title = `${channel.name} - ${t('app:shortname')}`;
-const shortTitle = channel.name;
 
 // Ensure description is SEO-optimized (150-160 chars)
 const description =
@@ -66,9 +65,10 @@ try {
   hasError = true;
 }
 ---
+
 <Page title={title} description={description}>
   <!-- Single Svelte component handles everything -->
-  <ChannelThreadList 
+  <ChannelThreadList
     channel={channel}
     initialThreads={threads}
     initialLastFlowTime={lastThreadFlowTime}
@@ -76,15 +76,21 @@ try {
     client:load
   />
 
-  <ChannelFabs client:only="svelte" slot="fab-tray"/>
+  <ChannelFabs client:only="svelte" slot="fab-tray" />
 
   <BackgroundPoster
-      slot="app-background-poster"
-      src="/myrrys-proprietary/juno-viinikka/juno-viinikka-dragon-2.webp"
-      md="/myrrys-proprietary/juno-viinikka/juno-viinikka-dragon-2-960.webp"
-    />
-  
-  <p class="text-caption text-center" style="opacity:0.44" slot="app-footer-credits">
-    Taustakuva © Juno Viinikka (<a href="https://linktr.ee/junowski">https://linktr.ee/junowski</a>)
+    slot="app-background-poster"
+    src="/myrrys-proprietary/juno-viinikka/juno-viinikka-dragon-2.webp"
+    md="/myrrys-proprietary/juno-viinikka/juno-viinikka-dragon-2-960.webp"
+  />
+
+  <p
+    class="text-caption text-center"
+    style="opacity:0.44"
+    slot="app-footer-credits"
+  >
+    Taustakuva © Juno Viinikka (<a href="https://linktr.ee/junowski"
+      >https://linktr.ee/junowski</a
+    >)
   </p>
 </Page>

@@ -1,47 +1,42 @@
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import {
+  generateStoragePath,
+  type StorageUploadResult,
+  uploadToStorage,
+  validateFileSize,
+  validateFileType,
+} from 'src/utils/client/assetUploadHelpers';
 import { logError } from 'src/utils/logHelpers';
-import { v4 as uuidv4 } from 'uuid';
-import { app } from '..';
+
+const THREAD_ASSET_ALLOWED_TYPES = ['image/*'];
 
 /**
- * Adds an asset to the given Thread in Firebase Storage.
+ * Uploads an image asset to a thread's storage location
+ * Note: This function does NOT update Firestore - caller is responsible for that
  *
- * @param site [Thread] The site to add the asset to.
- * @param file [File] The asset file to upload.
- * @returns {Promise<{ downloadURL: string, storagePath: string }>} A promise that resolves
- * with the download URL and storage path of the uploaded asset.
+ * @param threadKey - The thread key
+ * @param file - The image file to upload
+ * @returns Object containing downloadURL and storagePath
+ * @throws Error if file is not an image or upload fails
  */
 export async function addAssetToThread(
   threadKey: string,
   file: File,
-): Promise<{ downloadURL: string; storagePath: string }> {
+): Promise<StorageUploadResult> {
   if (!threadKey || !file || !file.name) {
     throw new Error('Invalid thread or file provided, aborting asset upload');
   }
 
-  // Allow only images at this point!
-  if (!file.type.startsWith('image/')) {
-    throw new Error('Invalid file type, only images are allowed for threads');
-  }
+  // Validate file type (images only for threads)
+  validateFileType(file, THREAD_ASSET_ALLOWED_TYPES);
+  validateFileSize(file);
 
-  const { getStorage } = await import('firebase/storage');
-  const storage = getStorage(app);
-
-  const uniqueFilename = `${uuidv4()}-${file.name}`; // Generate a unique filename
-  const storagePath = `Threads/${threadKey}/${uniqueFilename}`; // The path to store the file in Firebase Storage
-  const threadAssetRef = ref(storage, storagePath);
+  // Upload to storage
+  const storagePath = generateStoragePath('Threads', threadKey, file.name);
 
   try {
-    // Upload the file
-    await uploadBytes(threadAssetRef, file);
-
-    // Get the download URL
-    const downloadURL = await getDownloadURL(threadAssetRef);
-
-    // Return the download URL
-    return { downloadURL, storagePath };
+    return await uploadToStorage(file, storagePath);
   } catch (error) {
-    logError('Error uploading asset to storage', error);
-    throw error; // Re-throw the error to be handled by the caller
+    logError('addAssetToThread', 'Upload failed:', error);
+    throw error;
   }
 }

@@ -3,6 +3,8 @@ import { addAssetToSite } from 'src/firebase/client/site/addAssetToSite';
 import type { Site } from 'src/schemas/SiteSchema';
 import { resizeImage } from 'src/utils/client/resizeImage';
 import { t } from 'src/utils/i18n';
+import { logWarn } from 'src/utils/logHelpers';
+import { uid } from '../../../../stores/session';
 import { update } from '../../../../stores/site';
 
 /**
@@ -44,7 +46,12 @@ async function onsubmit(e: Event) {
   const f = file;
   if (!f) return;
 
-  const url = await addAssetToSite(site, f, {});
+  if (!$uid) {
+    logWarn('SiteThemeImageInput', 'Cannot upload: user not authenticated');
+    return;
+  }
+
+  const url = await addAssetToSite(site, f, $uid);
 
   update({
     [imageField]: url,
@@ -65,39 +72,48 @@ async function deleteImage() {
 }
 </script>
 
-<form
-  onsubmit={onsubmit}
-  class="elevation-1 radius-l mb-2"
->
+<form {onsubmit} class="elevation-1 radius-l mb-2">
   <div class="flex flex-row p-2">
-  {#if preview}
-    <img
-      src={preview}
-      alt={t('app:meta.preview')}
-      class="icon flex-none border"
-      style="align-self: flex-start;justify-self: center;flex-grow: 0;"
-     />
-  {:else}
-    <cn-icon noun="assets" class="flex-none" style="align-self: flex-start;justify-self: center;flex-grow: 0;"></cn-icon>
-  {/if}
-  
-  
-    <label>{t(`entries:site.${imageField}`)}
+    {#if preview}
+      <img
+        src={preview}
+        alt={t("app:meta.preview")}
+        class="icon flex-none border"
+        style="align-self: flex-start;justify-self: center;flex-grow: 0;"
+      />
+    {:else}
+      <cn-icon
+        noun="assets"
+        class="flex-none"
+        style="align-self: flex-start;justify-self: center;flex-grow: 0;"
+      ></cn-icon>
+    {/if}
+
+    <label
+      >{t(`entries:site.${imageField}`)}
       <input type="file" accept="image/*" onchange={fileChanged} />
     </label>
+  </div>
+  <div class="toolbar">
+    <button
+      type="button"
+      disabled={!site[imageField]}
+      onclick={deleteImage}
+      class="text"
+    >
+      {t("actions:delete")}
+    </button>
 
-  </div>  
-    <div class="toolbar">
-      <button type="button" disabled={!site[imageField]} onclick={deleteImage} class="text">
-        {t('actions:delete')}
-      </button>
-        
-        <button type="reset" disabled={file === null} onclick={resetPreview}  class="text">
-          {t('actions:reset')}
-        </button>
-        <button type="submit" disabled={file === null} >
-          {t('actions:upload')}
-        </button>
-      </div>
+    <button
+      type="reset"
+      disabled={file === null}
+      onclick={resetPreview}
+      class="text"
+    >
+      {t("actions:reset")}
+    </button>
+    <button type="submit" disabled={file === null}>
+      {t("actions:upload")}
+    </button>
+  </div>
 </form>
-

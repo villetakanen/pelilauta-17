@@ -46,21 +46,34 @@ export const POST: APIRoute = async ({ request }) => {
       `Email: ${decodedToken.email || 'N/A'}`,
     );
 
-    const articleData = await request.json(); // If you were sending data
-    await postToBluesky(
+    const articleData = await request.json();
+
+    // Post to Bluesky and capture the URI
+    const blueskyUri = await postToBluesky(
       articleData.text,
       articleData.linkUrl,
       articleData.linkTitle,
       articleData.linkDescription,
     );
-    // --- End Placeholder ---
 
-    // Return success response
+    if (!blueskyUri) {
+      logWarn(endpointName, 'Failed to post to Bluesky');
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'Failed to post to Bluesky',
+        }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } },
+      );
+    }
+
+    // Return success response with Bluesky URI
     return new Response(
       JSON.stringify({
         success: true,
         userId: decodedToken.uid,
-        message: 'Authentication successful.',
+        blueskyUri,
+        message: 'Successfully posted to Bluesky',
       }),
       { status: 200, headers: { 'Content-Type': 'application/json' } },
     );

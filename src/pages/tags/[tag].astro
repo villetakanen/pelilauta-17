@@ -87,7 +87,7 @@ function parseUrl(tag: Tag) {
           {tagInfo?.icon && <cn-icon noun={tagInfo.icon} />}
           {displayName}
         </h1>
-        
+
         <!-- If we are on popular tag, we get a host of extra description -->
         {tagInfo?.description && (
           <p>{tagInfo.description}</p>
@@ -99,7 +99,7 @@ function parseUrl(tag: Tag) {
             {t('tag:synonymsInfo', { count: tagInfo.synonyms.length })}:
           </p>
           <div class="flex">
-            {tagInfo.synonyms.map((syn, index) => (
+            {tagInfo.synonyms.map((syn) => (
               <span class="cn-chip">
                 #{syn}
               </span>

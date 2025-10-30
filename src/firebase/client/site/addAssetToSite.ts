@@ -1,62 +1,49 @@
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { type Asset, parseAsset } from 'src/schemas/AssetSchema';
+import { type Asset, createAssetMetadata } from 'src/schemas/AssetSchema';
 import {
   parseSite,
   SITES_COLLECTION_NAME,
   type Site,
 } from 'src/schemas/SiteSchema';
+import {
+  generateStoragePath,
+  getImageDimensions,
+  uploadToStorage,
+  validateFileSize,
+  validateFileType,
+} from 'src/utils/client/assetUploadHelpers';
 import { toClientEntry } from 'src/utils/client/entryUtils';
-import { logError } from 'src/utils/logHelpers';
-import { v4 as uuidv4 } from 'uuid';
-import { app, db } from '..';
+import { db } from '..';
+
+// Allowed file types for site assets
+const SITE_ASSET_ALLOWED_TYPES = [
+  'image/*',
+  'application/pdf',
+  'text/plain',
+  'text/markdown',
+];
 
 /**
- * Adds an asset to the given site in Firebase Storage.
+ * Adds an asset to a site's asset collection
  *
- * @param site [Site] The site to add the asset to.
- * @param file [File] The asset file to upload.
- * @returns {Promise<{ downloadURL: string, storagePath: string }>} A promise that resolves
- * with the download URL and storage path of the uploaded asset.
- */
-async function addAssetToStorage(
-  site: Site,
-  file: File,
-): Promise<{ downloadURL: string; storagePath: string }> {
-  const uniqueFilename = `${uuidv4()}-${file.name}`; // Generate a unique filename
-  const storagePath = `Sites/${site.key}/${uniqueFilename}`; // The path to store the file in Firebase Storage
-  const { getStorage } = await import('firebase/storage');
-  const storage = getStorage(app);
-  const siteAssetsRef = ref(storage, storagePath);
-
-  try {
-    // Upload the file
-    await uploadBytes(siteAssetsRef, file);
-
-    // Get the download URL
-    const downloadURL = await getDownloadURL(siteAssetsRef);
-
-    // Return the download URL
-    return { downloadURL, storagePath };
-  } catch (error) {
-    logError('Error uploading asset to storage', error);
-    throw error; // Re-throw the error to be handled by the caller
-  }
-}
-
-/**
- * Adds an asset to the given site in Firebase Storage.
- *
- * @param site [Site] The site to add the asset to.
- * @param file [File] The asset file to upload.
- * @param metadata [Record<string, string>] The metadata to attach to the asset.
- * @returns {Promise<string>} A promise that resolves with the download URL of the uploaded asset.
+ * @param site - The site to add the asset to
+ * @param file - The file to upload
+ * @param uploadedBy - User ID of the uploader
+ * @param metadata - Optional additional metadata (name, description, license)
+ * @returns The download URL of the uploaded asset
+ * @throws Error if site doesn't exist, file validation fails, or upload fails
  */
 export async function addAssetToSite(
   site: Site,
   file: File,
-  metadata: Partial<Asset> = {},
+  uploadedBy: string,
+  metadata: Partial<Pick<Asset, 'name' | 'description' | 'license'>> = {},
 ): Promise<string> {
+  // Validate file
+  validateFileType(file, SITE_ASSET_ALLOWED_TYPES);
+  validateFileSize(file);
+
+  // Get site document
   const siteRef = doc(db, SITES_COLLECTION_NAME, site.key);
   const siteDoc = await getDoc(siteRef);
 
@@ -64,25 +51,32 @@ export async function addAssetToSite(
     throw new Error(`Site with key ${site.key} not found`);
   }
 
-  const { downloadURL, storagePath } = await addAssetToStorage(site, file);
+  // Upload to storage
+  const storagePath = generateStoragePath('Sites', site.key, file.name);
+  const { downloadURL } = await uploadToStorage(file, storagePath);
+
+  // Get image dimensions if applicable
+  const dimensions = await getImageDimensions(file);
+
+  // Create asset metadata
+  const assetData = createAssetMetadata(
+    downloadURL,
+    storagePath,
+    file,
+    uploadedBy,
+    {
+      ...metadata,
+      ...(dimensions || {}),
+    },
+  );
+
+  // Update site's assets array
   const remoteSite = parseSite(toClientEntry(siteDoc.data()), site.key);
-
-  // Update the site's assets list
-  const assetData = parseAsset({
-    url: downloadURL,
-    description: metadata.description || '',
-    license: metadata.license || '0',
-    name: metadata.name || file.name,
-    mimetype: file.type,
-    storagePath: storagePath,
-  });
-
   const assets = remoteSite.assets || [];
   assets.push(assetData);
 
   // Raw update to site, no need to update metadata fields
-  await updateDoc(siteRef, { assets: assets });
+  await updateDoc(siteRef, { assets });
 
-  // Return the download URL
   return downloadURL;
 }

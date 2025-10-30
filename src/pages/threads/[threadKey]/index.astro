@@ -32,6 +32,7 @@ const title = thread.title
 
 const snippet = createPlainSnippet(thread.markdownContent || '', 160);
 ---
+
 <Page title={title} description={snippet}>
   <div class="content-columns">
     <ThreadArticle thread={thread} />
