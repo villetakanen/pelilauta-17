@@ -1,66 +1,66 @@
 <script lang="ts">
-  import type { Thread } from "@schemas/ThreadSchema";
-  import { meta, metaLoading } from "@stores/admin/ChannelsAdminStore";
-  import { showAdminTools } from "@stores/session";
-  import { t } from "@utils/i18n";
-  import { logDebug, logError } from "@utils/logHelpers";
-  import LabelManager from "./LabelManager.svelte";
+import type { Thread } from '@schemas/ThreadSchema';
+import { meta, metaLoading } from '@stores/admin/ChannelsAdminStore';
+import { showAdminTools } from '@stores/session';
+import { t } from '@utils/i18n';
+import { logDebug, logError } from '@utils/logHelpers';
+import LabelManager from './LabelManager.svelte';
 
-  interface Props {
-    thread?: Thread; // Keep optional to handle potential undefined cases gracefully
+interface Props {
+  thread?: Thread; // Keep optional to handle potential undefined cases gracefully
+}
+const { thread }: Props = $props();
+
+let updating = $state(false);
+
+// This effect ensures the store is subscribed to and triggers onMount
+$effect(() => {
+  // Just accessing $meta here creates a subscription that triggers the store's onMount
+  void $meta;
+});
+
+async function handleChannelChange(event: Event) {
+  const select = event.target as HTMLSelectElement;
+  const newChannel = select.value;
+
+  if (!thread?.key || !newChannel || newChannel === thread.channel) {
+    return;
   }
-  const { thread }: Props = $props();
 
-  let updating = $state(false);
+  updating = true;
 
-  // This effect ensures the store is subscribed to and triggers onMount
-  $effect(() => {
-    // Just accessing $meta here creates a subscription that triggers the store's onMount
-    void $meta;
-  });
+  try {
+    const { updateThreadApi } = await import(
+      '@firebase/client/threads/updateThreadApi'
+    );
 
-  async function handleChannelChange(event: Event) {
-    const select = event.target as HTMLSelectElement;
-    const newChannel = select.value;
+    // Silent update - don't update timestamps
+    await updateThreadApi(
+      {
+        key: thread.key,
+        channel: newChannel,
+      },
+      true,
+    );
 
-    if (!thread?.key || !newChannel || newChannel === thread.channel) {
-      return;
+    logDebug('ThreadAdminActions', 'Thread channel updated silently', {
+      threadKey: thread.key,
+      oldChannel: thread.channel,
+      newChannel,
+    });
+
+    // Update the local thread object
+    if (thread) {
+      thread.channel = newChannel;
     }
-
-    updating = true;
-
-    try {
-      const { updateThreadApi } = await import(
-        "@firebase/client/threads/updateThreadApi"
-      );
-
-      // Silent update - don't update timestamps
-      await updateThreadApi(
-        {
-          key: thread.key,
-          channel: newChannel,
-        },
-        true,
-      );
-
-      logDebug("ThreadAdminActions", "Thread channel updated silently", {
-        threadKey: thread.key,
-        oldChannel: thread.channel,
-        newChannel,
-      });
-
-      // Update the local thread object
-      if (thread) {
-        thread.channel = newChannel;
-      }
-    } catch (error) {
-      logError("ThreadAdminActions", "Failed to update thread channel:", error);
-      // Revert the select value on error
-      select.value = thread.channel || "";
-    } finally {
-      updating = false;
-    }
+  } catch (error) {
+    logError('ThreadAdminActions', 'Failed to update thread channel:', error);
+    // Revert the select value on error
+    select.value = thread.channel || '';
+  } finally {
+    updating = false;
   }
+}
 </script>
 
 {#if $showAdminTools && thread}
