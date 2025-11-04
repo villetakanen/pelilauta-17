@@ -10,7 +10,7 @@
  * For full documentation, see: src/docs/76-01-entry-labels-and-tags.md
  */
 
-import type { Thread } from "@schemas/ThreadSchema";
+import type { Thread } from '@schemas/ThreadSchema';
 
 /**
  * Normalizes a tag string for consistent storage and comparison.
@@ -28,7 +28,7 @@ import type { Thread } from "@schemas/ThreadSchema";
  * normalizeTag('Call  of   Cthulhu') // Returns 'call of cthulhu'
  */
 export function normalizeTag(tag: string): string {
-  return tag.toLowerCase().trim().replace(/\s+/g, " ");
+  return tag.toLowerCase().trim().replace(/\s+/g, ' ');
 }
 
 /**

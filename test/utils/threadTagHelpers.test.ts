@@ -1,10 +1,10 @@
-import { describe, expect, it } from 'vitest';
+import type { Thread } from '@schemas/ThreadSchema';
 import {
   getAllThreadTags,
   isLabel,
   normalizeTag,
 } from '@utils/shared/threadTagHelpers';
-import type { Thread } from '@schemas/ThreadSchema';
+import { describe, expect, it } from 'vitest';
 
 describe('normalizeTag', () => {
   it('should convert tags to lowercase', () => {
