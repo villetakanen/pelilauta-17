@@ -99,97 +99,100 @@
 
 ---
 
-## Phase 3: UI Components (3-4 hours)
+## Phase 3: UI Components (3-4 hours) ✅ COMPLETED
 
 ### Label Manager Component
-- [ ] Create `src/components/svelte/threads/LabelManager.svelte`
-  - [ ] Add TypeScript script with Props interface
-  - [ ] Import required utilities (authedFetch, logDebug, etc.)
-  - [ ] Create reactive state variables
-    - [ ] `newLabel = $state('')`
-    - [ ] `updating = $state(false)`
-  - [ ] Create derived values
-    - [ ] `allTags = $derived(getAllThreadTags(thread))`
-    - [ ] `labels = $derived(thread.labels || [])`
-  - [ ] Implement `addLabel()` function
-    - [ ] Validate input
-    - [ ] Check for duplicates
-    - [ ] Call POST API
-    - [ ] Update local thread object
-    - [ ] Show success/error notification
-    - [ ] Clear input on success
-  - [ ] Implement `removeLabel(tag)` function
-    - [ ] Call DELETE API
-    - [ ] Update local thread object
-    - [ ] Show success/error notification
-  - [ ] Implement `handleKeyPress()` for Enter key
-  - [ ] Create template with:
-    - [ ] Title/heading
-    - [ ] Input field for new label
-    - [ ] Add button
-    - [ ] Tag/label list display
-    - [ ] Visual distinction for labels vs tags
-    - [ ] Remove button for labels only
-    - [ ] Legend explaining difference
-  - [ ] **Use Cyan DS classes - NO component-level `<style>` tags**
-    - [ ] Use `.cn-tag` for base styling
-    - [ ] Use `.elevated .accent` for label styling
-    - [ ] Use spacing atomics (`.p-1`, `.mt-2`, `.gap-1`, etc.)
-    - [ ] Use layout utilities (`.flex`, `.wrap`, `.items-center`)
-    - [ ] Use typography classes (`.text-caption`, `.downscaled`)
-    - [ ] Inline styles only for design tokens (e.g., `border: 1px solid var(--color-accent)`)
+- [x] Create `src/components/svelte/threads/LabelManager.svelte`
+  - [x] Add TypeScript script with Props interface
+  - [x] Import required utilities (authedPost, authedDelete, logDebug, etc.)
+  - [x] Create reactive state variables
+    - [x] `newLabel = $state('')`
+    - [x] `isAdding = $state(false)`
+    - [x] `isRemoving = $state<string | null>(null)`
+    - [x] `errorMessage = $state('')`
+  - [x] Implement `addLabel()` function
+    - [x] Validate input (check for empty)
+    - [x] Check for duplicates using `normalizeTag()`
+    - [x] Call POST API at `/api/threads/${threadKey}/labels`
+    - [x] Update local thread object
+    - [x] Clear input on success
+    - [x] Show error messages
+  - [x] Implement `removeLabel(label)` function
+    - [x] Call DELETE API with query parameter
+    - [x] Update local thread object
+    - [x] Show error messages
+  - [x] Implement `handleKeydown()` for Enter key
+  - [x] Create template with:
+    - [x] Title/heading using i18n
+    - [x] Legend explaining difference
+    - [x] Input field for new label with placeholder
+    - [x] Add button with loading state
+    - [x] Label list display with `.cn-chip` styling
+    - [x] Visual distinction for labels (`.border` class)
+    - [x] Remove button for each label with loading state
+    - [x] Error message display
+  - [x] **Use Cyan DS classes - NO component-level `<style>` tags**
+    - [x] Use `.cn-chip` for label styling
+    - [x] Use `.border` class for label distinction
+    - [x] Use spacing atomics (`.mb-1`, `.mb-2`, `.ml-1`, `.mr-1`, `.mt-1`, `.mt-3`, `.pt-3`)
+    - [x] Use layout utilities (`.flex`, `.flex-col`, `.flex-wrap`, `.items-center`, `.grow`)
+    - [x] Use typography classes (`.text-caption`, `.text-high`, `.text-small`, `.text-low`, `.text-error`)
 
 ### Update ThreadAdminActions
-- [ ] Modify `src/components/svelte/threads/ThreadAdminActions.svelte`
-  - [ ] Import `LabelManager` component
-  - [ ] Add `<LabelManager {thread} />` in accordion
-  - [ ] Verify placement and layout
+- [x] Modify `src/components/svelte/threads/ThreadAdminActions.svelte`
+  - [x] Import `LabelManager` component
+  - [x] Add `<LabelManager {thread} />` in accordion with border separator
+  - [x] Verify placement and layout
 
 ### Update Thread Info Display
-- [ ] Modify `src/components/server/ThreadsApp/ThreadInfoSection.astro`
-  - [ ] Import `getAllThreadTags` and `isLabel`
-  - [ ] Use `getAllThreadTags(thread)` instead of `thread.tags`
-  - [ ] Add conditional class for labels (`.elevated .accent`)
-  - [ ] Add inline style for accent border on labels
-  - [ ] **NO component-level styles** - use Cyan DS classes only
+- [x] Create `src/components/server/app/EntryTagsWithLabelsSection.astro`
+  - [x] Import `getAllThreadTags` and `isLabel`
+  - [x] Use `getAllThreadTags(thread)` to get all tags
+  - [x] Use `isLabel()` to check if tag is admin label
+  - [x] Add conditional class `.border` for labels
+  - [x] Add admin icon (`<cn-icon noun="admin" small>`) for labels
+  - [x] Use `.cn-chip` for all tags
+  - [x] **NO component-level styles** - use Cyan DS classes only
+- [x] Modify `src/components/server/ThreadsApp/ThreadInfoSection.astro`
+  - [x] Import `EntryTagsWithLabelsSection` instead of `EntryTagsSection`
+  - [x] Pass thread object instead of just tags array
+  - [x] Replace `<EntryTagsSection tags={thread.tags} />` with `<EntryTagsWithLabelsSection thread={thread} />`
 
 ### i18n Translations
-- [ ] Update `src/locales/en/admin.ts`
-  - [ ] Add `thread_tags.title`
-  - [ ] Add `thread_tags.add_placeholder`
-  - [ ] Add `thread_tags.admin_tag`
-  - [ ] Add `thread_tags.user_tag`
-  - [ ] Add `thread_tags.no_tags`
-  - [ ] Add `thread_tags.already_exists`
-  - [ ] Add `thread_tags.added`
-  - [ ] Add `thread_tags.add_failed`
-  - [ ] Add `thread_tags.removed`
-  - [ ] Add `thread_tags.remove_failed`
+- [x] Update `src/locales/en/admin.ts`
+  - [x] Add `labels.title` - "Admin Labels"
+  - [x] Add `labels.addLabel` - "Add Label"
+  - [x] Add `labels.addPlaceholder` - "Enter label name"
+  - [x] Add `labels.noLabels` - "No admin labels assigned"
+  - [x] Add `labels.removeLabel` - "Remove label"
+  - [x] Add `labels.legend` - "Labels are admin-assigned tags that persist through edits"
+  - [x] Add `labels.success.added` - 'Label "{label}" added'
+  - [x] Add `labels.success.removed` - 'Label "{label}" removed'
+  - [x] Add `labels.errors.addFailed` - "Failed to add label"
+  - [x] Add `labels.errors.removeFailed` - "Failed to remove label"
+  - [x] Add `labels.errors.emptyLabel` - "Label cannot be empty"
+  - [x] Add `labels.errors.alreadyExists` - 'Label "{label}" already exists'
 
-- [ ] Update `src/locales/fi/admin.ts`
-  - [ ] Add all Finnish translations (same keys as English)
+- [x] Update `src/locales/fi/admin.ts`
+  - [x] Add all Finnish translations (complete with proper Finnish terminology)
 
 ### E2E Tests
-- [ ] Create `e2e/admin-thread-tags.spec.ts`
-  - [ ] Test: Admin can add tag to thread
-  - [ ] Test: Admin can remove tag from thread
-  - [ ] Test: Admin tags persist when user edits thread
-  - [ ] Test: Admin tags visually distinct from user tags
-  - [ ] Test: Non-admin cannot see admin tools
-  - [ ] All tests pass
+- [ ] ~~E2E tests deferred in favor of manual testing (per discussion)~~
 
 ### Verification
-- [ ] Run dev server and test UI manually
-- [ ] Add admin tag via UI - verify it appears
-- [ ] Remove admin tag via UI - verify it disappears
-- [ ] Edit thread as owner - verify labels persist
-- [ ] Check visual styling (admin vs user tags)
-- [ ] Test on mobile/tablet viewport
-- [ ] Test keyboard navigation
-- [ ] Test with screen reader (basic check)
-- [ ] Run `npm run build` - success
-- [ ] Run E2E tests - all pass
-- [ ] Commit Phase 3 changes
+- [ ] Run dev server and test UI manually (deferred until deployment)
+- [ ] Follow comprehensive testing guide: `docs/pbi/041-manual-testing-guide.md`
+  - [ ] Add admin label via UI - verify it appears
+  - [ ] Remove admin label via UI - verify it disappears
+  - [ ] Edit thread as owner - verify labels persist
+  - [ ] Check visual styling (admin labels with border and icon)
+  - [ ] Test on mobile/tablet viewport
+  - [ ] Test keyboard navigation (Enter key support implemented)
+  - [ ] Test with screen reader (basic check)
+  - [ ] Complete all 37 test cases in manual testing guide
+- [x] Run `npm run build` - success
+- [x] Run unit tests - all 321 tests pass
+- [x] Commit Phase 3 changes
 
 ---
 
@@ -203,55 +206,33 @@
 
 ### Manual Testing Checklist
 
-#### Admin Tag Addition
-- [ ] Can add single admin tag
-- [ ] Can add multiple labels
-- [ ] Tags are normalized (lowercase, trimmed)
+**📋 Complete Manual Testing Guide:** `docs/pbi/041-manual-testing-guide.md`
+
+The comprehensive manual testing guide includes 37 detailed test cases covering:
+- [ ] Test Suite 1: Admin Label Addition (7 tests)
+- [ ] Test Suite 2: Admin Label Removal (3 tests)
+- [ ] Test Suite 3: Label Persistence (3 tests)
+- [ ] Test Suite 4: Visual Display (4 tests)
+- [ ] Test Suite 5: Tag Index Integration (4 tests)
+- [ ] Test Suite 6: Authorization and Security (4 tests)
+- [ ] Test Suite 7: Performance and Edge Cases (5 tests)
+- [ ] Test Suite 8: Cache and Data Consistency (2 tests)
+- [ ] Test Suite 9: Accessibility (3 tests)
+- [ ] Test Suite 10: i18n (Internationalization) (2 tests)
+
+**Key test scenarios:**
+- [ ] Can add/remove labels via UI
+- [ ] Labels normalized (lowercase, trimmed)
 - [ ] Cannot add duplicate tags
-- [ ] Success notification appears
-- [ ] Tag appears immediately in UI
-- [ ] Tag persists after page reload
-
-#### Admin Tag Removal
-- [ ] Can remove labels via X button
-- [ ] Removing admin tag doesn't affect user tags
-- [ ] Success notification appears
-- [ ] Tag disappears immediately from UI
-- [ ] Removal persists after page reload
-
-#### Persistence Through User Edits
-- [ ] Admin adds tag to user's thread
-- [ ] User edits thread content (add/remove hashtags)
-- [ ] Admin tag remains unchanged
-- [ ] Both tag types appear in tag index
-- [ ] Thread appears on both tag pages
-
-#### Tag Display
-- [ ] Admin tags visually distinct (accent color/border)
-- [ ] User tags use standard styling
-- [ ] Legend shows difference between tag types
-- [ ] Tags are clickable links to tag pages
-- [ ] Layout looks good on desktop
-- [ ] Layout looks good on mobile
-
-#### Tag Index Updates
-- [ ] Thread appears on admin tag pages
-- [ ] Thread appears on user tag pages
-- [ ] Removing all tags removes from tag index
-- [ ] Cache purged after tag changes (verify with curl)
-
-#### Authorization
-- [ ] Non-admin users cannot see admin tools
-- [ ] API rejects non-admin tag modifications (403)
-- [ ] API rejects unauthenticated requests (401)
-
-#### Edge Cases
-- [ ] Thread with only labels - works
-- [ ] Thread with only user tags - works
-- [ ] Thread with overlapping tags - deduplicates
-- [ ] Empty tag string - handled gracefully
-- [ ] Very long tag names - handled (UI doesn't break)
-- [ ] Special characters in tags - normalized correctly
+- [ ] Labels persist through user edits (critical!)
+- [ ] Admin labels visually distinct (border + icon)
+- [ ] Tag index updated correctly
+- [ ] Cache purged after changes
+- [ ] Non-admin users cannot access
+- [ ] API authorization enforced (401/403)
+- [ ] Keyboard navigation works
+- [ ] Responsive on mobile/tablet
+- [ ] i18n works in English and Finnish
 
 ### Performance Testing
 - [ ] Tag operations complete in < 2 seconds
