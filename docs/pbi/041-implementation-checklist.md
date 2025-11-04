@@ -2,13 +2,9 @@
 
 ## Pre-Implementation
 
-- [ ] Team review of PBI-041 document completed
-- [ ] Acceptance criteria agreed upon
-- [ ] i18n translations reviewed (English and Finnish)
-- [ ] Design mockups approved
-- [ ] Estimated effort confirmed (~10-12 hours)
-- [ ] Sprint scheduled
-- [ ] Developer(s) assigned
+- [x] Team review of PBI-041 document completed
+- [x] Acceptance criteria agreed upon
+- [x] i18n translations reviewed (English and Finnish)
 
 ---
 
@@ -53,64 +49,53 @@
 
 ---
 
-## Phase 2: API Endpoints (3-4 hours)
+## Phase 2: API Endpoints (3-4 hours) ✅ COMPLETED
 
-### Admin Tags API Endpoint
-- [ ] Create `src/pages/api/threads/[threadKey]/admin-tags.ts`
-  - [ ] Import required modules (serverDB, isAdmin, schemas, etc.)
-  - [ ] Implement `verifyAdmin()` helper function
-  - [ ] Implement `POST` handler for adding labels
-    - [ ] Verify admin authentication
-    - [ ] Parse and validate request body
-    - [ ] Normalize tags
-    - [ ] Get existing thread
-    - [ ] Add tags to labels array (deduplicate)
-    - [ ] Update thread document
-    - [ ] Update tag index with combined tags
-    - [ ] Purge cache
-    - [ ] Return success response with updated tags
-  - [ ] Implement `DELETE` handler for removing labels
-    - [ ] Verify admin authentication
-    - [ ] Parse and validate request body
-    - [ ] Normalize tags
-    - [ ] Get existing thread
-    - [ ] Remove tags from labels array
-    - [ ] Update thread document
-    - [ ] Update tag index with combined tags
-    - [ ] Purge cache (or remove from index if no tags left)
-    - [ ] Return success response
-  - [ ] Add error handling for all operations
-  - [ ] Add logging with `logDebug`, `logError`, `logWarn`
+### Admin Labels API Endpoint
+- [x] Create `src/pages/api/threads/[threadKey]/labels.ts`
+  - [x] Import required modules (serverDB, isAdmin, schemas, etc.)
+  - [x] Use `tokenToUid()` and `isAdmin()` for auth (no wrapper function)
+  - [x] Implement `POST` handler for adding labels
+    - [x] Verify admin authentication using `tokenToUid()` and `isAdmin()`
+    - [x] Parse and validate request body
+    - [x] Normalize labels using `normalizeTag()`
+    - [x] Get existing thread
+    - [x] Add labels to labels array (deduplicate)
+    - [x] Update thread document
+    - [x] Update tag index with combined tags using `getAllThreadTags()`
+    - [x] Purge cache in background task
+    - [x] Return success response with updated labels
+  - [x] Implement `DELETE` handler for removing labels
+    - [x] Verify admin authentication using `tokenToUid()` and `isAdmin()`
+    - [x] Parse and validate request body
+    - [x] Normalize labels using `normalizeTag()`
+    - [x] Get existing thread
+    - [x] Remove labels from labels array
+    - [x] Update thread document
+    - [x] Update tag index with combined tags using `getAllThreadTags()`
+    - [x] Purge cache in background task (or remove from index if no tags left)
+    - [x] Return success response
+  - [x] Add error handling for all operations
+  - [x] Add logging with `logDebug`, `logError`, `logWarn`
 
 ### Update Thread Endpoint
-- [ ] Modify `src/pages/api/threads/[threadKey].ts`
-  - [ ] Import `getAllThreadTags` from helper
-  - [ ] Verify `labels` is NOT in `allowedFields` array
-  - [ ] Update tag index logic to use `getAllThreadTags()`
-  - [ ] Test that user updates don't affect labels
+- [x] Modify `src/pages/api/threads/[threadKey].ts`
+  - [x] Import `getAllThreadTags` from helper
+  - [x] Verify `labels` is NOT in `allowedFields` array (with comment explaining why)
+  - [x] Update tag index logic to use `getAllThreadTags()` in background tasks
+  - [x] Ensure labels persist through user updates
 
 ### API Unit Tests
-- [ ] Create `test/api/threads-admin-tags.test.ts`
-  - [ ] Test POST with valid admin auth
-  - [ ] Test POST returns 401 without auth
-  - [ ] Test POST returns 403 with non-admin auth
-  - [ ] Test POST deduplicates tags
-  - [ ] Test POST normalizes tag case
-  - [ ] Test DELETE with valid admin auth
-  - [ ] Test DELETE returns 401 without auth
-  - [ ] Test DELETE returns 403 with non-admin auth
-  - [ ] Test DELETE doesn't affect user tags
-  - [ ] Test tag index updated with combined tags
-  - [ ] All tests pass
+- [ ] ~~API unit tests deferred in favor of E2E tests (per user request)~~
 
 ### Verification
-- [ ] Test POST endpoint with Postman/curl
-- [ ] Test DELETE endpoint with Postman/curl
+- [ ] Test POST endpoint manually (after UI implemented)
+- [ ] Test DELETE endpoint manually (after UI implemented)
 - [ ] Verify tag index updated correctly
 - [ ] Verify cache purging works
-- [ ] Run `npm run build` - success
-- [ ] Run `npm run test` - all tests pass
-- [ ] Commit Phase 2 changes
+- [x] Run `npm run build` - success
+- [x] Run `npm run test` - all tests pass
+- [x] Commit Phase 2 changes
 
 ---
 
