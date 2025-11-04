@@ -42,15 +42,44 @@ if (tagResponse.status === 404) {
   // For featured tags, continue to render the page with no entries
 }
 
-const tagData =
-  tagResponse.status === 404
-    ? {
-        entries: [],
-        displayName: tagInfo?.displayName || tag,
-        description: tagInfo?.description,
-        synonymCount: tagInfo?.synonyms.length || 0,
-      }
-    : await tagResponse.json();
+let tagData: {
+  entries: Tag[];
+  displayName?: string;
+  description?: string;
+  synonymCount?: number;
+};
+if (tagResponse.status === 404) {
+  tagData = {
+    entries: [],
+    displayName: tagInfo?.displayName || tag,
+    description: tagInfo?.description,
+    synonymCount: tagInfo?.synonyms.length || 0,
+  };
+} else if (!tagResponse.ok) {
+  // Handle other errors (500, etc.) that might return HTML
+  logError(`Tag API error: ${tagResponse.status} ${tagResponse.statusText}`);
+  const errorText = await tagResponse.text();
+  logError(`Tag API error body: ${errorText.substring(0, 200)}`);
+
+  // Show empty results for featured tags, redirect to 404 for others
+  if (tagInfo) {
+    tagData = {
+      entries: [],
+      displayName: tagInfo?.displayName || tag,
+      description: tagInfo?.description,
+      synonymCount: tagInfo?.synonyms.length || 0,
+    };
+  } else {
+    return Astro.redirect('/404');
+  }
+} else {
+  try {
+    tagData = await tagResponse.json();
+  } catch (error) {
+    logError(`Failed to parse tag API response as JSON: ${error}`);
+    return Astro.redirect('/404');
+  }
+}
 
 const entries = tagData.entries as Tag[];
 
