@@ -9,10 +9,7 @@ import {
 import { logDebug, logError, logWarn } from '@utils/logHelpers';
 import { toDate } from '@utils/schemaHelpers';
 import { tokenToUid } from '@utils/server/auth/tokenToUid';
-import {
-  getAllThreadTags,
-  normalizeTag,
-} from '@utils/shared/threadTagHelpers';
+import { getAllThreadTags, normalizeTag } from '@utils/shared/threadTagHelpers';
 import { toTagData } from '@utils/shared/toTagData';
 import type { APIContext } from 'astro';
 
@@ -110,7 +107,9 @@ export async function POST({ params, request }: APIContext): Promise<Response> {
 
     // 6. Merge and deduplicate labels
     const existingLabels = (existingThread.labels || []).map(normalizeTag);
-    const updatedLabels = [...new Set([...existingLabels, ...normalizedLabels])];
+    const updatedLabels = [
+      ...new Set([...existingLabels, ...normalizedLabels]),
+    ];
 
     // 7. Update thread document
     await threadRef.update({
