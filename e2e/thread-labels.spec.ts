@@ -1,10 +1,10 @@
-import { expect, test } from "@playwright/test";
-import { authenticateAdmin } from "./authenticate-admin";
-import { waitForAuthState } from "./wait-for-auth";
+import { expect, test } from '@playwright/test';
+import { authenticateAdmin } from './authenticate-admin';
+import { waitForAuthState } from './wait-for-auth';
 
 test.setTimeout(120000);
 
-test.describe("Thread Labels (PBI-041)", () => {
+test.describe('Thread Labels (PBI-041)', () => {
   let threadUrl: string;
   let threadKey: string;
   const uniqueThreadTitle = `E2E Labels Test ${Date.now()}`;
@@ -14,26 +14,26 @@ test.describe("Thread Labels (PBI-041)", () => {
     const page = await browser.newPage();
 
     await authenticateAdmin(page);
-    await page.goto("http://localhost:4321/create/thread");
+    await page.goto('http://localhost:4321/create/thread');
     await waitForAuthState(page, 15000);
 
     // Fill in the thread title
     await page.fill('input[name="title"]', uniqueThreadTitle);
 
     // Wait for CodeMirror editor
-    await page.waitForSelector(".cm-editor", {
-      state: "attached",
+    await page.waitForSelector('.cm-editor', {
+      state: 'attached',
       timeout: 15000,
     });
 
     // Add some content with hashtags to test tag/label distinction
-    const editor = page.locator(".cm-content");
+    const editor = page.locator('.cm-content');
     await editor.click();
-    await editor.fill("Test thread for admin labels. #test #automation #e2e");
+    await editor.fill('Test thread for admin labels. #test #automation #e2e');
 
     // Submit the thread
-    await expect(page.getByTestId("send-thread-button")).toBeEnabled();
-    await page.getByTestId("send-thread-button").click();
+    await expect(page.getByTestId('send-thread-button')).toBeEnabled();
+    await page.getByTestId('send-thread-button').click();
 
     // Wait for navigation to the thread page
     await page.waitForURL(/\/threads\/[^/]+$/, { timeout: 15000 });
@@ -44,18 +44,18 @@ test.describe("Thread Labels (PBI-041)", () => {
       threadKey = urlMatch[1];
     }
 
-    console.log("Created test thread:", threadKey);
+    console.log('Created test thread:', threadKey);
     await page.close();
   });
 
-  test("admin can add labels to a thread", async ({ page }) => {
+  test('admin can add labels to a thread', async ({ page }) => {
     await authenticateAdmin(page);
     await page.goto(threadUrl);
     await waitForAuthState(page, 15000);
 
     // Wait for thread to load
     await expect(
-      page.getByRole("heading", { name: uniqueThreadTitle, level: 1 }),
+      page.getByRole('heading', { name: uniqueThreadTitle, level: 1 }),
     ).toBeVisible();
 
     // Check if label manager is visible (only for admins)
@@ -69,25 +69,25 @@ test.describe("Thread Labels (PBI-041)", () => {
       .catch(() => false);
 
     if (!isLabelManagerVisible) {
-      console.log("Label manager not visible - user may not be an admin");
-      console.log("Skipping test as this requires admin privileges");
+      console.log('Label manager not visible - user may not be an admin');
+      console.log('Skipping test as this requires admin privileges');
       test.skip();
       return;
     }
 
-    console.log("Label manager is visible - proceeding with test");
+    console.log('Label manager is visible - proceeding with test');
 
     // Add a label using the API directly (more reliable than UI interaction)
     const response = await page.evaluate(async (key) => {
-      const { authedFetch } = await import("/src/firebase/client/apiClient.ts");
+      const { authedFetch } = await import('/src/firebase/client/apiClient.ts');
       return await authedFetch(`/api/threads/${key}/labels`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ labels: ["featured"] }),
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ labels: ['featured'] }),
       });
     }, threadKey);
 
-    console.log("Add label API response status:", response);
+    console.log('Add label API response status:', response);
 
     // Reload the page to see the label
     await page.reload();
@@ -97,24 +97,24 @@ test.describe("Thread Labels (PBI-041)", () => {
     await page.waitForTimeout(2000);
 
     // Check if the "featured" label appears in the thread info
-    const featuredLabel = page.locator("text=/featured/i").first();
+    const featuredLabel = page.locator('text=/featured/i').first();
     await expect(featuredLabel).toBeVisible({ timeout: 10000 });
 
     console.log('Label "featured" is now visible on the thread');
   });
 
-  test("labels persist after thread edit (PBI-042 fix)", async ({ page }) => {
+  test('labels persist after thread edit (PBI-042 fix)', async ({ page }) => {
     await authenticateAdmin(page);
     await page.goto(threadUrl);
     await waitForAuthState(page, 15000);
 
     // First, ensure the thread has a label
     await page.evaluate(async (key) => {
-      const { authedFetch } = await import("/src/firebase/client/apiClient.ts");
+      const { authedFetch } = await import('/src/firebase/client/apiClient.ts');
       await authedFetch(`/api/threads/${key}/labels`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ labels: ["persistent"] }),
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ labels: ['persistent'] }),
       });
     }, threadKey);
 
@@ -124,7 +124,7 @@ test.describe("Thread Labels (PBI-041)", () => {
     await page.waitForTimeout(2000);
 
     // Verify label exists
-    await expect(page.locator("text=/persistent/i").first()).toBeVisible({
+    await expect(page.locator('text=/persistent/i').first()).toBeVisible({
       timeout: 10000,
     });
 
@@ -135,18 +135,18 @@ test.describe("Thread Labels (PBI-041)", () => {
     const updateResult = await page.evaluate(
       async (args) => {
         const { authedFetch } = await import(
-          "/src/firebase/client/apiClient.ts"
+          '/src/firebase/client/apiClient.ts'
         );
         try {
           const response = await authedFetch(`/api/threads/${args.key}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               key: args.key,
               title: args.title,
               markdownContent:
-                "Updated content with different tags. #updated #modified",
-              channel: "general",
+                'Updated content with different tags. #updated #modified',
+              channel: 'general',
             }),
           });
           return {
@@ -163,7 +163,7 @@ test.describe("Thread Labels (PBI-041)", () => {
       { key: threadKey, title: uniqueThreadTitle },
     );
 
-    console.log("Thread updated via API:", updateResult);
+    console.log('Thread updated via API:', updateResult);
     expect(updateResult.ok).toBe(true);
 
     // Reload the thread page to see changes
@@ -172,7 +172,7 @@ test.describe("Thread Labels (PBI-041)", () => {
     await page.waitForTimeout(2000);
 
     // Verify the admin label still exists after edit
-    const persistentLabel = page.locator("text=/persistent/i").first();
+    const persistentLabel = page.locator('text=/persistent/i').first();
     await expect(persistentLabel).toBeVisible({
       timeout: 10000,
     });
@@ -182,7 +182,7 @@ test.describe("Thread Labels (PBI-041)", () => {
     );
   });
 
-  test("labels appear on tag pages immediately (PBI-042 fix)", async ({
+  test('labels appear on tag pages immediately (PBI-042 fix)', async ({
     page,
   }) => {
     const uniqueLabel = `instant-${Date.now()}`;
@@ -199,11 +199,11 @@ test.describe("Thread Labels (PBI-041)", () => {
     const addResponse = await page.evaluate(
       async (args) => {
         const { authedFetch } = await import(
-          "/src/firebase/client/apiClient.ts"
+          '/src/firebase/client/apiClient.ts'
         );
         const response = await authedFetch(`/api/threads/${args.key}/labels`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ labels: [args.label] }),
         });
         return {
@@ -215,12 +215,12 @@ test.describe("Thread Labels (PBI-041)", () => {
       { key: threadKey, label: uniqueLabel },
     );
 
-    console.log("Add label response:", addResponse);
+    console.log('Add label response:', addResponse);
     expect(addResponse.ok).toBe(true);
 
     // Immediately navigate to the tag page (within 100ms - testing race condition fix)
     await page.goto(`http://localhost:4321/tags/${uniqueLabel}`, {
-      waitUntil: "domcontentloaded",
+      waitUntil: 'domcontentloaded',
     });
 
     // Wait for page to load
@@ -238,18 +238,18 @@ test.describe("Thread Labels (PBI-041)", () => {
     );
   });
 
-  test("admin can remove labels from a thread", async ({ page }) => {
+  test('admin can remove labels from a thread', async ({ page }) => {
     await authenticateAdmin(page);
     await page.goto(threadUrl);
     await waitForAuthState(page, 15000);
 
     // First add a label to remove
     await page.evaluate(async (key) => {
-      const { authedFetch } = await import("/src/firebase/client/apiClient.ts");
+      const { authedFetch } = await import('/src/firebase/client/apiClient.ts');
       await authedFetch(`/api/threads/${key}/labels`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ labels: ["removeme"] }),
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ labels: ['removeme'] }),
       });
     }, threadKey);
 
@@ -259,7 +259,7 @@ test.describe("Thread Labels (PBI-041)", () => {
     await page.waitForTimeout(2000);
 
     // Verify label exists
-    await expect(page.locator("text=/removeme/i").first()).toBeVisible({
+    await expect(page.locator('text=/removeme/i').first()).toBeVisible({
       timeout: 10000,
     });
 
@@ -267,11 +267,11 @@ test.describe("Thread Labels (PBI-041)", () => {
 
     // Remove the label
     const removeResponse = await page.evaluate(async (key) => {
-      const { authedFetch } = await import("/src/firebase/client/apiClient.ts");
+      const { authedFetch } = await import('/src/firebase/client/apiClient.ts');
       const response = await authedFetch(`/api/threads/${key}/labels`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ labels: ["removeme"] }),
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ labels: ['removeme'] }),
       });
       return {
         ok: response.ok,
@@ -279,7 +279,7 @@ test.describe("Thread Labels (PBI-041)", () => {
       };
     }, threadKey);
 
-    console.log("Remove label response:", removeResponse);
+    console.log('Remove label response:', removeResponse);
     expect(removeResponse.ok).toBe(true);
 
     // Reload to verify removal
@@ -288,24 +288,24 @@ test.describe("Thread Labels (PBI-041)", () => {
     await page.waitForTimeout(2000);
 
     // Verify label is gone
-    const removedLabel = page.locator("text=/removeme/i");
+    const removedLabel = page.locator('text=/removeme/i');
     await expect(removedLabel).not.toBeVisible();
 
     console.log('Label "removeme" successfully removed');
   });
 
-  test("labels are visually distinct from user tags", async ({ page }) => {
+  test('labels are visually distinct from user tags', async ({ page }) => {
     await authenticateAdmin(page);
     await page.goto(threadUrl);
     await waitForAuthState(page, 15000);
 
     // Add an admin label
     await page.evaluate(async (key) => {
-      const { authedFetch } = await import("/src/firebase/client/apiClient.ts");
+      const { authedFetch } = await import('/src/firebase/client/apiClient.ts');
       await authedFetch(`/api/threads/${key}/labels`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ labels: ["official"] }),
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ labels: ['official'] }),
       });
     }, threadKey);
 
@@ -328,7 +328,7 @@ test.describe("Thread Labels (PBI-041)", () => {
 
     if (labelVisible && tagVisible) {
       // If both are visible, we can check for visual differences
-      console.log("Both admin labels and user tags are visible");
+      console.log('Both admin labels and user tags are visible');
 
       // The implementation should style them differently (e.g., accent color, border, icon)
       // We can't easily test visual styling in e2e, but we can verify they both exist
@@ -336,12 +336,12 @@ test.describe("Thread Labels (PBI-041)", () => {
       expect(tagVisible).toBe(true);
     } else {
       console.log(
-        "Could not verify visual distinction - elements may use different selectors",
+        'Could not verify visual distinction - elements may use different selectors',
       );
     }
   });
 
-  test("non-admin users cannot add labels", async ({ page }) => {
+  test('non-admin users cannot add labels', async ({ page }) => {
     // This test would need a non-admin user account
     // For now, we'll test the API response when attempting to add labels
 
@@ -353,12 +353,12 @@ test.describe("Thread Labels (PBI-041)", () => {
     const response = await page.evaluate(async (key) => {
       try {
         const { authedFetch } = await import(
-          "/src/firebase/client/apiClient.ts"
+          '/src/firebase/client/apiClient.ts'
         );
         const res = await authedFetch(`/api/threads/${key}/labels`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ labels: ["unauthorized"] }),
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ labels: ['unauthorized'] }),
         });
         return {
           ok: res.ok,
@@ -374,15 +374,15 @@ test.describe("Thread Labels (PBI-041)", () => {
       }
     }, threadKey);
 
-    console.log("Label add attempt response:", response);
+    console.log('Label add attempt response:', response);
 
     // If user is admin, this will succeed (status 200)
     // If user is not admin, this should fail (status 403)
     if (response.status === 403) {
-      console.log("Non-admin user correctly denied access to add labels");
+      console.log('Non-admin user correctly denied access to add labels');
       expect(response.ok).toBe(false);
     } else if (response.status === 200) {
-      console.log("User is admin - label add succeeded");
+      console.log('User is admin - label add succeeded');
       expect(response.ok).toBe(true);
     }
   });
@@ -409,10 +409,10 @@ test.describe("Thread Labels (PBI-041)", () => {
         await confirmButton.click();
         await page.waitForTimeout(3000);
 
-        console.log("Test thread cleaned up successfully");
+        console.log('Test thread cleaned up successfully');
       }
     } catch (error) {
-      console.error("Failed to clean up test thread:", error);
+      console.error('Failed to clean up test thread:', error);
     } finally {
       await page.close();
     }

@@ -92,19 +92,21 @@ export async function authenticateAdmin(page: Page) {
 
   // Verify admin status by checking if we can access admin features
   // This is optional but provides a sanity check
-  const isAdmin = await page.evaluate(async () => {
-    try {
-      // Try to fetch user's admin status
-      const { auth } = await import('/src/firebase/client/index.ts');
-      const user = auth.currentUser;
-      if (!user) return false;
+  const isAdmin = await page
+    .evaluate(async () => {
+      try {
+        // Try to fetch user's admin status
+        const { auth } = await import('/src/firebase/client/index.ts');
+        const user = auth.currentUser;
+        if (!user) return false;
 
-      // If this user is admin, they should be able to see admin features
-      return true; // We'll verify through UI or API calls in actual tests
-    } catch {
-      return false;
-    }
-  }).catch(() => false);
+        // If this user is admin, they should be able to see admin features
+        return true; // We'll verify through UI or API calls in actual tests
+      } catch {
+        return false;
+      }
+    })
+    .catch(() => false);
 
   console.log('Admin status check:', isAdmin ? 'verified' : 'unable to verify');
 }
