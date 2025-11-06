@@ -3,6 +3,27 @@
 We are creating a role playing games community site with Astro, Lit and Svelte. The application
 will be deployed to Netlify using a Github integration.
 
+## Package Manager
+
+**IMPORTANT: This project uses `pnpm` as the package manager.**
+
+Always use `pnpm` commands instead of `npm` or `yarn`:
+
+```bash
+# ✅ Correct
+pnpm install
+pnpm run dev
+pnpm run test
+pnpm run test:e2e
+
+# ❌ Wrong
+npm install
+npm run dev
+yarn install
+```
+
+When writing documentation, scripts, or instructions, always use `pnpm` commands.
+
 ## SSR with Astro
 
 We want to render all stateless components, and components that share the state with the server. These

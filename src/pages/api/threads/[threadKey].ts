@@ -1,45 +1,45 @@
-import { serverDB } from "@firebase/server";
-import { isAdmin } from "@firebase/server/admin";
+import { serverDB } from '@firebase/server';
+import { isAdmin } from '@firebase/server/admin';
 import {
   CHANNELS_META_REF,
   type Channel,
   ChannelSchema,
-} from "@schemas/ChannelSchema";
-import { TAG_FIRESTORE_COLLECTION } from "@schemas/TagSchema";
+} from '@schemas/ChannelSchema';
+import { TAG_FIRESTORE_COLLECTION } from '@schemas/TagSchema';
 import {
   THREADS_COLLECTION_NAME,
   type Thread,
   ThreadSchema,
-} from "@schemas/ThreadSchema";
-import { logDebug, logError, logWarn } from "@utils/logHelpers";
-import { toDate } from "@utils/schemaHelpers";
-import { tokenToUid } from "@utils/server/auth/tokenToUid";
-import { toFirestoreEntry } from "@utils/server/toFirestoreEntry";
-import { getAllThreadTags } from "@utils/shared/threadTagHelpers";
-import { toTagData } from "@utils/shared/toTagData";
-import type { APIContext } from "astro";
+} from '@schemas/ThreadSchema';
+import { logDebug, logError, logWarn } from '@utils/logHelpers';
+import { toDate } from '@utils/schemaHelpers';
+import { tokenToUid } from '@utils/server/auth/tokenToUid';
+import { toFirestoreEntry } from '@utils/server/toFirestoreEntry';
+import { getAllThreadTags } from '@utils/shared/threadTagHelpers';
+import { toTagData } from '@utils/shared/toTagData';
+import type { APIContext } from 'astro';
 
 /**
  * Update an existing thread
  * PUT /api/threads/[threadKey]
  */
 export async function PUT({ params, request }: APIContext): Promise<Response> {
-  const endpointName = "updateThread";
+  const endpointName = 'updateThread';
   const { threadKey } = params;
 
   if (!threadKey) {
-    return new Response(JSON.stringify({ error: "Thread key required" }), {
+    return new Response(JSON.stringify({ error: 'Thread key required' }), {
       status: 400,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 
   // 1. Authenticate user
   const uid = await tokenToUid(request);
   if (!uid) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 
@@ -47,7 +47,7 @@ export async function PUT({ params, request }: APIContext): Promise<Response> {
     // 2. Parse request body
     const body = await request.json();
 
-    logDebug(endpointName, "Update request received", {
+    logDebug(endpointName, 'Update request received', {
       threadKey,
       uid,
       fields: Object.keys(body),
@@ -60,9 +60,9 @@ export async function PUT({ params, request }: APIContext): Promise<Response> {
     const threadDoc = await threadRef.get();
 
     if (!threadDoc.exists) {
-      return new Response(JSON.stringify({ error: "Thread not found" }), {
+      return new Response(JSON.stringify({ error: 'Thread not found' }), {
         status: 404,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
       });
     }
 
@@ -70,16 +70,16 @@ export async function PUT({ params, request }: APIContext): Promise<Response> {
 
     // 4. Verify ownership
     if (!existingThread.owners?.includes(uid)) {
-      logWarn(endpointName, "Unauthorized update attempt", {
+      logWarn(endpointName, 'Unauthorized update attempt', {
         threadKey,
         uid,
         owners: existingThread.owners,
       });
       return new Response(
-        JSON.stringify({ error: "Forbidden: Not thread owner" }),
+        JSON.stringify({ error: 'Forbidden: Not thread owner' }),
         {
           status: 403,
-          headers: { "Content-Type": "application/json" },
+          headers: { 'Content-Type': 'application/json' },
         },
       );
     }
@@ -87,13 +87,13 @@ export async function PUT({ params, request }: APIContext): Promise<Response> {
     // 5. Validate and prepare update data
     // Note: 'labels' is intentionally excluded - only admins can modify labels via /labels endpoint
     const allowedFields = [
-      "title",
-      "markdownContent",
-      "channel",
-      "tags",
-      "youtubeId",
-      "poster",
-      "public",
+      'title',
+      'markdownContent',
+      'channel',
+      'tags',
+      'youtubeId',
+      'poster',
+      'public',
     ];
 
     const updateData: Partial<Thread> & Record<string, unknown> = {};
@@ -105,11 +105,11 @@ export async function PUT({ params, request }: APIContext): Promise<Response> {
     }
 
     // Parse tags if provided as JSON string
-    if (typeof updateData.tags === "string") {
+    if (typeof updateData.tags === 'string') {
       try {
         updateData.tags = JSON.parse(updateData.tags as string);
       } catch {
-        logWarn(endpointName, "Invalid tags JSON format");
+        logWarn(endpointName, 'Invalid tags JSON format');
       }
     }
 
@@ -121,7 +121,7 @@ export async function PUT({ params, request }: APIContext): Promise<Response> {
       }),
     );
 
-    logDebug(endpointName, "Thread document updated", { threadKey });
+    logDebug(endpointName, 'Thread document updated', { threadKey });
 
     // 7. Get updated thread for post-processing
     const updatedDoc = await threadRef.get();
@@ -135,13 +135,13 @@ export async function PUT({ params, request }: APIContext): Promise<Response> {
       JSON.stringify({
         success: true,
         threadKey,
-        message: "Thread updated successfully",
+        message: 'Thread updated successfully',
       }),
       {
         status: 200,
         headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-cache",
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
         },
       },
     );
@@ -151,15 +151,15 @@ export async function PUT({ params, request }: APIContext): Promise<Response> {
 
     return response;
   } catch (error) {
-    logError(endpointName, "Failed to update thread:", error);
+    logError(endpointName, 'Failed to update thread:', error);
     return new Response(
       JSON.stringify({
-        error: "Internal server error",
-        details: error instanceof Error ? error.message : "Unknown error",
+        error: 'Internal server error',
+        details: error instanceof Error ? error.message : 'Unknown error',
       }),
       {
         status: 500,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
       },
     );
   }
@@ -188,7 +188,7 @@ function executeUpdateBackgroundTasks(
           const tagData = toTagData(
             { ...updatedThread, tags: allTags },
             threadKey,
-            "thread",
+            'thread',
             toDate(updatedThread.flowTime).getTime(),
           );
 
@@ -197,7 +197,7 @@ function executeUpdateBackgroundTasks(
             .doc(threadKey)
             .set(tagData);
 
-          logDebug("updateThread:background", "Updated tag index", {
+          logDebug('updateThread:background', 'Updated tag index', {
             threadKey,
             tagCount: allTags.length,
           });
@@ -208,7 +208,7 @@ function executeUpdateBackgroundTasks(
             .doc(threadKey)
             .delete();
 
-          logDebug("updateThread:background", "Removed from tag index", {
+          logDebug('updateThread:background', 'Removed from tag index', {
             threadKey,
           });
         }
@@ -217,7 +217,7 @@ function executeUpdateBackgroundTasks(
       // Task 2: Purge thread cache (only if netlify-cache is available)
       try {
         const { NetlifyCachePurger } = await import(
-          "../../../lib/server/netlify-cache"
+          '../../../lib/server/netlify-cache'
         );
         const purger = new NetlifyCachePurger();
 
@@ -243,7 +243,7 @@ function executeUpdateBackgroundTasks(
 
           await purger.purgeTags(cacheTags);
 
-          logDebug("updateThread:background", "Cache purged", {
+          logDebug('updateThread:background', 'Cache purged', {
             threadKey,
             tagCount: cacheTags.length,
           });
@@ -251,13 +251,13 @@ function executeUpdateBackgroundTasks(
       } catch (error) {
         // Cache purging is optional - log but don't fail
         logWarn(
-          "updateThread:background",
-          "Cache purging not available or failed:",
+          'updateThread:background',
+          'Cache purging not available or failed:',
           error,
         );
       }
     } catch (error) {
-      logError("updateThread:background", "Background task failed:", error);
+      logError('updateThread:background', 'Background task failed:', error);
     }
   });
 }
@@ -272,11 +272,11 @@ export async function DELETE({ request, params }: APIContext) {
   const uid = await tokenToUid(request);
 
   if (!uid) {
-    return new Response("Unauthorized", { status: 401 });
+    return new Response('Unauthorized', { status: 401 });
   }
 
   if (!threadKey) {
-    return new Response("Bad Request: Missing threadKey", { status: 400 });
+    return new Response('Bad Request: Missing threadKey', { status: 400 });
   }
 
   const threadRef = serverDB.collection(THREADS_COLLECTION_NAME).doc(threadKey);
@@ -285,7 +285,7 @@ export async function DELETE({ request, params }: APIContext) {
     const threadDoc = await threadRef.get();
 
     if (!threadDoc.exists) {
-      return new Response("Not Found", { status: 404 });
+      return new Response('Not Found', { status: 404 });
     }
 
     const thread = ThreadSchema.parse(threadDoc.data());
@@ -294,7 +294,7 @@ export async function DELETE({ request, params }: APIContext) {
     const userIsAdmin = await isAdmin(uid);
 
     if (!isOwner && !userIsAdmin) {
-      return new Response("Forbidden", { status: 403 });
+      return new Response('Forbidden', { status: 403 });
     }
 
     // Critical task: Delete the thread document
@@ -320,7 +320,7 @@ export async function DELETE({ request, params }: APIContext) {
               (channels[channelIndex].threadCount || 1) - 1;
             metaRef.update({ topics: channels }).catch((err) => {
               logWarn(
-                "deleteThread-background",
+                'deleteThread-background',
                 `Failed to update topics in ${CHANNELS_META_REF}`,
                 err,
               );
@@ -329,7 +329,7 @@ export async function DELETE({ request, params }: APIContext) {
         })
         .catch((err) => {
           logWarn(
-            "deleteThread-background",
+            'deleteThread-background',
             `Failed to get ${CHANNELS_META_REF}`,
             err,
           );
@@ -338,7 +338,7 @@ export async function DELETE({ request, params }: APIContext) {
 
     return new Response(null, { status: 202 });
   } catch (error) {
-    logError("deleteThread", "Failed to delete thread:", error);
-    return new Response("Internal Server Error", { status: 500 });
+    logError('deleteThread', 'Failed to delete thread:', error);
+    return new Response('Internal Server Error', { status: 500 });
   }
 }

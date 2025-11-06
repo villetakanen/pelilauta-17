@@ -1,6 +1,6 @@
-import type { ContentEntry } from "@schemas/ContentEntry";
-import { type Tag, TagSchema } from "@schemas/TagSchema";
-import { logWarn } from "@utils/logHelpers";
+import type { ContentEntry } from '@schemas/ContentEntry';
+import { type Tag, TagSchema } from '@schemas/TagSchema';
+import { logWarn } from '@utils/logHelpers';
 
 /**
  * Converts a ContentEntry to TagSchema data for the tag index collection.
@@ -19,20 +19,20 @@ import { logWarn } from "@utils/logHelpers";
  * @returns Parsed Tag object ready for Firestore
  */
 export function toTagData(
-  entry: Pick<ContentEntry, "tags" | "owners"> & {
+  entry: Pick<ContentEntry, 'tags' | 'owners'> & {
     title?: string;
     name?: string;
   },
   key: string,
-  type: "thread" | "page",
+  type: 'thread' | 'page',
   flowTime: number,
 ): Tag {
-  const title = "title" in entry ? entry.title : entry.name;
+  const title = 'title' in entry ? entry.title : entry.name;
 
   // Ensure flowTime is positive (TagSchema requires positive integer)
   let validFlowTime = flowTime;
   if (flowTime <= 0) {
-    logWarn("toTagData", "Invalid flowTime, using current time as fallback", {
+    logWarn('toTagData', 'Invalid flowTime, using current time as fallback', {
       flowTime,
       key,
     });
@@ -41,9 +41,9 @@ export function toTagData(
 
   return TagSchema.parse({
     key,
-    title: title || "",
+    title: title || '',
     type,
-    author: entry.owners?.[0] || "",
+    author: entry.owners?.[0] || '',
     tags: entry.tags?.map((t) => t.toLowerCase()) || [],
     flowTime: validFlowTime,
   });

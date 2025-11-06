@@ -2,6 +2,7 @@
   "name": "pelilauta",
   "type": "module",
   "version": "18.10.0",
+  "packageManager": "pnpm@8.0.0",
   "engines": {
     "node": ">=20.0.0"
   },

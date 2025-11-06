@@ -1,17 +1,17 @@
-import { serverDB } from "@firebase/server";
-import { isAdmin } from "@firebase/server/admin";
-import { TAG_FIRESTORE_COLLECTION } from "@schemas/TagSchema";
+import { serverDB } from '@firebase/server';
+import { isAdmin } from '@firebase/server/admin';
+import { TAG_FIRESTORE_COLLECTION } from '@schemas/TagSchema';
 import {
   THREADS_COLLECTION_NAME,
   type Thread,
   ThreadSchema,
-} from "@schemas/ThreadSchema";
-import { logDebug, logError, logWarn } from "@utils/logHelpers";
-import { getValidFlowTime } from "@utils/schemaHelpers";
-import { tokenToUid } from "@utils/server/auth/tokenToUid";
-import { getAllThreadTags, normalizeTag } from "@utils/shared/threadTagHelpers";
-import { toTagData } from "@utils/shared/toTagData";
-import type { APIContext } from "astro";
+} from '@schemas/ThreadSchema';
+import { logDebug, logError, logWarn } from '@utils/logHelpers';
+import { getValidFlowTime } from '@utils/schemaHelpers';
+import { tokenToUid } from '@utils/server/auth/tokenToUid';
+import { getAllThreadTags, normalizeTag } from '@utils/shared/threadTagHelpers';
+import { toTagData } from '@utils/shared/toTagData';
+import type { APIContext } from 'astro';
 
 /**
  * Add labels to a thread (admin only)
@@ -21,37 +21,37 @@ import type { APIContext } from "astro";
  * Response: { success: boolean, labels: string[], message?: string }
  */
 export async function POST({ params, request }: APIContext): Promise<Response> {
-  const endpointName = "addThreadLabels";
+  const endpointName = 'addThreadLabels';
   const { threadKey } = params;
 
   if (!threadKey) {
-    return new Response(JSON.stringify({ error: "Thread key required" }), {
+    return new Response(JSON.stringify({ error: 'Thread key required' }), {
       status: 400,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 
   // 1. Authenticate user
   const uid = await tokenToUid(request);
   if (!uid) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 
   // 2. Verify admin status
   const userIsAdmin = await isAdmin(uid);
   if (!userIsAdmin) {
-    logWarn(endpointName, "Non-admin attempted to add labels", {
+    logWarn(endpointName, 'Non-admin attempted to add labels', {
       threadKey,
       uid,
     });
     return new Response(
-      JSON.stringify({ error: "Forbidden: Admin access required" }),
+      JSON.stringify({ error: 'Forbidden: Admin access required' }),
       {
         status: 403,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
       },
     );
   }
@@ -63,15 +63,15 @@ export async function POST({ params, request }: APIContext): Promise<Response> {
 
     if (!Array.isArray(labelsToAdd) || labelsToAdd.length === 0) {
       return new Response(
-        JSON.stringify({ error: "Invalid request: labels array required" }),
+        JSON.stringify({ error: 'Invalid request: labels array required' }),
         {
           status: 400,
-          headers: { "Content-Type": "application/json" },
+          headers: { 'Content-Type': 'application/json' },
         },
       );
     }
 
-    logDebug(endpointName, "Add labels request received", {
+    logDebug(endpointName, 'Add labels request received', {
       threadKey,
       uid,
       labelsToAdd,
@@ -82,10 +82,10 @@ export async function POST({ params, request }: APIContext): Promise<Response> {
 
     if (normalizedLabels.length === 0) {
       return new Response(
-        JSON.stringify({ error: "No valid labels provided" }),
+        JSON.stringify({ error: 'No valid labels provided' }),
         {
           status: 400,
-          headers: { "Content-Type": "application/json" },
+          headers: { 'Content-Type': 'application/json' },
         },
       );
     }
@@ -97,9 +97,9 @@ export async function POST({ params, request }: APIContext): Promise<Response> {
     const threadDoc = await threadRef.get();
 
     if (!threadDoc.exists) {
-      return new Response(JSON.stringify({ error: "Thread not found" }), {
+      return new Response(JSON.stringify({ error: 'Thread not found' }), {
         status: 404,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
       });
     }
 
@@ -116,7 +116,7 @@ export async function POST({ params, request }: APIContext): Promise<Response> {
       labels: updatedLabels,
     });
 
-    logDebug(endpointName, "Thread labels updated", {
+    logDebug(endpointName, 'Thread labels updated', {
       threadKey,
       before: existingLabels.length,
       after: updatedLabels.length,
@@ -140,26 +140,26 @@ export async function POST({ params, request }: APIContext): Promise<Response> {
       JSON.stringify({
         success: true,
         labels: updatedLabels,
-        message: "Labels added successfully",
+        message: 'Labels added successfully',
       }),
       {
         status: 200,
         headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-cache",
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
         },
       },
     );
   } catch (error) {
-    logError(endpointName, "Failed to add labels:", error);
+    logError(endpointName, 'Failed to add labels:', error);
     return new Response(
       JSON.stringify({
-        error: "Internal server error",
-        details: error instanceof Error ? error.message : "Unknown error",
+        error: 'Internal server error',
+        details: error instanceof Error ? error.message : 'Unknown error',
       }),
       {
         status: 500,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
       },
     );
   }
@@ -176,37 +176,37 @@ export async function DELETE({
   params,
   request,
 }: APIContext): Promise<Response> {
-  const endpointName = "removeThreadLabels";
+  const endpointName = 'removeThreadLabels';
   const { threadKey } = params;
 
   if (!threadKey) {
-    return new Response(JSON.stringify({ error: "Thread key required" }), {
+    return new Response(JSON.stringify({ error: 'Thread key required' }), {
       status: 400,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 
   // 1. Authenticate user
   const uid = await tokenToUid(request);
   if (!uid) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 
   // 2. Verify admin status
   const userIsAdmin = await isAdmin(uid);
   if (!userIsAdmin) {
-    logWarn(endpointName, "Non-admin attempted to remove labels", {
+    logWarn(endpointName, 'Non-admin attempted to remove labels', {
       threadKey,
       uid,
     });
     return new Response(
-      JSON.stringify({ error: "Forbidden: Admin access required" }),
+      JSON.stringify({ error: 'Forbidden: Admin access required' }),
       {
         status: 403,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
       },
     );
   }
@@ -218,15 +218,15 @@ export async function DELETE({
 
     if (!Array.isArray(labelsToRemove) || labelsToRemove.length === 0) {
       return new Response(
-        JSON.stringify({ error: "Invalid request: labels array required" }),
+        JSON.stringify({ error: 'Invalid request: labels array required' }),
         {
           status: 400,
-          headers: { "Content-Type": "application/json" },
+          headers: { 'Content-Type': 'application/json' },
         },
       );
     }
 
-    logDebug(endpointName, "Remove labels request received", {
+    logDebug(endpointName, 'Remove labels request received', {
       threadKey,
       uid,
       labelsToRemove,
@@ -239,10 +239,10 @@ export async function DELETE({
 
     if (normalizedLabelsToRemove.length === 0) {
       return new Response(
-        JSON.stringify({ error: "No valid labels provided" }),
+        JSON.stringify({ error: 'No valid labels provided' }),
         {
           status: 400,
-          headers: { "Content-Type": "application/json" },
+          headers: { 'Content-Type': 'application/json' },
         },
       );
     }
@@ -254,9 +254,9 @@ export async function DELETE({
     const threadDoc = await threadRef.get();
 
     if (!threadDoc.exists) {
-      return new Response(JSON.stringify({ error: "Thread not found" }), {
+      return new Response(JSON.stringify({ error: 'Thread not found' }), {
         status: 404,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
       });
     }
 
@@ -273,7 +273,7 @@ export async function DELETE({
       labels: updatedLabels,
     });
 
-    logDebug(endpointName, "Thread labels updated", {
+    logDebug(endpointName, 'Thread labels updated', {
       threadKey,
       before: existingLabels.length,
       after: updatedLabels.length,
@@ -297,26 +297,26 @@ export async function DELETE({
       JSON.stringify({
         success: true,
         labels: updatedLabels,
-        message: "Labels removed successfully",
+        message: 'Labels removed successfully',
       }),
       {
         status: 200,
         headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-cache",
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
         },
       },
     );
   } catch (error) {
-    logError(endpointName, "Failed to remove labels:", error);
+    logError(endpointName, 'Failed to remove labels:', error);
     return new Response(
       JSON.stringify({
-        error: "Internal server error",
-        details: error instanceof Error ? error.message : "Unknown error",
+        error: 'Internal server error',
+        details: error instanceof Error ? error.message : 'Unknown error',
       }),
       {
         status: 500,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
       },
     );
   }
@@ -337,7 +337,7 @@ async function updateTagIndexForThread(
       const tagData = toTagData(
         { ...updatedThread, tags: allTags },
         threadKey,
-        "thread",
+        'thread',
         getValidFlowTime(updatedThread),
       );
 
@@ -346,7 +346,7 @@ async function updateTagIndexForThread(
         .doc(threadKey)
         .set(tagData);
 
-      logDebug("updateTagIndex", "Tag index updated", {
+      logDebug('updateTagIndex', 'Tag index updated', {
         threadKey,
         tagCount: allTags.length,
       });
@@ -357,12 +357,12 @@ async function updateTagIndexForThread(
         .doc(threadKey)
         .delete();
 
-      logDebug("updateTagIndex", "Removed from tag index", {
+      logDebug('updateTagIndex', 'Removed from tag index', {
         threadKey,
       });
     }
   } catch (error) {
-    logError("updateTagIndex", "Failed to update tag index:", error);
+    logError('updateTagIndex', 'Failed to update tag index:', error);
     throw error; // Re-throw to fail the API request if tag index update fails
   }
 }
@@ -374,7 +374,7 @@ function purgeThreadCaches(threadKey: string, updatedThread: Thread): void {
   Promise.resolve().then(async () => {
     try {
       const { NetlifyCachePurger } = await import(
-        "../../../../lib/server/netlify-cache"
+        '../../../../lib/server/netlify-cache'
       );
       const purger = new NetlifyCachePurger();
 
@@ -389,7 +389,7 @@ function purgeThreadCaches(threadKey: string, updatedThread: Thread): void {
 
         await purger.purgeTags(cacheTags);
 
-        logDebug("purgeThreadCaches", "Cache purged", {
+        logDebug('purgeThreadCaches', 'Cache purged', {
           threadKey,
           tagCount: cacheTags.length,
         });
@@ -397,8 +397,8 @@ function purgeThreadCaches(threadKey: string, updatedThread: Thread): void {
     } catch (error) {
       // Cache purging is optional - log but don't fail
       logWarn(
-        "purgeThreadCaches",
-        "Cache purging not available or failed:",
+        'purgeThreadCaches',
+        'Cache purging not available or failed:',
         error,
       );
     }
