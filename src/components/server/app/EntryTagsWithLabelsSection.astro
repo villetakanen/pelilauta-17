@@ -12,23 +12,23 @@ const { getAllThreadTags } = await import('@utils/shared/threadTagHelpers');
 const allTags = getAllThreadTags(thread);
 ---
 
-{allTags && allTags.length > 0 && (
-  <div class="flex flex-wrap items-start mt-2">
-    {allTags.map((tag) => {
-      const isAdminLabel = isLabel(thread, tag);
-      return (
-        <a
-          href={`/tags/${tag}`}
-          class={`cn-chip ${isAdminLabel ? 'border' : ''}`}
-          style="flex:none"
-          title={isAdminLabel ? 'Admin label' : undefined}
-        >
-          {isAdminLabel && (
-            <cn-icon noun="admin" small style="margin-right: 0.25rem;"></cn-icon>
-          )}
-          {tag}
-        </a>
-      );
-    })}
-  </div>
-)}
+{
+  allTags && allTags.length > 0 && (
+    <div class="flex flex-wrap items-start mt-2">
+      {allTags.map((tag) => {
+        const label = isLabel(thread, tag);
+        return (
+          <a
+            href={`/tags/${tag}`}
+            class={`cn-chip ${label ? "secondary" : ""}`}
+            style="flex:none"
+            title={label ? "label" : undefined}
+          >
+            {label && <cn-icon noun="label-tag" small />}
+            {tag}
+          </a>
+        );
+      })}
+    </div>
+  )
+}
