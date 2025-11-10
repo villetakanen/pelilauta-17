@@ -3,7 +3,7 @@
   publish = "dist"
 
 [build.environment]
-  NODE_VERSION = "20"
+  NODE_VERSION = "22"
 
 # PBI-037: Netlify Image CDN remote image domains
 [images]
@@ -80,17 +80,17 @@
       # Content Security Policy
       Content-Security-Policy = """
         default-src 'self';
-        script-src 'self' 'unsafe-inline' 'unsafe-eval' 
-          https://*.simpleanalyticscdn.com 
-          https://browser.sentry-cdn.com 
+        script-src 'self' 'unsafe-inline' 'unsafe-eval'
+          https://*.simpleanalyticscdn.com
+          https://browser.sentry-cdn.com
           https://*.firebaseio.com
           https://storage.googleapis.com
           https://apis.google.com;
         style-src 'self' 'unsafe-inline';
         img-src 'self' data: https: blob:;
         font-src 'self' data:;
-        connect-src 'self' 
-          https://*.firebaseio.com 
+        connect-src 'self'
+          https://*.firebaseio.com
           https://*.googleapis.com
           https://apis.google.com
           https://*.simpleanalyticscdn.com
@@ -98,7 +98,7 @@
         worker-src 'self' blob:;
         frame-ancestors 'self';
       """
-      
+
       # Security Headers
       X-Content-Type-Options = "nosniff"
       X-Frame-Options = "SAMEORIGIN"
