@@ -4,6 +4,7 @@ import { meta, metaLoading } from '@stores/admin/ChannelsAdminStore';
 import { showAdminTools } from '@stores/session';
 import { t } from '@utils/i18n';
 import { logDebug, logError } from '@utils/logHelpers';
+import LabelManager from './LabelManager.svelte';
 
 interface Props {
   thread?: Thread; // Keep optional to handle potential undefined cases gracefully
@@ -63,18 +64,14 @@ async function handleChannelChange(event: Event) {
 </script>
 
 {#if $showAdminTools && thread}
-  <cn-accordion 
-    class="border radius-m"
-    title="ADMIN" 
-    noun="admin">
-
+  <cn-accordion class="border radius-m" title="ADMIN" noun="admin">
     <a
-        href={`/threads/${thread?.key}/confirmDelete`}
-        class="button text-center text"
-      >
-        {t('actions:delete')} 
-      </a>
-    
+      href={`/threads/${thread?.key}/confirmDelete`}
+      class="button text-center text"
+    >
+      {t("actions:delete")}
+    </a>
+
     <label>
       Move to channel:
       {#if $metaLoading}
@@ -82,7 +79,7 @@ async function handleChannelChange(event: Event) {
           <option>Loading channels...</option>
         </select>
       {:else if $meta?.topics && $meta.topics.length > 0}
-        <select 
+        <select
           name="channel"
           onchange={handleChannelChange}
           disabled={updating}
@@ -100,5 +97,9 @@ async function handleChannelChange(event: Event) {
         </select>
       {/if}
     </label>
+
+    <div class="mt-3 pt-3 border-t">
+      <LabelManager {thread} />
+    </div>
   </cn-accordion>
 {/if}

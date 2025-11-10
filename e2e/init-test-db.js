@@ -290,4 +290,17 @@ await serverDB
   .set(keeperTestCharacter);
 console.log('Keeper test character created:', keeperTestCharacter.key);
 
+// Create app metadata with admin configuration
+const appMeta = {
+  admins: [
+    'vN8RyOYratXr80130A7LqVCLmLn1', // sator@iki.fi - test admin user
+  ],
+  version: '1.0.0',
+  updatedAt: FieldValue.serverTimestamp(),
+};
+await serverDB.collection('meta').doc('pelilauta').set(appMeta);
+console.log(
+  'App metadata created with admin user: vN8RyOYratXr80130A7LqVCLmLn1',
+);
+
 console.log('User cleanup complete.');

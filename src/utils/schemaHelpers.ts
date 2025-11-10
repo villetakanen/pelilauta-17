@@ -65,3 +65,33 @@ export function parseFlowTime(entry: Partial<Entry>): number {
         ? toDate(entry.createdAt).getTime()
         : 0;
 }
+
+/**
+ * Returns a valid positive flowTime for tag indexing.
+ *
+ * Falls back to Date.now() if the computed flowTime is not a positive number.
+ * This prevents TagSchema validation failures when flowTime is 0 or invalid.
+ *
+ * @param entry - Entry with flowTime, updatedAt, or createdAt
+ * @returns Positive integer timestamp in milliseconds
+ */
+export function getValidFlowTime(entry: Partial<Entry>): number {
+  const flowTime = parseFlowTime(entry);
+
+  // Ensure flowTime is positive (TagSchema requires positive integer)
+  if (flowTime > 0) {
+    return flowTime;
+  }
+
+  // Fallback to current time if flowTime is 0 or invalid
+  logWarn(
+    'getValidFlowTime',
+    'Invalid flowTime, using current time as fallback',
+    {
+      flowTime,
+      entryKey: 'key' in entry ? entry.key : 'unknown',
+    },
+  );
+
+  return Date.now();
+}

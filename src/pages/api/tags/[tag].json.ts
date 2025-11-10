@@ -6,6 +6,7 @@ import {
   TagSchema,
 } from 'src/schemas/TagSchema';
 import { getTagDisplayInfo, resolveTagSynonym } from 'src/schemas/TagSynonyms';
+import { logError } from 'src/utils/logHelpers';
 import { serverDB } from '../../../firebase/server';
 
 /* type Thread = {
@@ -64,14 +65,6 @@ export async function GET({ params }: APIContext): Promise<Response> {
 
   log(`Fetching entries for tags: ${allTags.join(', ')}`);
 
-  // Query for all variations using array-contains-any
-  const docs = await serverDB
-    .collection(TAG_FIRESTORE_COLLECTION)
-    .where('tags', 'array-contains-any', allTags)
-    .orderBy('flowTime', 'desc')
-    .limit(50)
-    .get();
-
   const response = {
     entries: [] as Tag[],
     canonical: canonicalTag,
@@ -80,9 +73,36 @@ export async function GET({ params }: APIContext): Promise<Response> {
     synonymCount: tagInfo?.synonyms.length || 0,
   };
 
-  for (const doc of docs.docs) {
-    const data = doc.data();
-    response.entries.push(TagSchema.parse(data));
+  try {
+    // Query for all variations using array-contains-any
+    const docs = await serverDB
+      .collection(TAG_FIRESTORE_COLLECTION)
+      .where('tags', 'array-contains-any', allTags)
+      .orderBy('flowTime', 'desc')
+      .limit(50)
+      .get();
+
+    for (const doc of docs.docs) {
+      try {
+        const data = doc.data();
+        response.entries.push(TagSchema.parse(data));
+      } catch (parseError) {
+        logError(`Failed to parse tag entry ${doc.id}:`, parseError);
+      }
+    }
+  } catch (firestoreError) {
+    logError(
+      `Firestore query error for tag "${canonicalTag}":`,
+      firestoreError,
+    );
+    // Return empty results instead of crashing
+    return new Response(JSON.stringify(response), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 's-maxage=60, stale-while-revalidate=300', // Shorter cache on errors
+      },
+    });
   }
 
   if (response.entries.length === 0) {

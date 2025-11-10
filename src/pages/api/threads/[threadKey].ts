@@ -15,6 +15,7 @@ import { logDebug, logError, logWarn } from '@utils/logHelpers';
 import { toDate } from '@utils/schemaHelpers';
 import { tokenToUid } from '@utils/server/auth/tokenToUid';
 import { toFirestoreEntry } from '@utils/server/toFirestoreEntry';
+import { getAllThreadTags } from '@utils/shared/threadTagHelpers';
 import { toTagData } from '@utils/shared/toTagData';
 import type { APIContext } from 'astro';
 
@@ -84,6 +85,7 @@ export async function PUT({ params, request }: APIContext): Promise<Response> {
     }
 
     // 5. Validate and prepare update data
+    // Note: 'labels' is intentionally excluded - only admins can modify labels via /labels endpoint
     const allowedFields = [
       'title',
       'markdownContent',
@@ -173,15 +175,18 @@ function executeUpdateBackgroundTasks(
 ): void {
   Promise.resolve().then(async () => {
     try {
-      // Task 1: Update tag index if tags or title changed
+      // 8. Update tag index if tags or title changed
+      // Use getAllThreadTags to combine user tags and admin labels for the index
       if (
         JSON.stringify(updatedThread.tags) !==
           JSON.stringify(existingThread.tags) ||
         updatedThread.title !== existingThread.title
       ) {
-        if (updatedThread.tags && updatedThread.tags.length > 0) {
+        const allTags = getAllThreadTags(updatedThread);
+
+        if (allTags.length > 0) {
           const tagData = toTagData(
-            updatedThread,
+            { ...updatedThread, tags: allTags },
             threadKey,
             'thread',
             toDate(updatedThread.flowTime).getTime(),
@@ -194,9 +199,10 @@ function executeUpdateBackgroundTasks(
 
           logDebug('updateThread:background', 'Updated tag index', {
             threadKey,
+            tagCount: allTags.length,
           });
         } else {
-          // Remove from tag index if no tags
+          // Remove from tag index if no tags or labels
           await serverDB
             .collection(TAG_FIRESTORE_COLLECTION)
             .doc(threadKey)
@@ -218,15 +224,17 @@ function executeUpdateBackgroundTasks(
         if (purger.isConfigured()) {
           const cacheTags = [`thread-${threadKey}`];
 
-          // Add tag cache tags if tags changed
+          // Add tag cache tags if tags or labels changed
+          // Use getAllThreadTags to include both user tags AND admin labels
           if (
             JSON.stringify(updatedThread.tags) !==
-            JSON.stringify(existingThread.tags)
+              JSON.stringify(existingThread.tags) ||
+            JSON.stringify(updatedThread.labels) !==
+              JSON.stringify(existingThread.labels)
           ) {
-            const allTags = [
-              ...(updatedThread.tags || []),
-              ...(existingThread.tags || []),
-            ];
+            const updatedAllTags = getAllThreadTags(updatedThread);
+            const existingAllTags = getAllThreadTags(existingThread);
+            const allTags = [...updatedAllTags, ...existingAllTags];
             const uniqueTags = [...new Set(allTags)];
             cacheTags.push(
               ...uniqueTags.map((tag) => `tag-${tag.toLowerCase()}`),

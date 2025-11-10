@@ -116,4 +116,22 @@ export const admin: Locale = {
     loadFailed: 'Failed to load channels',
     retry: 'Retry',
   },
+  labels: {
+    title: 'Admin Labels',
+    addLabel: 'Add Label',
+    addPlaceholder: 'Enter label name',
+    noLabels: 'No admin labels assigned',
+    removeLabel: 'Remove label',
+    legend: 'Labels are admin-assigned tags that persist through edits',
+    success: {
+      added: 'Label "{label}" added',
+      removed: 'Label "{label}" removed',
+    },
+    errors: {
+      addFailed: 'Failed to add label',
+      removeFailed: 'Failed to remove label',
+      emptyLabel: 'Label cannot be empty',
+      alreadyExists: 'Label "{label}" already exists',
+    },
+  },
 };

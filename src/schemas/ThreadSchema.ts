@@ -33,6 +33,10 @@ export const ThreadSchema = ContentEntrySchema.extend({
   quoteRef: z.string().optional(),
   author: z.string().optional(),
 
+  // Admin-managed persistent tags (labels)
+  // These persist through content edits, unlike tags which are extracted from content
+  labels: z.array(z.string()).optional(),
+
   // Bluesky syndication tracking
   blueskyPostUrl: z.url().optional(), // https://bsky.app/profile/[handle]/post/[rkey]
   blueskyPostUri: z.string().optional(), // at://did:plc:xxx/app.bsky.feed.post/yyy
@@ -108,6 +112,7 @@ export function createThread(
     quoteRef: source?.quoteRef || undefined,
     public: source?.public || true,
     tags: source?.tags || undefined,
+    labels: source?.labels || undefined,
   };
 
   // Remove empty fields, empty strings, and empty arrays (but keep owners even if it's ['-'])

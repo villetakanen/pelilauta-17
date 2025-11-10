@@ -114,4 +114,23 @@ export const admin: Locale = {
     loadFailed: 'Kanavien lataaminen epäonnistui',
     retry: 'Yritä uudelleen',
   },
+  labels: {
+    title: 'Ylläpidon tunnisteet',
+    addLabel: 'Lisää tunniste',
+    addPlaceholder: 'Syötä tunnisteen nimi',
+    noLabels: 'Ei ylläpidon tunnisteita',
+    removeLabel: 'Poista tunniste',
+    legend:
+      'Tunnisteet ovat ylläpidon määrittämiä tageja, jotka säilyvät muokkausten aikana',
+    success: {
+      added: 'Tunniste "{label}" lisätty',
+      removed: 'Tunniste "{label}" poistettu',
+    },
+    errors: {
+      addFailed: 'Tunnisteen lisääminen epäonnistui',
+      removeFailed: 'Tunnisteen poistaminen epäonnistui',
+      emptyLabel: 'Tunniste ei voi olla tyhjä',
+      alreadyExists: 'Tunniste "{label}" on jo olemassa',
+    },
+  },
 };

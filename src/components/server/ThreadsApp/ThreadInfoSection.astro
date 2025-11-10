@@ -10,7 +10,7 @@ import ReactionButton from '../../svelte/app/ReactionButton.svelte';
 import BlueskyCard from '../../svelte/threads/BlueskyCard.svelte';
 import ThreadInfoActions from '../../svelte/threads/ThreadInfoActions.svelte';
 import BlueskyPostCard from '../app/BlueskyPostCard.astro';
-import EntryTagsSection from '../app/EntryTagsSection.astro';
+import EntryTagsWithLabelsSection from '../app/EntryTagsWithLabelsSection.astro';
 
 interface Props {
   thread: Thread;
@@ -65,7 +65,7 @@ if (thread.blueskyPostUri) {
     </p>
   </cn-card>
 
-  {thread.tags && <EntryTagsSection tags={thread.tags} />}
+  <EntryTagsWithLabelsSection thread={thread} />
 
   {
     blueskyPost && thread.blueskyPostUrl ? (

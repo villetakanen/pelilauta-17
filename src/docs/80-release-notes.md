@@ -5,6 +5,9 @@ noun: 'monsters'
 ---
 ## Version 18
 
+### 18.11.0
+* feat: Added support for system-tags: "labels", which can be added to entries in addition to tags auto-mined from the content
+
 ### 18.10.0 (29.10.2025)
 * feat(threads): Bluesky posts can be added retroactively for a thread
 * feat(threads): Show BSKY stats (likes, reposts, replies) on thread page for BSKY linked threads
