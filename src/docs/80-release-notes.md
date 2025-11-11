@@ -5,7 +5,10 @@ noun: 'monsters'
 ---
 ## Version 18
 
-### 18.11.0
+## 18.11.x (ongoing)
+* fix(tags): meta-tag url double encode-fix for tag page routes
+
+### 18.11.0 (10.11.2025)
 * feat: Added support for system-tags: "labels", which can be added to entries in addition to tags auto-mined from the content
 
 ### 18.10.0 (29.10.2025)
