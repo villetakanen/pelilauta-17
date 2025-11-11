@@ -341,6 +341,97 @@ test.describe('Thread Labels (PBI-041)', () => {
     }
   });
 
+  test('can add labels to threads without any user tags', async ({ page }) => {
+    // This tests the bug fix: threads without tags should still accept labels
+    const noTagsThreadTitle = `No Tags Thread ${Date.now()}`;
+
+    await authenticateAdmin(page);
+    await page.goto('http://localhost:4321/create/thread');
+    await waitForAuthState(page, 15000);
+
+    // Fill in the thread title
+    await page.fill('input[name="title"]', noTagsThreadTitle);
+
+    // Wait for CodeMirror editor
+    await page.waitForSelector('.cm-editor', {
+      state: 'attached',
+      timeout: 15000,
+    });
+
+    // Add content WITHOUT any hashtags (no user tags)
+    const editor = page.locator('.cm-content');
+    await editor.click();
+    await editor.fill(
+      'This thread has no hashtags and therefore no user tags.',
+    );
+
+    // Submit the thread
+    await expect(page.getByTestId('send-thread-button')).toBeEnabled();
+    await page.getByTestId('send-thread-button').click();
+
+    // Wait for navigation to the thread page
+    await page.waitForURL(/\/threads\/[^/]+$/, { timeout: 15000 });
+
+    const noTagsThreadUrl = page.url();
+    const urlMatch = noTagsThreadUrl.match(/\/threads\/([^/]+)$/);
+    let noTagsThreadKey = '';
+    if (urlMatch) {
+      noTagsThreadKey = urlMatch[1];
+    }
+
+    console.log('Created thread without tags:', noTagsThreadKey);
+
+    // Reload to ensure we have fresh data
+    await page.reload();
+    await waitForAuthState(page, 15000);
+    await page.waitForTimeout(2000);
+
+    // Verify no user tags are present (tags section should not show user tags)
+    const hasUserTags = await page.locator('.cn-chip:not(.secondary)').count();
+    console.log('User tag count:', hasUserTags);
+
+    // Now try to add an admin label (this is where the bug occurred)
+    const addLabelResponse = await page.evaluate(async (key) => {
+      const { authedFetch } = await import('/src/firebase/client/apiClient.ts');
+      const response = await authedFetch(`/api/threads/${key}/labels`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ labels: ['first-label'] }),
+      });
+      return {
+        ok: response.ok,
+        status: response.status,
+        body: await response.json(),
+      };
+    }, noTagsThreadKey);
+
+    console.log('Add label to thread without tags response:', addLabelResponse);
+    expect(addLabelResponse.ok).toBe(true);
+    expect(addLabelResponse.status).toBe(200);
+
+    // Reload and verify the label appears
+    await page.reload();
+    await waitForAuthState(page, 15000);
+    await page.waitForTimeout(2000);
+
+    const labelElement = page.locator('text=/first-label/i').first();
+    await expect(labelElement).toBeVisible({ timeout: 10000 });
+
+    console.log(
+      'Successfully added label to thread without user tags - bug fix verified',
+    );
+
+    // Cleanup: delete the test thread
+    await page.goto(`${noTagsThreadUrl}/confirmDelete`);
+    await page.waitForTimeout(1000);
+    const confirmButton = page.locator('button[type="submit"]');
+    if (await confirmButton.isVisible().catch(() => false)) {
+      await confirmButton.click();
+      await page.waitForTimeout(2000);
+      console.log('Test thread cleaned up');
+    }
+  });
+
   test('non-admin users cannot add labels', async ({ page }) => {
     // This test would need a non-admin user account
     // For now, we'll test the API response when attempting to add labels
