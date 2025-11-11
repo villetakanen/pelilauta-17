@@ -1,12 +1,12 @@
-import type { APIContext } from "astro";
+import type { APIContext } from 'astro';
 import {
   TAG_FIRESTORE_COLLECTION,
   type Tag,
   TagSchema,
-} from "src/schemas/TagSchema";
-import { getTagDisplayInfo, resolveTagSynonym } from "src/schemas/TagSynonyms";
-import { logDebug, logError } from "src/utils/logHelpers";
-import { serverDB } from "../../../firebase/server";
+} from 'src/schemas/TagSchema';
+import { getTagDisplayInfo, resolveTagSynonym } from 'src/schemas/TagSynonyms';
+import { logDebug, logError } from 'src/utils/logHelpers';
+import { serverDB } from '../../../firebase/server';
 
 /* type Thread = {
   title: string;
@@ -50,7 +50,7 @@ export async function GET({ params }: APIContext): Promise<Response> {
   const { tag } = params;
 
   if (!tag) {
-    return new Response("Tag required", { status: 400 });
+    return new Response('Tag required', { status: 400 });
   }
 
   // Resolve synonym to canonical tag
@@ -66,7 +66,7 @@ export async function GET({ params }: APIContext): Promise<Response> {
       )
     : [decodeURIComponent(canonicalTag).toLowerCase()];
 
-  logDebug("tags-api", "Fetching entries for tags", {
+  logDebug('tags-api', 'Fetching entries for tags', {
     tag,
     canonicalTag,
     allTags,
@@ -84,8 +84,8 @@ export async function GET({ params }: APIContext): Promise<Response> {
     // Query for all variations using array-contains-any
     const docs = await serverDB
       .collection(TAG_FIRESTORE_COLLECTION)
-      .where("tags", "array-contains-any", allTags)
-      .orderBy("flowTime", "desc")
+      .where('tags', 'array-contains-any', allTags)
+      .orderBy('flowTime', 'desc')
       .limit(50)
       .get();
 
@@ -106,21 +106,21 @@ export async function GET({ params }: APIContext): Promise<Response> {
     return new Response(JSON.stringify(response), {
       status: 200,
       headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "s-maxage=60, stale-while-revalidate=300", // Shorter cache on errors
+        'Content-Type': 'application/json',
+        'Cache-Control': 's-maxage=60, stale-while-revalidate=300', // Shorter cache on errors
       },
     });
   }
 
   if (response.entries.length === 0) {
-    return new Response("No entries found", { status: 404 });
+    return new Response('No entries found', { status: 404 });
   }
 
   return new Response(JSON.stringify(response), {
     status: 200,
     headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": "s-maxage=300, stale-while-revalidate=1800", // 5min cache, 30min stale
+      'Content-Type': 'application/json',
+      'Cache-Control': 's-maxage=300, stale-while-revalidate=1800', // 5min cache, 30min stale
     },
   });
 }
