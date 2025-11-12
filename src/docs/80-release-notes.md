@@ -6,6 +6,7 @@ noun: 'monsters'
 ## Version 18
 
 ## 18.11.x (ongoing)
+* fix(search): Search results missing locales and heading links added
 * fix(tags): A moderator can set a label (a system tag) to a thread, even if the thread does not have any tags yet
 * fix(tags): meta-tag url double encode-fix for tag page routes
 
