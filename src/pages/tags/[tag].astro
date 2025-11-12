@@ -2,6 +2,7 @@
 import { logError } from '@utils/logHelpers';
 import type { Tag } from 'src/schemas/TagSchema';
 import { t } from 'src/utils/i18n';
+import TagHeader from '../../components/server/TagHeader.astro';
 import ProfileLink from '../../components/svelte/app/ProfileLink.svelte';
 import Page from '../../layouts/Page.astro';
 import {
@@ -85,7 +86,7 @@ const entries = tagData.entries as Tag[];
 
 // SEO metadata
 const displayName = tagData.displayName || tag;
-const title = `#${displayName}`;
+const title = `${t('tags:title')} - #${displayName}`;
 const description =
   tagData.description || t('seo:tag.fallback', { tag: displayName });
 
@@ -111,73 +112,51 @@ function parseUrl(tag: Tag) {
 <Page {title} {description}>
   <div class="content-columns">
     <article class="column-l">
-      <header style="margin-bottom: calc(2 * var(--cn-grid))">
-        <h1>
-          {tagInfo?.icon && <cn-icon noun={tagInfo.icon} />}
-          {displayName}
-        </h1>
+      <TagHeader {displayName} {tagInfo} />
 
-        <!-- If we are on popular tag, we get a host of extra description -->
-        {tagInfo?.description && (
-          <p>{tagInfo.description}</p>
-        )}
+      {
+        threads.length > 0 && (
+          <section style="margin-bottom: calc(3 * var(--cn-grid))">
+            <h2 class="text-title">
+              <cn-icon name="discussion" small />
+              {t("tag:discussions")} ({threads.length})
+            </h2>
+            <ul>
+              {threads.map((entry) => (
+                <li class="flex items-center">
+                  <span style="flex: 1">
+                    <a href={parseUrl(entry)}>{entry.title}</a>
+                  </span>
+                  <ProfileLink uid={entry.author} client:only="svelte" />
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
 
+      {
+        pages.length > 0 && (
+          <section>
+            <h2 class="text-title">
+              <cn-icon noun="card" small />
+              {t("tag:pages")} ({pages.length})
+            </h2>
+            <ul>
+              {pages.map((entry) => (
+                <li class="flex items-center">
+                  <span style="flex: 1">
+                    <a href={parseUrl(entry)}>{entry.title}</a>
+                  </span>
+                  <ProfileLink uid={entry.author} client:only="svelte" />
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
 
-        {tagInfo?.synonyms && tagInfo.synonyms.length > 0 && (
-          <p class="text-low">
-            {t('tag:synonymsInfo', { count: tagInfo.synonyms.length })}:
-          </p>
-          <div class="flex">
-            {tagInfo.synonyms.map((syn) => (
-              <span class="cn-chip">
-                #{syn}
-              </span>
-            ))}
-          </div>
-        )}
-      </header>
-
-      {threads.length > 0 && (
-        <section style="margin-bottom: calc(3 * var(--cn-grid))">
-          <h2 class="text-title">
-            <cn-icon name="discussion" small />
-            {t('tag:discussions')} ({threads.length})
-          </h2>
-          <ul>
-            {threads.map((entry) => (
-              <li class="flex items-center">
-                <span style="flex: 1">
-                  <a href={parseUrl(entry)}>{entry.title}</a>
-                </span>
-                <ProfileLink uid={entry.author} client:only="svelte"/>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {pages.length > 0 && (
-        <section>
-          <h2 class="text-title">
-            <cn-icon noun="card" small />
-            {t('tag:pages')} ({pages.length})
-          </h2>
-          <ul>
-            {pages.map((entry) => (
-              <li class="flex items-center">
-                <span style="flex: 1">
-                  <a href={parseUrl(entry)}>{entry.title}</a>
-                </span>
-                <ProfileLink uid={entry.author} client:only="svelte"/>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {entries.length === 0 && (
-        <p class="text-caption">{t('tag:noEntries')}</p>
-      )}
+      {entries.length === 0 && <p class="text-caption">{t("tag:noEntries")}</p>}
     </article>
   </div>
 </Page>

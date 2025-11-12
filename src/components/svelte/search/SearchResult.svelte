@@ -1,6 +1,6 @@
 <script lang="ts">
 import { t } from '@utils/i18n';
-import MarkdownContent from '../app/MarkdownContent.svelte';
+import { createPlainSnippet } from '@utils/snippetHelpers';
 import ProfileLink from '../app/ProfileLink.svelte';
 
 interface Props {
@@ -14,11 +14,16 @@ interface Props {
 }
 const { result }: Props = $props();
 const url = `/threads/${result.path.split('/').pop()}`;
+const snippet = createPlainSnippet(result.markdownContent || '', 150);
 </script>
 
 <div class="search-result mb-2 border-t">
-  <h3 class="text-h5 m-0">{result.title}</h3>
+  <h3 class="text-h5 m-0">
+    <a href={url} class="no-underline hover-underline">
+      {result.title}
+    </a>
+  </h3>
   <p><ProfileLink uid={result.author} /></p>
-  <div><MarkdownContent content={(result.markdownContent || '').substring(0, 100)} />...</div>
-  <a href={url} class="read-more">{t("actions:more")}</a>
+  <p class="text-small">{snippet}</p>
+  <a href={url} class="read-more">{t("actions:readMore")}</a>
 </div>

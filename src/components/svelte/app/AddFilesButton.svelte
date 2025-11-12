@@ -33,8 +33,12 @@ const handleButtonClick = () => {
   onchange={handleFileChange}
   style="display: none"
   bind:this={fileInputRef}
+  {accept}
+  {multiple}
+  {disabled}
+  data-testid="file-input"
 />
-<button onclick={handleButtonClick} type="button">
+<button onclick={handleButtonClick} type="button" {disabled}>
   <cn-icon noun="assets"></cn-icon>
-  <span>{t('actions:upload')}</span>
+  <span>{t("actions:upload")}</span>
 </button>

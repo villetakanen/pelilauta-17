@@ -91,5 +91,13 @@ export const authedPut = (
 ) =>
   authedFetch(input, { ...options, method: 'PUT', body: JSON.stringify(body) });
 
-export const authedDelete = (input: RequestInfo | URL, options?: RequestInit) =>
-  authedFetch(input, { ...options, method: 'DELETE' });
+export const authedDelete = (
+  input: RequestInfo | URL,
+  body?: unknown,
+  options?: RequestInit,
+) =>
+  authedFetch(input, {
+    ...options,
+    method: 'DELETE',
+    body: body ? JSON.stringify(body) : undefined,
+  });

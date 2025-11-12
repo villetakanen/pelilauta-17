@@ -77,13 +77,9 @@ async function removeLabel(label: string) {
   try {
     const { authedDelete } = await import('@firebase/client/apiClient');
 
-    const url = new URL(
-      `/api/threads/${thread.key}/labels`,
-      window.location.origin,
-    );
-    url.searchParams.set('labels', label);
-
-    const response = await authedDelete(url.toString());
+    const response = await authedDelete(`/api/threads/${thread.key}/labels`, {
+      labels: [label],
+    });
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -116,8 +112,8 @@ function handleKeydown(event: KeyboardEvent) {
 </script>
 
 <div class="flex flex-col">
-  <h3 class="text-caption text-high mb-1">{t('admin:labels.title')}</h3>
-  <p class="text-small text-low mb-2">{t('admin:labels.legend')}</p>
+  <h3 class="text-caption text-high mb-1">{t("admin:labels.title")}</h3>
+  <p class="text-small text-low mb-2">{t("admin:labels.legend")}</p>
 
   {#if thread.labels && thread.labels.length > 0}
     <div class="flex flex-wrap items-center mb-2">
@@ -129,7 +125,7 @@ function handleKeydown(event: KeyboardEvent) {
             class="ml-1"
             onclick={() => removeLabel(label)}
             disabled={isRemoving === label}
-            aria-label={t('admin:labels.removeLabel')}
+            aria-label={t("admin:labels.removeLabel")}
           >
             {#if isRemoving === label}
               <cn-icon noun="loader" small></cn-icon>
@@ -141,7 +137,7 @@ function handleKeydown(event: KeyboardEvent) {
       {/each}
     </div>
   {:else}
-    <p class="text-small text-low mb-2">{t('admin:labels.noLabels')}</p>
+    <p class="text-small text-low mb-2">{t("admin:labels.noLabels")}</p>
   {/if}
 
   <div class="flex items-center">
@@ -149,7 +145,7 @@ function handleKeydown(event: KeyboardEvent) {
       type="text"
       bind:value={newLabel}
       onkeydown={handleKeydown}
-      placeholder={t('admin:labels.addPlaceholder')}
+      placeholder={t("admin:labels.addPlaceholder")}
       disabled={isAdding}
       class="grow"
     />
@@ -162,7 +158,7 @@ function handleKeydown(event: KeyboardEvent) {
       {#if isAdding}
         <cn-icon noun="loader" small></cn-icon>
       {:else}
-        {t('admin:labels.addLabel')}
+        {t("admin:labels.addLabel")}
       {/if}
     </button>
   </div>

@@ -1,4 +1,3 @@
-import { log } from 'node:console';
 import type { APIContext } from 'astro';
 import {
   TAG_FIRESTORE_COLLECTION,
@@ -6,7 +5,7 @@ import {
   TagSchema,
 } from 'src/schemas/TagSchema';
 import { getTagDisplayInfo, resolveTagSynonym } from 'src/schemas/TagSynonyms';
-import { logError } from 'src/utils/logHelpers';
+import { logDebug, logError } from 'src/utils/logHelpers';
 import { serverDB } from '../../../firebase/server';
 
 /* type Thread = {
@@ -59,11 +58,19 @@ export async function GET({ params }: APIContext): Promise<Response> {
   const tagInfo = getTagDisplayInfo(canonicalTag);
 
   // Fetch entries for canonical tag AND its synonyms
+  // IMPORTANT: Decode URL encoding and lowercase all tags before querying
+  // because toTagData() stores tags in lowercase without URL encoding
   const allTags = tagInfo
-    ? [canonicalTag, ...tagInfo.synonyms]
-    : [canonicalTag];
+    ? [canonicalTag, ...tagInfo.synonyms].map((t) =>
+        decodeURIComponent(t).toLowerCase(),
+      )
+    : [decodeURIComponent(canonicalTag).toLowerCase()];
 
-  log(`Fetching entries for tags: ${allTags.join(', ')}`);
+  logDebug('tags-api', 'Fetching entries for tags', {
+    tag,
+    canonicalTag,
+    allTags,
+  });
 
   const response = {
     entries: [] as Tag[],

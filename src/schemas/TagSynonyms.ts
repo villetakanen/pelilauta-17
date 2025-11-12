@@ -57,7 +57,8 @@ export const TAG_SYNONYMS: TagSynonym[] = [
       'lössö',
       'Suuri seikkailu',
     ],
-    description: 'Legendoja ja Lohikäärmeitä -roolipelin keskustelut ja pelit',
+    description:
+      'Legendoja ja Lohikäärmeitä -roolipeliin liittyvät keskustelut ja sivut.',
     icon: 'll-ampersand',
   },
   {

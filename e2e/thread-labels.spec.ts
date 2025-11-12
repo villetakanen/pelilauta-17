@@ -58,26 +58,7 @@ test.describe('Thread Labels (PBI-041)', () => {
       page.getByRole('heading', { name: uniqueThreadTitle, level: 1 }),
     ).toBeVisible();
 
-    // Check if label manager is visible (only for admins)
-    const labelManager = page.locator(
-      'label-manager, cn-label-manager, [data-testid="label-manager"]',
-    );
-
-    // If user is admin, label manager should be visible
-    const isLabelManagerVisible = await labelManager
-      .isVisible()
-      .catch(() => false);
-
-    if (!isLabelManagerVisible) {
-      console.log('Label manager not visible - user may not be an admin');
-      console.log('Skipping test as this requires admin privileges');
-      test.skip();
-      return;
-    }
-
-    console.log('Label manager is visible - proceeding with test');
-
-    // Add a label using the API directly (more reliable than UI interaction)
+    // Add a label using the API directly (most reliable approach)
     const response = await page.evaluate(async (key) => {
       const { authedFetch } = await import('/src/firebase/client/apiClient.ts');
       return await authedFetch(`/api/threads/${key}/labels`, {
@@ -96,9 +77,11 @@ test.describe('Thread Labels (PBI-041)', () => {
     // Wait a bit for the page to fully load
     await page.waitForTimeout(2000);
 
-    // Check if the "featured" label appears in the thread info
-    const featuredLabel = page.locator('text=/featured/i').first();
-    await expect(featuredLabel).toBeVisible({ timeout: 10000 });
+    // Check if the "featured" label appears using chip selector
+    const featuredLabelChip = page.locator('.cn-chip.secondary', {
+      hasText: 'featured',
+    });
+    await expect(featuredLabelChip).toBeVisible({ timeout: 10000 });
 
     console.log('Label "featured" is now visible on the thread');
   });
@@ -123,8 +106,11 @@ test.describe('Thread Labels (PBI-041)', () => {
     await waitForAuthState(page, 15000);
     await page.waitForTimeout(2000);
 
-    // Verify label exists
-    await expect(page.locator('text=/persistent/i').first()).toBeVisible({
+    // Verify label exists using chip selector
+    const labelChipBefore = page.locator('.cn-chip.secondary', {
+      hasText: 'persistent',
+    });
+    await expect(labelChipBefore).toBeVisible({
       timeout: 10000,
     });
 
@@ -171,9 +157,11 @@ test.describe('Thread Labels (PBI-041)', () => {
     await waitForAuthState(page, 15000);
     await page.waitForTimeout(2000);
 
-    // Verify the admin label still exists after edit
-    const persistentLabel = page.locator('text=/persistent/i').first();
-    await expect(persistentLabel).toBeVisible({
+    // Verify the admin label still exists after edit using chip selector
+    const labelChipAfter = page.locator('.cn-chip.secondary', {
+      hasText: 'persistent',
+    });
+    await expect(labelChipAfter).toBeVisible({
       timeout: 10000,
     });
 
@@ -258,8 +246,11 @@ test.describe('Thread Labels (PBI-041)', () => {
     await waitForAuthState(page, 15000);
     await page.waitForTimeout(2000);
 
-    // Verify label exists
-    await expect(page.locator('text=/removeme/i').first()).toBeVisible({
+    // Verify label exists using the chip selector
+    const labelChip = page.locator('.cn-chip.secondary', {
+      hasText: 'removeme',
+    });
+    await expect(labelChip).toBeVisible({
       timeout: 10000,
     });
 
@@ -287,8 +278,10 @@ test.describe('Thread Labels (PBI-041)', () => {
     await waitForAuthState(page, 15000);
     await page.waitForTimeout(2000);
 
-    // Verify label is gone
-    const removedLabel = page.locator('text=/removeme/i');
+    // Verify label is gone - check that no .secondary chip with "removeme" exists
+    const removedLabel = page.locator('.cn-chip.secondary', {
+      hasText: 'removeme',
+    });
     await expect(removedLabel).not.toBeVisible();
 
     console.log('Label "removeme" successfully removed');
@@ -313,43 +306,138 @@ test.describe('Thread Labels (PBI-041)', () => {
     await waitForAuthState(page, 15000);
     await page.waitForTimeout(2000);
 
-    // Check if there's visual distinction (e.g., different styling, icon, border)
-    // This depends on the actual implementation
-    const labelElement = page
-      .locator('[data-label="official"], .label-official, .admin-label')
-      .first();
-    const tagElement = page
-      .locator('[data-tag="test"], .tag-test, .user-tag')
-      .first();
+    // Check if there's visual distinction based on actual implementation
+    // Labels have .cn-chip.secondary class and cn-icon with noun="label-tag"
+    // User tags have .cn-chip class without .secondary
 
-    // At minimum, both should be visible
-    const labelVisible = await labelElement.isVisible().catch(() => false);
-    const tagVisible = await tagElement.isVisible().catch(() => false);
+    // Find label chip (should have .secondary class and contain "official")
+    const labelChip = page.locator('.cn-chip.secondary', {
+      hasText: 'official',
+    });
+    await expect(labelChip).toBeVisible({ timeout: 10000 });
 
-    if (labelVisible && tagVisible) {
-      // If both are visible, we can check for visual differences
-      console.log('Both admin labels and user tags are visible');
+    // Verify label has the icon
+    const labelIcon = labelChip.locator('cn-icon[noun="label-tag"]');
+    await expect(labelIcon).toBeVisible();
 
-      // The implementation should style them differently (e.g., accent color, border, icon)
-      // We can't easily test visual styling in e2e, but we can verify they both exist
-      expect(labelVisible).toBe(true);
-      expect(tagVisible).toBe(true);
-    } else {
-      console.log(
-        'Could not verify visual distinction - elements may use different selectors',
-      );
+    // Find a user tag chip (should be .cn-chip without .secondary, e.g., "test", "automation", or "e2e")
+    const userTagChips = page.locator('.cn-chip:not(.secondary)');
+    const userTagCount = await userTagChips.count();
+    expect(userTagCount).toBeGreaterThan(0);
+
+    // Verify user tags don't have the label icon
+    const firstUserTag = userTagChips.first();
+    const userTagIcon = firstUserTag.locator('cn-icon[noun="label-tag"]');
+    await expect(userTagIcon).not.toBeVisible();
+
+    console.log(
+      'Successfully verified visual distinction between labels and tags',
+    );
+    console.log('- Labels have .secondary class and label-tag icon');
+    console.log('- User tags are plain .cn-chip without .secondary class');
+  });
+
+  test('can add labels to threads without any user tags', async ({ page }) => {
+    // This tests the bug fix: threads without tags should still accept labels
+    const noTagsThreadTitle = `No Tags Thread ${Date.now()}`;
+
+    await authenticateAdmin(page);
+    await page.goto('http://localhost:4321/create/thread');
+    await waitForAuthState(page, 15000);
+
+    // Fill in the thread title
+    await page.fill('input[name="title"]', noTagsThreadTitle);
+
+    // Wait for CodeMirror editor
+    await page.waitForSelector('.cm-editor', {
+      state: 'attached',
+      timeout: 15000,
+    });
+
+    // Add content WITHOUT any hashtags (no user tags)
+    const editor = page.locator('.cm-content');
+    await editor.click();
+    await editor.fill(
+      'This thread has no hashtags and therefore no user tags.',
+    );
+
+    // Submit the thread
+    await expect(page.getByTestId('send-thread-button')).toBeEnabled();
+    await page.getByTestId('send-thread-button').click();
+
+    // Wait for navigation to the thread page
+    await page.waitForURL(/\/threads\/[^/]+$/, { timeout: 15000 });
+
+    const noTagsThreadUrl = page.url();
+    const urlMatch = noTagsThreadUrl.match(/\/threads\/([^/]+)$/);
+    let noTagsThreadKey = '';
+    if (urlMatch) {
+      noTagsThreadKey = urlMatch[1];
+    }
+
+    console.log('Created thread without tags:', noTagsThreadKey);
+
+    // Reload to ensure we have fresh data
+    await page.reload();
+    await waitForAuthState(page, 15000);
+    await page.waitForTimeout(2000);
+
+    // Verify no user tags are present (tags section should not show user tags)
+    const hasUserTags = await page.locator('.cn-chip:not(.secondary)').count();
+    console.log('User tag count:', hasUserTags);
+
+    // Now try to add an admin label (this is where the bug occurred)
+    const addLabelResponse = await page.evaluate(async (key) => {
+      const { authedFetch } = await import('/src/firebase/client/apiClient.ts');
+      const response = await authedFetch(`/api/threads/${key}/labels`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ labels: ['first-label'] }),
+      });
+      return {
+        ok: response.ok,
+        status: response.status,
+        body: await response.json(),
+      };
+    }, noTagsThreadKey);
+
+    console.log('Add label to thread without tags response:', addLabelResponse);
+    expect(addLabelResponse.ok).toBe(true);
+    expect(addLabelResponse.status).toBe(200);
+
+    // Reload and verify the label appears
+    await page.reload();
+    await waitForAuthState(page, 15000);
+    await page.waitForTimeout(2000);
+
+    const labelElement = page.locator('text=/first-label/i').first();
+    await expect(labelElement).toBeVisible({ timeout: 10000 });
+
+    console.log(
+      'Successfully added label to thread without user tags - bug fix verified',
+    );
+
+    // Cleanup: delete the test thread
+    await page.goto(`${noTagsThreadUrl}/confirmDelete`);
+    await page.waitForTimeout(1000);
+    const confirmButton = page.locator('button[type="submit"]');
+    if (await confirmButton.isVisible().catch(() => false)) {
+      await confirmButton.click();
+      await page.waitForTimeout(2000);
+      console.log('Test thread cleaned up');
     }
   });
 
   test('non-admin users cannot add labels', async ({ page }) => {
-    // This test would need a non-admin user account
-    // For now, we'll test the API response when attempting to add labels
+    // Authenticate as non-admin user (newUser)
+    const { authenticate } = await import('./authenticate-e2e');
+    await authenticate(page, true); // Use newUser who is not admin
 
-    await authenticateAdmin(page);
-    await page.goto(threadUrl);
-    await waitForAuthState(page, 15000);
+    // Don't navigate to the thread - just wait for auth to be ready
+    // The newUser may be on onboarding page, but that's fine for API testing
+    await page.waitForTimeout(2000);
 
-    // Try to add a label (if user is not admin, should fail with 403)
+    // Try to add a label as non-admin user (should fail with 403)
     const response = await page.evaluate(async (key) => {
       try {
         const { authedFetch } = await import(
@@ -374,17 +462,12 @@ test.describe('Thread Labels (PBI-041)', () => {
       }
     }, threadKey);
 
-    console.log('Label add attempt response:', response);
+    console.log('Non-admin label add attempt response:', response);
 
-    // If user is admin, this will succeed (status 200)
-    // If user is not admin, this should fail (status 403)
-    if (response.status === 403) {
-      console.log('Non-admin user correctly denied access to add labels');
-      expect(response.ok).toBe(false);
-    } else if (response.status === 200) {
-      console.log('User is admin - label add succeeded');
-      expect(response.ok).toBe(true);
-    }
+    // Non-admin user should be denied with 403 Forbidden
+    expect(response.status).toBe(403);
+    expect(response.ok).toBe(false);
+    expect(response.body.error).toContain('Forbidden');
   });
 
   test.afterAll(async ({ browser }) => {

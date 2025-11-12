@@ -216,15 +216,15 @@ test.describe('Reply Submission UX Improvements', () => {
       0x00, 0x00, 0x00, 0x49, 0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82,
     ]);
 
-    // Upload the test image - set file directly on the hidden input
-    await page.locator('input[type="file"]').setInputFiles({
+    // Upload the test image - set file directly on the hidden input within the dialog
+    await page.getByRole('dialog').locator('input[type="file"]').setInputFiles({
       name: 'test-image.png',
       mimeType: 'image/png',
       buffer: testImageBuffer,
     });
 
     // Verify file is shown in the dialog (preview should appear)
-    await expect(page.locator('cn-lightbox')).toBeVisible();
+    await expect(page.getByRole('dialog').locator('cn-lightbox')).toBeVisible();
 
     // Start timing the reply submission with file
     const startTime = Date.now();
