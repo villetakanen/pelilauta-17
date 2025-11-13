@@ -7,6 +7,58 @@
 
 **User Story:** As a developer, I want site updates to follow the API-first pattern (like threads), so that the codebase has consistent architecture and atomic cache purging.
 
+## Implementation Status
+
+**Current Phase:** Commit 3 Complete ✅
+
+### Completed Commits
+
+- ✅ **Commit 1** (c79f167): Add `SiteUpdateSchema` validation schema
+  - Created `src/schemas/SiteUpdateSchema.ts` with Zod schema
+  - Added comprehensive unit tests (33 tests)
+  - All fields optional, validates partial updates
+  
+- ✅ **Commit 2** (2dac59c): Add PATCH `/api/sites/[siteKey]` endpoint (initial)
+  - Created API endpoint with auth, validation, Firestore update
+  - Implemented atomic cache purging via `NetlifyCachePurger`
+  - Added integration tests (40+ tests)
+  
+- ✅ **Commit 2.1** (fd0632c): Fix HTTP method semantics (hotfix)
+  - Changed primary method from PUT to PATCH (correct REST semantics)
+  - Kept PUT as alias for backward compatibility
+  - Updated tests to use PATCH as primary method
+  - Documented bug in "Known Issues" section
+
+- ✅ **Commit 3** (Not yet committed): Add `updateSiteApi` client wrapper
+  - Created `src/firebase/client/site/updateSiteApi.ts`
+  - Added `authedPatch` helper to `src/firebase/client/apiClient.ts`
+  - Implemented comprehensive unit tests (12 tests)
+  - All tests passing, code formatted with Biome
+
+### Remaining Commits
+
+- ⏳ **Commit 4**: Migrate `SiteMetaForm.svelte` to use new API
+- ⏳ **Commit 5**: Migrate `SiteTocTool.svelte` to use new API  
+- ⏳ **Commit 6**: Migrate `SiteCategoriesTool.svelte` to use new API
+- ⏳ **Commit 7**: Remove old `updateSite.ts` pattern
+
+### Files Modified
+
+**Commit 1:**
+- `src/schemas/SiteSchema.ts` - Added `SiteUpdateSchema` and `SiteUpdate` type
+- `src/schemas/SiteUpdateSchema.test.ts` - New test file (33 tests)
+
+**Commit 2 & 2.1:**
+- `src/pages/api/sites/[siteKey]/index.ts` - Added GET + PATCH handlers (PUT alias)
+- `test/api/sites-update.test.ts` - New integration test file (40+ tests)
+
+**Commit 3:**
+- `src/firebase/client/apiClient.ts` - Added `authedPatch` helper method
+- `src/firebase/client/site/updateSiteApi.ts` - New client-side wrapper
+- `test/lib/client/updateSiteApi.test.ts` - New unit test file (12 tests)
+
+---
+
 ## Terminology
 
 - **CSR (Client-Side Rendering)**: Direct Firestore updates from browser with dynamic imports
