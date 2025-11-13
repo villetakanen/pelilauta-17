@@ -1,5 +1,5 @@
 <script lang="ts">
-import { updateSite } from 'src/firebase/client/site/updateSite';
+import { updateSiteApi } from 'src/firebase/client/site/updateSiteApi';
 import {
   type Site,
   type SiteSortOrder,
@@ -30,7 +30,7 @@ async function setSortOrder(e: Event) {
   const target = e.target as HTMLSelectElement;
   const value = target.value as SiteSortOrder;
   try {
-    await updateSite(
+    await updateSiteApi(
       {
         key: site.key,
         sortOrder: value,
@@ -40,28 +40,25 @@ async function setSortOrder(e: Event) {
     // Lets notiufy the user about the update
     pushSnack(t('snack:site.sortOrderUpdated'));
   } catch (error) {
-    logError(error);
+    logError('SiteTocTool', 'Failed to update sort order:', error);
     pushSnack(t('snack:site.sortOrderUpdateFailed'));
   }
 }
-</script> 
+</script>
 
 <WithAuth allow={site.owners.includes($uid)}>
   <div class="content-columns">
     <section>
       <h2>
         <cn-icon noun="tools"></cn-icon>
-        {t('site:toc.admin.title')}
+        {t("site:toc.admin.title")}
       </h2>
-      <p>{t('site:toc.admin.info')}</p>
+      <p>{t("site:toc.admin.info")}</p>
       <label>
-        <span>{t('entries:site.sortOrder')}</span>
+        <span>{t("entries:site.sortOrder")}</span>
         <select onchange={setSortOrder}>
           {#each Array.from(sortOrderOptions.entries()) as [value, label]}
-            <option
-            selected={sortOrder === value}
-            value={value}>{label}
-            </option>
+            <option selected={sortOrder === value} {value}>{label} </option>
           {/each}
         </select>
       </label>

@@ -91,6 +91,17 @@ export const authedPut = (
 ) =>
   authedFetch(input, { ...options, method: 'PUT', body: JSON.stringify(body) });
 
+export const authedPatch = (
+  input: RequestInfo | URL,
+  body: unknown,
+  options?: RequestInit,
+) =>
+  authedFetch(input, {
+    ...options,
+    method: 'PATCH',
+    body: JSON.stringify(body),
+  });
+
 export const authedDelete = (
   input: RequestInfo | URL,
   body?: unknown,

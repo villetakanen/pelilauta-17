@@ -7,6 +7,105 @@
 
 **User Story:** As a developer, I want site updates to follow the API-first pattern (like threads), so that the codebase has consistent architecture and atomic cache purging.
 
+## Implementation Status
+
+**Current Phase:** Migration Complete ✅ All 7 Commits Done
+
+### Completed Commits
+
+- ✅ **Commit 1** (c79f167): Add `SiteUpdateSchema` validation schema
+  - Created `src/schemas/SiteUpdateSchema.ts` with Zod schema
+  - Added comprehensive unit tests (33 tests)
+  - All fields optional, validates partial updates
+  
+- ✅ **Commit 2** (2dac59c): Add PATCH `/api/sites/[siteKey]` endpoint (initial)
+  - Created API endpoint with auth, validation, Firestore update
+  - Implemented atomic cache purging via `NetlifyCachePurger`
+  - Added integration tests (40+ tests)
+  
+- ✅ **Commit 2.1** (fd0632c): Fix HTTP method semantics (hotfix)
+  - Changed primary method from PUT to PATCH (correct REST semantics)
+  - Kept PUT as alias for backward compatibility
+  - Updated tests to use PATCH as primary method
+  - Documented bug in "Known Issues" section
+
+- ✅ **Commit 3** (4b7bb95): Add `updateSiteApi` client wrapper
+  - Created `src/firebase/client/site/updateSiteApi.ts`
+  - Added `authedPatch` helper to `src/firebase/client/apiClient.ts`
+  - Implemented comprehensive unit tests (12 tests)
+  - All tests passing, code formatted with Biome
+
+- ✅ **Commit 4** (16c657b): Migrate `SiteMetaForm` to API pattern
+  - Updated `src/stores/site/siteEditorStore.ts` to use `updateSiteApi`
+  - Replaced direct Firestore updates with API calls
+  - Removed manual cache purging (handled server-side atomically)
+  - Simplified code: -25 lines, +14 lines (net -11 lines)
+  - No component changes needed (store abstraction works!)
+
+- ✅ **Commit 5** (0713218): Migrate TOC tool components to API pattern
+  - Updated `src/components/svelte/sites/toc/SiteTocTool.svelte` to use `updateSiteApi`
+  - Updated `src/components/svelte/sites/toc/SiteCategoriesTool.svelte` to use `updateSiteApi`
+  - Both components use silent updates (no timestamp changes)
+  - Improved error logging with component context
+  - All tests passing (366/366)
+
+- ✅ **Commit 6** (950e7b9): Migrate remaining client-side uses to API pattern
+  - Updated `src/firebase/client/page/addPageRef.ts` to use `updateSiteApi`
+  - Updated `src/stores/site/index.ts` to use `updateSiteApi`
+  - Both use silent updates (metadata-only changes)
+  - No more direct uses of old `updateSite` pattern in codebase
+  - All tests passing (366/366)
+
+- ✅ **Commit 7** (Not yet committed): Remove old `updateSite.ts` pattern
+  - Deleted `src/firebase/client/site/updateSite.ts`
+  - Old Firestore pattern completely removed from codebase
+  - All site updates now go through REST API
+  - All tests passing (366/366)
+  - Migration complete!
+
+### Migration Complete! 🎉
+
+All site updates now use the API-first pattern:
+- ✅ Server-side validation with `SiteUpdateSchema`
+- ✅ Atomic cache purging on every update
+- ✅ Authentication and authorization on server
+- ✅ No direct Firestore access from client
+- ✅ Consistent error handling across all update paths
+
+### Files Modified
+
+**Commit 1:**
+- `src/schemas/SiteSchema.ts` - Added `SiteUpdateSchema` and `SiteUpdate` type
+- `src/schemas/SiteUpdateSchema.test.ts` - New test file (33 tests)
+
+**Commit 2 & 2.1:**
+- `src/pages/api/sites/[siteKey]/index.ts` - Added GET + PATCH handlers (PUT alias)
+- `test/api/sites-update.test.ts` - New integration test file (40+ tests)
+
+**Commit 3:**
+- `src/firebase/client/apiClient.ts` - Added `authedPatch` helper method
+- `src/firebase/client/site/updateSiteApi.ts` - New client-side wrapper
+- `test/lib/client/updateSiteApi.test.ts` - New unit test file (12 tests)
+
+**Commit 4:**
+- `src/stores/site/siteEditorStore.ts` - Migrated to use `updateSiteApi` (simplified by 11 lines)
+- `COMMIT-4-CHANGES.md` - Commit documentation
+
+**Commit 5:**
+- `src/components/svelte/sites/toc/SiteTocTool.svelte` - Migrated to use `updateSiteApi`
+- `src/components/svelte/sites/toc/SiteCategoriesTool.svelte` - Migrated to use `updateSiteApi`
+- `COMMIT-5-CHANGES.md` - Commit documentation
+
+**Commit 6:**
+- `src/firebase/client/page/addPageRef.ts` - Migrated to use `updateSiteApi`
+- `src/stores/site/index.ts` - Migrated to use `updateSiteApi`
+- `COMMIT-6-CHANGES.md` - Commit documentation
+
+**Commit 7:**
+- `src/firebase/client/site/updateSite.ts` - Deleted (old pattern removed)
+
+---
+
 ## Terminology
 
 - **CSR (Client-Side Rendering)**: Direct Firestore updates from browser with dynamic imports
@@ -742,25 +841,41 @@ pnpm test:e2e -- --grep "site metadata"
 
 ---
 
-### Commit 5: Update SiteTocTool.svelte (20 minutes)
+### Commit 5: Update SiteTocTool.svelte and SiteCategoriesTool.svelte (30 minutes) ✅
 
-**Goal:** Migrate TOC settings to new API pattern
+**Goal:** Migrate TOC tool components to new API pattern
 
-**Files to Modify:**
+**Files Modified:**
 - `src/components/svelte/sites/toc/SiteTocTool.svelte`
+- `src/components/svelte/sites/toc/SiteCategoriesTool.svelte`
 
 **Why This Commit?**
-- Second component migration
+- Both TOC-related components use silent updates for metadata
 - Uses `silent: true` parameter (important test case)
-- Other components still work with old pattern
+- Logical grouping: both components are in the same feature area
 
 **Implementation:**
+
+**SiteTocTool.svelte:**
 ```typescript
 // Before:
+import { updateSite } from 'src/firebase/client/site/updateSite';
 await updateSite({ key: site.key, sortOrder: value }, true);
 
 // After:
+import { updateSiteApi } from 'src/firebase/client/site/updateSiteApi';
 await updateSiteApi({ key: site.key, sortOrder: value }, true);
+```
+
+**SiteCategoriesTool.svelte:**
+```typescript
+// Before:
+import { updateSite } from 'src/firebase/client/site/updateSite';
+await updateSite({ key: site.key, pageCategories: cats }, true);
+
+// After:
+import { updateSiteApi } from 'src/firebase/client/site/updateSiteApi';
+await updateSiteApi({ key: site.key, pageCategories: cats }, true);
 ```
 
 **Tests:**
@@ -793,46 +908,41 @@ pnpm test:e2e -- --grep "TOC sort order"
 
 ---
 
-### Commit 6: Update SiteCategoriesTool.svelte (20 minutes)
+### Commit 6: Update addPageRef.ts and stores/site/index.ts (30 minutes)
 
-**Goal:** Migrate category management to new API pattern
+**Goal:** Migrate remaining client-side uses of `updateSite` to new API pattern
 
 **Files to Modify:**
-- `src/components/svelte/sites/toc/SiteCategoriesTool.svelte`
+- `src/firebase/client/page/addPageRef.ts`
+- `src/stores/site/index.ts`
 
 **Why This Commit?**
-- Final component migration
-- All site updates now use new API
-- Old pattern no longer used by any code
+- Last remaining direct uses of old `updateSite` pattern
+- After this, only the old implementation file itself remains
+- Both use silent updates (no timestamp changes)
 
 **Implementation:**
+
+**addPageRef.ts:**
 ```typescript
 // Before:
-await updateSite({ key: site.key, pageCategories: cats }, true);
+import { updateSite } from '../site/updateSite';
+await updateSite({ pageRefs: refs, key: siteKey });
 
 // After:
-await updateSiteApi({ key: site.key, pageCategories: cats }, true);
+import { updateSiteApi } from '../site/updateSiteApi';
+await updateSiteApi({ pageRefs: refs, key: siteKey });
 ```
 
-**Tests:**
+**stores/site/index.ts:**
 ```typescript
-// E2E test to add/verify
-test('category management uses new API', async ({ page }) => {
-  const siteKey = await createTestSite();
-  await loginAsOwner(page);
-  
-  await page.goto(`/sites/${siteKey}/toc/settings`);
-  await page.fill('input[name="categoryName"]', 'New Category');
-  await page.click('button[type="submit"]');
-  
-  await expect(page.locator('.snackbar')).toContainText('updated');
-  
-  const site = await getSiteData(siteKey);
-  expect(site.pageCategories).toContainEqual({
-    slug: expect.any(String),
-    name: 'New Category',
-  });
-});
+// Before:
+import { updateSite } from 'src/firebase/client/site/updateSite';
+await updateSite(updated, true);
+
+// After:
+import { updateSiteApi } from 'src/firebase/client/site/updateSiteApi';
+await updateSiteApi(updated, true);
 ```
 
 **Search for Remaining Usages:**
@@ -1290,3 +1400,46 @@ test('cache purging works after site update', async ({ page }) => {
 - **Zero Breaking Changes**: Existing functionality maintained throughout migration
 - **Commit Atomicity**: All 7 commits independently testable and deployable
 - **Agent Handoff**: Each commit can be completed by different agent sequentially
+---
+
+## Known Issues / Bugs Found During Implementation
+
+### Bug: Incorrect HTTP Method Semantics in Commit 2
+**Discovered**: During code review after Commit 2 completion  
+**Severity**: Low (semantic correctness issue)
+
+**Issue Description:**
+Commit 2 implemented the endpoint with PUT as the primary method and PATCH as an alias:
+```typescript
+export async function PUT({ params, request }: APIContext): Promise<Response> { ... }
+export const PATCH = PUT;
+```
+
+However, the actual behavior is **partial updates** (PATCH semantics), not full resource replacement (PUT semantics):
+- All fields in `SiteUpdateSchema` are optional
+- Only provided fields are updated in Firestore
+- Missing fields are not deleted/reset
+
+**REST Semantics:**
+- **PUT**: Replace entire resource (full representation required)
+- **PATCH**: Partially modify resource (send only changed fields)
+
+**Root Cause:**
+- Followed the existing thread API pattern which uses PUT
+- Didn't consider that we're implementing partial updates, not full resource replacement
+
+**Impact:**
+- ✅ Functionality works correctly
+- ⚠️ Semantically incorrect HTTP method choice
+- ⚠️ May confuse API consumers expecting PUT behavior
+
+**Resolution Plan:**
+- Switch primary method to PATCH (semantically correct for partial updates)
+- Keep PUT as an alias for backward compatibility
+- Update documentation to reflect PATCH as primary
+- Update tests to use PATCH as primary method
+- Add comment explaining PUT alias exists for compatibility
+
+**Fixed In**: Commit 2.1 (hotfix before Commit 3)
+
+---

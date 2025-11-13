@@ -1,6 +1,6 @@
 <script lang="ts">
 import { type CnListItem, CnSortableList } from '@11thdeg/cyan-lit';
-import { updateSite } from 'src/firebase/client/site/updateSite';
+import { updateSiteApi } from 'src/firebase/client/site/updateSiteApi';
 import {
   type CategoryRef,
   parseCategories,
@@ -91,7 +91,7 @@ async function onsubmit(e: Event) {
     // Check if categories are valid
     const cats = parseCategories(categories);
     // Silent update to site
-    await updateSite(
+    await updateSiteApi(
       {
         key: site.key,
         pageCategories: cats,
@@ -99,7 +99,7 @@ async function onsubmit(e: Event) {
       true,
     );
   } catch (error) {
-    logError('Error saving categories', error);
+    logError('SiteCategoriesTool', 'Error saving categories:', error);
     pushSnack(t('site:toc.admin.errorSaving'));
   } finally {
     saving = false;
@@ -108,7 +108,7 @@ async function onsubmit(e: Event) {
 </script>
 
 <section>
-  <h3>{t('site:toc.admin.categories.title')}</h3>
+  <h3>{t("site:toc.admin.categories.title")}</h3>
   <form {onsubmit}>
     {#if categories.length > 0}
       <SvelteSortableList
@@ -119,47 +119,44 @@ async function onsubmit(e: Event) {
         delete={true}
       />
     {:else}
-      <p class="info-text">{t('site:toc.admin.noCategories')}</p>
+      <p class="info-text">{t("site:toc.admin.noCategories")}</p>
     {/if}
-
 
     <div class="toolbar border border-radius">
       <cn-icon noun="add"></cn-icon>
       <input
-        class="grow" 
-          type="text" 
-          id="newCategory" 
-          name="newCategory" 
-          bind:value={newCategory} 
-          placeholder={t('site:toc.admin.categoryPlaceholder')}
-        />
+        class="grow"
+        type="text"
+        id="newCategory"
+        name="newCategory"
+        bind:value={newCategory}
+        placeholder={t("site:toc.admin.categoryPlaceholder")}
+      />
 
-      <button 
+      <button
         class="no-shrink"
         disabled={!newCategory}
-        type="button" 
-        onclick={addCategory}>
-        {t('actions:add')}
+        type="button"
+        onclick={addCategory}
+      >
+        {t("actions:add")}
       </button>
     </div>
 
     <div class="toolbar">
-      <button 
-        type="button" 
-        class="text" 
-        onclick={reset} 
+      <button
+        type="button"
+        class="text"
+        onclick={reset}
         disabled={!hasChanges || saving}
       >
-        {t('actions:reset')}
+        {t("actions:reset")}
       </button>
-      <button 
-        type="submit" 
-        disabled={!hasChanges || saving}
-      >
+      <button type="submit" disabled={!hasChanges || saving}>
         {#if saving}
           <span class="spinner small"></span>
         {/if}
-        {t('actions:save')}
+        {t("actions:save")}
       </button>
     </div>
   </form>

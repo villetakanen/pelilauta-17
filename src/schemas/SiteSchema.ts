@@ -91,6 +91,51 @@ export const emptySite: Site = {
   sortOrder: 'name',
 };
 
+/**
+ * Schema for validating site updates via API.
+ * Includes all fields from SiteSchema that can be updated by users,
+ * excluding Entry fields (key, createdAt, updatedAt, flowTime, owners)
+ * which are managed by toFirestoreEntry on the server.
+ */
+export const SiteUpdateSchema = z.object({
+  // Core fields
+  name: z.string().optional(),
+  system: z.string().optional(),
+  description: z.string().optional(),
+  homepage: z.string().optional(),
+  license: z.string().optional(),
+
+  // Media/assets
+  posterURL: z.string().optional(),
+  avatarURL: z.string().optional(),
+  backgroundURL: z.string().optional(),
+  assets: z.array(AssetSchema).optional(),
+
+  // Visibility
+  hidden: z.boolean().optional(),
+
+  // Page organization
+  sortOrder: SiteSortOrderSchema.optional(),
+  customPageKeys: z.boolean().optional(),
+  usePlainTextURLs: z.boolean().optional(),
+  pageRefs: z.array(PageRefSchema).optional(),
+  pageCategories: z.array(CategoryRefSchema).optional(),
+
+  // Features/options
+  players: z.array(z.string()).optional(),
+  usePlayers: z.boolean().optional(),
+  useClocks: z.boolean().optional(),
+  useHandouts: z.boolean().optional(),
+  useRecentChanges: z.boolean().optional(),
+  useSidebar: z.boolean().optional(),
+  sidebarKey: z.string().optional(),
+  useCharacters: z.boolean().optional(),
+  useCharacterKeeper: z.boolean().optional(),
+  characterKeeperSheetKey: z.string().optional(),
+});
+
+export type SiteUpdate = z.infer<typeof SiteUpdateSchema>;
+
 export function parseSite(data: Partial<Site>, newKey?: string): Site {
   // Forcing key to be a string, even if it's undefined. Legacy support for key field.
   const key = newKey || data.key || '';

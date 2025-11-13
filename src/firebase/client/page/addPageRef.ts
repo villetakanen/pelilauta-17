@@ -5,7 +5,7 @@ import {
 } from 'src/schemas/SiteSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { db } from '..';
-import { updateSite } from '../site/updateSite';
+import { updateSiteApi } from '../site/updateSiteApi';
 
 export async function addPageRef(pageRef: PageRef, siteKey: string) {
   // Get the siteDoc and Site from the firestore
@@ -27,5 +27,5 @@ export async function addPageRef(pageRef: PageRef, siteKey: string) {
   }
 
   // Update the site with the new pageRefs
-  await updateSite({ pageRefs: refs, key: siteKey });
+  await updateSiteApi({ pageRefs: refs, key: siteKey });
 }
