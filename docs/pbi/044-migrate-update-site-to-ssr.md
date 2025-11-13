@@ -9,7 +9,7 @@
 
 ## Implementation Status
 
-**Current Phase:** Commit 5 Complete ✅
+**Current Phase:** Commit 6 Complete ✅
 
 ### Completed Commits
 
@@ -42,17 +42,23 @@
   - Simplified code: -25 lines, +14 lines (net -11 lines)
   - No component changes needed (store abstraction works!)
 
-- ✅ **Commit 5** (Not yet committed): Migrate TOC tool components to API pattern
+- ✅ **Commit 5** (0713218): Migrate TOC tool components to API pattern
   - Updated `src/components/svelte/sites/toc/SiteTocTool.svelte` to use `updateSiteApi`
   - Updated `src/components/svelte/sites/toc/SiteCategoriesTool.svelte` to use `updateSiteApi`
   - Both components use silent updates (no timestamp changes)
   - Improved error logging with component context
   - All tests passing (366/366)
 
+- ✅ **Commit 6** (Not yet committed): Migrate remaining client-side uses to API pattern
+  - Updated `src/firebase/client/page/addPageRef.ts` to use `updateSiteApi`
+  - Updated `src/stores/site/index.ts` to use `updateSiteApi`
+  - Both use silent updates (metadata-only changes)
+  - No more direct uses of old `updateSite` pattern in codebase
+  - All tests passing (366/366)
+
 ### Remaining Commits
 
-- ⏳ **Commit 6**: Migrate `addPageRef.ts` and `stores/site/index.ts` to use new API
-- ⏳ **Commit 7**: Remove old `updateSite.ts` pattern
+- ⏳ **Commit 7**: Remove old `updateSite.ts` pattern and cleanup
 
 ### Files Modified
 
@@ -76,6 +82,11 @@
 **Commit 5:**
 - `src/components/svelte/sites/toc/SiteTocTool.svelte` - Migrated to use `updateSiteApi`
 - `src/components/svelte/sites/toc/SiteCategoriesTool.svelte` - Migrated to use `updateSiteApi`
+- `COMMIT-5-CHANGES.md` - Commit documentation
+
+**Commit 6:**
+- `src/firebase/client/page/addPageRef.ts` - Migrated to use `updateSiteApi`
+- `src/stores/site/index.ts` - Migrated to use `updateSiteApi`
 
 ---
 
