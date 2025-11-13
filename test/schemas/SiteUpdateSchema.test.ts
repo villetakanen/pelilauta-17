@@ -1,48 +1,48 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from 'vitest';
 import {
   type SiteUpdate,
   SiteUpdateSchema,
-} from "../../src/schemas/SiteSchema";
+} from '../../src/schemas/SiteSchema';
 
-describe("SiteUpdateSchema", () => {
-  describe("valid updates", () => {
-    it("should accept empty update object", () => {
+describe('SiteUpdateSchema', () => {
+  describe('valid updates', () => {
+    it('should accept empty update object', () => {
       const update = {};
       const result = SiteUpdateSchema.parse(update);
       expect(result).toEqual({});
     });
 
-    it("should accept core field updates", () => {
+    it('should accept core field updates', () => {
       const update: SiteUpdate = {
-        name: "Updated Site Name",
-        system: "D&D 5e",
-        description: "A new description",
-        homepage: "intro",
-        license: "cc-by",
+        name: 'Updated Site Name',
+        system: 'D&D 5e',
+        description: 'A new description',
+        homepage: 'intro',
+        license: 'cc-by',
       };
 
       const result = SiteUpdateSchema.parse(update);
-      expect(result.name).toBe("Updated Site Name");
-      expect(result.system).toBe("D&D 5e");
-      expect(result.description).toBe("A new description");
-      expect(result.homepage).toBe("intro");
-      expect(result.license).toBe("cc-by");
+      expect(result.name).toBe('Updated Site Name');
+      expect(result.system).toBe('D&D 5e');
+      expect(result.description).toBe('A new description');
+      expect(result.homepage).toBe('intro');
+      expect(result.license).toBe('cc-by');
     });
 
-    it("should accept media field updates", () => {
+    it('should accept media field updates', () => {
       const update: SiteUpdate = {
-        posterURL: "https://example.com/poster.jpg",
-        avatarURL: "https://example.com/avatar.png",
-        backgroundURL: "https://example.com/bg.jpg",
+        posterURL: 'https://example.com/poster.jpg',
+        avatarURL: 'https://example.com/avatar.png',
+        backgroundURL: 'https://example.com/bg.jpg',
       };
 
       const result = SiteUpdateSchema.parse(update);
-      expect(result.posterURL).toBe("https://example.com/poster.jpg");
-      expect(result.avatarURL).toBe("https://example.com/avatar.png");
-      expect(result.backgroundURL).toBe("https://example.com/bg.jpg");
+      expect(result.posterURL).toBe('https://example.com/poster.jpg');
+      expect(result.avatarURL).toBe('https://example.com/avatar.png');
+      expect(result.backgroundURL).toBe('https://example.com/bg.jpg');
     });
 
-    it("should accept visibility updates", () => {
+    it('should accept visibility updates', () => {
       const update: SiteUpdate = {
         hidden: false,
       };
@@ -51,12 +51,12 @@ describe("SiteUpdateSchema", () => {
       expect(result.hidden).toBe(false);
     });
 
-    it("should accept valid sortOrder values", () => {
-      const orders: Array<"name" | "createdAt" | "flowTime" | "manual"> = [
-        "name",
-        "createdAt",
-        "flowTime",
-        "manual",
+    it('should accept valid sortOrder values', () => {
+      const orders: Array<'name' | 'createdAt' | 'flowTime' | 'manual'> = [
+        'name',
+        'createdAt',
+        'flowTime',
+        'manual',
       ];
 
       for (const order of orders) {
@@ -66,33 +66,33 @@ describe("SiteUpdateSchema", () => {
       }
     });
 
-    it("should accept page organization updates", () => {
+    it('should accept page organization updates', () => {
       const update: SiteUpdate = {
-        sortOrder: "manual",
+        sortOrder: 'manual',
         customPageKeys: true,
         usePlainTextURLs: false,
       };
 
       const result = SiteUpdateSchema.parse(update);
-      expect(result.sortOrder).toBe("manual");
+      expect(result.sortOrder).toBe('manual');
       expect(result.customPageKeys).toBe(true);
       expect(result.usePlainTextURLs).toBe(false);
     });
 
-    it("should accept pageRefs array", () => {
+    it('should accept pageRefs array', () => {
       const update: SiteUpdate = {
         pageRefs: [
           {
-            key: "page1",
-            name: "Page 1",
-            author: "user123",
+            key: 'page1',
+            name: 'Page 1',
+            author: 'user123',
             flowTime: 1234567890,
           },
           {
-            key: "page2",
-            name: "Page 2",
-            author: "user456",
-            category: "rules",
+            key: 'page2',
+            name: 'Page 2',
+            author: 'user456',
+            category: 'rules',
             flowTime: 1234567900,
           },
         ],
@@ -100,25 +100,25 @@ describe("SiteUpdateSchema", () => {
 
       const result = SiteUpdateSchema.parse(update);
       expect(result.pageRefs).toHaveLength(2);
-      expect(result.pageRefs?.[0].key).toBe("page1");
-      expect(result.pageRefs?.[1].category).toBe("rules");
+      expect(result.pageRefs?.[0].key).toBe('page1');
+      expect(result.pageRefs?.[1].category).toBe('rules');
     });
 
-    it("should accept pageCategories array", () => {
+    it('should accept pageCategories array', () => {
       const update: SiteUpdate = {
         pageCategories: [
-          { slug: "rules", name: "Rules" },
-          { slug: "lore", name: "Lore" },
+          { slug: 'rules', name: 'Rules' },
+          { slug: 'lore', name: 'Lore' },
         ],
       };
 
       const result = SiteUpdateSchema.parse(update);
       expect(result.pageCategories).toHaveLength(2);
-      expect(result.pageCategories?.[0].slug).toBe("rules");
-      expect(result.pageCategories?.[1].name).toBe("Lore");
+      expect(result.pageCategories?.[0].slug).toBe('rules');
+      expect(result.pageCategories?.[1].name).toBe('Lore');
     });
 
-    it("should accept feature toggle updates", () => {
+    it('should accept feature toggle updates', () => {
       const update: SiteUpdate = {
         usePlayers: true,
         useClocks: false,
@@ -139,90 +139,90 @@ describe("SiteUpdateSchema", () => {
       expect(result.useCharacterKeeper).toBe(false);
     });
 
-    it("should accept players array", () => {
+    it('should accept players array', () => {
       const update: SiteUpdate = {
-        players: ["user123", "user456", "user789"],
+        players: ['user123', 'user456', 'user789'],
       };
 
       const result = SiteUpdateSchema.parse(update);
-      expect(result.players).toEqual(["user123", "user456", "user789"]);
+      expect(result.players).toEqual(['user123', 'user456', 'user789']);
     });
 
-    it("should accept assets array", () => {
+    it('should accept assets array', () => {
       const update: SiteUpdate = {
         assets: [
           {
-            url: "https://example.com/image1.png",
-            name: "image1.png",
-            description: "First image",
-            license: "cc-by",
+            url: 'https://example.com/image1.png',
+            name: 'image1.png',
+            description: 'First image',
+            license: 'cc-by',
           },
           {
-            url: "https://example.com/image2.jpg",
-            name: "image2.jpg",
-            description: "",
-            license: "0",
+            url: 'https://example.com/image2.jpg',
+            name: 'image2.jpg',
+            description: '',
+            license: '0',
           },
         ],
       };
 
       const result = SiteUpdateSchema.parse(update);
       expect(result.assets).toHaveLength(2);
-      expect(result.assets?.[0].url).toBe("https://example.com/image1.png");
+      expect(result.assets?.[0].url).toBe('https://example.com/image1.png');
     });
 
-    it("should accept sidebar configuration", () => {
+    it('should accept sidebar configuration', () => {
       const update: SiteUpdate = {
         useSidebar: true,
-        sidebarKey: "sidebar-page",
+        sidebarKey: 'sidebar-page',
       };
 
       const result = SiteUpdateSchema.parse(update);
       expect(result.useSidebar).toBe(true);
-      expect(result.sidebarKey).toBe("sidebar-page");
+      expect(result.sidebarKey).toBe('sidebar-page');
     });
 
-    it("should accept character keeper configuration", () => {
+    it('should accept character keeper configuration', () => {
       const update: SiteUpdate = {
         useCharacterKeeper: true,
-        characterKeeperSheetKey: "sheet-template-1",
+        characterKeeperSheetKey: 'sheet-template-1',
       };
 
       const result = SiteUpdateSchema.parse(update);
       expect(result.useCharacterKeeper).toBe(true);
-      expect(result.characterKeeperSheetKey).toBe("sheet-template-1");
+      expect(result.characterKeeperSheetKey).toBe('sheet-template-1');
     });
 
-    it("should accept combined updates from different sections", () => {
+    it('should accept combined updates from different sections', () => {
       const update: SiteUpdate = {
-        name: "My Campaign",
-        system: "Pathfinder",
+        name: 'My Campaign',
+        system: 'Pathfinder',
         hidden: false,
-        sortOrder: "manual",
+        sortOrder: 'manual',
         usePlayers: true,
-        players: ["gm", "player1", "player2"],
+        players: ['gm', 'player1', 'player2'],
         useClocks: true,
         useSidebar: true,
-        sidebarKey: "welcome",
+        sidebarKey: 'welcome',
       };
 
       const result = SiteUpdateSchema.parse(update);
-      expect(result.name).toBe("My Campaign");
+      expect(result.name).toBe('My Campaign');
       expect(result.players).toHaveLength(3);
       expect(result.useClocks).toBe(true);
     });
   });
 
-  describe("invalid updates", () => {
-    it("should reject invalid sortOrder", () => {
+  describe('invalid updates', () => {
+    it('should reject invalid sortOrder', () => {
       const update = {
-        sortOrder: "invalid-order",
+        sortOrder: 'invalid-order',
       };
 
       expect(() => SiteUpdateSchema.parse(update)).toThrow();
     });
 
-    it("should reject non-string name", () => {
+    it('should reject non-string name', () => {
       const update = {
         name: 123,
       };
@@ -230,21 +230,21 @@ describe("SiteUpdateSchema", () => {
       expect(() => SiteUpdateSchema.parse(update)).toThrow();
     });
 
-    it("should reject non-boolean hidden", () => {
+    it('should reject non-boolean hidden', () => {
       const update = {
-        hidden: "true",
+        hidden: 'true',
       };
 
       expect(() => SiteUpdateSchema.parse(update)).toThrow();
     });
 
-    it("should reject invalid pageRefs structure", () => {
+    it('should reject invalid pageRefs structure', () => {
       const update = {
         pageRefs: [
           {
             // Missing required 'key' field
-            name: "Page 1",
-            author: "user123",
+            name: 'Page 1',
+            author: 'user123',
             flowTime: 1234567890,
           },
         ],
@@ -253,12 +253,12 @@ describe("SiteUpdateSchema", () => {
       expect(() => SiteUpdateSchema.parse(update)).toThrow();
     });
 
-    it("should reject invalid pageCategories structure", () => {
+    it('should reject invalid pageCategories structure', () => {
       const update = {
         pageCategories: [
           {
             // Missing required 'name' field
-            slug: "rules",
+            slug: 'rules',
           },
         ],
       };
@@ -266,30 +266,30 @@ describe("SiteUpdateSchema", () => {
       expect(() => SiteUpdateSchema.parse(update)).toThrow();
     });
 
-    it("should reject non-array players", () => {
+    it('should reject non-array players', () => {
       const update = {
-        players: "user123",
+        players: 'user123',
       };
 
       expect(() => SiteUpdateSchema.parse(update)).toThrow();
     });
 
-    it("should reject players array with non-string elements", () => {
+    it('should reject players array with non-string elements', () => {
       const update = {
-        players: ["user123", 456, "user789"],
+        players: ['user123', 456, 'user789'],
       };
 
       expect(() => SiteUpdateSchema.parse(update)).toThrow();
     });
 
-    it("should reject invalid assets", () => {
+    it('should reject invalid assets', () => {
       const update = {
         assets: [
           {
             // Missing required 'url' field
-            name: "image.png",
-            description: "An image",
-            license: "cc-by",
+            name: 'image.png',
+            description: 'An image',
+            license: 'cc-by',
           },
         ],
       };
@@ -297,67 +297,67 @@ describe("SiteUpdateSchema", () => {
       expect(() => SiteUpdateSchema.parse(update)).toThrow();
     });
 
-    it("should reject non-boolean feature toggles", () => {
+    it('should reject non-boolean feature toggles', () => {
       const update = {
-        usePlayers: "yes",
+        usePlayers: 'yes',
       };
 
       expect(() => SiteUpdateSchema.parse(update)).toThrow();
     });
   });
 
-  describe("does not include Entry fields", () => {
-    it("should not validate key field", () => {
+  describe('does not include Entry fields', () => {
+    it('should not validate key field', () => {
       // key should not be in update schema - it comes from URL params
       const updateWithKey = {
-        name: "Test Site",
-        key: "should-be-ignored",
+        name: 'Test Site',
+        key: 'should-be-ignored',
       };
 
       const result = SiteUpdateSchema.parse(updateWithKey);
       // Zod will strip unknown fields unless passthrough() is used
-      expect(result).not.toHaveProperty("key");
+      expect(result).not.toHaveProperty('key');
     });
 
-    it("should not validate owners field", () => {
+    it('should not validate owners field', () => {
       // owners should not be updatable via API
       const updateWithOwners = {
-        name: "Test Site",
-        owners: ["user123"],
+        name: 'Test Site',
+        owners: ['user123'],
       };
 
       const result = SiteUpdateSchema.parse(updateWithOwners);
-      expect(result).not.toHaveProperty("owners");
+      expect(result).not.toHaveProperty('owners');
     });
 
-    it("should not validate timestamp fields", () => {
+    it('should not validate timestamp fields', () => {
       // createdAt, updatedAt, flowTime are managed by toFirestoreEntry
       const updateWithTimestamps = {
-        name: "Test Site",
+        name: 'Test Site',
         createdAt: new Date(),
         updatedAt: new Date(),
         flowTime: 1234567890,
       };
 
       const result = SiteUpdateSchema.parse(updateWithTimestamps);
-      expect(result).not.toHaveProperty("createdAt");
-      expect(result).not.toHaveProperty("updatedAt");
-      expect(result).not.toHaveProperty("flowTime");
+      expect(result).not.toHaveProperty('createdAt');
+      expect(result).not.toHaveProperty('updatedAt');
+      expect(result).not.toHaveProperty('flowTime');
     });
   });
 
-  describe("partial updates", () => {
-    it("should allow updating only name", () => {
+  describe('partial updates', () => {
+    it('should allow updating only name', () => {
       const update: SiteUpdate = {
-        name: "New Name Only",
+        name: 'New Name Only',
       };
 
       const result = SiteUpdateSchema.parse(update);
-      expect(result.name).toBe("New Name Only");
+      expect(result.name).toBe('New Name Only');
       expect(Object.keys(result)).toHaveLength(1);
     });
 
-    it("should allow updating only visibility", () => {
+    it('should allow updating only visibility', () => {
       const update: SiteUpdate = {
         hidden: true,
       };
@@ -367,7 +367,7 @@ describe("SiteUpdateSchema", () => {
       expect(Object.keys(result)).toHaveLength(1);
     });
 
-    it("should allow updating only feature toggles", () => {
+    it('should allow updating only feature toggles', () => {
       const update: SiteUpdate = {
         useClocks: true,
       };
@@ -377,18 +377,18 @@ describe("SiteUpdateSchema", () => {
       expect(Object.keys(result)).toHaveLength(1);
     });
 
-    it("should allow clearing optional string fields", () => {
+    it('should allow clearing optional string fields', () => {
       const update: SiteUpdate = {
-        description: "",
-        posterURL: "",
+        description: '',
+        posterURL: '',
       };
 
       const result = SiteUpdateSchema.parse(update);
-      expect(result.description).toBe("");
-      expect(result.posterURL).toBe("");
+      expect(result.description).toBe('');
+      expect(result.posterURL).toBe('');
     });
 
-    it("should allow clearing optional array fields", () => {
+    it('should allow clearing optional array fields', () => {
       const update: SiteUpdate = {
         players: [],
         assets: [],
@@ -404,19 +404,19 @@ describe("SiteUpdateSchema", () => {
     });
   });
 
-  describe("type safety", () => {
-    it("should enforce SiteUpdate type", () => {
+  describe('type safety', () => {
+    it('should enforce SiteUpdate type', () => {
       // This is a compile-time test that verifies the type is correct
       const validUpdate: SiteUpdate = {
-        name: "Test",
+        name: 'Test',
         hidden: false,
-        sortOrder: "manual",
+        sortOrder: 'manual',
       };
 
-      expect(validUpdate.name).toBe("Test");
+      expect(validUpdate.name).toBe('Test');
     });
 
-    it("should allow all optional fields to be undefined", () => {
+    it('should allow all optional fields to be undefined', () => {
       const update: SiteUpdate = {};
       const result = SiteUpdateSchema.parse(update);
       expect(result).toEqual({});

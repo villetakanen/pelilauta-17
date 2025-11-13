@@ -1,39 +1,39 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from 'vitest';
 import {
   type Asset,
   createAssetMetadata,
   parseAsset,
-} from "../../src/schemas/AssetSchema";
+} from '../../src/schemas/AssetSchema';
 
-describe("AssetSchema", () => {
-  describe("backward compatibility", () => {
-    it("should parse legacy assets with minimal fields", () => {
+describe('AssetSchema', () => {
+  describe('backward compatibility', () => {
+    it('should parse legacy assets with minimal fields', () => {
       const legacyAsset = {
-        url: "https://example.com/image.png",
-        name: "image.png",
-        description: "",
-        license: "0",
+        url: 'https://example.com/image.png',
+        name: 'image.png',
+        description: '',
+        license: '0',
       };
 
       const result = parseAsset(legacyAsset);
 
       expect(result.url).toBe(legacyAsset.url);
       expect(result.name).toBe(legacyAsset.name);
-      expect(result.description).toBe("");
-      expect(result.license).toBe("0");
+      expect(result.description).toBe('');
+      expect(result.license).toBe('0');
     });
 
-    it("should apply defaults for missing optional fields", () => {
+    it('should apply defaults for missing optional fields', () => {
       const minimalAsset = {
-        url: "https://example.com/file.pdf",
+        url: 'https://example.com/file.pdf',
       };
 
       const result = parseAsset(minimalAsset);
 
       expect(result.url).toBe(minimalAsset.url);
-      expect(result.name).toBe("");
-      expect(result.description).toBe("");
-      expect(result.license).toBe("0");
+      expect(result.name).toBe('');
+      expect(result.description).toBe('');
+      expect(result.license).toBe('0');
       expect(result.mimetype).toBeUndefined();
       expect(result.storagePath).toBeUndefined();
       expect(result.size).toBeUndefined();
@@ -41,52 +41,52 @@ describe("AssetSchema", () => {
       expect(result.uploadedBy).toBeUndefined();
     });
 
-    it("should parse assets with storagePath and mimetype", () => {
+    it('should parse assets with storagePath and mimetype', () => {
       const assetWithStorage = {
-        url: "https://example.com/image.png",
-        name: "image.png",
-        description: "A test image",
-        license: "cc-by",
-        mimetype: "image/png",
-        storagePath: "Sites/site123/uuid-image.png",
+        url: 'https://example.com/image.png',
+        name: 'image.png',
+        description: 'A test image',
+        license: 'cc-by',
+        mimetype: 'image/png',
+        storagePath: 'Sites/site123/uuid-image.png',
       };
 
       const result = parseAsset(assetWithStorage);
 
-      expect(result.mimetype).toBe("image/png");
-      expect(result.storagePath).toBe("Sites/site123/uuid-image.png");
+      expect(result.mimetype).toBe('image/png');
+      expect(result.storagePath).toBe('Sites/site123/uuid-image.png');
     });
   });
 
-  describe("new metadata fields (Phase 2)", () => {
-    it("should parse assets with tracking metadata", () => {
+  describe('new metadata fields (Phase 2)', () => {
+    it('should parse assets with tracking metadata', () => {
       const fullAsset = {
-        url: "https://example.com/image.png",
-        storagePath: "Sites/site123/uuid-image.png",
-        name: "image.png",
-        description: "A test image",
-        license: "cc-by",
-        mimetype: "image/png",
+        url: 'https://example.com/image.png',
+        storagePath: 'Sites/site123/uuid-image.png',
+        name: 'image.png',
+        description: 'A test image',
+        license: 'cc-by',
+        mimetype: 'image/png',
         size: 1024000,
-        uploadedAt: "2024-01-15T10:30:00.000Z",
-        uploadedBy: "user123",
+        uploadedAt: '2024-01-15T10:30:00.000Z',
+        uploadedBy: 'user123',
       };
 
       const result = parseAsset(fullAsset);
 
       expect(result.size).toBe(1024000);
-      expect(result.uploadedAt).toBe("2024-01-15T10:30:00.000Z");
-      expect(result.uploadedBy).toBe("user123");
+      expect(result.uploadedAt).toBe('2024-01-15T10:30:00.000Z');
+      expect(result.uploadedBy).toBe('user123');
     });
 
-    it("should parse assets with image dimensions", () => {
+    it('should parse assets with image dimensions', () => {
       const imageAsset = {
-        url: "https://example.com/image.png",
-        name: "image.png",
-        mimetype: "image/png",
+        url: 'https://example.com/image.png',
+        name: 'image.png',
+        mimetype: 'image/png',
         size: 1024000,
-        uploadedAt: "2024-01-15T10:30:00.000Z",
-        uploadedBy: "user123",
+        uploadedAt: '2024-01-15T10:30:00.000Z',
+        uploadedBy: 'user123',
         width: 1920,
         height: 1080,
       };
@@ -97,14 +97,14 @@ describe("AssetSchema", () => {
       expect(result.height).toBe(1080);
     });
 
-    it("should allow image dimensions to be undefined", () => {
+    it('should allow image dimensions to be undefined', () => {
       const pdfAsset = {
-        url: "https://example.com/document.pdf",
-        name: "document.pdf",
-        mimetype: "application/pdf",
+        url: 'https://example.com/document.pdf',
+        name: 'document.pdf',
+        mimetype: 'application/pdf',
         size: 500000,
-        uploadedAt: "2024-01-15T10:30:00.000Z",
-        uploadedBy: "user123",
+        uploadedAt: '2024-01-15T10:30:00.000Z',
+        uploadedBy: 'user123',
       };
 
       const result = parseAsset(pdfAsset);
@@ -114,39 +114,39 @@ describe("AssetSchema", () => {
     });
   });
 
-  describe("validation", () => {
-    it("should throw error if url is missing", () => {
+  describe('validation', () => {
+    it('should throw error if url is missing', () => {
       const invalidAsset = {
-        name: "image.png",
-        description: "A test image",
+        name: 'image.png',
+        description: 'A test image',
       };
 
       expect(() => parseAsset(invalidAsset)).toThrow();
     });
 
-    it("should throw error if url is not a string", () => {
+    it('should throw error if url is not a string', () => {
       const invalidAsset = {
         url: 123,
-        name: "image.png",
+        name: 'image.png',
       };
 
       expect(() => parseAsset(invalidAsset)).toThrow();
     });
 
-    it("should reject invalid size (not a number)", () => {
+    it('should reject invalid size (not a number)', () => {
       const invalidAsset = {
-        url: "https://example.com/image.png",
-        size: "1024",
+        url: 'https://example.com/image.png',
+        size: '1024',
       };
 
       expect(() => parseAsset(invalidAsset)).toThrow();
     });
 
-    it("should reject invalid dimensions (not numbers)", () => {
+    it('should reject invalid dimensions (not numbers)', () => {
       const invalidAsset = {
-        url: "https://example.com/image.png",
-        width: "1920",
-        height: "1080",
+        url: 'https://example.com/image.png',
+        width: '1920',
+        height: '1080',
       };
 
       expect(() => parseAsset(invalidAsset)).toThrow();
@@ -154,38 +154,38 @@ describe("AssetSchema", () => {
   });
 });
 
-describe("createAssetMetadata", () => {
-  const mockFile = new File(["content"], "test-image.png", {
-    type: "image/png",
+describe('createAssetMetadata', () => {
+  const mockFile = new File(['content'], 'test-image.png', {
+    type: 'image/png',
   });
-  Object.defineProperty(mockFile, "size", { value: 1024000 });
+  Object.defineProperty(mockFile, 'size', { value: 1024000 });
 
-  it("should create complete asset metadata from file", () => {
-    const url = "https://example.com/test-image.png";
-    const storagePath = "Sites/site123/uuid-test-image.png";
-    const uploadedBy = "user123";
+  it('should create complete asset metadata from file', () => {
+    const url = 'https://example.com/test-image.png';
+    const storagePath = 'Sites/site123/uuid-test-image.png';
+    const uploadedBy = 'user123';
 
     const result = createAssetMetadata(url, storagePath, mockFile, uploadedBy);
 
     expect(result.url).toBe(url);
     expect(result.storagePath).toBe(storagePath);
-    expect(result.name).toBe("test-image.png");
-    expect(result.mimetype).toBe("image/png");
+    expect(result.name).toBe('test-image.png');
+    expect(result.mimetype).toBe('image/png');
     expect(result.size).toBe(1024000);
     expect(result.uploadedBy).toBe(uploadedBy);
     expect(result.uploadedAt).toBeDefined();
-    expect(result.description).toBe("");
-    expect(result.license).toBe("0");
+    expect(result.description).toBe('');
+    expect(result.license).toBe('0');
   });
 
-  it("should use provided additional metadata", () => {
-    const url = "https://example.com/test-image.png";
-    const storagePath = "Sites/site123/uuid-test-image.png";
-    const uploadedBy = "user123";
+  it('should use provided additional metadata', () => {
+    const url = 'https://example.com/test-image.png';
+    const storagePath = 'Sites/site123/uuid-test-image.png';
+    const uploadedBy = 'user123';
     const additionalData = {
-      name: "Custom Name",
-      description: "A custom description",
-      license: "cc-by",
+      name: 'Custom Name',
+      description: 'A custom description',
+      license: 'cc-by',
     };
 
     const result = createAssetMetadata(
@@ -196,15 +196,15 @@ describe("createAssetMetadata", () => {
       additionalData,
     );
 
-    expect(result.name).toBe("Custom Name");
-    expect(result.description).toBe("A custom description");
-    expect(result.license).toBe("cc-by");
+    expect(result.name).toBe('Custom Name');
+    expect(result.description).toBe('A custom description');
+    expect(result.license).toBe('cc-by');
   });
 
-  it("should include image dimensions if provided", () => {
-    const url = "https://example.com/test-image.png";
-    const storagePath = "Sites/site123/uuid-test-image.png";
-    const uploadedBy = "user123";
+  it('should include image dimensions if provided', () => {
+    const url = 'https://example.com/test-image.png';
+    const storagePath = 'Sites/site123/uuid-test-image.png';
+    const uploadedBy = 'user123';
     const additionalData = {
       width: 1920,
       height: 1080,
@@ -222,10 +222,10 @@ describe("createAssetMetadata", () => {
     expect(result.height).toBe(1080);
   });
 
-  it("should generate ISO timestamp for uploadedAt", () => {
-    const url = "https://example.com/test-image.png";
-    const storagePath = "Sites/site123/uuid-test-image.png";
-    const uploadedBy = "user123";
+  it('should generate ISO timestamp for uploadedAt', () => {
+    const url = 'https://example.com/test-image.png';
+    const storagePath = 'Sites/site123/uuid-test-image.png';
+    const uploadedBy = 'user123';
 
     const beforeTime = new Date();
     const result = createAssetMetadata(url, storagePath, mockFile, uploadedBy);
@@ -247,47 +247,47 @@ describe("createAssetMetadata", () => {
     }
   });
 
-  it("should use file name when no custom name provided", () => {
-    const url = "https://example.com/my-document.pdf";
-    const storagePath = "Sites/site123/uuid-my-document.pdf";
-    const uploadedBy = "user123";
-    const pdfFile = new File(["content"], "my-document.pdf", {
-      type: "application/pdf",
+  it('should use file name when no custom name provided', () => {
+    const url = 'https://example.com/my-document.pdf';
+    const storagePath = 'Sites/site123/uuid-my-document.pdf';
+    const uploadedBy = 'user123';
+    const pdfFile = new File(['content'], 'my-document.pdf', {
+      type: 'application/pdf',
     });
 
     const result = createAssetMetadata(url, storagePath, pdfFile, uploadedBy);
 
-    expect(result.name).toBe("my-document.pdf");
+    expect(result.name).toBe('my-document.pdf');
   });
 
-  it("should handle files without dimensions (non-images)", () => {
-    const url = "https://example.com/document.pdf";
-    const storagePath = "Sites/site123/uuid-document.pdf";
-    const uploadedBy = "user123";
-    const pdfFile = new File(["content"], "document.pdf", {
-      type: "application/pdf",
+  it('should handle files without dimensions (non-images)', () => {
+    const url = 'https://example.com/document.pdf';
+    const storagePath = 'Sites/site123/uuid-document.pdf';
+    const uploadedBy = 'user123';
+    const pdfFile = new File(['content'], 'document.pdf', {
+      type: 'application/pdf',
     });
 
     const result = createAssetMetadata(url, storagePath, pdfFile, uploadedBy);
 
     expect(result.width).toBeUndefined();
     expect(result.height).toBeUndefined();
-    expect(result.mimetype).toBe("application/pdf");
+    expect(result.mimetype).toBe('application/pdf');
   });
 });
 
-describe("Asset type", () => {
-  it("should allow accessing all asset properties", () => {
+describe('Asset type', () => {
+  it('should allow accessing all asset properties', () => {
     const asset: Asset = {
-      url: "https://example.com/image.png",
-      storagePath: "Sites/site123/uuid-image.png",
-      name: "image.png",
-      description: "A test image",
-      license: "cc-by",
-      mimetype: "image/png",
+      url: 'https://example.com/image.png',
+      storagePath: 'Sites/site123/uuid-image.png',
+      name: 'image.png',
+      description: 'A test image',
+      license: 'cc-by',
+      mimetype: 'image/png',
       size: 1024000,
-      uploadedAt: "2024-01-15T10:30:00.000Z",
-      uploadedBy: "user123",
+      uploadedAt: '2024-01-15T10:30:00.000Z',
+      uploadedBy: 'user123',
       width: 1920,
       height: 1080,
     };
@@ -306,14 +306,14 @@ describe("Asset type", () => {
     expect(asset.height).toBeDefined();
   });
 
-  it("should allow partial Asset with only required fields", () => {
+  it('should allow partial Asset with only required fields', () => {
     const minimalAsset: Asset = {
-      url: "https://example.com/image.png",
-      name: "",
-      description: "",
-      license: "0",
+      url: 'https://example.com/image.png',
+      name: '',
+      description: '',
+      license: '0',
     };
 
-    expect(minimalAsset.url).toBe("https://example.com/image.png");
+    expect(minimalAsset.url).toBe('https://example.com/image.png');
   });
 });
