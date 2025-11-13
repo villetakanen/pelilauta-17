@@ -9,7 +9,7 @@
 
 ## Implementation Status
 
-**Current Phase:** Commit 3 Complete ✅
+**Current Phase:** Commit 4 Complete ✅
 
 ### Completed Commits
 
@@ -29,15 +29,21 @@
   - Updated tests to use PATCH as primary method
   - Documented bug in "Known Issues" section
 
-- ✅ **Commit 3** (Not yet committed): Add `updateSiteApi` client wrapper
+- ✅ **Commit 3** (4b7bb95): Add `updateSiteApi` client wrapper
   - Created `src/firebase/client/site/updateSiteApi.ts`
   - Added `authedPatch` helper to `src/firebase/client/apiClient.ts`
   - Implemented comprehensive unit tests (12 tests)
   - All tests passing, code formatted with Biome
 
+- ✅ **Commit 4** (Not yet committed): Migrate `SiteMetaForm` to API pattern
+  - Updated `src/stores/site/siteEditorStore.ts` to use `updateSiteApi`
+  - Replaced direct Firestore updates with API calls
+  - Removed manual cache purging (handled server-side atomically)
+  - Simplified code: -25 lines, +14 lines (net -11 lines)
+  - No component changes needed (store abstraction works!)
+
 ### Remaining Commits
 
-- ⏳ **Commit 4**: Migrate `SiteMetaForm.svelte` to use new API
 - ⏳ **Commit 5**: Migrate `SiteTocTool.svelte` to use new API  
 - ⏳ **Commit 6**: Migrate `SiteCategoriesTool.svelte` to use new API
 - ⏳ **Commit 7**: Remove old `updateSite.ts` pattern
@@ -56,6 +62,10 @@
 - `src/firebase/client/apiClient.ts` - Added `authedPatch` helper method
 - `src/firebase/client/site/updateSiteApi.ts` - New client-side wrapper
 - `test/lib/client/updateSiteApi.test.ts` - New unit test file (12 tests)
+
+**Commit 4:**
+- `src/stores/site/siteEditorStore.ts` - Migrated to use `updateSiteApi` (simplified by 11 lines)
+- `COMMIT-4-CHANGES.md` - Commit documentation
 
 ---
 
