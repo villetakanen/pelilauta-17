@@ -42,10 +42,17 @@ export async function GET({ params, request }: APIContext): Promise<Response> {
 }
 
 /**
- * Update an existing site
- * PUT /api/sites/[siteKey]
+ * Partially update an existing site
+ * PATCH /api/sites/[siteKey]
+ *
+ * Note: We use PATCH as the primary method because we support partial updates.
+ * Only the fields provided in the request body are updated; other fields remain unchanged.
+ * This is semantically correct according to REST conventions.
  */
-export async function PUT({ params, request }: APIContext): Promise<Response> {
+export async function PATCH({
+  params,
+  request,
+}: APIContext): Promise<Response> {
   const endpointName = 'updateSite';
   const { siteKey } = params;
 
@@ -194,6 +201,7 @@ function executeUpdateBackgroundTasks(siteKey: string): void {
 }
 
 /**
- * PATCH is an alias for PUT (partial updates)
+ * PUT is supported as an alias for PATCH for compatibility.
+ * Both methods perform partial updates (PATCH semantics).
  */
-export const PATCH = PUT;
+export const PUT = PATCH;

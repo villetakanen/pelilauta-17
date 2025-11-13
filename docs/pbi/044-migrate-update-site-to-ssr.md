@@ -1290,3 +1290,46 @@ test('cache purging works after site update', async ({ page }) => {
 - **Zero Breaking Changes**: Existing functionality maintained throughout migration
 - **Commit Atomicity**: All 7 commits independently testable and deployable
 - **Agent Handoff**: Each commit can be completed by different agent sequentially
+---
+
+## Known Issues / Bugs Found During Implementation
+
+### Bug: Incorrect HTTP Method Semantics in Commit 2
+**Discovered**: During code review after Commit 2 completion  
+**Severity**: Low (semantic correctness issue)
+
+**Issue Description:**
+Commit 2 implemented the endpoint with PUT as the primary method and PATCH as an alias:
+```typescript
+export async function PUT({ params, request }: APIContext): Promise<Response> { ... }
+export const PATCH = PUT;
+```
+
+However, the actual behavior is **partial updates** (PATCH semantics), not full resource replacement (PUT semantics):
+- All fields in `SiteUpdateSchema` are optional
+- Only provided fields are updated in Firestore
+- Missing fields are not deleted/reset
+
+**REST Semantics:**
+- **PUT**: Replace entire resource (full representation required)
+- **PATCH**: Partially modify resource (send only changed fields)
+
+**Root Cause:**
+- Followed the existing thread API pattern which uses PUT
+- Didn't consider that we're implementing partial updates, not full resource replacement
+
+**Impact:**
+- ✅ Functionality works correctly
+- ⚠️ Semantically incorrect HTTP method choice
+- ⚠️ May confuse API consumers expecting PUT behavior
+
+**Resolution Plan:**
+- Switch primary method to PATCH (semantically correct for partial updates)
+- Keep PUT as an alias for backward compatibility
+- Update documentation to reflect PATCH as primary
+- Update tests to use PATCH as primary method
+- Add comment explaining PUT alias exists for compatibility
+
+**Fixed In**: Commit 2.1 (hotfix before Commit 3)
+
+---

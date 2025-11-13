@@ -15,7 +15,7 @@ import {
   TEST_USERS,
 } from './setup';
 
-describe('PUT /api/sites/[siteKey]', () => {
+describe('PATCH /api/sites/[siteKey]', () => {
   let testSiteKey: string;
 
   beforeAll(async () => {
@@ -61,7 +61,7 @@ describe('PUT /api/sites/[siteKey]', () => {
       const updateData = { name: 'Updated Name' };
 
       const response = await makeApiRequest(`/api/sites/${testSiteKey}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -78,7 +78,7 @@ describe('PUT /api/sites/[siteKey]', () => {
       const updateData = { name: 'Updated Name' };
 
       const response = await makeApiRequest(`/api/sites/${testSiteKey}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           Authorization: 'Bearer invalid-token',
@@ -103,7 +103,7 @@ describe('PUT /api/sites/[siteKey]', () => {
       const headers = await getAuthHeaders(otherUser);
 
       const response = await makeApiRequest(`/api/sites/${testSiteKey}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           ...headers,
           'Content-Type': 'application/json',
@@ -122,7 +122,7 @@ describe('PUT /api/sites/[siteKey]', () => {
       const headers = await getAuthHeaders(TEST_USERS.NORMAL);
 
       const response = await makeApiRequest(`/api/sites/${testSiteKey}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           ...headers,
           'Content-Type': 'application/json',
@@ -144,7 +144,7 @@ describe('PUT /api/sites/[siteKey]', () => {
       const headers = await getAuthHeaders(TEST_USERS.NORMAL);
 
       const response = await makeApiRequest('/api/sites/', {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           ...headers,
           'Content-Type': 'application/json',
@@ -160,7 +160,7 @@ describe('PUT /api/sites/[siteKey]', () => {
       const headers = await getAuthHeaders(TEST_USERS.NORMAL);
 
       const response = await makeApiRequest('/api/sites/non-existent-site', {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           ...headers,
           'Content-Type': 'application/json',
@@ -179,7 +179,7 @@ describe('PUT /api/sites/[siteKey]', () => {
       const headers = await getAuthHeaders(TEST_USERS.NORMAL);
 
       const response = await makeApiRequest(`/api/sites/${testSiteKey}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           ...headers,
           'Content-Type': 'application/json',
@@ -195,7 +195,7 @@ describe('PUT /api/sites/[siteKey]', () => {
       const headers = await getAuthHeaders(TEST_USERS.NORMAL);
 
       const response = await makeApiRequest(`/api/sites/${testSiteKey}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           ...headers,
           'Content-Type': 'application/json',
@@ -220,7 +220,7 @@ describe('PUT /api/sites/[siteKey]', () => {
       const headers = await getAuthHeaders(TEST_USERS.NORMAL);
 
       const response = await makeApiRequest(`/api/sites/${testSiteKey}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           ...headers,
           'Content-Type': 'application/json',
@@ -244,7 +244,7 @@ describe('PUT /api/sites/[siteKey]', () => {
       const headers = await getAuthHeaders(TEST_USERS.NORMAL);
 
       const response = await makeApiRequest(`/api/sites/${testSiteKey}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           ...headers,
           'Content-Type': 'application/json',
@@ -274,7 +274,7 @@ describe('PUT /api/sites/[siteKey]', () => {
       const headers = await getAuthHeaders(TEST_USERS.NORMAL);
 
       const response = await makeApiRequest(`/api/sites/${testSiteKey}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           ...headers,
           'Content-Type': 'application/json',
@@ -302,7 +302,7 @@ describe('PUT /api/sites/[siteKey]', () => {
       const headers = await getAuthHeaders(TEST_USERS.NORMAL);
 
       const response = await makeApiRequest(`/api/sites/${testSiteKey}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           ...headers,
           'Content-Type': 'application/json',
@@ -324,7 +324,7 @@ describe('PUT /api/sites/[siteKey]', () => {
       const headers = await getAuthHeaders(TEST_USERS.NORMAL);
 
       const response = await makeApiRequest(`/api/sites/${testSiteKey}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           ...headers,
           'Content-Type': 'application/json',
@@ -351,7 +351,7 @@ describe('PUT /api/sites/[siteKey]', () => {
       const headers = await getAuthHeaders(TEST_USERS.NORMAL);
 
       const response = await makeApiRequest(`/api/sites/${testSiteKey}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           ...headers,
           'Content-Type': 'application/json',
@@ -380,7 +380,7 @@ describe('PUT /api/sites/[siteKey]', () => {
       const headers = await getAuthHeaders(TEST_USERS.NORMAL);
 
       const response = await makeApiRequest(`/api/sites/${testSiteKey}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           ...headers,
           'Content-Type': 'application/json',
@@ -402,7 +402,7 @@ describe('PUT /api/sites/[siteKey]', () => {
       const headers = await getAuthHeaders(TEST_USERS.NORMAL);
 
       const response = await makeApiRequest(`/api/sites/${testSiteKey}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           ...headers,
           'Content-Type': 'application/json',
@@ -426,7 +426,7 @@ describe('PUT /api/sites/[siteKey]', () => {
       const headers = await getAuthHeaders(TEST_USERS.NORMAL);
 
       const response = await makeApiRequest(`/api/sites/${testSiteKey}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           ...headers,
           'Content-Type': 'application/json',
@@ -448,7 +448,7 @@ describe('PUT /api/sites/[siteKey]', () => {
       const headers = await getAuthHeaders(TEST_USERS.NORMAL);
 
       const response = await makeApiRequest(`/api/sites/${testSiteKey}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           ...headers,
           'Content-Type': 'application/json',
@@ -472,7 +472,7 @@ describe('PUT /api/sites/[siteKey]', () => {
       const headers = await getAuthHeaders(TEST_USERS.NORMAL);
 
       const response = await makeApiRequest(`/api/sites/${testSiteKey}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           ...headers,
           'Content-Type': 'application/json',
@@ -510,7 +510,7 @@ describe('PUT /api/sites/[siteKey]', () => {
       const headers = await getAuthHeaders(TEST_USERS.NORMAL);
 
       const response = await makeApiRequest(`/api/sites/${testSiteKey}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           ...headers,
           'Content-Type': 'application/json',
@@ -541,7 +541,7 @@ describe('PUT /api/sites/[siteKey]', () => {
       const headers = await getAuthHeaders(TEST_USERS.NORMAL);
 
       const response = await makeApiRequest(`/api/sites/${testSiteKey}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           ...headers,
           'Content-Type': 'application/json',
@@ -573,7 +573,7 @@ describe('PUT /api/sites/[siteKey]', () => {
       const headers = await getAuthHeaders(TEST_USERS.NORMAL);
 
       const response = await makeApiRequest(`/api/sites/${testSiteKey}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           ...headers,
           'Content-Type': 'application/json',
@@ -601,7 +601,7 @@ describe('PUT /api/sites/[siteKey]', () => {
       const headers = await getAuthHeaders(TEST_USERS.NORMAL);
 
       const response = await makeApiRequest(`/api/sites/${testSiteKey}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           ...headers,
           'Content-Type': 'application/json',
@@ -643,7 +643,7 @@ describe('PUT /api/sites/[siteKey]', () => {
       const headers = await getAuthHeaders(TEST_USERS.NORMAL);
 
       const response = await makeApiRequest(`/api/sites/${testSiteKey}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           ...headers,
           'Content-Type': 'application/json',
@@ -666,13 +666,32 @@ describe('PUT /api/sites/[siteKey]', () => {
     });
   });
 
-  describe('PATCH Method', () => {
-    it('should support PATCH as alias for PUT', async () => {
+  describe('HTTP Methods', () => {
+    it('should support PATCH for partial updates (primary method)', async () => {
       const updateData = { name: 'PATCH Update' };
       const headers = await getAuthHeaders(TEST_USERS.NORMAL);
 
       const response = await makeApiRequest(`/api/sites/${testSiteKey}`, {
         method: 'PATCH',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      expect(response.status).toBe(200);
+
+      const data = await response.json();
+      expect(data.success).toBe(true);
+    });
+
+    it('should support PUT as alias for PATCH (compatibility)', async () => {
+      const updateData = { name: 'PUT Update' };
+      const headers = await getAuthHeaders(TEST_USERS.NORMAL);
+
+      const response = await makeApiRequest(`/api/sites/${testSiteKey}`, {
+        method: 'PUT',
         headers: {
           ...headers,
           'Content-Type': 'application/json',
@@ -693,7 +712,7 @@ describe('PUT /api/sites/[siteKey]', () => {
       const headers = await getAuthHeaders(TEST_USERS.NORMAL);
 
       const response = await makeApiRequest(`/api/sites/${testSiteKey}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           ...headers,
           'Content-Type': 'application/json',
@@ -721,7 +740,7 @@ describe('PUT /api/sites/[siteKey]', () => {
       const headers = await getAuthHeaders(TEST_USERS.NORMAL);
 
       const response = await makeApiRequest(`/api/sites/${testSiteKey}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           ...headers,
           'Content-Type': 'application/json',
