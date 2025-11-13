@@ -9,7 +9,7 @@
 
 ## Implementation Status
 
-**Current Phase:** Commit 4 Complete ✅
+**Current Phase:** Commit 5 Complete ✅
 
 ### Completed Commits
 
@@ -35,17 +35,23 @@
   - Implemented comprehensive unit tests (12 tests)
   - All tests passing, code formatted with Biome
 
-- ✅ **Commit 4** (Not yet committed): Migrate `SiteMetaForm` to API pattern
+- ✅ **Commit 4** (16c657b): Migrate `SiteMetaForm` to API pattern
   - Updated `src/stores/site/siteEditorStore.ts` to use `updateSiteApi`
   - Replaced direct Firestore updates with API calls
   - Removed manual cache purging (handled server-side atomically)
   - Simplified code: -25 lines, +14 lines (net -11 lines)
   - No component changes needed (store abstraction works!)
 
+- ✅ **Commit 5** (Not yet committed): Migrate TOC tool components to API pattern
+  - Updated `src/components/svelte/sites/toc/SiteTocTool.svelte` to use `updateSiteApi`
+  - Updated `src/components/svelte/sites/toc/SiteCategoriesTool.svelte` to use `updateSiteApi`
+  - Both components use silent updates (no timestamp changes)
+  - Improved error logging with component context
+  - All tests passing (366/366)
+
 ### Remaining Commits
 
-- ⏳ **Commit 5**: Migrate `SiteTocTool.svelte` to use new API  
-- ⏳ **Commit 6**: Migrate `SiteCategoriesTool.svelte` to use new API
+- ⏳ **Commit 6**: Migrate `addPageRef.ts` and `stores/site/index.ts` to use new API
 - ⏳ **Commit 7**: Remove old `updateSite.ts` pattern
 
 ### Files Modified
@@ -66,6 +72,10 @@
 **Commit 4:**
 - `src/stores/site/siteEditorStore.ts` - Migrated to use `updateSiteApi` (simplified by 11 lines)
 - `COMMIT-4-CHANGES.md` - Commit documentation
+
+**Commit 5:**
+- `src/components/svelte/sites/toc/SiteTocTool.svelte` - Migrated to use `updateSiteApi`
+- `src/components/svelte/sites/toc/SiteCategoriesTool.svelte` - Migrated to use `updateSiteApi`
 
 ---
 
@@ -804,25 +814,41 @@ pnpm test:e2e -- --grep "site metadata"
 
 ---
 
-### Commit 5: Update SiteTocTool.svelte (20 minutes)
+### Commit 5: Update SiteTocTool.svelte and SiteCategoriesTool.svelte (30 minutes) ✅
 
-**Goal:** Migrate TOC settings to new API pattern
+**Goal:** Migrate TOC tool components to new API pattern
 
-**Files to Modify:**
+**Files Modified:**
 - `src/components/svelte/sites/toc/SiteTocTool.svelte`
+- `src/components/svelte/sites/toc/SiteCategoriesTool.svelte`
 
 **Why This Commit?**
-- Second component migration
+- Both TOC-related components use silent updates for metadata
 - Uses `silent: true` parameter (important test case)
-- Other components still work with old pattern
+- Logical grouping: both components are in the same feature area
 
 **Implementation:**
+
+**SiteTocTool.svelte:**
 ```typescript
 // Before:
+import { updateSite } from 'src/firebase/client/site/updateSite';
 await updateSite({ key: site.key, sortOrder: value }, true);
 
 // After:
+import { updateSiteApi } from 'src/firebase/client/site/updateSiteApi';
 await updateSiteApi({ key: site.key, sortOrder: value }, true);
+```
+
+**SiteCategoriesTool.svelte:**
+```typescript
+// Before:
+import { updateSite } from 'src/firebase/client/site/updateSite';
+await updateSite({ key: site.key, pageCategories: cats }, true);
+
+// After:
+import { updateSiteApi } from 'src/firebase/client/site/updateSiteApi';
+await updateSiteApi({ key: site.key, pageCategories: cats }, true);
 ```
 
 **Tests:**
@@ -855,46 +881,41 @@ pnpm test:e2e -- --grep "TOC sort order"
 
 ---
 
-### Commit 6: Update SiteCategoriesTool.svelte (20 minutes)
+### Commit 6: Update addPageRef.ts and stores/site/index.ts (30 minutes)
 
-**Goal:** Migrate category management to new API pattern
+**Goal:** Migrate remaining client-side uses of `updateSite` to new API pattern
 
 **Files to Modify:**
-- `src/components/svelte/sites/toc/SiteCategoriesTool.svelte`
+- `src/firebase/client/page/addPageRef.ts`
+- `src/stores/site/index.ts`
 
 **Why This Commit?**
-- Final component migration
-- All site updates now use new API
-- Old pattern no longer used by any code
+- Last remaining direct uses of old `updateSite` pattern
+- After this, only the old implementation file itself remains
+- Both use silent updates (no timestamp changes)
 
 **Implementation:**
+
+**addPageRef.ts:**
 ```typescript
 // Before:
-await updateSite({ key: site.key, pageCategories: cats }, true);
+import { updateSite } from '../site/updateSite';
+await updateSite({ pageRefs: refs, key: siteKey });
 
 // After:
-await updateSiteApi({ key: site.key, pageCategories: cats }, true);
+import { updateSiteApi } from '../site/updateSiteApi';
+await updateSiteApi({ pageRefs: refs, key: siteKey });
 ```
 
-**Tests:**
+**stores/site/index.ts:**
 ```typescript
-// E2E test to add/verify
-test('category management uses new API', async ({ page }) => {
-  const siteKey = await createTestSite();
-  await loginAsOwner(page);
-  
-  await page.goto(`/sites/${siteKey}/toc/settings`);
-  await page.fill('input[name="categoryName"]', 'New Category');
-  await page.click('button[type="submit"]');
-  
-  await expect(page.locator('.snackbar')).toContainText('updated');
-  
-  const site = await getSiteData(siteKey);
-  expect(site.pageCategories).toContainEqual({
-    slug: expect.any(String),
-    name: 'New Category',
-  });
-});
+// Before:
+import { updateSite } from 'src/firebase/client/site/updateSite';
+await updateSite(updated, true);
+
+// After:
+import { updateSiteApi } from 'src/firebase/client/site/updateSiteApi';
+await updateSiteApi(updated, true);
 ```
 
 **Search for Remaining Usages:**
