@@ -2,9 +2,9 @@ import {
   createSite as createSiteFromSchema,
   SITES_COLLECTION_NAME,
   type Site,
-} from "src/schemas/SiteSchema";
-import { logDebug } from "src/utils/logHelpers";
-import { uid } from "../../../stores/session";
+} from 'src/schemas/SiteSchema';
+import { logDebug } from 'src/utils/logHelpers';
+import { uid } from '../../../stores/session';
 
 /**
  * Creates a new site in the database, returns the key of the new site
@@ -14,17 +14,17 @@ import { uid } from "../../../stores/session";
  */
 export async function createSite(site: Partial<Site>): Promise<string> {
   const { getFirestore, doc, getDoc, setDoc, addDoc, collection, updateDoc } =
-    await import("firebase/firestore");
+    await import('firebase/firestore');
   const { toFirestoreEntry } = await import(
-    "src/utils/client/toFirestoreEntry"
+    'src/utils/client/toFirestoreEntry'
   );
 
-  logDebug("createSite", site);
+  logDebug('createSite', site);
 
   // Get the current user's uid
   const u = uid.get();
   if (!u) {
-    throw new Error("Site creation aborted, session uid not set");
+    throw new Error('Site creation aborted, session uid not set');
   }
 
   // Create a new site object based on the params
@@ -41,7 +41,7 @@ export async function createSite(site: Partial<Site>): Promise<string> {
     if (siteDoc.exists()) {
       throw new Error(`Site with key ${site.key} already exists`);
     }
-    logDebug("createSite", "Creating site with given key", siteData);
+    logDebug('createSite', 'Creating site with given key', siteData);
     await setDoc(siteRef, siteData);
 
     setDoc(doc(getFirestore(), `reactions/${site.key}`), {
