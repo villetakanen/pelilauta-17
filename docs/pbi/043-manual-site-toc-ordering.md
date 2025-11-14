@@ -914,3 +914,214 @@ async function migrateManualSites() {
 - Average reorder operation completes in < 3 seconds
 - < 1% error rate on save operations
 - 0 reports of data loss or corruption
+
+---
+
+## Atomic Commit Plan
+
+This PBI is broken down into simple, atomic commits that can be implemented independently by agents.
+
+### **Commit 1: Add `order` field to PageRefSchema** ✅
+**File:** `src/schemas/SiteSchema.ts`
+
+**Changes:**
+- Add `order: z.number().optional()` to `PageRefSchema`
+- This is backward compatible (optional field)
+
+**Testing:**
+- Add unit tests to verify schema accepts `order` field
+- Add unit tests to verify `order` field is optional
+
+**Dependencies:** None
+
+**Acceptance:** Schema validation passes with and without `order` field
+
+**Status:** ✅ COMPLETED
+- Added `order: z.number().optional()` field to `PageRefSchema`
+- Added comprehensive unit tests in `test/schemas/Site.test.ts`
+- All 370 tests passing
+- No diagnostics errors
+
+---
+
+### **Commit 2: Create `updatePageRefsOrder` client function**
+**File:** `src/firebase/client/site/updatePageRefsOrder.ts` (new)
+
+**Changes:**
+- Create function that takes `siteKey` and `orderedPageRefs[]`
+- Dynamically import Firestore methods for code splitting
+- Add `order` index to each page ref (0, 1, 2, ...)
+- Update site document with ordered refs
+- Include cache purging (with error handling)
+
+**Testing:**
+- Unit tests for function logic
+- Integration test with mock Firestore
+
+**Dependencies:** Commit 1 (needs schema)
+
+**Acceptance:** Function successfully updates Firestore with order indices
+
+---
+
+### **Commit 3: Update TOC display logic for manual sorting**
+**File:** `src/components/server/SiteApp/SiteTocApp.astro`
+
+**Changes:**
+- Add sorting logic for `sortBy === 'manual'`
+- Sort by `page.order` field ascending
+- Fall back to `Number.MAX_SAFE_INTEGER` for missing `order` values
+
+**Testing:**
+- Unit tests for sort logic
+- E2E test: verify manual order displays correctly
+
+**Dependencies:** Commit 1 (needs schema)
+
+**Acceptance:** TOC displays pages in order by `order` field when `sortOrder: 'manual'`
+
+---
+
+### **Commit 4: Add Manual option to sort order dropdown**
+**File:** `src/components/svelte/sites/toc/SiteTocTool.svelte`
+
+**Changes:**
+- Add `'manual'` option to `sortOrderOptions` map
+- Wire up to existing dropdown (already renders from map)
+
+**Testing:**
+- E2E test: verify "Manual" appears in dropdown
+- E2E test: verify selecting "Manual" updates site
+
+**Dependencies:** None (schema already has 'manual' in enum)
+
+**Acceptance:** "Manual" option appears and can be selected
+
+---
+
+### **Commit 5: Create ManualTocOrdering component**
+**File:** `src/components/svelte/sites/toc/ManualTocOrdering.svelte` (new)
+
+**Changes:**
+- Create Svelte component with `site` prop
+- Group pages by category using `$derived.by`
+- Render `SvelteSortableList` for each category
+- Handle `onitemschanged` event → call `updatePageRefsOrder`
+- Show loading state during save
+- Show success/error snackbar
+
+**Testing:**
+- Unit tests for page grouping logic
+- E2E test: drag-and-drop within category
+
+**Dependencies:** 
+- Commit 1 (schema)
+- Commit 2 (updatePageRefsOrder function)
+
+**Acceptance:** Component renders draggable page lists grouped by category
+
+---
+
+### **Commit 6: Integrate ManualTocOrdering into settings**
+**File:** `src/components/svelte/sites/toc/SiteTocTool.svelte`
+
+**Changes:**
+- Import `ManualTocOrdering` component
+- Add conditional rendering: `{#if site.sortOrder === 'manual'}`
+- Place between sort order dropdown and categories tool
+
+**Testing:**
+- E2E test: verify component appears when Manual selected
+- E2E test: verify component hidden for other sort orders
+
+**Dependencies:**
+- Commit 4 (Manual option)
+- Commit 5 (ManualTocOrdering component)
+
+**Acceptance:** Manual ordering UI appears only when `sortOrder === 'manual'`
+
+---
+
+### **Commit 7: Add translation keys**
+**Files:** Translation files (JSON)
+
+**Changes:**
+Add keys for:
+- `entries.site.sortOrders.manual`: "Manual Order"
+- `site.toc.manualOrder.title`: "Reorder Pages"
+- `site.toc.manualOrder.info`: "Drag and drop pages to change their order..."
+- `site.toc.manualOrder.saving`: "Saving order..."
+- `snack.site.tocOrderUpdated`: "Table of contents order updated"
+- `snack.site.tocOrderUpdateFailed`: "Failed to update TOC order"
+
+**Testing:**
+- Manual verification in UI
+- Check all languages have keys
+
+**Dependencies:** None (standalone)
+
+**Acceptance:** All text displays correctly in multiple languages
+
+---
+
+### **Commit 8: Add visual polish and feedback**
+**Files:**
+- `ManualTocOrdering.svelte` (enhance)
+- CSS as needed
+
+**Changes:**
+- Ensure drag handles (`☰`) are visible
+- Add hover states
+- Verify loading spinner displays properly
+- Add visual spacing between categories
+- Test responsive behavior
+
+**Testing:**
+- Manual UI testing
+- Mobile/touch testing
+- Cross-browser testing
+
+**Dependencies:** Commit 5, 6 (component must exist)
+
+**Acceptance:** UI feels polished and responsive
+
+---
+
+### Dependency Graph
+
+```
+Commit 1 (Schema)
+    ├── Commit 2 (updatePageRefsOrder)
+    │       └── Commit 5 (ManualTocOrdering component)
+    │               └── Commit 6 (Integration)
+    │                       └── Commit 8 (Polish)
+    └── Commit 3 (Display logic)
+
+Commit 4 (Dropdown option) → Commit 6 (Integration)
+
+Commit 7 (Translations) → Independent
+```
+
+### Recommended Implementation Order
+
+1. **Commit 1** → Schema (foundation)
+2. **Commit 7** → Translations (parallel, no dependencies)
+3. **Commit 2** → Client function (depends on schema)
+4. **Commit 3** → Display logic (depends on schema)
+5. **Commit 4** → Dropdown option (can be done anytime)
+6. **Commit 5** → ManualTocOrdering component (depends on 1, 2)
+7. **Commit 6** → Integration (depends on 4, 5)
+8. **Commit 8** → Polish (final touches)
+
+### Notes for Implementation
+
+- **Use pnpm**, not npm
+- Follow existing patterns in codebase
+- Use dynamic imports for Firebase client methods
+- Use `SITES_COLLECTION_NAME` constant, not hardcoded 'sites'
+- Follow Svelte runes mode patterns (`$state`, `$derived.by`, `$props`)
+- Import from aliases (`@schemas/`, `@firebase/`, etc.)
+- Use `logDebug`, `logError` from `@utils/logHelpers`
+- Use `pushSnack` from `@utils/client/snackUtils`
+- Each commit should be testable independently
+- Write tests before or alongside implementation
