@@ -1,8 +1,8 @@
-import { readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
-import { cert, initializeApp, getApps } from "firebase-admin/app";
-import { getFirestore, FieldValue } from "firebase-admin/firestore";
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { cert, getApps, initializeApp } from 'firebase-admin/app';
+import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -12,8 +12,8 @@ function getAdminDb() {
   const apps = getApps();
 
   if (apps.length === 0) {
-    const serviceAccountPath = join(__dirname, "../server_principal.json");
-    const serviceAccount = JSON.parse(readFileSync(serviceAccountPath, "utf8"));
+    const serviceAccountPath = join(__dirname, '../server_principal.json');
+    const serviceAccount = JSON.parse(readFileSync(serviceAccountPath, 'utf8'));
 
     initializeApp({
       credential: cert(serviceAccount),
@@ -37,11 +37,11 @@ export async function updateSiteInFirestore(
       cleanData[key] = value;
     }
   }
-  await db.collection("sites").doc(siteKey).update(cleanData);
+  await db.collection('sites').doc(siteKey).update(cleanData);
 }
 
 export async function getSiteFromFirestore(siteKey: string) {
   const db = getAdminDb();
-  const doc = await db.collection("sites").doc(siteKey).get();
+  const doc = await db.collection('sites').doc(siteKey).get();
   return doc.data();
 }
