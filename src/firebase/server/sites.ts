@@ -1,18 +1,17 @@
-import type { Page } from 'src/schemas/PageSchema';
-import { PAGES_COLLECTION_NAME, parsePage } from 'src/schemas/PageSchema';
+import type { Page } from "src/schemas/PageSchema";
+import { PAGES_COLLECTION_NAME, parsePage } from "src/schemas/PageSchema";
 import {
-  parseSite,
+  SiteSchema,
   SITES_COLLECTION_NAME,
   type Site,
-  siteFrom,
-} from 'src/schemas/SiteSchema';
-import { toClientEntry } from 'src/utils/client/entryUtils';
-import { logError } from 'src/utils/logHelpers';
-import { renderWikiContent } from 'src/utils/server/wiki/renderWikiContent';
+} from "src/schemas/SiteSchema";
+import { toClientEntry } from "src/utils/client/entryUtils";
+import { logError } from "src/utils/logHelpers";
+import { renderWikiContent } from "src/utils/server/wiki/renderWikiContent";
 
 export async function getSiteData(siteKey: string): Promise<Site | null> {
   try {
-    const { serverDB } = await import('./index.js');
+    const { serverDB } = await import("./index.js");
     const siteDoc = await serverDB
       .collection(SITES_COLLECTION_NAME)
       .doc(siteKey)
@@ -24,9 +23,9 @@ export async function getSiteData(siteKey: string): Promise<Site | null> {
       return null;
     }
 
-    return parseSite(toClientEntry(siteData), siteKey);
+    return SiteSchema.parse({ ...toClientEntry(siteData), key: siteKey });
   } catch (error) {
-    logError('getSiteData', 'Failed to fetch site:', error);
+    logError("getSiteData", "Failed to fetch site:", error);
     return null;
   }
 }
@@ -37,7 +36,7 @@ export async function getPageData(
   url: URL,
 ): Promise<Page | null> {
   try {
-    const { serverDB } = await import('./index.js');
+    const { serverDB } = await import("./index.js");
     const siteRef = serverDB.collection(SITES_COLLECTION_NAME).doc(siteKey);
     const pageRef = siteRef.collection(PAGES_COLLECTION_NAME).doc(pageKey);
 
@@ -53,7 +52,10 @@ export async function getPageData(
       return null;
     }
 
-    const site = siteFrom(toClientEntry(siteData), siteDoc.id);
+    const site = SiteSchema.parse({
+      ...toClientEntry(siteData),
+      key: siteDoc.id,
+    });
     const page = parsePage(toClientEntry(pageData), pageKey, siteKey);
 
     // Render wiki content
@@ -61,7 +63,7 @@ export async function getPageData(
 
     return page;
   } catch (error) {
-    logError('getPageData', 'Failed to fetch page:', error);
+    logError("getPageData", "Failed to fetch page:", error);
     return null;
   }
 }
