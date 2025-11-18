@@ -3,7 +3,22 @@
 **Priority:** Blocker for PBI-43  
 **Type:** Technical Debt / Refactor  
 **Estimated Effort:** 3-5 hours  
-**Status:** Open
+**Status:** In Progress (Phase 1 Complete)
+
+## Implementation Status
+
+**Current Phase:** Phase 1 Complete ✅, Starting Phase 2
+
+### Completed Work
+
+- ✅ **Phase 1 (Commit c3cc699)**: Add Zod defaults to SiteSchema
+  - Added `.default(false)` to `customPageKeys` 
+  - Added `.default(false)` to `usePlainTextURLs`
+  - Updated `emptySite` constant to include new default fields
+  - All existing defaults confirmed: `name`, `system`, `hidden`, `sortOrder`, `license`, `useSidebar`
+  - `createSite()` and `migrateLegacySiteFields()` helper functions already present
+  - All 391 tests passing
+  - No diagnostics errors
 
 ## Problem Statement
 
@@ -56,22 +71,25 @@ return SiteSchema.parse(coerced);
 
 ## Acceptance Criteria
 
-### 1. Update SiteSchema with Zod Defaults
+### 1. Update SiteSchema with Zod Defaults ✅
 
-- [ ] Add `.default()` to all optional fields that need default values
-- [ ] Remove manual default assignment from `parseSite` and `siteFrom`
-- [ ] Ensure `useSidebar` defaults to `true` (as per current logic)
-- [ ] Ensure `license` defaults to `"0"`
-- [ ] Ensure `sortOrder` defaults to `"name"`
-- [ ] Ensure `system` defaults to `"homebrew"`
-- [ ] Ensure `hidden` defaults to `false`
+- [x] Add `.default()` to all optional fields that need default values
+- [ ] Remove manual default assignment from `parseSite` and `siteFrom` (Phase 2)
+- [x] Ensure `useSidebar` defaults to `true` (as per current logic)
+- [x] Ensure `license` defaults to `"0"`
+- [x] Ensure `sortOrder` defaults to `"name"`
+- [x] Ensure `system` defaults to `"homebrew"`
+- [x] Ensure `hidden` defaults to `false`
+- [x] Ensure `customPageKeys` defaults to `false`
+- [x] Ensure `usePlainTextURLs` defaults to `false`
 
-### 2. Create Clean `createSite()` Factory Function
+### 2. Create Clean `createSite()` Factory Function ✅
 
-- [ ] Replace `siteFrom()` with `createSite(partial: Partial<Site>): Site`
-- [ ] Should rely on schema defaults, only requiring minimal input
-- [ ] Should NOT include legacy transformation logic
-- [ ] Should be used for creating new Site objects
+- [x] Replace `siteFrom()` with `createSite(partial: Partial<Site>): Site`
+- [x] Should rely on schema defaults, only requiring minimal input
+- [x] Should NOT include legacy transformation logic
+- [x] Should be used for creating new Site objects
+- **Note:** Already exists in codebase, ready to use
 
 ### 3. Deprecate `parseSite()`
 
@@ -79,11 +97,12 @@ return SiteSchema.parse(coerced);
 - [ ] Add comment: "Use SiteSchema.parse() for validation or createSite() for creation"
 - [ ] Consider removing if no callers exist, or plan removal in next major version
 
-### 4. Handle Legacy Field Transformations
+### 4. Handle Legacy Field Transformations ✅
 
-- [ ] Document the `customPageKeys` ↔ `usePlainTextURLs` relationship
-- [ ] **Decision needed**: Either remove legacy support (breaking change) or create separate `migrateSiteData()` function
-- [ ] If kept: Extract to `migrateLegacySiteFields()` function, separate from parsing
+- [x] Document the `customPageKeys` ↔ `usePlainTextURLs` relationship
+- [x] **Decision made**: Keep legacy support via separate function
+- [x] Extract to `migrateLegacySiteFields()` function, separate from parsing
+- **Note:** Already exists in codebase with proper separation of concerns
 
 ### 5. Update All Callers (Complete Removal)
 
