@@ -52,37 +52,49 @@ export const SiteSortOrderSchema = z.enum([
 export type SiteSortOrder = z.infer<typeof SiteSortOrderSchema>;
 
 export const SiteSchema = EntrySchema.extend({
-  assets: z.array(AssetSchema).optional(),
+  // Core fields
   name: z.string().default('[...]'),
   system: z.string().default('homebrew'),
-  posterURL: z.string().optional(),
-  hidden: z.boolean().default(false),
-  avatarURL: z.string().optional(),
-  homepage: z.string().optional(),
   description: z.string().optional(),
-  players: z.array(z.string()).optional(),
-  sortOrder: SiteSortOrderSchema.default('name'),
+  homepage: z.string().optional(),
+  license: z.string().default('0'),
+
+  // Visibility
+  hidden: z.boolean().default(false),
+
+  // Media/assets
+  posterURL: z.string().optional(),
+  avatarURL: z.string().optional(),
   backgroundURL: z.string().optional(),
+  assets: z.array(AssetSchema).optional(),
+
+  // Page organization
+  sortOrder: SiteSortOrderSchema.default('name'),
   customPageKeys: z.boolean().default(false),
+  usePlainTextURLs: z.boolean().default(false),
   pageRefs: z.array(PageRefSchema).optional(),
   pageCategories: z.array(CategoryRefSchema).optional(),
-  // Metadata
-  license: z.string().default('0'),
-  // Options
+
+  // Players
+  players: z.array(z.string()).optional(),
   usePlayers: z.boolean().optional(),
+
+  // Features/options
   useClocks: z.boolean().optional(),
   useHandouts: z.boolean().optional(),
   useRecentChanges: z.boolean().optional(),
   useSidebar: z.boolean().default(true),
-  sidebarKey: z.string().optional(), // The page key to display in sidebar
-  usePlainTextURLs: z.boolean().default(false),
+  sidebarKey: z.string().optional(),
   useCharacters: z.boolean().optional(),
-  useCharacterKeeper: z.boolean().optional(), // Character Keeper feature toggle
-  characterKeeperSheetKey: z.string().optional(), // Selected character sheet template for keeper view
+  useCharacterKeeper: z.boolean().optional(),
+  characterKeeperSheetKey: z.string().optional(),
 });
 
 export type Site = z.infer<typeof SiteSchema>;
 
+/**
+ * @deprecated Use createSite() instead. This will be removed in a future version.
+ */
 export const emptySite: Site = {
   key: '',
   flowTime: 0,
@@ -178,49 +190,18 @@ export function migrateLegacySiteFields(data: Partial<Site>): Partial<Site> {
     migrated.usePlainTextURLs = !data.customPageKeys;
   }
 
-  // Handle homepage default (legacy behavior: default to key if not set)
-  if (data.homepage === undefined && data.key) {
-    migrated.homepage = data.key;
-  }
-
   return migrated;
 }
 
 export function parseSite(data: Partial<Site>, newKey?: string): Site {
-  // Forcing key to be a string, even if it's undefined. Legacy support for key field.
-  const key = newKey || data.key || '';
-  // Legacy support for system field
-  const system = data.system ? data.system : 'homebrew';
-
-  // Legacy support for hidden field
-  const hidden = data.hidden ? data.hidden : false;
-
-  // Legacy support for homepage field
-  const homepage = data.homepage ? data.homepage : key;
-
-  // Legacy support for sortOrder field
-  const sortOrder = data.sortOrder ? data.sortOrder : 'name';
-
-  // Legacy support for customPageKeys field
-  const customPageKeys = data.customPageKeys ? data.customPageKeys : false;
+  // Migrate legacy fields first
+  const migrated = migrateLegacySiteFields(data);
 
   try {
     return SiteSchema.parse({
-      ...toClientEntry(data),
-      name: data.name || '[...]',
-      system,
-      flowTime: parseFlowTime(data),
-      hidden,
-      homepage,
-      sortOrder,
-      customPageKeys,
-      key,
-      // useSidebar defaults to true if unset
-      useSidebar: data.useSidebar !== false,
-      // customPageKeys is the legacy field for usePlainTextUrls, but inverted - use it's value
-      // if usePlainTextUrls is not set
-      usePlainTextUrls: data.usePlainTextURLs || !customPageKeys,
-      license: data.license || '0',
+      ...toClientEntry(migrated),
+      flowTime: parseFlowTime(migrated),
+      key: newKey ?? migrated.key,
     });
   } catch (err: unknown) {
     if (err instanceof z.ZodError) {
@@ -238,20 +219,5 @@ export function parseSite(data: Partial<Site>, newKey?: string): Site {
  * @returns a Site object (extends Entry)
  */
 export function siteFrom(template: Partial<Site>, key?: string): Site {
-  const coerced: Partial<Site> = {
-    ...template,
-    key: key ?? template.key ?? '',
-    flowTime: template.flowTime ?? 0,
-    name: template.name || '-',
-    description: template.description || '',
-    owners: template.owners || [],
-    hidden: template.hidden || false,
-    system: template.system || 'homebrew',
-    sortOrder: template.sortOrder || 'name',
-    customPageKeys: template.customPageKeys || !template.usePlainTextURLs,
-    usePlainTextURLs: template.usePlainTextURLs || false,
-    license: template.license || '0',
-  };
-
-  return SiteSchema.parse(coerced);
+  return createSite({ ...template, key: key ?? template.key });
 }

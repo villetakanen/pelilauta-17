@@ -266,17 +266,7 @@ describe('migrateLegacySiteFields', () => {
     expect(migrated.usePlainTextURLs).toBe(true); // Keeps existing value
   });
 
-  test('sets homepage default to key if not provided', () => {
-    const legacy = {
-      key: 'test-site',
-    } as Partial<Site>;
-
-    const migrated = migrateLegacySiteFields(legacy);
-
-    expect(migrated.homepage).toBe('test-site');
-  });
-
-  test('does not override existing homepage', () => {
+  test('does not modify homepage field', () => {
     const legacy = {
       key: 'test-site',
       homepage: 'custom-home',
@@ -287,8 +277,10 @@ describe('migrateLegacySiteFields', () => {
     expect(migrated.homepage).toBe('custom-home');
   });
 
-  test('does not set homepage if key is missing', () => {
-    const legacy = {} as Partial<Site>;
+  test('preserves undefined homepage', () => {
+    const legacy = {
+      key: 'test-site',
+    } as Partial<Site>;
 
     const migrated = migrateLegacySiteFields(legacy);
 
