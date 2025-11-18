@@ -36,7 +36,7 @@ export const entries: Locale = {
       name: 'Alphabetical',
       createdAt: 'By creation time',
       flowTime: 'By modification time',
-      manual: 'By category',
+      manual: 'Manual order',
     },
     avatarURL: 'Icon',
     posterURL: 'Cover image',

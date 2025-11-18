@@ -4,9 +4,27 @@ import type { PageRef } from '../../../src/schemas/SiteSchema';
 describe('Manual TOC Sorting', () => {
   test('should sort pages by order field ascending', () => {
     const pages: PageRef[] = [
-      { key: 'page-a', name: 'Page A', author: 'user1', flowTime: 100, order: 2 },
-      { key: 'page-b', name: 'Page B', author: 'user1', flowTime: 200, order: 0 },
-      { key: 'page-c', name: 'Page C', author: 'user1', flowTime: 300, order: 1 },
+      {
+        key: 'page-a',
+        name: 'Page A',
+        author: 'user1',
+        flowTime: 100,
+        order: 2,
+      },
+      {
+        key: 'page-b',
+        name: 'Page B',
+        author: 'user1',
+        flowTime: 200,
+        order: 0,
+      },
+      {
+        key: 'page-c',
+        name: 'Page C',
+        author: 'user1',
+        flowTime: 300,
+        order: 1,
+      },
     ];
 
     const sorted = [...pages].sort((a, b) => {
@@ -22,9 +40,21 @@ describe('Manual TOC Sorting', () => {
 
   test('should handle missing order field by placing at end', () => {
     const pages: PageRef[] = [
-      { key: 'page-a', name: 'Page A', author: 'user1', flowTime: 100, order: 1 },
+      {
+        key: 'page-a',
+        name: 'Page A',
+        author: 'user1',
+        flowTime: 100,
+        order: 1,
+      },
       { key: 'page-b', name: 'Page B', author: 'user1', flowTime: 200 }, // No order
-      { key: 'page-c', name: 'Page C', author: 'user1', flowTime: 300, order: 0 },
+      {
+        key: 'page-c',
+        name: 'Page C',
+        author: 'user1',
+        flowTime: 300,
+        order: 0,
+      },
     ];
 
     const sorted = [...pages].sort((a, b) => {
@@ -59,9 +89,27 @@ describe('Manual TOC Sorting', () => {
 
   test('should handle order field with zero value', () => {
     const pages: PageRef[] = [
-      { key: 'page-a', name: 'Page A', author: 'user1', flowTime: 100, order: 2 },
-      { key: 'page-b', name: 'Page B', author: 'user1', flowTime: 200, order: 0 }, // Zero is valid
-      { key: 'page-c', name: 'Page C', author: 'user1', flowTime: 300, order: 1 },
+      {
+        key: 'page-a',
+        name: 'Page A',
+        author: 'user1',
+        flowTime: 100,
+        order: 2,
+      },
+      {
+        key: 'page-b',
+        name: 'Page B',
+        author: 'user1',
+        flowTime: 200,
+        order: 0,
+      }, // Zero is valid
+      {
+        key: 'page-c',
+        name: 'Page C',
+        author: 'user1',
+        flowTime: 300,
+        order: 1,
+      },
     ];
 
     const sorted = [...pages].sort((a, b) => {
@@ -78,9 +126,21 @@ describe('Manual TOC Sorting', () => {
   test('should handle mixed order and no-order pages', () => {
     const pages: PageRef[] = [
       { key: 'page-a', name: 'Page A', author: 'user1', flowTime: 100 },
-      { key: 'page-b', name: 'Page B', author: 'user1', flowTime: 200, order: 0 },
+      {
+        key: 'page-b',
+        name: 'Page B',
+        author: 'user1',
+        flowTime: 200,
+        order: 0,
+      },
       { key: 'page-c', name: 'Page C', author: 'user1', flowTime: 300 },
-      { key: 'page-d', name: 'Page D', author: 'user1', flowTime: 400, order: 1 },
+      {
+        key: 'page-d',
+        name: 'Page D',
+        author: 'user1',
+        flowTime: 400,
+        order: 1,
+      },
       { key: 'page-e', name: 'Page E', author: 'user1', flowTime: 500 },
     ];
 
@@ -99,9 +159,27 @@ describe('Manual TOC Sorting', () => {
 
   test('should handle negative order values', () => {
     const pages: PageRef[] = [
-      { key: 'page-a', name: 'Page A', author: 'user1', flowTime: 100, order: 1 },
-      { key: 'page-b', name: 'Page B', author: 'user1', flowTime: 200, order: -1 },
-      { key: 'page-c', name: 'Page C', author: 'user1', flowTime: 300, order: 0 },
+      {
+        key: 'page-a',
+        name: 'Page A',
+        author: 'user1',
+        flowTime: 100,
+        order: 1,
+      },
+      {
+        key: 'page-b',
+        name: 'Page B',
+        author: 'user1',
+        flowTime: 200,
+        order: -1,
+      },
+      {
+        key: 'page-c',
+        name: 'Page C',
+        author: 'user1',
+        flowTime: 300,
+        order: 0,
+      },
     ];
 
     const sorted = [...pages].sort((a, b) => {
@@ -117,9 +195,27 @@ describe('Manual TOC Sorting', () => {
 
   test('should maintain stability for equal order values', () => {
     const pages: PageRef[] = [
-      { key: 'page-a', name: 'Page A', author: 'user1', flowTime: 100, order: 1 },
-      { key: 'page-b', name: 'Page B', author: 'user1', flowTime: 200, order: 1 },
-      { key: 'page-c', name: 'Page C', author: 'user1', flowTime: 300, order: 1 },
+      {
+        key: 'page-a',
+        name: 'Page A',
+        author: 'user1',
+        flowTime: 100,
+        order: 1,
+      },
+      {
+        key: 'page-b',
+        name: 'Page B',
+        author: 'user1',
+        flowTime: 200,
+        order: 1,
+      },
+      {
+        key: 'page-c',
+        name: 'Page C',
+        author: 'user1',
+        flowTime: 300,
+        order: 1,
+      },
     ];
 
     const sorted = [...pages].sort((a, b) => {
@@ -148,7 +244,13 @@ describe('Manual TOC Sorting', () => {
 
   test('should handle single page', () => {
     const pages: PageRef[] = [
-      { key: 'page-a', name: 'Page A', author: 'user1', flowTime: 100, order: 5 },
+      {
+        key: 'page-a',
+        name: 'Page A',
+        author: 'user1',
+        flowTime: 100,
+        order: 5,
+      },
     ];
 
     const sorted = [...pages].sort((a, b) => {

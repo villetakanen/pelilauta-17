@@ -10,6 +10,7 @@ import { t } from 'src/utils/i18n';
 import { logError } from 'src/utils/logHelpers';
 import { uid } from '../../../../stores/session';
 import WithAuth from '../../app/WithAuth.svelte';
+import ManualTocOrdering from './ManualTocOrdering.svelte';
 import SiteCategoriesTool from './SiteCategoriesTool.svelte';
 
 interface Props {
@@ -24,6 +25,7 @@ const sortOrderOptions = new Map<string, string>([
   ['name' as SiteSortOrder, t('entries:site.sortOrders.name')],
   ['createdAt' as SiteSortOrder, t('entries:site.sortOrders.createdAt')],
   ['flowTime' as SiteSortOrder, t('entries:site.sortOrders.flowTime')],
+  ['manual' as SiteSortOrder, t('entries:site.sortOrders.manual')],
 ]);
 
 async function setSortOrder(e: Event) {
@@ -63,6 +65,9 @@ async function setSortOrder(e: Event) {
         </select>
       </label>
     </section>
+    {#if site.sortOrder === "manual"}
+      <ManualTocOrdering {site} />
+    {/if}
     <SiteCategoriesTool {site} />
   </div>
 </WithAuth>
