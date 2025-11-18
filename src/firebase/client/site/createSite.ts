@@ -27,9 +27,9 @@ export async function createSite(site: Partial<Site>): Promise<string> {
     throw new Error('Site creation aborted, session uid not set');
   }
 
-  // Create a new site object based on the params
-  const parsedSite = createSiteFromSchema(site);
-  const siteData = toFirestoreEntry(parsedSite);
+  // Create a new site object with defaults applied
+  const newSite = createSiteFromSchema(site);
+  const siteData = toFirestoreEntry(newSite);
 
   // Add the current user's uid to the site's owners
   siteData.owners = [u];
