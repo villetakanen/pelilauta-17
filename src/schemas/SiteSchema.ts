@@ -190,6 +190,19 @@ export function migrateLegacySiteFields(data: Partial<Site>): Partial<Site> {
     migrated.usePlainTextURLs = !data.customPageKeys;
   }
 
+  // Handle legacy sortOrder values
+  // Map old values: 'created' → 'createdAt', 'updated' → 'flowTime'
+  if (typeof data.sortOrder === 'string') {
+    const sortOrderMap: Record<string, SiteSortOrder> = {
+      created: 'createdAt',
+      updated: 'flowTime',
+    };
+    const legacyValue = data.sortOrder as string;
+    if (legacyValue in sortOrderMap) {
+      migrated.sortOrder = sortOrderMap[legacyValue];
+    }
+  }
+
   return migrated;
 }
 
