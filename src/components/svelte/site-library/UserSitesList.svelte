@@ -1,20 +1,20 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { uid } from "../../../stores/session";
-  import { refreshSites, userSites } from "../../../stores/userSites/index.ts";
-  import { t } from "../../../utils/i18n.ts";
-  import FilteredSites from "./FilteredSites.svelte";
-  import { filters, toggleOrder } from "./filters.svelte.ts";
+import { onMount } from 'svelte';
+import { uid } from '../../../stores/session';
+import { refreshSites, userSites } from '../../../stores/userSites/index.ts';
+import { t } from '../../../utils/i18n.ts';
+import FilteredSites from './FilteredSites.svelte';
+import { filters, toggleOrder } from './filters.svelte.ts';
 
-  const directionNoun = $derived(
-    filters.orderDirection === "asc" ? "arrow-up" : "arrow-down",
-  );
+const directionNoun = $derived(
+  filters.orderDirection === 'asc' ? 'arrow-up' : 'arrow-down',
+);
 
-  onMount(() => {
-    if ($uid) {
-      refreshSites($uid);
-    }
-  });
+onMount(() => {
+  if ($uid) {
+    refreshSites($uid);
+  }
+});
 </script>
 
 <div class="content-cards">
