@@ -12,19 +12,21 @@ interface Props {
 }
 const { site }: Props = $props();
 
+// Local state for page refs to allow optimistic updates
+let pageRefs = $state([...(site.pageRefs || [])]);
 let saving = $state(false);
 
 // Group pages by category with derived state
 const pagesByCategory = $derived.by(() => {
   const result = new Map<string, PageRef[]>();
 
-  if (!site.pageRefs) return result;
+  if (!pageRefs) return result;
 
   // Get all category slugs
   const categorySlugs = (site.pageCategories || []).map((cat) => cat.slug);
 
   // Group pages into their categories
-  for (const page of site.pageRefs) {
+  for (const page of pageRefs) {
     const categorySlug =
       page.category && categorySlugs.includes(page.category)
         ? page.category
@@ -50,6 +52,7 @@ const pagesByCategory = $derived.by(() => {
 
 // Get categories for display
 const categories = $derived(site.pageCategories || []);
+const uncategorized = $derived(pagesByCategory.get('__uncategorized') || []);
 
 /**
  * Handle reordering of pages within a category
@@ -58,48 +61,55 @@ async function handleReorder(
   categorySlug: string,
   reorderedItems: CnListItem[],
 ) {
-  saving = true;
+  // Optimistic update: Update local state immediately
+  const reorderedPageKeys = reorderedItems.map((item) => item.key);
+  const allPages: PageRef[] = [];
 
-  try {
-    // Convert reordered items back to PageRefs
-    const reorderedPageKeys = reorderedItems.map((item) => item.key);
+  // Reconstruct the full page list with the new order
+  // Process each category in order
+  for (const category of categories) {
+    const pages = pagesByCategory.get(category.slug) || [];
 
-    // Build the complete ordered pageRefs array
-    const allPages: PageRef[] = [];
-
-    // Process each category in order
-    for (const category of categories) {
-      const pages = pagesByCategory.get(category.slug) || [];
-
-      if (category.slug === categorySlug) {
-        // Use the reordered pages for this category
-        for (const key of reorderedPageKeys) {
-          const page = pages.find((p) => p.key === key);
-          if (page) {
-            allPages.push(page);
-          }
-        }
-      } else {
-        // Keep existing order for other categories
-        allPages.push(...pages);
-      }
-    }
-
-    // Add uncategorized pages at the end
-    const uncategorized = pagesByCategory.get('__uncategorized') || [];
-    if (categorySlug === '__uncategorized') {
-      // Use the reordered pages for uncategorized
+    if (category.slug === categorySlug) {
+      // Use the reordered pages for this category
       for (const key of reorderedPageKeys) {
-        const page = uncategorized.find((p) => p.key === key);
+        const page = pages.find((p) => p.key === key);
         if (page) {
           allPages.push(page);
         }
       }
     } else {
-      // Keep existing order
-      allPages.push(...uncategorized);
+      // Keep existing order for other categories
+      allPages.push(...pages);
     }
+  }
 
+  // Add uncategorized pages at the end
+  const uncategorizedPages = pagesByCategory.get('__uncategorized') || [];
+  if (categorySlug === '__uncategorized') {
+    // Use the reordered pages for uncategorized
+    for (const key of reorderedPageKeys) {
+      const page = uncategorizedPages.find((p) => p.key === key);
+      if (page) {
+        allPages.push(page);
+      }
+    }
+  } else {
+    // Keep existing order
+    allPages.push(...uncategorizedPages);
+  }
+
+  // Update local state to reflect changes in UI immediately
+  // We also need to update the 'order' field in the objects to match their new array position
+  // so that subsequent sorts work correctly
+  pageRefs = allPages.map((page, index) => ({
+    ...page,
+    order: index,
+  }));
+
+  saving = true;
+
+  try {
     logDebug('ManualTocOrdering', 'Updating page order', {
       siteKey: site.key,
       categorySlug,
@@ -107,15 +117,15 @@ async function handleReorder(
     });
 
     // Update the site with the new order
-    await updatePageRefsOrder(site.key, allPages);
+    await updatePageRefsOrder(site.key, pageRefs);
 
     pushSnack(t('snack:site.tocOrderUpdated'));
-
-    // Reload the page to reflect changes
-    window.location.reload();
   } catch (error) {
     logError('ManualTocOrdering', 'Failed to update page order:', error);
     pushSnack(t('snack:site.tocOrderUpdateFailed'));
+
+    // Revert local state on error (reload from props)
+    pageRefs = [...(site.pageRefs || [])];
   } finally {
     saving = false;
   }
@@ -170,7 +180,6 @@ function createReorderHandler(categorySlug: string) {
     {/if}
   {/each}
 
-  {@const uncategorized = pagesByCategory.get("__uncategorized") || []}
   {#if uncategorized.length > 0}
     <div class="mb-2">
       <h4 class="downscaled mb-1">{t("site:toc.uncategorized")}</h4>
