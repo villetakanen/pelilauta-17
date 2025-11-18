@@ -1,6 +1,3 @@
-import { toClientEntry } from 'src/utils/client/entryUtils';
-import { logError } from 'src/utils/logHelpers';
-import { parseFlowTime } from 'src/utils/schemaHelpers';
 import { z } from 'zod';
 import { AssetSchema } from './AssetSchema';
 import { EntrySchema } from './EntrySchema';
@@ -204,33 +201,4 @@ export function migrateLegacySiteFields(data: Partial<Site>): Partial<Site> {
   }
 
   return migrated;
-}
-
-export function parseSite(data: Partial<Site>, newKey?: string): Site {
-  // Migrate legacy fields first
-  const migrated = migrateLegacySiteFields(data);
-
-  try {
-    return SiteSchema.parse({
-      ...toClientEntry(migrated),
-      flowTime: parseFlowTime(migrated),
-      key: newKey ?? migrated.key,
-    });
-  } catch (err: unknown) {
-    if (err instanceof z.ZodError) {
-      logError('SiteSchema', err.issues);
-    }
-    throw err;
-  }
-}
-
-/**
- * Utility for creating a site entry from a partial data. Sets default values
- * where schema does not provide them.
- *
- * @param template
- * @returns a Site object (extends Entry)
- */
-export function siteFrom(template: Partial<Site>, key?: string): Site {
-  return createSite({ ...template, key: key ?? template.key });
 }
