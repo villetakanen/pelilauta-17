@@ -56,7 +56,7 @@ uid.subscribe((currentUid) => {
   }
 });
 
-async function refreshSites(currentUid: string) {
+export async function refreshSites(currentUid: string) {
   logDebug('userSites:refreshSites', 'Refreshing sites for user', {
     currentUid,
   });
