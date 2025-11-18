@@ -1,5 +1,5 @@
 ---
-import { parseSite } from 'src/schemas/SiteSchema';
+import { SiteSchema } from 'src/schemas/SiteSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { t } from 'src/utils/i18n';
 import SiteTocApp from '../../../../components/server/SiteApp/SiteTocApp.astro';
@@ -19,19 +19,25 @@ const origin = new URL(Astro.request.url).origin;
 const siteData = await fetch(`${origin}/api/sites/${siteKey}`).then((res) =>
   res.json(),
 );
-const site = parseSite(toClientEntry(siteData), siteKey);
+const site = SiteSchema.parse({
+  ...toClientEntry(siteData),
+  key: siteKey,
+});
 const title = `${site.name} – ${t('site:toc.title')}`;
 const image = site.avatarURL || site.posterURL || site.backgroundURL;
 ---
+
 <PageWithTray
   title={title}
   description={site.description}
   image={image}
   noSharing={site.hidden}
 >
-  <SiteTray slot="app-tray" site={site}/>
-  <SiteTocApp site={site}/>  
-  { site.backgroundURL && 
-    <BackgroundPoster src={site.backgroundURL} slot="app-background-poster"/>
+  <SiteTray slot="app-tray" site={site} />
+  <SiteTocApp site={site} />
+  {
+    site.backgroundURL && (
+      <BackgroundPoster src={site.backgroundURL} slot="app-background-poster" />
+    )
   }
 </PageWithTray>
