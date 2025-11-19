@@ -1,10 +1,10 @@
 <script lang="ts">
-import { authUser, sessionState } from '@stores/session';
+import { authUser, sessionState, uid } from '@stores/session';
 import { profile } from 'src/stores/session/profile';
 import { t } from 'src/utils/i18n';
 
 const isLoading = $derived(
-  $sessionState === 'loading' || $sessionState === 'initial',
+  $sessionState === 'loading' || ($sessionState === 'initial' && $uid !== ''),
 );
 const isAuthenticated = $derived($authUser && $sessionState === 'active');
 </script>

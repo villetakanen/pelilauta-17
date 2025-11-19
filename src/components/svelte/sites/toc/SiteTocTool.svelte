@@ -18,7 +18,9 @@ interface Props {
 }
 const { site }: Props = $props();
 
-const sortOrder = $state(site.sortOrder);
+// Local state for the site to allow optimistic updates
+let localSite = $state(site);
+const sortOrder = $state(localSite.sortOrder);
 //let chapters:CategoryRef[] = $state(site.pageCategories || []);
 
 const sortOrderOptions = new Map<string, string>([
@@ -34,11 +36,18 @@ async function setSortOrder(e: Event) {
   try {
     await updateSiteApi(
       {
-        key: site.key,
+        key: localSite.key,
         sortOrder: value,
       },
       true,
     );
+
+    // Update local state
+    localSite.sortOrder = value;
+
+    // Update global store
+    const { updateSite } = await import('../../../../stores/sites/sitesStore');
+    updateSite(localSite.key, { sortOrder: value });
     // Lets notiufy the user about the update
     pushSnack(t('snack:site.sortOrderUpdated'));
   } catch (error) {
@@ -48,7 +57,7 @@ async function setSortOrder(e: Event) {
 }
 </script>
 
-<WithAuth allow={site.owners.includes($uid)}>
+<WithAuth allow={localSite.owners.includes($uid)}>
   <div class="content-columns">
     <section>
       <h2>
@@ -65,9 +74,9 @@ async function setSortOrder(e: Event) {
         </select>
       </label>
     </section>
-    {#if site.sortOrder === "manual"}
-      <ManualTocOrdering {site} />
+    {#if localSite.sortOrder === "manual"}
+      <ManualTocOrdering site={localSite} />
     {/if}
-    <SiteCategoriesTool {site} />
+    <SiteCategoriesTool site={localSite} />
   </div>
 </WithAuth>

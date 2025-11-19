@@ -119,6 +119,10 @@ async function handleReorder(
     // Update the site with the new order
     await updatePageRefsOrder(site.key, pageRefs);
 
+    // Update global store
+    const { updateSite } = await import('../../../../stores/sites/sitesStore');
+    updateSite(site.key, { pageRefs });
+
     pushSnack(t('snack:site.tocOrderUpdated'));
   } catch (error) {
     logError('ManualTocOrdering', 'Failed to update page order:', error);
