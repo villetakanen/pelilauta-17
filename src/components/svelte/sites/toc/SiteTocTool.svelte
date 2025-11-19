@@ -8,7 +8,7 @@ import {
 import { pushSnack } from 'src/utils/client/snackUtils';
 import { t } from 'src/utils/i18n';
 import { logError } from 'src/utils/logHelpers';
-import { uid } from '../../../../stores/session';
+import { authUser, uid } from '../../../../stores/session';
 import WithAuth from '../../app/WithAuth.svelte';
 import ManualTocOrdering from './ManualTocOrdering.svelte';
 import SiteCategoriesTool from './SiteCategoriesTool.svelte';
@@ -67,7 +67,7 @@ async function setSortOrder(e: Event) {
       <p>{t("site:toc.admin.info")}</p>
       <label>
         <span>{t("entries:site.sortOrder")}</span>
-        <select onchange={setSortOrder}>
+        <select name="sortOrder" onchange={setSortOrder} disabled={!$authUser}>
           {#each Array.from(sortOrderOptions.entries()) as [value, label]}
             <option selected={sortOrder === value} {value}>{label} </option>
           {/each}
