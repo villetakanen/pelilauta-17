@@ -1,5 +1,5 @@
 ---
-import { parseSite } from 'src/schemas/SiteSchema';
+import { SiteSchema } from 'src/schemas/SiteSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { t } from 'src/utils/i18n';
 import ImportApp from '../../../components/svelte/sites/import/ImportApp.svelte';
@@ -21,16 +21,17 @@ if (siteResponse.status === 404) {
   return Astro.redirect('/404');
 }
 const siteData = await siteResponse.json();
-const site = parseSite(toClientEntry(siteData), siteKey);
+const site = SiteSchema.parse({
+  ...toClientEntry(siteData),
+  key: siteKey,
+});
 const title = `${site.name} – ${t('site:import.title')}`;
 
 if (!site) {
   return Astro.redirect('/404');
 }
 ---
-<ModalPage
-  title={title}
-  description={site.description}
->
-  <ImportApp site={site} client:only="svelte"/>
+
+<ModalPage title={title} description={site.description}>
+  <ImportApp site={site} client:only="svelte" />
 </ModalPage>

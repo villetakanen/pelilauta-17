@@ -65,8 +65,8 @@ function updateDeleteButtons() {
 }
 
 onMount(() => {
-  // Get reference after component mounts
-  sortableListElement = document.querySelector('cn-sortable-list');
+  // sortableListElement is already bound via bind:this
+  // sortableListElement = document.querySelector('cn-sortable-list');
 
   if (sortableListElement instanceof CnSortableList) {
     // Add event listener for item changes from the web component

@@ -44,4 +44,23 @@ export const site: Locale = {
       'Select a custom page to display in the sidebar. If no page is selected, the default sidebar will be used.',
     useDefaultSidebar: 'Use default sidebar',
   },
+  toc: {
+    title: 'Table of Contents',
+    uncategorized: 'Uncategorized',
+    admin: {
+      title: 'Management',
+      info: 'Manage the site table of contents. You can choose the order of pages and create and organize page categories.',
+      categories: {
+        title: 'Categories',
+      },
+      noCategories: 'No categories, you can create a new category below.',
+      categoryPlaceholder: 'Category name',
+      errorSaving: 'Error saving categories',
+    },
+    manualOrder: {
+      title: 'Reorder Pages',
+      info: 'Drag and drop pages to change their order in the table of contents.',
+      saving: 'Saving order...',
+    },
+  },
 };

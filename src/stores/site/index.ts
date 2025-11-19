@@ -1,4 +1,4 @@
-import { parseSite, type Site } from '@schemas/SiteSchema';
+import { type Site, SiteSchema } from '@schemas/SiteSchema';
 import { uid } from '@stores/session';
 import { toClientEntry } from '@utils/client/entryUtils';
 import { logDebug, logError, logWarn } from '@utils/logHelpers';
@@ -77,10 +77,10 @@ async function handleSubscription(
       doc(db, 'sites', currentSite.key),
       (doc) => {
         if (doc.exists()) {
-          const updatedSite = parseSite(
-            toClientEntry(doc.data()),
-            currentSite.key,
-          );
+          const updatedSite = SiteSchema.parse({
+            ...toClientEntry(doc.data()),
+            key: currentSite.key,
+          });
 
           // Prevent infinite loops by checking for actual changes
           const currentSiteData = site.get();

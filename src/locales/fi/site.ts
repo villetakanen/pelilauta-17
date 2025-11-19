@@ -218,6 +218,7 @@ export const site: Locale = {
   },
   toc: {
     title: 'Hakemisto',
+    uncategorized: 'Luokittelemattomat',
     missing:
       'Sivusto on luotu ennen Pelilaudan versiota 16, joten sivuston hakemisto on luotava uudestaan',
     repair: 'Luo hakemisto',
@@ -227,16 +228,21 @@ export const site: Locale = {
       newCategory: 'Uusi aihe',
       noCategories: 'Ei aiheita, voin luoda uuden aiheen alla.',
       categoryPlaceholder: 'Aiheen nimi',
+      errorSaving: 'Virhe tallennettaessa kategorioita',
       categories: {
         title: 'Aiheet',
       },
+    },
+    manualOrder: {
+      title: 'Järjestä sivut',
+      info: 'Vedä ja pudota sivuja muuttaaksesi niiden järjestystä hakemistossa.',
+      saving: 'Tallennetaan järjestystä...',
     },
     regenerate: {
       title: 'Hakemiston luonti',
       info: 'Jos sivuston hakemisto on vioittunut, tai se puuttuu historiallisista syistä, voit luoda hakemiston uudelleen tästä.',
       action: 'Luo hakemisto',
     },
-    other: 'Luokittelemattomat',
     all: 'Sisältö',
     importExport: {
       title: 'Tuo ja vie',

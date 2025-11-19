@@ -1,7 +1,7 @@
 ---
 import ModalPage from '@layouts/ModalPage.astro';
 import SiteOptionsApp from '@svelte/sites/options/SiteOptionsApp.svelte';
-import { parseSite } from 'src/schemas/SiteSchema';
+import { SiteSchema } from 'src/schemas/SiteSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 
 const { siteKey } = Astro.params;
@@ -11,7 +11,10 @@ if (siteResponse.status === 404) {
   return Astro.redirect('/404');
 }
 
-const site = parseSite(toClientEntry(await siteResponse.json()), siteKey);
+const site = SiteSchema.parse({
+  ...toClientEntry(await siteResponse.json()),
+  key: siteKey,
+});
 ---
 
 <ModalPage>

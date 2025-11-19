@@ -1,5 +1,5 @@
 ---
-import { parseSite } from 'src/schemas/SiteSchema';
+import { SiteSchema } from 'src/schemas/SiteSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { t } from 'src/utils/i18n';
 import SiteTray from '../../../../components/server/SiteApp/SiteTray.astro';
@@ -23,19 +23,25 @@ if (siteResponse.status === 404) {
 
 // Parse the site data and create the site object
 const siteData = await siteResponse.json();
-const site = parseSite(toClientEntry(siteData), siteKey);
+const site = SiteSchema.parse({
+  ...toClientEntry(siteData),
+  key: siteKey,
+});
 const title = `${site.name} – ${t('site:assets.title')}`;
 ---
+
 <PageWithTray
   title={title}
   description={site.description}
   image={site.backgroundURL}
   noSharing={true}
 >
-  <SiteTray slot="app-tray" site={site}/>
-  <AssetList site={site} client:only="svelte"/>
-  <UploadAssetFab site={site} client:only="svelte" slot="fab-tray"/>
-  { site.backgroundURL && 
-    <BackgroundPoster src={site.backgroundURL} slot="app-background-poster"/>
+  <SiteTray slot="app-tray" site={site} />
+  <AssetList site={site} client:only="svelte" />
+  <UploadAssetFab site={site} client:only="svelte" slot="fab-tray" />
+  {
+    site.backgroundURL && (
+      <BackgroundPoster src={site.backgroundURL} slot="app-background-poster" />
+    )
   }
 </PageWithTray>

@@ -1,7 +1,6 @@
 import { persistentAtom } from '@nanostores/persistent';
 import type { WritableAtom } from 'nanostores';
 import {
-  parseSite,
   SITES_COLLECTION_NAME,
   type Site,
   SiteSchema,
@@ -57,7 +56,7 @@ uid.subscribe((currentUid) => {
   }
 });
 
-async function refreshSites(currentUid: string) {
+export async function refreshSites(currentUid: string) {
   logDebug('userSites:refreshSites', 'Refreshing sites for user', {
     currentUid,
   });
@@ -87,12 +86,18 @@ async function refreshSites(currentUid: string) {
     const sitesMap = new Map<string, Site>();
 
     for (const doc of ownerDocs.docs) {
-      const site = parseSite(toClientEntry(doc.data()), doc.id);
+      const site = SiteSchema.parse({
+        ...toClientEntry(doc.data()),
+        key: doc.id,
+      });
       sitesMap.set(site.key, site);
     }
 
     for (const doc of playerDocs.docs) {
-      const site = parseSite(toClientEntry(doc.data()), doc.id);
+      const site = SiteSchema.parse({
+        ...toClientEntry(doc.data()),
+        key: doc.id,
+      });
       if (!sitesMap.has(site.key)) {
         sitesMap.set(site.key, site);
       }

@@ -45,6 +45,16 @@ describe('Content Update Hooks', () => {
     owners: ['user1'],
     hidden: false,
     sortOrder: 'name',
+    system: 'homebrew',
+    license: 'homebrew',
+    customPageKeys: false,
+    usePlainTextURLs: false,
+    useSidebar: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    assets: [],
+    description: 'A test site for unit testing',
+    characterKeeperSheetKey: undefined,
   };
 
   beforeEach(() => {

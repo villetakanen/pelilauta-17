@@ -627,11 +627,11 @@ describe('PATCH /api/sites/[siteKey]', () => {
       const { serverDB } = initializeTestFirebase();
 
       // Get original timestamps
-      const originalDoc = await serverDB
-        .collection('sites')
-        .doc(testSiteKey)
-        .get();
-      const _originalData = originalDoc.data();
+      //const originalDoc = await serverDB
+      //  .collection('sites')
+      //  .doc(testSiteKey)
+      //  .get();
+      // const _originalData = originalDoc.data();
 
       // Wait a bit to ensure timestamps would differ
       await new Promise((resolve) => setTimeout(resolve, 100));

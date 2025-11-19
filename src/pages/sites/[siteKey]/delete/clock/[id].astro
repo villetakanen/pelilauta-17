@@ -1,5 +1,5 @@
 ---
-import { parseSite } from 'src/schemas/SiteSchema';
+import { SiteSchema } from 'src/schemas/SiteSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import DeleteClockApp from '../../../../../components/svelte/sites/DeleteClockApp.svelte';
 import ModalPage from '../../../../../layouts/ModalPage.astro';
@@ -17,8 +17,12 @@ if (siteResponse.status === 404) {
   return Astro.redirect('/404');
 }
 
-const site = parseSite(toClientEntry(await siteResponse.json()), siteKey);
+const site = SiteSchema.parse({
+  ...toClientEntry(await siteResponse.json()),
+  key: siteKey,
+});
 ---
+
 <ModalPage>
-  <DeleteClockApp site={site} key={id} client:only="svelte"/-->
+  <DeleteClockApp site={site} key={id} client:only="svelte" -- />
 </ModalPage>

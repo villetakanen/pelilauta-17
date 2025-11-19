@@ -1,6 +1,3 @@
-import { toClientEntry } from 'src/utils/client/entryUtils';
-import { logError } from 'src/utils/logHelpers';
-import { parseFlowTime } from 'src/utils/schemaHelpers';
 import { z } from 'zod';
 import { AssetSchema } from './AssetSchema';
 import { EntrySchema } from './EntrySchema';
@@ -21,6 +18,7 @@ export const PageRefSchema = z.object({
   // Note: we save flowTime instead of updatedAt, as firestore
   // does not fully support timestamps in array fields
   flowTime: z.number(),
+  order: z.number().optional(), // Manual sort position for TOC ordering
 });
 
 export type PageRef = z.infer<typeof PageRefSchema>;
@@ -51,44 +49,61 @@ export const SiteSortOrderSchema = z.enum([
 export type SiteSortOrder = z.infer<typeof SiteSortOrderSchema>;
 
 export const SiteSchema = EntrySchema.extend({
-  assets: z.array(AssetSchema).optional(),
-  name: z.string(),
-  system: z.string().optional(),
-  posterURL: z.string().optional(),
-  hidden: z.boolean(),
-  avatarURL: z.string().optional(),
-  homepage: z.string().optional(),
+  // Core fields
+  name: z.string().default('[...]'),
+  system: z.string().default('homebrew'),
   description: z.string().optional(),
-  players: z.array(z.string()).optional(),
-  sortOrder: SiteSortOrderSchema,
+  homepage: z.string().optional(),
+  license: z.string().default('0'),
+
+  // Visibility
+  hidden: z.boolean().default(false),
+
+  // Media/assets
+  posterURL: z.string().optional(),
+  avatarURL: z.string().optional(),
   backgroundURL: z.string().optional(),
-  customPageKeys: z.boolean().optional(),
+  assets: z.array(AssetSchema).optional(),
+
+  // Page organization
+  sortOrder: SiteSortOrderSchema.default('name'),
+  customPageKeys: z.boolean().default(false),
+  usePlainTextURLs: z.boolean().default(false),
   pageRefs: z.array(PageRefSchema).optional(),
   pageCategories: z.array(CategoryRefSchema).optional(),
-  // Metadata
-  license: z.string().optional(),
-  // Options
+
+  // Players
+  players: z.array(z.string()).optional(),
   usePlayers: z.boolean().optional(),
+
+  // Features/options
   useClocks: z.boolean().optional(),
   useHandouts: z.boolean().optional(),
   useRecentChanges: z.boolean().optional(),
-  useSidebar: z.boolean().optional(), // Defaults to true if unset
-  sidebarKey: z.string().optional(), // The page key to display in sidebar
-  usePlainTextURLs: z.boolean().optional(),
+  useSidebar: z.boolean().default(true),
+  sidebarKey: z.string().optional(),
   useCharacters: z.boolean().optional(),
-  useCharacterKeeper: z.boolean().optional(), // Character Keeper feature toggle
-  characterKeeperSheetKey: z.string().optional(), // Selected character sheet template for keeper view
+  useCharacterKeeper: z.boolean().optional(),
+  characterKeeperSheetKey: z.string().optional(),
 });
 
 export type Site = z.infer<typeof SiteSchema>;
 
+/**
+ * @deprecated Use createSite() instead. This will be removed in a future version.
+ */
 export const emptySite: Site = {
   key: '',
   flowTime: 0,
-  name: '',
+  name: '[...]',
   owners: [],
   hidden: true,
   sortOrder: 'name',
+  system: 'homebrew',
+  license: '0',
+  useSidebar: true,
+  customPageKeys: false,
+  usePlainTextURLs: false,
 };
 
 /**
@@ -136,72 +151,54 @@ export const SiteUpdateSchema = z.object({
 
 export type SiteUpdate = z.infer<typeof SiteUpdateSchema>;
 
-export function parseSite(data: Partial<Site>, newKey?: string): Site {
-  // Forcing key to be a string, even if it's undefined. Legacy support for key field.
-  const key = newKey || data.key || '';
-  // Legacy support for system field
-  const system = data.system ? data.system : 'homebrew';
-
-  // Legacy support for hidden field
-  const hidden = data.hidden ? data.hidden : false;
-
-  // Legacy support for homepage field
-  const homepage = data.homepage ? data.homepage : key;
-
-  // Legacy support for sortOrder field
-  const sortOrder = data.sortOrder ? data.sortOrder : 'name';
-
-  // Legacy support for customPageKeys field
-  const customPageKeys = data.customPageKeys ? data.customPageKeys : false;
-
-  try {
-    return SiteSchema.parse({
-      ...toClientEntry(data),
-      name: data.name || '[...]',
-      system,
-      flowTime: parseFlowTime(data),
-      hidden,
-      homepage,
-      sortOrder,
-      customPageKeys,
-      key,
-      // useSidebar defaults to true if unset
-      useSidebar: data.useSidebar !== false,
-      // customPageKeys is the legacy field for usePlainTextUrls, but inverted - use it's value
-      // if usePlainTextUrls is not set
-      usePlainTextUrls: data.usePlainTextURLs || !customPageKeys,
-      license: data.license || '0',
-    });
-  } catch (err: unknown) {
-    if (err instanceof z.ZodError) {
-      logError('SiteSchema', err.issues);
-    }
-    throw err;
-  }
+/**
+ * Creates a new Site object with default values.
+ * Use this for creating new sites from scratch or templates.
+ *
+ * Entry fields (key, flowTime, owners, createdAt, updatedAt) are handled by
+ * the schema defaults and should be managed by toFirestoreEntry when saving.
+ *
+ * @param partial - Partial site data to merge with defaults
+ * @returns Valid Site object with all required fields and defaults applied
+ *
+ * @example
+ * const site = createSite({ name: 'My Campaign' });
+ */
+export function createSite(partial: Partial<Site> = {}): Site {
+  return SiteSchema.parse(partial);
 }
 
 /**
- * Utility for creating a site entry from a partial data. Sets default values
- * where schema does not provide them.
+ * Migrates legacy site data fields to current schema.
+ * Handles backwards compatibility transformations.
  *
- * @param template
- * @returns a Site object (extends Entry)
+ * @param data - Legacy site data
+ * @returns Migrated site data compatible with current schema
  */
-export function siteFrom(template: Partial<Site>, key?: string): Site {
-  const coerced: Partial<Site> = {
-    ...template,
-    key: key ?? template.key ?? '',
-    flowTime: template.flowTime ?? 0,
-    name: template.name || '-',
-    description: template.description || '',
-    owners: template.owners || [],
-    hidden: template.hidden || false,
-    system: template.system || 'homebrew',
-    sortOrder: template.sortOrder || 'name',
-    customPageKeys: template.customPageKeys || !template.usePlainTextURLs,
-    usePlainTextURLs: template.usePlainTextURLs || false,
-    license: template.license || '0',
-  };
+export function migrateLegacySiteFields(data: Partial<Site>): Partial<Site> {
+  const migrated = { ...data };
 
-  return SiteSchema.parse(coerced);
+  // Handle customPageKeys ↔ usePlainTextURLs relationship
+  // customPageKeys is legacy, inverted logic of usePlainTextURLs
+  if (
+    data.customPageKeys !== undefined &&
+    data.usePlainTextURLs === undefined
+  ) {
+    migrated.usePlainTextURLs = !data.customPageKeys;
+  }
+
+  // Handle legacy sortOrder values
+  // Map old values: 'created' → 'createdAt', 'updated' → 'flowTime'
+  if (typeof data.sortOrder === 'string') {
+    const sortOrderMap: Record<string, SiteSortOrder> = {
+      created: 'createdAt',
+      updated: 'flowTime',
+    };
+    const legacyValue = data.sortOrder as string;
+    if (legacyValue in sortOrderMap) {
+      migrated.sortOrder = sortOrderMap[legacyValue];
+    }
+  }
+
+  return migrated;
 }

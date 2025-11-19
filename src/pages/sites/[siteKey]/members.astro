@@ -1,5 +1,5 @@
 ---
-import { parseSite } from 'src/schemas/SiteSchema';
+import { SiteSchema } from 'src/schemas/SiteSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { t } from 'src/utils/i18n';
 import SiteMembersApp from '../../../components/svelte/sites/SiteMembersApp.svelte';
@@ -16,10 +16,14 @@ if (siteResponse.status === 404) {
   return Astro.redirect('/404');
 }
 
-const site = parseSite(toClientEntry(await siteResponse.json()), siteKey);
+const site = SiteSchema.parse({
+  ...toClientEntry(await siteResponse.json()),
+  key: siteKey,
+});
 ---
-<ModalPage title={t('site:members.title')}>
+
+<ModalPage title={t("site:members.title")}>
   <div class="content-columns">
-    <SiteMembersApp site={site} client:only="svelte"/>
+    <SiteMembersApp site={site} client:only="svelte" />
   </div>
 </ModalPage>
