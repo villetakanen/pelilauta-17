@@ -84,18 +84,26 @@
           https://*.simpleanalyticscdn.com
           https://browser.sentry-cdn.com
           https://*.firebaseio.com
+          https://*.firebaseapp.com
           https://storage.googleapis.com
-          https://apis.google.com;
+          https://apis.google.com
+          https://securetoken.googleapis.com
+          https://identitytoolkit.googleapis.com;
         style-src 'self' 'unsafe-inline';
         img-src 'self' data: https: blob:;
         font-src 'self' data:;
         connect-src 'self'
           https://*.firebaseio.com
+          https://*.firebaseapp.com
           https://*.googleapis.com
           https://apis.google.com
+          https://securetoken.googleapis.com
+          https://identitytoolkit.googleapis.com
           https://*.simpleanalyticscdn.com
           https://sentry.io;
         worker-src 'self' blob:;
+        frame-src 'self'
+          https://*.firebaseapp.com;
         frame-ancestors 'self';
       """
 
