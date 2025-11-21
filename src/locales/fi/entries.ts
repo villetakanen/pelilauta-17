@@ -36,7 +36,7 @@ export const entries: Locale = {
       name: 'Aakkosjärjestyksessä',
       createdAt: 'Luomisajan mukaan',
       flowTime: 'Muokkausajan mukaan',
-      manual: 'Kategorian mukaan',
+      manual: 'Manuaalinen järjestys',
     },
     avatarURL: 'Kuvake',
     posterURL: 'Kansikuva',

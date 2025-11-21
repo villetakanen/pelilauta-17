@@ -14,6 +14,7 @@ import { search } from './search';
 import { seo } from './seo';
 import { settings } from './settings';
 import { site } from './site';
+import { snack } from './snack';
 import { social } from './social';
 import { tag } from './tag';
 import { threads } from './threads';
@@ -34,6 +35,7 @@ export const fi: Locale = {
   seo,
   settings,
   site,
+  snack,
   social,
   tag,
   threads,

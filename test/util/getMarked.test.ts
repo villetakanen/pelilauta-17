@@ -13,6 +13,11 @@ const mockSite: Site = {
   owners: [],
   hidden: false,
   sortOrder: 'createdAt',
+  system: 'homebrew',
+  license: 'homebrew',
+  customPageKeys: false,
+  usePlainTextURLs: false,
+  useSidebar: false,
 };
 
 test('getMarked with site returns a function that can render in-site links', async () => {

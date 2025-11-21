@@ -1,5 +1,5 @@
 ---
-import { parseSite, type Site } from 'src/schemas/SiteSchema';
+import { type Site, SiteSchema } from 'src/schemas/SiteSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { t } from 'src/utils/i18n';
 import { logError } from 'src/utils/logHelpers';
@@ -19,22 +19,30 @@ try {
   if (siteListRequest.status === 200) {
     const siteListResponse = await siteListRequest.json();
     for (const site of siteListResponse) {
-      sites.push(parseSite(toClientEntry(site), site.key));
+      sites.push(
+        SiteSchema.parse({
+          ...toClientEntry(site),
+          key: site.key,
+        }),
+      );
     }
   }
 } catch (error) {
   logError('ProfileSiteList failed to fetch the users public sites', error);
 }
 ---
+
 <section class="column-s">
-  <h2>{t('profile:siteList.title')}</h2>
-  { sites.length > 0 ? (
-    <div class="flex flex-col">
-      {sites.map((site) => (
-        <SiteCard site={site} />
-      ))}
-    </div>
+  <h2>{t("profile:siteList.title")}</h2>
+  {
+    sites.length > 0 ? (
+      <div class="flex flex-col">
+        {sites.map((site) => (
+          <SiteCard site={site} />
+        ))}
+      </div>
     ) : (
-        <p>{t('profile:siteList.empty')}</p>
-    )}
+      <p>{t("profile:siteList.empty")}</p>
+    )
+  }
 </section>

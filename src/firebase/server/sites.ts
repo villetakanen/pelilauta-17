@@ -1,10 +1,9 @@
 import type { Page } from 'src/schemas/PageSchema';
 import { PAGES_COLLECTION_NAME, parsePage } from 'src/schemas/PageSchema';
 import {
-  parseSite,
   SITES_COLLECTION_NAME,
   type Site,
-  siteFrom,
+  SiteSchema,
 } from 'src/schemas/SiteSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { logError } from 'src/utils/logHelpers';
@@ -24,7 +23,7 @@ export async function getSiteData(siteKey: string): Promise<Site | null> {
       return null;
     }
 
-    return parseSite(toClientEntry(siteData), siteKey);
+    return SiteSchema.parse({ ...toClientEntry(siteData), key: siteKey });
   } catch (error) {
     logError('getSiteData', 'Failed to fetch site:', error);
     return null;
@@ -53,7 +52,10 @@ export async function getPageData(
       return null;
     }
 
-    const site = siteFrom(toClientEntry(siteData), siteDoc.id);
+    const site = SiteSchema.parse({
+      ...toClientEntry(siteData),
+      key: siteDoc.id,
+    });
     const page = parsePage(toClientEntry(pageData), pageKey, siteKey);
 
     // Render wiki content

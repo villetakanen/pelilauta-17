@@ -24,6 +24,13 @@ export const sessionState = persistentAtom<SessionState>(
   'initial',
 );
 
+// Fix for infinite loading state:
+// If the page was reloaded while in 'loading' state, we need to reset it
+// because the async process that was supposed to clear it is no longer running.
+if (sessionState.get() === 'loading') {
+  sessionState.set('initial');
+}
+
 // Add debug logging for session state changes
 sessionState.subscribe((state, oldState) => {
   if (state !== oldState) {

@@ -1,9 +1,9 @@
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { type Asset, createAssetMetadata } from 'src/schemas/AssetSchema';
 import {
-  parseSite,
   SITES_COLLECTION_NAME,
   type Site,
+  SiteSchema,
 } from 'src/schemas/SiteSchema';
 import {
   generateStoragePath,
@@ -71,7 +71,10 @@ export async function addAssetToSite(
   );
 
   // Update site's assets array
-  const remoteSite = parseSite(toClientEntry(siteDoc.data()), site.key);
+  const remoteSite = SiteSchema.parse({
+    ...toClientEntry(siteDoc.data()),
+    key: site.key,
+  });
   const assets = remoteSite.assets || [];
   assets.push(assetData);
 

@@ -156,6 +156,95 @@ await serverDB.collection('profiles').doc(TEST_USERS.ADMIN).set({
 
 console.log('Test profiles created.');
 
+// Create test sites
+console.log('Creating test sites...');
+
+const testSiteKey = 'test-site-normal-user';
+await serverDB
+  .collection('sites')
+  .doc(testSiteKey)
+  .set({
+    key: testSiteKey,
+    name: 'Test Site for Normal User',
+    owners: [TEST_USERS.NORMAL],
+    hidden: false,
+    sortOrder: 'name',
+    system: 'mekanismi',
+    flowTime: Date.now(),
+    createdAt: FieldValue.serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp(),
+    description: 'A test site owned by the normal test user',
+    posterURL: '',
+    avatarURL: '',
+    pageRefs: [],
+    pageCategories: [],
+  });
+
+const testSiteKey2 = 'test-site-normal-user-2';
+await serverDB
+  .collection('sites')
+  .doc(testSiteKey2)
+  .set({
+    key: testSiteKey2,
+    name: 'Another Test Site',
+    owners: [TEST_USERS.NORMAL],
+    hidden: false,
+    sortOrder: 'created',
+    system: 'dnd5e',
+    flowTime: Date.now() - 1000,
+    createdAt: FieldValue.serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp(),
+    description: 'Another test site for testing',
+    posterURL: '',
+    avatarURL: '',
+    pageRefs: [],
+    pageCategories: [],
+  });
+
+const hiddenSiteKey = 'test-site-hidden';
+await serverDB
+  .collection('sites')
+  .doc(hiddenSiteKey)
+  .set({
+    key: hiddenSiteKey,
+    name: 'Hidden Test Site',
+    owners: [TEST_USERS.NORMAL],
+    hidden: true,
+    sortOrder: 'name',
+    system: 'homebrew',
+    flowTime: Date.now() - 2000,
+    createdAt: FieldValue.serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp(),
+    description: 'A hidden test site that should not appear in public listings',
+    posterURL: '',
+    avatarURL: '',
+    pageRefs: [],
+    pageCategories: [],
+  });
+
+const adminSiteKey = 'test-site-admin';
+await serverDB
+  .collection('sites')
+  .doc(adminSiteKey)
+  .set({
+    key: adminSiteKey,
+    name: 'Admin Test Site',
+    owners: [TEST_USERS.ADMIN],
+    hidden: false,
+    sortOrder: 'name',
+    system: 'mekanismi',
+    flowTime: Date.now() - 3000,
+    createdAt: FieldValue.serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp(),
+    description: 'A test site owned by admin user',
+    posterURL: '',
+    avatarURL: '',
+    pageRefs: [],
+    pageCategories: [],
+  });
+
+console.log('Test sites created.');
+
 // Create test channels in meta/threads if they don't exist
 console.log('Setting up test channels...');
 

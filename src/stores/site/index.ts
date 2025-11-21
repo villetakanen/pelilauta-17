@@ -1,9 +1,9 @@
-import { parseSite, type Site } from '@schemas/SiteSchema';
+import { type Site, SiteSchema } from '@schemas/SiteSchema';
 import { uid } from '@stores/session';
 import { toClientEntry } from '@utils/client/entryUtils';
 import { logDebug, logError, logWarn } from '@utils/logHelpers';
 import { atom, onMount, onSet } from 'nanostores';
-import { updateSite } from 'src/firebase/client/site/updateSite';
+import { updateSiteApi } from 'src/firebase/client/site/updateSiteApi';
 
 export const site = atom<Site | null>(null);
 export const isPreSeeded = atom<boolean>(false);
@@ -77,10 +77,10 @@ async function handleSubscription(
       doc(db, 'sites', currentSite.key),
       (doc) => {
         if (doc.exists()) {
-          const updatedSite = parseSite(
-            toClientEntry(doc.data()),
-            currentSite.key,
-          );
+          const updatedSite = SiteSchema.parse({
+            ...toClientEntry(doc.data()),
+            key: currentSite.key,
+          });
 
           // Prevent infinite loops by checking for actual changes
           const currentSiteData = site.get();
@@ -145,7 +145,7 @@ export async function update(data: Partial<Site>) {
   const updated = { ...site.get(), ...data, key };
   // Silent update of the Site Data
   logDebug('Updating site data', updated);
-  await updateSite(updated, true);
+  await updateSiteApi(updated, true);
 }
 
 // Export import store

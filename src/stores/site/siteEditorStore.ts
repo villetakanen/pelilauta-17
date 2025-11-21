@@ -1,4 +1,4 @@
-import { SITES_COLLECTION_NAME, type Site } from '@schemas/SiteSchema';
+import type { Site } from '@schemas/SiteSchema';
 import { logDebug, logError } from '@utils/logHelpers';
 import { atom, computed } from 'nanostores';
 
@@ -28,12 +28,13 @@ export function reset() {
 
 /**
  * Optimistically updates the site data. Updates the local store immediately
- * for instant preview, then persists to Firestore and triggers cache purging.
+ * for instant preview, then persists via API endpoint which handles validation,
+ * authorization, and atomic cache purging.
  *
  * If the update fails, the local store is rolled back to the previous state.
  *
- * Note: Only the changed fields are sent to Firestore. updateDoc performs
- * a merge by default, preventing overwrites of concurrent changes by other users.
+ * Note: The API endpoint performs partial updates (PATCH semantics), so only
+ * the changed fields need to be sent.
  *
  * @param updates - Partial Site object with fields to update
  */
@@ -67,35 +68,23 @@ export async function updateSite(updates: Partial<Site>): Promise<void> {
   logDebug('siteEditorStore:update', 'Optimistic update applied', updates);
 
   try {
-    // Dynamic import of firebase/firestore for code splitting
-    const { getFirestore, doc, updateDoc } = await import('firebase/firestore');
-    const { toFirestoreEntry } = await import('@utils/client/toFirestoreEntry');
+    // Dynamic import of the API wrapper for code splitting
+    const { updateSiteApi } = await import(
+      '@firebase/client/site/updateSiteApi'
+    );
 
-    // Create ref and prep data for Firestore update
-    const siteDoc = doc(getFirestore(), SITES_COLLECTION_NAME, currentSite.key);
-    // IMPORTANT: Only send the partial updates, not the merged object
-    // updateDoc performs a merge by default, preventing overwrites of concurrent changes
-    const updateData = toFirestoreEntry(updates, { silent: true });
+    // Call API endpoint with the updates
+    // silent=true prevents timestamp updates (metadata-only changes)
+    // Cache purging happens server-side automatically
+    await updateSiteApi(
+      {
+        key: currentSite.key,
+        ...updates,
+      },
+      true, // silent - no timestamp update for form edits
+    );
 
-    // Persist to Firestore (only the changed fields)
-    await updateDoc(siteDoc, updateData);
-
-    logDebug('siteEditorStore:update', 'Firestore update completed');
-
-    // Trigger site-wide cache purging for SSR pages (non-blocking)
-    try {
-      const { purgeCacheForSite } = await import(
-        '@firebase/client/cache/purgeCacheHelpers'
-      );
-      await purgeCacheForSite(currentSite.key);
-    } catch (cacheError) {
-      // Cache purging failures should not block the update
-      logDebug(
-        'siteEditorStore:update',
-        'Cache purging failed but site update succeeded',
-        cacheError,
-      );
-    }
+    logDebug('siteEditorStore:update', 'API update completed');
   } catch (error) {
     // Rollback to previous state on error
     logError('siteEditorStore:update', 'Update failed, rolling back', error);

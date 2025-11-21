@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { type Asset, createAssetMetadata, parseAsset } from './AssetSchema';
+import {
+  type Asset,
+  createAssetMetadata,
+  parseAsset,
+} from '../../src/schemas/AssetSchema';
 
 describe('AssetSchema', () => {
   describe('backward compatibility', () => {

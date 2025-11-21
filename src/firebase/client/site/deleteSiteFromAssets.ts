@@ -2,9 +2,9 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { deleteObject, getStorage, ref } from 'firebase/storage';
 import type { Asset } from 'src/schemas/AssetSchema';
 import {
-  parseSite,
   SITES_COLLECTION_NAME,
   type Site,
+  SiteSchema,
 } from 'src/schemas/SiteSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { logDebug, logWarn } from 'src/utils/logHelpers';
@@ -40,7 +40,10 @@ export async function deleteSiteAsset(
     throw new Error(`Site with key ${site.key} not found`);
   }
 
-  const remoteSite = parseSite(toClientEntry(siteDoc.data()), site.key);
+  const remoteSite = SiteSchema.parse({
+    ...toClientEntry(siteDoc.data()),
+    key: site.key,
+  });
   const assets =
     remoteSite.assets?.filter((a) => a.storagePath !== storagePath) || [];
 

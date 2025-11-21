@@ -1,8 +1,8 @@
 <script lang="ts">
 import {
-  parseSite,
   SITES_COLLECTION_NAME,
   type Site,
+  SiteSchema,
 } from 'src/schemas/SiteSchema';
 import { appMeta } from 'src/stores/metaStore/metaStore';
 import { toClientEntry } from 'src/utils/client/entryUtils';
@@ -28,7 +28,12 @@ onMount(async () => {
   const snapshot = await getDocs(q);
 
   for (const doc of snapshot.docs) {
-    sites.push(parseSite(toClientEntry(doc.data()), doc.id));
+    sites.push(
+      SiteSchema.parse({
+        ...toClientEntry(doc.data()),
+        key: doc.id,
+      }),
+    );
   }
 });
 
@@ -37,24 +42,28 @@ function getLatesPageRef(site: Site) {
   return [...site.pageRefs].sort((a, b) => b.flowTime - a.flowTime)[0];
 }
 </script>
+
 <WithAuth allow={visible}>
   <div class="content-columns">
-  <section>
-    <h1>SITES</h1>
-    <p>Site activity for public and hidden site - used for usage and triage purposes.</p>
-    {#each sites as site}
-      <h4>{site.name}</h4>
+    <section>
+      <h1>SITES</h1>
       <p>
-        {getLatesPageRef(site)?.name}
-        -
-        <ProfileLink uid={getLatesPageRef(site)?.author || ''} />
-        -
-        {toDisplayString(getLatesPageRef(site)?.flowTime)}
+        Site activity for public and hidden site - used for usage and triage
+        purposes.
       </p>
-      <div class="toolbar">
-        <AddSiteReactions site={site} />
-      </div>
-    {/each}
-  </section>
+      {#each sites as site}
+        <h4>{site.name}</h4>
+        <p>
+          {getLatesPageRef(site)?.name}
+          -
+          <ProfileLink uid={getLatesPageRef(site)?.author || ""} />
+          -
+          {toDisplayString(getLatesPageRef(site)?.flowTime)}
+        </p>
+        <div class="toolbar">
+          <AddSiteReactions {site} />
+        </div>
+      {/each}
+    </section>
   </div>
 </WithAuth>

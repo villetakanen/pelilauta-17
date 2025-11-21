@@ -100,3 +100,22 @@ export function getSite(key: string): Atom<Site | null> {
 
   return siteAtom;
 }
+
+/**
+ * Updates a site in the local store.
+ * This is useful for optimistic updates or when we know the data has changed.
+ *
+ * @param key The key of the site to update
+ * @param data The partial site data to merge
+ */
+export function updateSite(key: string, data: Partial<Site>): void {
+  const currentSites = sitesStorage.get();
+  const index = currentSites.findIndex((s) => s.key === key);
+
+  if (index >= 0) {
+    const updatedSites = [...currentSites];
+    updatedSites[index] = { ...updatedSites[index], ...data };
+    sitesStorage.set(updatedSites);
+    logDebug('sitesStore', `Updated local site state: ${key}`);
+  }
+}

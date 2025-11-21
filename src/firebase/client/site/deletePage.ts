@@ -1,6 +1,7 @@
 import { deleteDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { PAGES_COLLECTION_NAME } from 'src/schemas/PageSchema';
-import { parseSite, SITES_COLLECTION_NAME } from 'src/schemas/SiteSchema';
+import { SITES_COLLECTION_NAME, SiteSchema } from 'src/schemas/SiteSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
 import { db } from '..';
 
 /**
@@ -19,7 +20,10 @@ export async function deletePage(siteKey: string, pageKey: string) {
 
   const siteDoc = await getDoc(doc(db, SITES_COLLECTION_NAME, siteKey));
 
-  const site = parseSite(siteDoc.data() || {}, siteDoc.id);
+  const site = SiteSchema.parse({
+    ...toClientEntry(siteDoc.data() || {}),
+    key: siteDoc.id,
+  });
 
   const toc = site.pageRefs?.filter((ref) => ref.key !== pageKey) || [];
 

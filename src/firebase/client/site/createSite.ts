@@ -1,6 +1,5 @@
-import { updateDoc } from 'firebase/firestore';
 import {
-  parseSite,
+  createSite as createSiteFromSchema,
   SITES_COLLECTION_NAME,
   type Site,
 } from 'src/schemas/SiteSchema';
@@ -14,7 +13,7 @@ import { uid } from '../../../stores/session';
  * @returns string - the key of the new site
  */
 export async function createSite(site: Partial<Site>): Promise<string> {
-  const { getFirestore, doc, getDoc, setDoc, addDoc, collection } =
+  const { getFirestore, doc, getDoc, setDoc, addDoc, collection, updateDoc } =
     await import('firebase/firestore');
   const { toFirestoreEntry } = await import(
     'src/utils/client/toFirestoreEntry'
@@ -28,9 +27,9 @@ export async function createSite(site: Partial<Site>): Promise<string> {
     throw new Error('Site creation aborted, session uid not set');
   }
 
-  // Create a new site object based on the params
-  const parsedSite = parseSite(site);
-  const siteData = toFirestoreEntry(parsedSite);
+  // Create a new site object with defaults applied
+  const newSite = createSiteFromSchema(site);
+  const siteData = toFirestoreEntry(newSite);
 
   // Add the current user's uid to the site's owners
   siteData.owners = [u];

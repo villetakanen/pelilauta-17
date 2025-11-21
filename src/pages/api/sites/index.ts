@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
 import type { APIContext } from 'astro';
-import { type Site, siteFrom } from 'src/schemas/SiteSchema';
+import { type Site, SiteSchema } from 'src/schemas/SiteSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { logError } from 'src/utils/logHelpers';
 import { getAstroQueryParams } from 'src/utils/server/astroApiHelpers';
@@ -28,7 +28,12 @@ export async function GET({ request }: APIContext) {
     const siteDocs = await sitesCollection.get();
 
     for (const siteDoc of siteDocs.docs) {
-      publicSites.push(siteFrom(toClientEntry(siteDoc.data()), siteDoc.id));
+      publicSites.push(
+        SiteSchema.parse({
+          ...toClientEntry(siteDoc.data()),
+          key: siteDoc.id,
+        }),
+      );
     }
 
     publicSites.sort((a, b) => {

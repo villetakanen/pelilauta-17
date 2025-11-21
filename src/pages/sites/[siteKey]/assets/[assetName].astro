@@ -1,5 +1,5 @@
 ---
-import { parseSite } from 'src/schemas/SiteSchema';
+import { SiteSchema } from 'src/schemas/SiteSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import AssetEditor from '../../../../components/server/SiteApp/AssetEditor.astro';
 import SiteTray from '../../../../components/server/SiteApp/SiteTray.astro';
@@ -20,16 +20,20 @@ if (siteResponse.status === 404) {
 
 // Parse the site data and create the site object
 const siteData = await siteResponse.json();
-const site = parseSite(toClientEntry(siteData), siteKey);
+const site = SiteSchema.parse({
+  ...toClientEntry(siteData),
+  key: siteKey,
+});
 const title = `${site.name} – ${assetName}`;
 ---
+
 <PageWithTray
   title={title}
   description={site.description}
   image={site.backgroundURL}
-  noSharing={true}>
-  <SiteTray slot="app-tray" site={site}/>
+  noSharing={true}
+>
+  <SiteTray slot="app-tray" site={site} />
 
   <AssetEditor site={site} assetName={`${assetName}`} />
-
 </PageWithTray>

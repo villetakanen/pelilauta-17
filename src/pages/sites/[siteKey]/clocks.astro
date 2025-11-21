@@ -1,5 +1,5 @@
 ---
-import { parseSite } from 'src/schemas/SiteSchema';
+import { SiteSchema } from 'src/schemas/SiteSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { t } from 'src/utils/i18n';
 import SiteTray from '../../../components/server/SiteApp/SiteTray.astro';
@@ -24,7 +24,10 @@ if (siteResponse.status === 404) {
   return Astro.redirect('/404');
 }
 const siteData = await siteResponse.json();
-const site = parseSite(toClientEntry(siteData), siteKey);
+const site = SiteSchema.parse({
+  ...toClientEntry(siteData),
+  key: siteKey,
+});
 const title = `${site.name} – ${t('site:clocks.title')}`;
 const image = site.avatarURL || site.posterURL || site.backgroundURL;
 
@@ -32,20 +35,23 @@ if (!site) {
   return Astro.redirect('/404');
 }
 ---
+
 <PageWithTray
   title={title}
   description={site.description}
   image={image}
   noSharing={true}
 >
-  <SiteTray slot="app-tray" site={site}/>
-  <ClocksApp site={site} client:only="svelte"/>
-  <ClocksFabs site={site} client:only="svelte" slot="fab-tray"/>
-  { site.backgroundURL && 
-    <BackgroundPoster src={site.backgroundURL} slot="app-background-poster"/>
+  <SiteTray slot="app-tray" site={site} />
+  <ClocksApp site={site} client:only="svelte" />
+  <ClocksFabs site={site} client:only="svelte" slot="fab-tray" />
+  {
+    site.backgroundURL && (
+      <BackgroundPoster src={site.backgroundURL} slot="app-background-poster" />
+    )
   }
 </PageWithTray>
 
 <script>
-import '@11thdeg/cn-story-clock';
+  import "@11thdeg/cn-story-clock";
 </script>
