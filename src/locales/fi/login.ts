@@ -31,6 +31,14 @@ export const login: Locale = {
         'Olemme päivittäneet tietosuojakäytäntöjä ja käyttöehtoja sovelluksen version 16 myötä, ja siksi joudumme pyytämään sinulta uudelleen suostumuksen tietojesi käsittelyyn.',
     },
   },
+  error: {
+    credentialsRequired: 'Sähköposti ja salasana vaaditaan.',
+    invalidCredentials: 'Virheellinen sähköposti tai salasana.',
+    emailRequired: 'Sähköpostiosoite vaaditaan.',
+    provider: 'Kirjautuminen {provider}-palveluun epäonnistui.',
+    linkVerificationFailed: 'Linkin vahvistus epäonnistui.',
+    sendLinkFailed: 'Linkin lähettäminen epäonnistui.',
+  },
   snacks: {
     success: 'Kirjautuminen onnistui!',
   },

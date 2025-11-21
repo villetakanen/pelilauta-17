@@ -31,6 +31,14 @@ export const login: Locale = {
         'We have updated our privacy policies and terms of service with application version 16, and therefore we need to ask for your consent again for processing your data.',
     },
   },
+  error: {
+    credentialsRequired: 'Email and password are required.',
+    invalidCredentials: 'Invalid email or password.',
+    emailRequired: 'Email address is required.',
+    provider: 'Sign in with {provider} failed.',
+    linkVerificationFailed: 'Link verification failed.',
+    sendLinkFailed: 'Failed to send link.',
+  },
   snacks: {
     success: 'Sign in successful!',
   },
