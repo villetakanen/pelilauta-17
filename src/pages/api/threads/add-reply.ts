@@ -1,23 +1,23 @@
-import type { APIContext } from 'astro';
-import { FieldValue } from 'firebase-admin/firestore';
-import { getStorage } from 'firebase-admin/storage';
-import { NotificationRequestSchema } from 'src/schemas/NotificationSchema';
+import type { APIContext } from "astro";
+import { FieldValue } from "firebase-admin/firestore";
+import { getStorage } from "firebase-admin/storage";
+import { NotificationRequestSchema } from "src/schemas/NotificationSchema";
 import {
   REACTIONS_COLLECTION_NAME,
   type Reactions,
-} from 'src/schemas/ReactionsSchema';
-import { REPLIES_COLLECTION, type Reply } from 'src/schemas/ReplySchema';
+} from "src/schemas/ReactionsSchema";
+import { REPLIES_COLLECTION, type Reply } from "src/schemas/ReplySchema";
 import {
   type ImageArray,
   THREADS_COLLECTION_NAME,
   type Thread,
-  ThreadSchema,
-} from 'src/schemas/ThreadSchema';
-import { logDebug, logError, logWarn } from 'src/utils/logHelpers';
-import { tokenToUid } from 'src/utils/server/auth/tokenToUid';
-import { createPlainSnippet } from 'src/utils/snippetHelpers';
-import { v4 as uuidv4 } from 'uuid';
-import { serverApp, serverDB } from '../../../firebase/server';
+  parseThread,
+} from "src/schemas/ThreadSchema";
+import { logDebug, logError, logWarn } from "src/utils/logHelpers";
+import { tokenToUid } from "src/utils/server/auth/tokenToUid";
+import { createPlainSnippet } from "src/utils/snippetHelpers";
+import { v4 as uuidv4 } from "uuid";
+import { serverApp, serverDB } from "../../../firebase/server";
 
 interface UploadedFile {
   url: string;
@@ -32,8 +32,8 @@ async function uploadFileToStorage(
   file: File,
 ): Promise<UploadedFile> {
   // Validate file type
-  if (!file.type.startsWith('image/')) {
-    throw new Error('Invalid file type, only images are allowed for threads');
+  if (!file.type.startsWith("image/")) {
+    throw new Error("Invalid file type, only images are allowed for threads");
   }
 
   const storage = getStorage(serverApp);
@@ -81,8 +81,8 @@ function executeBackgroundTasks(
   setTimeout(async () => {
     try {
       logDebug(
-        'addReply:background',
-        'Starting background tasks for reply',
+        "addReply:background",
+        "Starting background tasks for reply",
         replyId,
       );
 
@@ -95,7 +95,7 @@ function executeBackgroundTasks(
           flowTime: FieldValue.serverTimestamp(),
         });
 
-      logDebug('addReply:background', 'Updated thread metadata');
+      logDebug("addReply:background", "Updated thread metadata");
 
       // Task 2: Initialize reaction system for the new reply
       const reactions: Reactions = {
@@ -108,7 +108,7 @@ function executeBackgroundTasks(
         .doc(replyId)
         .set(reactions);
 
-      logDebug('addReply:background', 'Created reactions document');
+      logDebug("addReply:background", "Created reactions document");
 
       // Task 3: Send notification to thread owner (if different from reply author)
       if (thread.owners[0] !== author) {
@@ -119,8 +119,8 @@ function executeBackgroundTasks(
 
         const notification = NotificationRequestSchema.parse({
           notification: {
-            key: '',
-            targetType: 'thread.reply',
+            key: "",
+            targetType: "thread.reply",
             targetKey: thread.key,
             targetTitle,
             message: createPlainSnippet(markdownContent, 120),
@@ -141,42 +141,42 @@ function executeBackgroundTasks(
         };
 
         await serverDB
-          .collection('notifications')
+          .collection("notifications")
           .doc(notificationDoc.key)
           .set(notificationDoc);
 
-        logDebug('addReply:background', 'Sent notification to thread owner');
+        logDebug("addReply:background", "Sent notification to thread owner");
       }
 
       logDebug(
-        'addReply:background',
-        'All background tasks completed successfully',
+        "addReply:background",
+        "All background tasks completed successfully",
       );
     } catch (error) {
       // Log but don't throw - background tasks are non-critical
-      logError('addReply:background', 'Background task failed:', error);
+      logError("addReply:background", "Background task failed:", error);
     }
   }, 0); // Queue immediately but non-blocking
 }
 
 export async function POST({ request }: APIContext): Promise<Response> {
-  const endpointName = '/api/threads/add-reply';
+  const endpointName = "/api/threads/add-reply";
 
   try {
     // 1. Authenticate the request
     const uid = await tokenToUid(request);
     if (!uid) {
-      logWarn(endpointName, 'Authentication failed: Invalid or missing token');
+      logWarn(endpointName, "Authentication failed: Invalid or missing token");
       return new Response(
         JSON.stringify({
           success: false,
-          error: 'Invalid or missing token',
+          error: "Invalid or missing token",
         }),
         {
           status: 401,
           headers: {
-            'Content-Type': 'application/json',
-            'Cache-Control': 'no-cache',
+            "Content-Type": "application/json",
+            "Cache-Control": "no-cache",
           },
         },
       );
@@ -185,14 +185,14 @@ export async function POST({ request }: APIContext): Promise<Response> {
     // 2. Parse multipart form data
     const formData = await request.formData();
 
-    const threadKey = formData.get('threadKey') as string;
-    const markdownContent = formData.get('markdownContent') as string;
-    const quoteref = formData.get('quoteref') as string | null;
+    const threadKey = formData.get("threadKey") as string;
+    const markdownContent = formData.get("markdownContent") as string;
+    const quoteref = formData.get("quoteref") as string | null;
 
     // Get all files from form data
     const files: File[] = [];
     for (const [key, value] of formData.entries()) {
-      if (key.startsWith('file_') && value instanceof File) {
+      if (key.startsWith("file_") && value instanceof File) {
         files.push(value);
       }
     }
@@ -207,13 +207,13 @@ export async function POST({ request }: APIContext): Promise<Response> {
       return new Response(
         JSON.stringify({
           success: false,
-          error: 'Missing required fields: threadKey and markdownContent',
+          error: "Missing required fields: threadKey and markdownContent",
         }),
         {
           status: 400,
           headers: {
-            'Content-Type': 'application/json',
-            'Cache-Control': 'no-cache',
+            "Content-Type": "application/json",
+            "Cache-Control": "no-cache",
           },
         },
       );
@@ -228,22 +228,22 @@ export async function POST({ request }: APIContext): Promise<Response> {
       return new Response(
         JSON.stringify({
           success: false,
-          error: 'Thread not found',
+          error: "Thread not found",
         }),
         {
           status: 404,
           headers: {
-            'Content-Type': 'application/json',
-            'Cache-Control': 'no-cache',
+            "Content-Type": "application/json",
+            "Cache-Control": "no-cache",
           },
         },
       );
     }
 
-    const thread = ThreadSchema.parse({
-      ...threadDoc.data(),
-      key: threadDoc.id,
-    });
+    const thread = parseThread(
+      threadDoc.data() as Record<string, unknown>,
+      threadDoc.id,
+    );
 
     // 5. **CRITICAL TASK (SYNCHRONOUS)**: Upload files and create reply document
     const uploadedImages: ImageArray = [];
@@ -263,8 +263,8 @@ export async function POST({ request }: APIContext): Promise<Response> {
           {
             status: 500,
             headers: {
-              'Content-Type': 'application/json',
-              'Cache-Control': 'no-cache',
+              "Content-Type": "application/json",
+              "Cache-Control": "no-cache",
             },
           },
         );
@@ -309,13 +309,13 @@ export async function POST({ request }: APIContext): Promise<Response> {
       JSON.stringify({
         success: true,
         replyId,
-        message: 'Reply created successfully',
+        message: "Reply created successfully",
       }),
       {
         status: 202, // Accepted - processing continues in background
         headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache',
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache",
         },
       },
     );
@@ -325,17 +325,17 @@ export async function POST({ request }: APIContext): Promise<Response> {
 
     return response;
   } catch (error) {
-    logError(endpointName, 'Error processing reply:', error);
+    logError(endpointName, "Error processing reply:", error);
     return new Response(
       JSON.stringify({
         success: false,
-        error: 'Internal server error',
+        error: "Internal server error",
       }),
       {
         status: 500,
         headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache',
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache",
         },
       },
     );
