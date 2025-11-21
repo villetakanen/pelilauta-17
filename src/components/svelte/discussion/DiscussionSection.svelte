@@ -1,76 +1,74 @@
 <script lang="ts">
-  import {
-    REPLIES_COLLECTION,
-    type Reply,
-    ReplySchema,
-  } from "src/schemas/ReplySchema";
-  import {
-    THREADS_COLLECTION_NAME,
-    type Thread,
-  } from "src/schemas/ThreadSchema";
-  import { toClientEntry } from "src/utils/client/entryUtils";
-  import { fixImageData } from "src/utils/fixImageData";
-  import { t } from "src/utils/i18n";
-  import { onMount } from "svelte";
-  import { uid, authUser, sessionState } from "../../../stores/session";
-  import { hasSeen, setSeen } from "../../../stores/subscription";
-  import ReplyArticle from "./ReplyArticle.svelte";
-  import ReplyDialog from "./ReplyDialog.svelte";
+import {
+  REPLIES_COLLECTION,
+  type Reply,
+  ReplySchema,
+} from 'src/schemas/ReplySchema';
+import { THREADS_COLLECTION_NAME, type Thread } from 'src/schemas/ThreadSchema';
+import { toClientEntry } from 'src/utils/client/entryUtils';
+import { fixImageData } from 'src/utils/fixImageData';
+import { t } from 'src/utils/i18n';
+import { onMount } from 'svelte';
+import { authUser, sessionState, uid } from '../../../stores/session';
+import { hasSeen, setSeen } from '../../../stores/subscription';
+import ReplyArticle from './ReplyArticle.svelte';
+import ReplyDialog from './ReplyDialog.svelte';
 
-  interface Props {
-    thread: Thread;
-    discussion: Reply[];
+interface Props {
+  thread: Thread;
+  discussion: Reply[];
+}
+const { discussion: initDiscussion, thread }: Props = $props();
+
+let discussion = $state(initDiscussion);
+
+const isLoading = $derived(
+  $sessionState === 'loading' || ($sessionState === 'initial' && $uid !== ''),
+);
+const isAuthenticated = $derived($authUser && $sessionState === 'active');
+
+onMount(async () => {
+  if (!$hasSeen(thread.key, thread.flowTime)) {
+    // We haven't seen this thread or it's latest comments yet, so we mark it as seen
+    setSeen(thread.key);
   }
-  const { discussion: initDiscussion, thread }: Props = $props();
 
-  let discussion = $state(initDiscussion);
-
-  const isLoading = $derived(
-    $sessionState === "loading" || ($sessionState === "initial" && $uid !== ""),
+  const { getFirestore, query, collection, orderBy, onSnapshot } = await import(
+    'firebase/firestore'
   );
-  const isAuthenticated = $derived($authUser && $sessionState === "active");
+  const db = getFirestore();
 
-  onMount(async () => {
-    if (!$hasSeen(thread.key, thread.flowTime)) {
-      // We haven't seen this thread or it's latest comments yet, so we mark it as seen
-      setSeen(thread.key);
-    }
+  const q = query(
+    collection(db, THREADS_COLLECTION_NAME, thread.key, REPLIES_COLLECTION),
+    orderBy('createdAt', 'asc'),
+  );
 
-    const { getFirestore, query, collection, orderBy, onSnapshot } =
-      await import("firebase/firestore");
-    const db = getFirestore();
-
-    const q = query(
-      collection(db, THREADS_COLLECTION_NAME, thread.key, REPLIES_COLLECTION),
-      orderBy("createdAt", "asc"),
-    );
-
-    onSnapshot(q, (querySnapshot) => {
-      const d = [...discussion];
-      for (const change of querySnapshot.docChanges()) {
-        const data = change.doc.data();
-        if (change.type === "removed") {
-          const remove = d.findIndex((r) => r.key === change.doc.id);
-          if (remove !== -1) {
-            d.splice(remove, 1);
-          }
+  onSnapshot(q, (querySnapshot) => {
+    const d = [...discussion];
+    for (const change of querySnapshot.docChanges()) {
+      const data = change.doc.data();
+      if (change.type === 'removed') {
+        const remove = d.findIndex((r) => r.key === change.doc.id);
+        if (remove !== -1) {
+          d.splice(remove, 1);
+        }
+      } else {
+        const index = d.findIndex((r) => r.key === change.doc.id);
+        const reply = ReplySchema.parse({
+          ...toClientEntry(fixImageData(data)),
+          key: change.doc.id,
+          threadKey: thread.key,
+        });
+        if (index !== -1) {
+          d[index] = reply;
         } else {
-          const index = d.findIndex((r) => r.key === change.doc.id);
-          const reply = ReplySchema.parse({
-            ...toClientEntry(fixImageData(data)),
-            key: change.doc.id,
-            threadKey: thread.key,
-          });
-          if (index !== -1) {
-            d[index] = reply;
-          } else {
-            d.push(reply);
-          }
+          d.push(reply);
         }
       }
-      discussion = d;
-    });
+    }
+    discussion = d;
   });
+});
 </script>
 
 <div class="content-columns">
