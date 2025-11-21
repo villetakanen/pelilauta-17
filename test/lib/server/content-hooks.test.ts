@@ -21,12 +21,12 @@ const mockIsConfigured = vi.fn();
 const mockGetConfigStatus = vi.fn();
 
 vi.mock('../../../src/lib/server/netlify-cache', () => ({
-  NetlifyCachePurger: vi.fn().mockImplementation(() => ({
-    purgePageCache: mockPurgePageCache,
-    purgeTags: mockPurgeTags,
-    isConfigured: mockIsConfigured,
-    getConfigStatus: mockGetConfigStatus,
-  })),
+  NetlifyCachePurger: class {
+    purgePageCache = mockPurgePageCache;
+    purgeTags = mockPurgeTags;
+    isConfigured = mockIsConfigured;
+    getConfigStatus = mockGetConfigStatus;
+  },
 }));
 
 // Mock the log helpers (we'll skip detailed log testing for now)

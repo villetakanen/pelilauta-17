@@ -141,10 +141,31 @@ SECRET_FEATURE_FLAG_PASSWORD_LOGIN=true  # Enables password login for e2e tests
 pnpm dev          # Start development server
 pnpm build        # Build for production
 pnpm preview      # Preview production build
-pnpm check        # Run Biome linting and formatting
 pnpm test         # Run unit tests
 pnpm test:e2e     # Run end-to-end tests
 ```
+
+### Linting and Formatting
+
+This project uses [Biome](https://biomejs.dev/) for fast linting and formatting.
+
+```bash
+pnpm check        # Check and fix ALL files in the project
+```
+
+**Git Hooks (Lefthook)**:
+- **Pre-commit**: Automatically checks and fixes **staged files only** when you commit
+- **Commit-msg**: Validates commit message format (Conventional Commits)
+
+**When to use each**:
+- `pnpm check` - Run manually to check the **entire codebase** (recommended after pulling changes)
+- Git hooks - Run automatically on commit to check **only your staged changes** (fast)
+
+**Key differences**:
+- Pre-commit hook: `biome check --write --staged {staged_files}` (staged files only)
+- Manual check: `biome check --write .` (all files)
+
+See [docs/lefthook.md](docs/lefthook.md) for more details.
 
 ## Core Features
 

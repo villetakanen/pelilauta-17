@@ -30,3 +30,67 @@ export function parseProfile(
     key,
   });
 }
+
+/**
+ * Migrates legacy profile data to the current schema.
+ * Handles missing fields and legacy field names (e.g., photoURL -> avatarURL).
+ *
+ * @param data - Raw profile data from Firestore
+ * @param key - Profile document ID (uid)
+ * @returns Migrated profile that conforms to current schema
+ */
+export function migrateProfile(
+  data: Record<string, unknown>,
+  key: string,
+): Profile {
+  // Ensure data is an object
+  if (typeof data !== 'object' || data === null) {
+    throw new Error('Invalid profile data');
+  }
+
+  // Handle legacy photoURL field (renamed to avatarURL)
+  const avatarURL = data.avatarURL || data.photoURL || '';
+
+  // Ensure nick has a value (required field)
+  const nick = data.nick ? String(data.nick) : 'N.N.';
+
+  // Generate username from nick if missing
+  const username = data.username ? String(data.username) : toFid(nick);
+
+  // Ensure arrays are properly typed
+  const tags = Array.isArray(data.tags)
+    ? data.tags.filter((tag): tag is string => typeof tag === 'string')
+    : [];
+
+  const lovedThreads = Array.isArray(data.lovedThreads)
+    ? data.lovedThreads.filter(
+        (thread): thread is string => typeof thread === 'string',
+      )
+    : [];
+
+  // Build migrated profile with all fields
+  const migratedData: Record<string, unknown> = {
+    key,
+    nick,
+    username,
+  };
+
+  // Add optional fields only if they have values
+  if (avatarURL) {
+    migratedData.avatarURL = String(avatarURL);
+  }
+
+  if (data.bio && typeof data.bio === 'string') {
+    migratedData.bio = data.bio;
+  }
+
+  if (tags.length > 0) {
+    migratedData.tags = tags;
+  }
+
+  if (lovedThreads.length > 0) {
+    migratedData.lovedThreads = lovedThreads;
+  }
+
+  return ProfileSchema.parse(migratedData);
+}
