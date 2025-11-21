@@ -1,6 +1,9 @@
 <script lang="ts">
 // Import utilities, stores, and lifecycle functions
+
+import { FirebaseError } from 'firebase/app';
 import { completeAuthFlow } from 'src/utils/client/authUtils';
+import { captureError } from 'src/utils/client/sentry';
 import { pushSessionSnack } from 'src/utils/client/snackUtils';
 import { t } from 'src/utils/i18n';
 import { logDebug, logError } from 'src/utils/logHelpers';
@@ -77,6 +80,20 @@ const verifyLink = async (emailToUse?: string) => {
   } catch (error) {
     logError('EmailLoginSection', 'Error verifying email link:', error);
 
+    // Expected auth errors that don't need Sentry logging
+    const expectedErrors = [
+      'auth/invalid-action-code',
+      'auth/expired-action-code',
+      'auth/invalid-email',
+    ];
+
+    const errorCode = error instanceof FirebaseError ? error.code : '';
+    const isExpectedError = expectedErrors.some(
+      (code) =>
+        errorCode.includes(code) ||
+        (error instanceof Error && error.message.includes(code)),
+    );
+
     // Provide more specific error messages based on the error type
     if (error instanceof Error) {
       if (error.message.includes('auth/invalid-action-code')) {
@@ -93,11 +110,25 @@ const verifyLink = async (emailToUse?: string) => {
         // Ask user to re-enter email
         view = 'verifyWithEmail';
       } else {
+        // Log unexpected errors to Sentry
+        if (!isExpectedError) {
+          captureError(error, {
+            component: 'EmailLoginSection',
+            action: 'verifyLink',
+            errorCode,
+          });
+        }
         pushSessionSnack(`Error: ${error.message}`, {
           type: 'error',
         });
       }
     } else {
+      // Non-Error object - log to Sentry
+      captureError(error as Error, {
+        component: 'EmailLoginSection',
+        action: 'verifyLink',
+        errorType: 'non-error-object',
+      });
       pushSessionSnack(t('login:error.linkVerificationFailed'), {
         type: 'error',
       }); // User feedback
@@ -168,6 +199,21 @@ const sendLink = async (e: SubmitEvent) => {
   } catch (error) {
     logError('EmailLoginSection', 'Error sending email link:', error);
 
+    // Expected errors that don't need Sentry logging
+    const expectedErrors = ['auth/invalid-email', 'auth/missing-email'];
+
+    const errorCode = error instanceof FirebaseError ? error.code : '';
+    const isExpectedError = expectedErrors.includes(errorCode);
+
+    // Log unexpected errors to Sentry
+    if (!isExpectedError) {
+      captureError(error as Error, {
+        component: 'EmailLoginSection',
+        action: 'sendLink',
+        errorCode,
+      });
+    }
+
     // Provide more specific error messages
     if (error instanceof Error) {
       pushSessionSnack(`Error sending email: ${error.message}`, {
@@ -196,58 +242,58 @@ onMount(async () => {
   }
 });
 </script>
-  
-  <section class="elevation-1 border-radius p-2" style="position: relative">
-    <h2>{t('login:withEmail.title')}</h2>
-  
-    {#if view === 'sent'}
-      <p>{t('login:withEmail.sent')}</p> 
-    {:else if view === 'verifyWithEmail'}
-      <!-- User needs to re-enter email for link verification -->
-      <p>Please enter the email address you used to request the login link:</p>
-      <form onsubmit={verifyWithEmail}>
-        <div class="form-field"> 
-          <label for="email-verify">{t('login:withEmail.label')}</label>
-          <input
-            id="email-verify"
-            type="email"
-            placeholder={t('login:withEmail.placeholder')}
-            bind:value={email}
-            required
-          />
-        </div>
-        <div class="toolbar justify-end">
-          <button type="submit" disabled={suspend}>
-            {#if suspend}
-              <cn-loader></cn-loader>
-            {/if}
-            <span>Verify Login Link</span>
-          </button>
-        </div>
-      </form>
-    {:else}
-      <p>{t('login:withEmail.info')}</p>
-      <form onsubmit={sendLink}>
-        <div class="form-field"> 
-          <label for="email-login">{t('login:withEmail.label')}</label>
-          <input
-            id="email-login"
-            type="email"
-            placeholder={t('login:withEmail.placeholder')}
-            bind:value={email}
-            required
-          />
-        </div>
-        <div class="toolbar justify-end">
-          <button type="submit" disabled={suspend}>
-            {#if suspend}
-              <cn-loader></cn-loader>
-            {:else}
-              <cn-icon noun="send"></cn-icon>
-            {/if}
-            <span>{t('login:withEmail.sendAction')}</span>
-          </button>
-        </div>
-      </form>
-    {/if}
-  </section>
+
+<section class="elevation-1 border-radius p-2" style="position: relative">
+  <h2>{t("login:withEmail.title")}</h2>
+
+  {#if view === "sent"}
+    <p>{t("login:withEmail.sent")}</p>
+  {:else if view === "verifyWithEmail"}
+    <!-- User needs to re-enter email for link verification -->
+    <p>Please enter the email address you used to request the login link:</p>
+    <form onsubmit={verifyWithEmail}>
+      <div class="form-field">
+        <label for="email-verify">{t("login:withEmail.label")}</label>
+        <input
+          id="email-verify"
+          type="email"
+          placeholder={t("login:withEmail.placeholder")}
+          bind:value={email}
+          required
+        />
+      </div>
+      <div class="toolbar justify-end">
+        <button type="submit" disabled={suspend}>
+          {#if suspend}
+            <cn-loader></cn-loader>
+          {/if}
+          <span>Verify Login Link</span>
+        </button>
+      </div>
+    </form>
+  {:else}
+    <p>{t("login:withEmail.info")}</p>
+    <form onsubmit={sendLink}>
+      <div class="form-field">
+        <label for="email-login">{t("login:withEmail.label")}</label>
+        <input
+          id="email-login"
+          type="email"
+          placeholder={t("login:withEmail.placeholder")}
+          bind:value={email}
+          required
+        />
+      </div>
+      <div class="toolbar justify-end">
+        <button type="submit" disabled={suspend}>
+          {#if suspend}
+            <cn-loader></cn-loader>
+          {:else}
+            <cn-icon noun="send"></cn-icon>
+          {/if}
+          <span>{t("login:withEmail.sendAction")}</span>
+        </button>
+      </div>
+    </form>
+  {/if}
+</section>
