@@ -9,9 +9,9 @@ import {
 import { REPLIES_COLLECTION, type Reply } from 'src/schemas/ReplySchema';
 import {
   type ImageArray,
+  parseThread,
   THREADS_COLLECTION_NAME,
   type Thread,
-  ThreadSchema,
 } from 'src/schemas/ThreadSchema';
 import { logDebug, logError, logWarn } from 'src/utils/logHelpers';
 import { tokenToUid } from 'src/utils/server/auth/tokenToUid';
@@ -240,10 +240,10 @@ export async function POST({ request }: APIContext): Promise<Response> {
       );
     }
 
-    const thread = ThreadSchema.parse({
-      ...threadDoc.data(),
-      key: threadDoc.id,
-    });
+    const thread = parseThread(
+      threadDoc.data() as Record<string, unknown>,
+      threadDoc.id,
+    );
 
     // 5. **CRITICAL TASK (SYNCHRONOUS)**: Upload files and create reply document
     const uploadedImages: ImageArray = [];

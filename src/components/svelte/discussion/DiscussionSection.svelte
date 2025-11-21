@@ -9,7 +9,7 @@ import { toClientEntry } from 'src/utils/client/entryUtils';
 import { fixImageData } from 'src/utils/fixImageData';
 import { t } from 'src/utils/i18n';
 import { onMount } from 'svelte';
-import { uid } from '../../../stores/session';
+import { authUser, sessionState, uid } from '../../../stores/session';
 import { hasSeen, setSeen } from '../../../stores/subscription';
 import ReplyArticle from './ReplyArticle.svelte';
 import ReplyDialog from './ReplyDialog.svelte';
@@ -21,6 +21,11 @@ interface Props {
 const { discussion: initDiscussion, thread }: Props = $props();
 
 let discussion = $state(initDiscussion);
+
+const isLoading = $derived(
+  $sessionState === 'loading' || ($sessionState === 'initial' && $uid !== ''),
+);
+const isAuthenticated = $derived($authUser && $sessionState === 'active');
 
 onMount(async () => {
   if (!$hasSeen(thread.key, thread.flowTime)) {
@@ -65,21 +70,26 @@ onMount(async () => {
   });
 });
 </script>
+
 <div class="content-columns">
   <section class="column-l">
     <div class="flex flex-col">
-    {#each discussion as reply}
-      <ReplyArticle {reply} />
-    {/each}
+      {#each discussion as reply}
+        <ReplyArticle {reply} />
+      {/each}
     </div>
 
-    {#if $uid}
+    {#if isLoading}
+      <div class="toolbar items-center">
+        <cn-loader small></cn-loader>
+      </div>
+    {:else if isAuthenticated}
       <ReplyDialog {thread} />
     {:else}
       <div class="toolbar items-center">
         <a href="/login" class="button">
           <cn-icon noun="send"></cn-icon>
-          <span>{t('actions:login')}</span>
+          <span>{t("actions:login")}</span>
         </a>
       </div>
     {/if}
