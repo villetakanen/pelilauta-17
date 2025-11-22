@@ -1,5 +1,5 @@
 <script lang="ts">
-import { $profileMissing, profile } from '@stores/session/profile';
+import { profile, profileMissing } from '@stores/session/profile';
 import ProfileSection from '../../shared/ProfileSection.svelte';
 import Actions from './Actions.svelte';
 import AuthnSection from './AuthnSection.svelte';
