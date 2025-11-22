@@ -6,7 +6,7 @@ import { completeAuthFlow } from 'src/utils/client/authUtils';
 import { captureError } from 'src/utils/client/sentry';
 import { pushSessionSnack } from 'src/utils/client/snackUtils';
 import { t } from 'src/utils/i18n';
-import { logDebug, logError } from 'src/utils/logHelpers';
+import { logDebug, logError, logWarn } from 'src/utils/logHelpers';
 import { onMount } from 'svelte';
 
 interface Props {
@@ -33,9 +33,16 @@ const verifyLink = async (emailToUse?: string) => {
     const { signInWithEmailLink } = await import('firebase/auth');
     const { auth } = await import('../../../firebase/client');
 
-    const emailFromStorage = window.localStorage.getItem('emailForSignIn');
-    const loginRedirectRoute =
-      window.localStorage.getItem('loginRedirectRoute');
+    let emailFromStorage = '';
+    let loginRedirectRoute = '';
+
+    try {
+      emailFromStorage = window.localStorage.getItem('emailForSignIn') || '';
+      loginRedirectRoute =
+        window.localStorage.getItem('loginRedirectRoute') || '';
+    } catch (e) {
+      logWarn('EmailLoginSection', 'Failed to access localStorage', e);
+    }
 
     // Use provided email, storage email, or component state email as fallback
     const emailForVerification = emailToUse || emailFromStorage || email;
@@ -71,8 +78,12 @@ const verifyLink = async (emailToUse?: string) => {
     logDebug('EmailLoginSection', 'Sign in successful:', userCredential.user);
 
     // Clear email from storage on success
-    window.localStorage.removeItem('emailForSignIn');
-    window.localStorage.removeItem('loginRedirectRoute'); // Also clear redirect route
+    try {
+      window.localStorage.removeItem('emailForSignIn');
+      window.localStorage.removeItem('loginRedirectRoute'); // Also clear redirect route
+    } catch (e) {
+      logWarn('EmailLoginSection', 'Failed to clear localStorage', e);
+    }
 
     // Complete the authentication flow (save session + redirect)
     await completeAuthFlow(userCredential.user, loginRedirectRoute || redirect);
@@ -182,10 +193,14 @@ const sendLink = async (e: SubmitEvent) => {
     const { auth } = await import('../../../firebase/client');
 
     logDebug('EmailLoginSection', 'Storing email in localStorage:', email);
-    window.localStorage.setItem('emailForSignIn', email);
-    // Optionally store the intended redirect route if needed after login
-    if (redirect) {
-      window.localStorage.setItem('loginRedirectRoute', redirect);
+    try {
+      window.localStorage.setItem('emailForSignIn', email);
+      // Optionally store the intended redirect route if needed after login
+      if (redirect) {
+        window.localStorage.setItem('loginRedirectRoute', redirect);
+      }
+    } catch (e) {
+      logWarn('EmailLoginSection', 'Failed to write to localStorage', e);
     }
 
     logDebug('EmailLoginSection', 'Sending sign-in link to email:', email);
@@ -232,13 +247,21 @@ const sendLink = async (e: SubmitEvent) => {
 
 // Check for sign-in link on component mount
 onMount(async () => {
-  // Dynamically import Firebase Auth functions and instance
-  const { isSignInWithEmailLink } = await import('firebase/auth');
-  const { auth } = await import('../../../firebase/client');
+  try {
+    // Dynamically import Firebase Auth functions and instance
+    const { isSignInWithEmailLink } = await import('firebase/auth');
+    const { auth } = await import('../../../firebase/client');
 
-  if (isSignInWithEmailLink(auth, window.location.href)) {
-    logDebug('EmailLoginSection', 'Verifying email link...');
-    verifyLink();
+    if (isSignInWithEmailLink(auth, window.location.href)) {
+      logDebug('EmailLoginSection', 'Verifying email link...');
+      verifyLink();
+    }
+  } catch (error) {
+    logError('EmailLoginSection', 'Error in onMount:', error);
+    captureError(error as Error, {
+      component: 'EmailLoginSection',
+      action: 'onMount',
+    });
   }
 });
 </script>

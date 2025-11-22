@@ -11,6 +11,7 @@ noun: 'monsters'
 * fix(search): Search results missing locales and heading links added
 * fix(tags): A moderator can set a label (a system tag) to a thread, even if the thread does not have any tags yet
 * fix(tags): meta-tag url double encode-fix for tag page routes
+* fix: Resolved login issues on Windows/Chrome (white page) and iOS Safari (perpetual loading), including a new 'Repair Profile' option for corrupted accounts
 
 ### 18.11.0 (10.11.2025)
 * feat: Added support for system-tags: "labels", which can be added to entries in addition to tags auto-mined from the content

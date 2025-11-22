@@ -26,6 +26,7 @@ export const $profile = persistentAtom<Profile | null>(
 );
 export const $profileMissing = atom(false);
 export const profile = $profile;
+export const profileMissing = $profileMissing;
 
 let unsubscribe: (() => void) | undefined;
 
