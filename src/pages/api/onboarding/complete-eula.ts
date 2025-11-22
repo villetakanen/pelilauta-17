@@ -30,7 +30,12 @@ export const POST: APIRoute = async ({ request }) => {
       .get();
 
     if (!usernameQuery.empty) {
-      return new Response('Nickname is already taken', { status: 409 });
+      // Check if the found profile belongs to the current user
+      const existingDoc = usernameQuery.docs[0];
+      if (existingDoc.id !== uid) {
+        return new Response('Nickname is already taken', { status: 409 });
+      }
+      // If it matches uid, we allow overwriting (repair scenario)
     }
 
     const batch = serverDB.batch();
