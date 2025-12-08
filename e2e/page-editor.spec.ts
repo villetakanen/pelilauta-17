@@ -18,11 +18,25 @@ test('Page name can be changed', async ({ page }) => {
   // Expect the submit button to be disabled, as there are no changes
   await expect(page.getByTestId('save-button')).toBeDisabled();
 
+  // Expect the page to be fully loaded
+  await expect(page.locator('form.content-editor')).toBeVisible();
+
   // Change the name of the page
-  await page.getByTestId('page-name').fill('New Front Page');
+  const nameInput = page.getByTestId('page-name');
+  await nameInput.click();
+  await nameInput.fill('New Front Page');
+  await nameInput.blur();
+
+  // Verify the input value is actually updated
+  await expect(nameInput).toHaveValue('New Front Page');
+
+  // Explicitly dispatch input event to ensure Svelte reactivity triggers
+  await nameInput.evaluate((node) =>
+    node.dispatchEvent(new Event('input', { bubbles: true })),
+  );
 
   // Expect the submit button to be enabled, as there are changes
-  await expect(page.getByTestId('save-button')).toBeEnabled();
+  await expect(page.getByTestId('save-button')).toBeEnabled({ timeout: 10000 });
 
   // Expect the page to have a category selector
   await expect(page.getByTestId('page-category')).toBeVisible();

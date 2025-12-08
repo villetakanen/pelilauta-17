@@ -6,6 +6,7 @@ import { uid } from '../../../stores/session';
 import AvatarLink from '../app/AvatarLink.svelte';
 import ProfileLink from '../app/ProfileLink.svelte';
 import ReactionButton from '../app/ReactionButton.svelte';
+import EditReplyDialog from './EditReplyDialog.svelte';
 
 interface Props {
   reply: Reply;
@@ -23,8 +24,11 @@ const images = $derived.by(() => {
     })) || []
   );
 });
+
+let editDialog = $state<ReturnType<typeof EditReplyDialog>>();
 </script>
-<article  class="flex {fromUser ? 'flex-row-reverse' : ''}">
+
+<article class="flex {fromUser ? 'flex-row-reverse' : ''}">
   <div class="sm-hidden flex-none" style="flex: 0 0 auto">
     <AvatarLink uid={reply.owners[0]} />
   </div>
@@ -37,20 +41,24 @@ const images = $derived.by(() => {
       <cn-menu inline>
         <ul>
           <li>
-            <a
-              href={`/threads/${reply.threadKey}/replies/${reply.key}/fork`}
-            >
+            <a href={`/threads/${reply.threadKey}/replies/${reply.key}/fork`}>
               <cn-icon noun="fork" small></cn-icon>
-              <span>{t('actions:fork')}</span>
+              <span>{t("actions:fork")}</span>
             </a>
           </li>
           {#if fromUser}
+            <li>
+              <button class="text" onclick={() => editDialog?.showDialog()}>
+                <cn-icon noun="edit" small></cn-icon>
+                <span>{t("actions:edit")}</span>
+              </button>
+            </li>
             <li>
               <a
                 href={`/threads/${reply.threadKey}/replies/${reply.key}/delete`}
               >
                 <cn-icon noun="delete" small></cn-icon>
-                <span>{t('actions:delete')}</span>
+                <span>{t("actions:delete")}</span>
               </a>
             </li>
           {/if}
@@ -58,11 +66,14 @@ const images = $derived.by(() => {
       </cn-menu>
     </div>
     <div>
-      {#if images.length }
+      {#if images.length}
         <cn-lightbox {images}></cn-lightbox>
       {/if}
-      {@html marked(reply.markdownContent || '')}
+      {@html marked(reply.markdownContent || "")}
     </div>
   </cn-bubble>
-    
 </article>
+
+{#if fromUser}
+  <EditReplyDialog {reply} bind:this={editDialog} />
+{/if}

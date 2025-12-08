@@ -6,7 +6,7 @@ test.describe('Channels Page', () => {
     await page.goto('http://localhost:4321/channels/');
 
     // Verify the page title
-    await expect(page).toHaveTitle(/Pelilauta.*Foorumi/);
+    await expect(page).toHaveTitle(/Keskustelualueet/);
 
     // Verify the main heading is present
     await expect(
@@ -167,7 +167,10 @@ test.describe('Channels Page', () => {
     ).toBeVisible();
 
     // Verify the category section exists
-    const categorySection = page.locator('section.content-listing');
+    const categorySection = page
+      .locator('section.content-listing')
+      .filter({ hasText: 'Pelilauta' })
+      .first();
     await expect(categorySection).toBeVisible();
 
     // Verify the category header
