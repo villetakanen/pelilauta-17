@@ -1,6 +1,10 @@
 import crypto from 'node:crypto';
 import type { APIContext } from 'astro';
-import { type Site, SiteSchema } from 'src/schemas/SiteSchema';
+import {
+  migrateLegacySiteFields,
+  type Site,
+  SiteSchema,
+} from 'src/schemas/SiteSchema';
 import { toClientEntry } from 'src/utils/client/entryUtils';
 import { logError } from 'src/utils/logHelpers';
 import { getAstroQueryParams } from 'src/utils/server/astroApiHelpers';
@@ -29,10 +33,12 @@ export async function GET({ request }: APIContext) {
 
     for (const siteDoc of siteDocs.docs) {
       publicSites.push(
-        SiteSchema.parse({
-          ...toClientEntry(siteDoc.data()),
-          key: siteDoc.id,
-        }),
+        SiteSchema.parse(
+          migrateLegacySiteFields({
+            ...toClientEntry(siteDoc.data()),
+            key: siteDoc.id,
+          }),
+        ),
       );
     }
 
@@ -59,11 +65,14 @@ export async function GET({ request }: APIContext) {
     });
   } catch (e: unknown) {
     logError(e);
-    return new Response('Error fetching sites', {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
+    return new Response(
+      `Error fetching sites: ${e instanceof Error ? e.message : String(e)}`,
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
-    });
+    );
   }
 }

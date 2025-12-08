@@ -27,11 +27,31 @@ async function purgeSession() {
   try {
     // 1. Clear Cookies
     addLog('Clearing cookies...');
-    document.cookie.split(';').forEach((c) => {
-      document.cookie = c
-        .replace(/^ +/, '')
-        .replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/');
-    });
+    if ('cookieStore' in window) {
+      // Use modern Cookie Store API
+      try {
+        const cookies = await cookieStore.getAll();
+        for (const cookie of cookies) {
+          await cookieStore.delete(cookie.name);
+          addLog(`Deleted cookie: ${cookie.name}`);
+        }
+      } catch (e) {
+        addLog('Error using Cookie Store API, falling back to legacy method');
+        // Fallback to legacy method
+        document.cookie.split(';').forEach((c) => {
+          document.cookie = c
+            .replace(/^ +/, '')
+            .replace(/=.*/, `=;expires=${new Date().toUTCString()};path=/`);
+        });
+      }
+    } else {
+      // Fallback for browsers without Cookie Store API
+      document.cookie.split(';').forEach((c) => {
+        document.cookie = c
+          .replace(/^ +/, '')
+          .replace(/=.*/, `=;expires=${new Date().toUTCString()};path=/`);
+      });
+    }
 
     // 2. Clear LocalStorage
     addLog('Clearing localStorage...');
@@ -112,8 +132,11 @@ async function purgeSession() {
       <div class="p-2">
         <a href="/" class="button">Return to Front Page</a>
       </div>
-      
-      <div class="text-low text-left mt-2 p-1 border radius-s" style="background: rgba(0,0,0,0.1); font-family: monospace; font-size: 0.8em;">
+
+      <div
+        class="text-low text-left mt-2 p-1 border radius-s"
+        style="background: rgba(0,0,0,0.1); font-family: monospace; font-size: 0.8em;"
+      >
         {#each logs as log}
           <div>{log}</div>
         {/each}
@@ -130,8 +153,11 @@ async function purgeSession() {
           <li>Remove all cached data and assets</li>
           <li>Reset the application state entirely</li>
         </ul>
-        
-        <p class="mt-2">Use this if you are experiencing persistent issues, loading loops, or "white screens".</p>
+
+        <p class="mt-2">
+          Use this if you are experiencing persistent issues, loading loops, or
+          "white screens".
+        </p>
       </div>
     </div>
 
@@ -143,9 +169,12 @@ async function purgeSession() {
         <span>Purge Session & Reset</span>
       </button>
     </div>
-    
+
     {#if logs.length > 0}
-      <div class="text-low text-left mt-2 p-1 border radius-s" style="background: rgba(0,0,0,0.1); font-family: monospace; font-size: 0.8em;">
+      <div
+        class="text-low text-left mt-2 p-1 border radius-s"
+        style="background: rgba(0,0,0,0.1); font-family: monospace; font-size: 0.8em;"
+      >
         {#each logs as log}
           <div>{log}</div>
         {/each}

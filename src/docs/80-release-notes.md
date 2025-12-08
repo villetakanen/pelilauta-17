@@ -5,7 +5,8 @@ noun: 'monsters'
 ---
 ## Version 18
 
-## 18.11.x (ongoing)
+## 18.12.0 (5.12.2025)
+* feat(threads): Thread reply edit dialog restored
 * fix: Added lots of logging to auth, for corner-case errors
 * fix(threads): Reply button follows new session store pattern
 * fix(search): Search results missing locales and heading links added

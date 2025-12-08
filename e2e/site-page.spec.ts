@@ -253,12 +253,12 @@ test.describe('Site Page Loading and Performance', () => {
     // Verify that the update triggered the onSnapshot callback
     // by checking if debug logs were emitted (if debug logging is enabled)
     // or by evaluating that the store has been updated
-    const storeUpdated = await page.evaluate(() => {
-      // Check if window has the site store (this is a basic check)
-      return typeof window !== 'undefined';
-    });
-
-    expect(storeUpdated).toBe(true);
+    // Verify that the update triggered the onSnapshot callback and updated the UI
+    // We updated the name to 'The E2E Test Site (Updated)'
+    await expect(page.getByRole('heading', { level: 1 })).toContainText(
+      'The E2E Test Site (Updated)',
+      { timeout: 10000 },
+    );
 
     // Clean up: restore the original site name
     await updateSiteInFirestore('e2e-test-site', {
