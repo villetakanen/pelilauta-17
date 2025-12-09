@@ -275,4 +275,61 @@ describe('migrateProfile', () => {
 
     expect(profile.avatarURL).toBe('12345');
   });
+
+  it('should migrate valid links', () => {
+    const data = {
+      nick: 'Test User',
+      username: 'testuser',
+      links: [
+        { url: 'https://example.com', label: 'My Site' },
+        { url: 'https://itch.io/me', label: 'Itch' },
+      ],
+    };
+
+    const profile = migrateProfile(data, 'user123');
+
+    expect(profile.links).toHaveLength(2);
+    expect(profile.links?.[0]).toEqual({
+      url: 'https://example.com',
+      label: 'My Site',
+    });
+    expect(profile.links?.[1]).toEqual({
+      url: 'https://itch.io/me',
+      label: 'Itch',
+    });
+  });
+
+  it('should filter invalid links during migration', () => {
+    const data = {
+      nick: 'Test User',
+      username: 'testuser',
+      links: [
+        { url: 'https://valid.com', label: 'Valid' },
+        { url: 'not-a-url', label: 'Invalid URL' }, // Invalid URL
+        { url: 'https://ok.com', label: '' }, // Empty label (schema requires min 1)
+        { nothing: 'here' }, // Missing fields
+        'not-an-object', // Wrong type
+      ],
+    };
+
+    const profile = migrateProfile(data, 'user123');
+
+    expect(profile.links).toHaveLength(1);
+    expect(profile.links?.[0]).toEqual({
+      url: 'https://valid.com',
+      label: 'Valid',
+    });
+  });
+
+  it('should ignore empty links array in migration', () => {
+    const data = {
+      nick: 'Test User',
+      username: 'testuser',
+      links: [],
+    };
+
+    const profile = migrateProfile(data, 'user123');
+
+    expect(profile.links).toBeUndefined();
+  });
 });
