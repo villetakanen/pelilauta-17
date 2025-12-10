@@ -2,37 +2,51 @@ import { expect, test } from '@playwright/test';
 import { authenticate } from './authenticate-e2e';
 
 test.describe('Profile Public Links', () => {
-  test('User can access public links settings', async ({ page }) => {
+  test('User can manage public links', async ({ page }) => {
     // 1. Authenticate
     await authenticate(page);
 
     // 2. Navigate to Settings
-    await page.goto('http://localhost:4321/settings');
+    const BASE_URL = process.env.BASE_URL || 'http://localhost:4321';
+    await page.goto(`${BASE_URL}/settings`);
 
-    // 3. Verify Public Links section exists (scaffolding check)
-    // Note: The specific text "Julkiset linkit" matches the planned design.
-    // This test is expected to fail until Phase 3 is implemented.
-    // For now, we mainly check we can get to the settings page.
-    await expect(page).toHaveURL(/.*settings/);
-    await expect(page.locator('h1, h2, h3')).toContainText(['Asetukset']);
-  });
+    // 3. Add a Link
+    const labelInput = page.getByPlaceholder('Esim. Kotisivu');
+    const urlInput = page.getByPlaceholder('https://example.com');
+    const addButton = page.getByRole('button', { name: 'Lisää linkki' });
 
-  test('User can see links on profile page', async ({ page }) => {
-    // 1. Authenticate (using a test user who might have links in future)
-    await authenticate(page);
+    await labelInput.fill('My Test Blog');
+    await urlInput.fill('https://test-blog.com');
 
-    // 2. Navigate to own profile
-    // Note: We need a way to know the UID or use the me-redirect if it exists,
-    // otherwise we assume the test user's profile is reachable.
-    // For this scaffold, we'll navigate to the settings page user's profile if possible,
-    // or just check the public profile route exists.
+    await expect(addButton).toBeEnabled();
+    await addButton.click();
 
-    // Using a known test user UID from other tests (e.g., H3evfU7BDmec9KkotRiTV41YECg1)
-    await page.goto(
-      'http://localhost:4321/profiles/H3evfU7BDmec9KkotRiTV41YECg1',
-    );
+    // 4. Verify link appears in the list
+    await expect(page.getByText('My Test Blog')).toBeVisible();
+    await expect(page.getByText('https://test-blog.com')).toBeVisible();
 
-    // 3. Verify profile page loads
-    await expect(page.locator('main')).toBeVisible();
+    // 5. Save Profile
+    // Note: Use a more specific selector if multiple Save buttons exist (e.g. within the form)
+    // The form is "Profiili" section.
+    // We can rely on "Tallenna" button being enabled.
+    const saveButton = page.getByRole('button', { name: 'Tallenna' });
+    await expect(saveButton).toBeEnabled();
+    await saveButton.click();
+
+    // Wait for save (button becomes disabled when store updates matches local state)
+    await expect(saveButton).toBeDisabled({ timeout: 10000 });
+
+    // For now, reload and check persistence
+    await page.reload();
+
+    // Verify persistence
+    await expect(page.getByText('My Test Blog')).toBeVisible();
+
+    // 6. Remove Link
+    await page.getByRole('button', { name: 'Poista linkki' }).click();
+    await expect(page.getByText('My Test Blog')).not.toBeVisible();
+
+    // Save removal
+    await saveButton.click();
   });
 });

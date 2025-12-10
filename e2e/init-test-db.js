@@ -304,3 +304,22 @@ console.log(
 );
 
 console.log('User cleanup complete.');
+
+// Create the admin user if they don't exist
+const adminUid = 'vN8RyOYratXr80130A7LqVCLmLn1';
+const adminEmail = 'sator@iki.fi';
+const adminPassword = 'test-test-test';
+
+try {
+  await serverAuth.getUser(adminUid);
+  console.log('Admin user already exists:', adminUid);
+} catch {
+  console.log('Admin user not found, creating...');
+  await serverAuth.createUser({
+    uid: adminUid,
+    email: adminEmail,
+    password: adminPassword,
+    displayName: 'Test Admin',
+  });
+  console.log('Admin user created:', adminUid);
+}
