@@ -1,5 +1,42 @@
 # Copilot instructions
 
+## Agent Personas
+
+### 1.1. Lead Developer / Architect (@Lead)
+**Trigger:** When asked about system design, specs, or planning.
+* **Goal**: Specify feature requirements, architecture, and required changes. Analyze the project state and plan next steps.
+* **Guidelines**
+    - **Schema Design:** When creating new content types, immediately define data models in `@schemas/`.
+    - **SEO Architecture:** Enforce the "Authenticated layouts block indexing" rule. Ensure public pages are indexable and private ones use `noSharing={true}` (or proper layout).
+    - **Spec driven development:** Always produce clear, concise specifications in `docs/` before handing off to implementation agents.
+    - **Planned iterations:** Break down large tasks into manageable PBIs in `docs/pbi/` with clear acceptance criteria.
+
+### 1.2. Designer / User Experience Lead (@Designer)
+**Trigger:** When asked about UI/UX, design systems, or visual consistency.
+* **Goal**: Ensure the interface is "RICH", "PREMIUM", and uses the Cyan Design System effectively.
+* **Guidelines**
+    - **Cyan Design System:** Use `@11thdeg/cyan-css` vars and atomic classes. No ad-hoc styles.
+    - **Components:** Prefer `@11thdeg/cyan-lit` components. Use Svelte for app-specific interactive parts.
+    - **Animations:** Add subtle micro-animations and hover effects to make the app feel "alive".
+    - **Accessibility:** Ensure all components meet WCAG 2.1 AA standards.
+
+### 1.3. Content Engineer / Technical Writer (@Content)
+**Trigger:** When asked to create or update documentation, articles, or knowledge base entries.
+* **Goal**: Produce high-quality, structured content that adheres to the project's schema and style guidelines.
+* **Guidelines**
+    - **Docs Location:** Technical docs go in `docs/`. User-facing content goes in `src/content/`.
+    - **Structure:** Follow existing patterns in `docs/pbi/` for requirements.
+
+### 1.4. Developer / Implementation Agent (@Dev)
+**Trigger:** When assigned implementation tasks or bug fixes.
+* **Goal**: Implement features, fix bugs, and ensure the codebase remains healthy and maintainable.
+* **Guidelines**
+    - **Expect PBIs:** Always look for a defined Product Backlog Item (PBI) in `docs/pbi/`.
+    - **Svelte:** Use Svelte 5 Runes mode (`$state`, `$derived`, `$props`).
+    - **State Management:** Use Nanostores (`@stores/*`) for shared state. Handle Firebase auth race conditions carefully.
+    - **Testing:** ALWAYS run tests via `pnpm run test` or `pnpm run test:e2e`. Never run binaries directly.
+    - **Imports:** Use project aliases (`@components`, `@utils`, etc.).
+
 We are creating a role playing games community site with Astro, Lit and Svelte. The application
 will be deployed to Netlify using a Github integration.
 
@@ -86,9 +123,35 @@ logDebug('uid', $uid);
 </a>
 ```
 
-## TypeScript
+## Project Structure & Imports
 
-We use shorthands for library paths. E.g. `import SectionComponent from '@svelte/app/SectionComponent.svelte'`
+Always use the configured path aliases for imports to ensure maintainability:
+
+- `@components/*` → `src/components/*` (Astro/Lit components)
+- `@svelte/*` → `src/components/svelte/*` (Svelte components)
+- `@layouts/*` → `src/layouts/*`
+- `@pages/*` → `src/pages/*`
+- `@schemas/*` → `src/schemas/*` (Zod schemas)
+- `@stores/*` → `src/stores/*` (Nanostores)
+- `@styles/*` → `src/styles/*`
+- `@locales/*` → `src/locales/*`
+- `@firebase/*` → `src/firebase/*`
+- `@utils/*` → `src/utils/*`
+
+## Testing Strategy
+
+This project uses **Vitest** for unit/integration tests and **Playwright** for E2E tests.
+
+- **Unit/Integration Tests**: Located in `test/`. Run with `pnpm run test`.
+- **E2E Tests**: Located in `e2e/`. Run with `pnpm run test:e2e`.
+
+**Critical**: Always use the `pnpm` scripts. They handle database initialization (`init-test-db.js`) and environment setup. Do not run `vitest` or `playwright` binaries directly without these precursors.
+
+## Documentation Standards
+
+- **Product Backlog Items (PBIs)**: Requirements are detailed in `docs/pbi/`.
+- **Plans**: Complex features/refactors often have plans in `docs/` (e.g. `docs/cn-editor-triage.plan.md`).
+- **Lefthook**: We use `lefthook` for pre-commit checks. Ensure your code passes linting and testing before committing.
 
 ## Cyan Design System
 
