@@ -16,6 +16,8 @@ let files = $state<File[]>([]);
 let changed = $state(false);
 let saving = $state(false);
 let error = $state<string | null>(null);
+let isOpen = $state(false);
+let textareaRef = $state<HTMLTextAreaElement | null>(null);
 
 const previews = $derived.by(() => {
   return files.map((file) => ({
@@ -25,15 +27,13 @@ const previews = $derived.by(() => {
 });
 
 function showDialog() {
-  const dialog = document.getElementById(dialogId) as HTMLDialogElement;
-  dialog.showModal();
+  isOpen = true;
 }
 
 function handleClose() {
-  const dialog = document.getElementById(dialogId) as HTMLDialogElement;
+  isOpen = false;
   replyContent = '';
   files = [];
-  dialog.close();
   changed = false;
   saving = false;
   error = null;
@@ -46,12 +46,39 @@ async function onsubmit(e: Event) {
   saving = true;
   error = null;
 
-  const form = e.target as HTMLFormElement;
-  const formData = new FormData(form);
-  const markdownContent = formData.get('reply') as string;
+  // For cn-reply-dialog, the form might be inside the shadow DOM or slot?
+  // Wait, no, the form is in the default slot, so it's in light DOM.
+  // But wait, the submit button is in the 'actions' slot, outside the form?
+  // Actually, we should probably wrap the whole thing inside the form if possible,
+  // or handle the button click manually if the button is outside.
+
+  // Let's keep the form structure if possible.
+  // cn-reply-dialog structure:
+  // <cn-reply-dialog>
+  //   <span slot="header">Title</span>
+  //   <div>Content (form fields)</div>
+  //   <div slot="actions">Buttons</div>
+  // </cn-reply-dialog>
+
+  // Ideally we want the form to wrap the inputs.
+  // If we put the form in the default slot, the buttons in 'actions' slot are outside the form.
+  // We can use the `form` attribute on buttons to link them to the form id.
+}
+
+async function handleSave() {
+  saving = true;
+  error = null;
+
+  // Update replyContent from DOM if possible (fix for binding issues)
+  if (textareaRef) {
+    replyContent = textareaRef.value;
+  }
 
   try {
-    await submitReply(thread, markdownContent, '', files);
+    if (!thread?.key) throw new Error('Thread key is missing');
+    if (!replyContent) throw new Error('Reply content is missing');
+
+    await submitReply(thread, replyContent, '', files);
 
     // Only close dialog on successful save
     handleClose();
@@ -72,44 +99,43 @@ async function onsubmit(e: Event) {
 <div class="toolbar items-center">
   <button type="button" onclick={showDialog}>
     <cn-icon noun="send"></cn-icon>
-    <span>{t('threads:discussion.reply')}</span>
+    <span>{t("threads:discussion.reply")}</span>
   </button>
 </div>
 
-<dialog id={dialogId}>
+{#if isOpen}
+  <cn-reply-dialog open={isOpen} onclose={handleClose}>
+    <span slot="header">{t("threads:discussion.reply")}</span>
 
-  <div class="header">
-    <button type="button" onclick={handleClose} aria-label="Close dialog">
-      <cn-icon noun="close"></cn-icon>
-    </button>
-    <h3>{t('threads:discussion.reply')}</h3>
-  </div>
+    <div class="reply-content">
+      {#if error}
+        <div class="error-message">
+          <cn-icon noun="info"></cn-icon>
+          <span>{error}</span>
+        </div>
+      {/if}
 
-  <form {onsubmit}>
+      {#if files.length > 0}
+        <section class="images-preview">
+          <cn-lightbox images={previews}></cn-lightbox>
+        </section>
+      {/if}
 
-    {#if error}
-    <div class="error-message" style="background: var(--cn-color-error-bg, #fee); color: var(--cn-color-error, #c00); padding: var(--cn-gap-xs); border-radius: var(--cn-radius); margin-bottom: var(--cn-gap);">
-      <cn-icon noun="info"></cn-icon>
-      <span>{error}</span>
+      <textarea
+        placeholder={t("entries:reply.placeholders.markdownContent")}
+        rows="5"
+        name="reply"
+        required
+        class="reply-textarea"
+        bind:this={textareaRef}
+        bind:value={replyContent}
+        oninput={(e) =>
+          (replyContent = (e.currentTarget as HTMLTextAreaElement).value)}
+        autofocus
+      ></textarea>
     </div>
-    {/if}
 
-    {#if files.length > 0}
-    <section style="container: images / inline-size; width: min(420px,90vw); margin: 0 auto; margin-bottom: var(--cn-gap)">
-      <cn-lightbox images={previews}></cn-lightbox>
-    </section>
-    {/if}
-
-    <textarea
-      placeholder={t('entries:reply.placeholders.markdownContent')}
-      rows="5"
-      name="reply"
-      required
-      class="reply-textarea"
-      bind:value={replyContent}
-    ></textarea>
-    
-    <div class="toolbar">
+    <div slot="actions" class="toolbar">
       <AddFilesButton
         accept="image/*"
         multiple={true}
@@ -117,32 +143,55 @@ async function onsubmit(e: Event) {
           files = [...files, ...newFiles];
           changed = true;
         }}
-      disabled={saving}
-    />
+        disabled={saving}
+      />
       <div class="grow"></div>
-      <button type="button" class="text" onclick={handleClose} disabled={saving}>
-        {t('actions:cancel')}
+      <button
+        type="button"
+        class="text"
+        onclick={handleClose}
+        disabled={saving}
+      >
+        {t("actions:cancel")}
       </button>
-      <button type="submit" class="call-to-action" disabled={saving}>
+      <button
+        type="button"
+        class="call-to-action"
+        disabled={saving}
+        onclick={handleSave}
+      >
         {#if saving}
           <cn-icon noun="clock"></cn-icon>
-          <span>{t('actions:saving') || 'Saving...'}</span>
+          <span>{t("actions:saving") || "Saving..."}</span>
         {:else}
-          {t('actions:send')}
+          {t("actions:send")}
         {/if}
       </button>
     </div>
-  </form>
-</dialog>
+  </cn-reply-dialog>
+{/if}
 
 <style>
-.reply-textarea {
-  min-width: 85dvw;
-}
-@media screen and (min-width: 621px) {
   .reply-textarea {
-    min-width: 620px;
+    width: 100%;
+    box-sizing: border-box;
+    resize: vertical;
   }
-}
 
+  .error-message {
+    background: var(--cn-color-error-bg, #fee);
+    color: var(--cn-color-error, #c00);
+    padding: var(--cn-gap-xs);
+    border-radius: var(--cn-radius);
+    margin-bottom: var(--cn-gap);
+    display: flex;
+    align-items: center;
+    gap: var(--cn-gap-xs);
+  }
+
+  .images-preview {
+    container: images / inline-size;
+    width: 100%;
+    margin-bottom: var(--cn-gap);
+  }
 </style>
