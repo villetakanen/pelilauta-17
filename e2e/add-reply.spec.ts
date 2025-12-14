@@ -1,12 +1,11 @@
 import { expect, test } from '@playwright/test';
-import { authenticate } from './authenticate-e2e';
 
 // Use environment variable for base URL or default to localhost
 const BASE_URL = process.env.BASE_URL || 'http://localhost:4321';
 
 test.describe('Reply Submission UX Improvements', () => {
-  // Increase timeout for these tests as they involve authentication and navigation
-  test.setTimeout(120000);
+  // Reduced timeout since we no longer do UI authentication
+  test.setTimeout(90000);
 
   test('Can create a thread and add a reply quickly', async ({ page }) => {
     // Listen for console errors and API responses
@@ -25,17 +24,16 @@ test.describe('Reply Submission UX Improvements', () => {
       }
     });
 
-    await authenticate(page);
+    // User is already authenticated via global setup
     await page.goto(`${BASE_URL}/create/thread`);
 
-    // Wait for the page to load and authentication state to be ready
+    // Wait for the page to load
     await page.waitForLoadState('domcontentloaded');
 
-    // Verify user is still authenticated on the create thread page
-    await expect(page.getByTestId('setting-navigation-button')).toBeVisible();
-
-    // Wait a bit more for auth state to fully propagate
-    await page.waitForTimeout(2000);
+    // Verify user is authenticated
+    await expect(page.getByTestId('setting-navigation-button')).toBeVisible({
+      timeout: 10000,
+    });
 
     // Expect the save button to exist, and be disabled initially
     await expect(page.getByTestId('send-thread-button')).toBeDisabled();
@@ -134,17 +132,16 @@ test.describe('Reply Submission UX Improvements', () => {
       }
     });
 
-    await authenticate(page);
+    // User is already authenticated via global setup
     await page.goto(`${BASE_URL}/create/thread`);
 
-    // Wait for the page to load and authentication state to be ready
+    // Wait for the page to load
     await page.waitForLoadState('domcontentloaded');
 
-    // Verify user is still authenticated on the create thread page
-    await expect(page.getByTestId('setting-navigation-button')).toBeVisible();
-
-    // Wait a bit more for auth state to fully propagate
-    await page.waitForTimeout(2000);
+    // Verify user is authenticated
+    await expect(page.getByTestId('setting-navigation-button')).toBeVisible({
+      timeout: 10000,
+    });
 
     // Create a unique thread title using timestamp
     const uniqueThreadTitle = `Test Thread for File Reply ${Date.now()}`;
@@ -271,17 +268,16 @@ test.describe('Reply Submission UX Improvements', () => {
       }
     });
 
-    await authenticate(page);
+    // User is already authenticated via global setup
     await page.goto(`${BASE_URL}/create/thread`);
 
-    // Wait for the page to load and authentication state to be ready
+    // Wait for the page to load
     await page.waitForLoadState('domcontentloaded');
 
-    // Verify user is still authenticated on the create thread page
-    await expect(page.getByTestId('setting-navigation-button')).toBeVisible();
-
-    // Wait a bit more for auth state to fully propagate
-    await page.waitForTimeout(2000);
+    // Verify user is authenticated
+    await expect(page.getByTestId('setting-navigation-button')).toBeVisible({
+      timeout: 10000,
+    });
 
     // Create a thread first
     const uniqueThreadTitle = `Validation Test Thread ${Date.now()}`;
@@ -381,14 +377,16 @@ test.describe('Reply Submission UX Improvements', () => {
     // but we can't easily test this scenario in E2E tests.
 
     // Instead, let's test that authentication is working by trying to create a thread
-    await authenticate(page);
+    // User is already authenticated via global setup
     await page.goto(`${BASE_URL}/create/thread`);
 
-    // Wait for the page to load and authentication state to be ready
+    // Wait for the page to load
     await page.waitForLoadState('domcontentloaded');
 
-    // Verify user is still authenticated on the create thread page
-    await expect(page.getByTestId('setting-navigation-button')).toBeVisible();
+    // Verify user is authenticated
+    await expect(page.getByTestId('setting-navigation-button')).toBeVisible({
+      timeout: 10000,
+    });
 
     // This should work - creating a valid thread to verify auth is working
     await expect(

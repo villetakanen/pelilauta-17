@@ -1,8 +1,9 @@
 import { expect, test } from '@playwright/test';
-import { authenticate } from './authenticate-e2e';
-import { waitForAuthState } from './wait-for-auth';
 
-test.setTimeout(120000); // Increase timeout for authentication and navigation
+// Use environment variable for base URL or default to localhost
+const BASE_URL = process.env.BASE_URL || 'http://localhost:4321';
+
+test.setTimeout(90000); // Reduced timeout since we no longer do UI authentication
 
 test('can create a thread successfully', async ({ page }) => {
   // Listen for console errors and API responses
@@ -32,11 +33,16 @@ test('can create a thread successfully', async ({ page }) => {
     }
   });
 
-  await authenticate(page);
-  await page.goto('http://localhost:4321/create/thread');
+  // User is already authenticated via global setup
+  await page.goto(`${BASE_URL}/create/thread`);
 
-  // Use the robust auth state waiting mechanism
-  await waitForAuthState(page, 15000);
+  // Wait for page to load
+  await page.waitForLoadState('domcontentloaded');
+
+  // Verify user is authenticated
+  await expect(page.getByTestId('setting-navigation-button')).toBeVisible({
+    timeout: 10000,
+  });
 
   // Expect the save button to exist, and be disabled initially
   await expect(page.getByTestId('send-thread-button')).toBeDisabled();

@@ -12,6 +12,8 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './e2e',
+  /* Global setup for programmatic authentication */
+  globalSetup: './e2e/auth.setup.ts',
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -42,6 +44,8 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
+        // Use stored authentication state from global setup
+        storageState: 'playwright/.auth/user.json',
         // Add extra timeout for authentication and page loads
         actionTimeout: 15000,
         navigationTimeout: 30000,
