@@ -45,24 +45,6 @@ async function onsubmit(e: Event) {
   // Don't close dialog yet - keep it open during save
   saving = true;
   error = null;
-
-  // For cn-reply-dialog, the form might be inside the shadow DOM or slot?
-  // Wait, no, the form is in the default slot, so it's in light DOM.
-  // But wait, the submit button is in the 'actions' slot, outside the form?
-  // Actually, we should probably wrap the whole thing inside the form if possible,
-  // or handle the button click manually if the button is outside.
-
-  // Let's keep the form structure if possible.
-  // cn-reply-dialog structure:
-  // <cn-reply-dialog>
-  //   <span slot="header">Title</span>
-  //   <div>Content (form fields)</div>
-  //   <div slot="actions">Buttons</div>
-  // </cn-reply-dialog>
-
-  // Ideally we want the form to wrap the inputs.
-  // If we put the form in the default slot, the buttons in 'actions' slot are outside the form.
-  // We can use the `form` attribute on buttons to link them to the form id.
 }
 
 async function handleSave() {
@@ -154,17 +136,13 @@ async function handleSave() {
       >
         {t("actions:cancel")}
       </button>
-      <button
-        type="button"
-        class="call-to-action"
-        disabled={saving}
-        onclick={handleSave}
-      >
+      <button type="button" disabled={saving} onclick={handleSave}>
         {#if saving}
-          <cn-icon noun="clock"></cn-icon>
-          <span>{t("actions:saving") || "Saving..."}</span>
+          <cn-icon noun="send"></cn-icon>
+          <span>{t("actions:send")}</span>
         {:else}
-          {t("actions:send")}
+          <cn-icon noun="send"></cn-icon>
+          <span>{t("actions:send")}</span>
         {/if}
       </button>
     </div>
