@@ -24,24 +24,26 @@ const { title, description, image, shortTitle, noSharing, search } =
 ---
 
 <html lang="fi">
-  <BaseHead {title} {description} {image} {noSharing}/>
+  <BaseHead {title} {description} {image} {noSharing} />
   <body>
     <AppBar
       title={title}
       shortTitle={shortTitle}
+      description={description}
       search={search}
-      noSharing={noSharing}>
+      noSharing={noSharing}
+    >
       <slot name="app-bar" />
     </AppBar>
     <AppRail />
-	  <main>
+    <main>
       <slot />
       <AppFooter>
-        <slot name="app-footer-credits" slot="app-footer-credits"/>
+        <slot name="app-footer-credits" slot="app-footer-credits" />
       </AppFooter>
     </main>
     <nav id="fab-tray">
-      <slot name="fab-tray"></slot>
+      <slot name="fab-tray" />
     </nav>
     <slot name="app-background-poster" />
     <AuthManager client:only="svelte" />
