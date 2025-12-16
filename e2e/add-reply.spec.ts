@@ -216,8 +216,9 @@ test.describe('Reply Submission UX Improvements', () => {
       0x00, 0x00, 0x00, 0x49, 0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82,
     ]);
 
-    // Upload the test image - set file directly on the hidden input within the dialog
-    await page.getByRole('dialog').locator('input[type="file"]').setInputFiles({
+    // Upload the test image - set file directly on the hidden input
+    // Note: With cn-reply-dialog, the input is slotted and might not be a direct descendant of the role="dialog" element in the accessibility tree
+    await page.locator('cn-reply-dialog input[type="file"]').setInputFiles({
       name: 'test-image.png',
       mimeType: 'image/png',
       buffer: testImageBuffer,

@@ -5,6 +5,9 @@ noun: 'monsters'
 ---
 ## Version 18
 
+## 18.12.x (ongoing)
+* fix(threads): Thread reply dialogs use the new cn-reply-dialog web component
+
 ## 18.12.0 (5.12.2025)
 * feat(threads): Thread reply edit dialog restored
 * fix: Added lots of logging to auth, for corner-case errors

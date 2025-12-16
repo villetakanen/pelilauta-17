@@ -3,6 +3,13 @@ import { z } from 'zod';
 
 export const PROFILES_COLLECTION_NAME = 'profiles';
 
+export const ProfileLinkSchema = z.object({
+  url: z.string().url(),
+  label: z.string().min(1).max(50),
+});
+
+export type ProfileLink = z.infer<typeof ProfileLinkSchema>;
+
 export const ProfileSchema = z.object({
   key: z.string(),
   username: z.string(),
@@ -11,6 +18,7 @@ export const ProfileSchema = z.object({
   bio: z.string().optional(),
   tags: z.array(z.string()).optional(),
   lovedThreads: z.array(z.string()).optional(),
+  links: z.array(ProfileLinkSchema).optional(),
 });
 
 export type Profile = z.infer<typeof ProfileSchema>;
@@ -68,6 +76,29 @@ export function migrateProfile(
       )
     : [];
 
+  // Handle links array
+  let links: ProfileLink[] = [];
+  if (Array.isArray(data.links)) {
+    // Filter and validate links
+    links = data.links
+      .filter(
+        (link): link is Record<string, unknown> =>
+          typeof link === 'object' &&
+          link !== null &&
+          typeof link.url === 'string' &&
+          typeof link.label === 'string',
+      )
+      .map((link) => ({
+        url: String(link.url),
+        label: String(link.label),
+      }))
+      // Validate against schema to be sure (optional, but good for validation)
+      .filter((link) => {
+        const result = ProfileLinkSchema.safeParse(link);
+        return result.success;
+      });
+  }
+
   // Build migrated profile with all fields
   const migratedData: Record<string, unknown> = {
     key,
@@ -90,6 +121,10 @@ export function migrateProfile(
 
   if (lovedThreads.length > 0) {
     migratedData.lovedThreads = lovedThreads;
+  }
+
+  if (links.length > 0) {
+    migratedData.links = links;
   }
 
   return ProfileSchema.parse(migratedData);

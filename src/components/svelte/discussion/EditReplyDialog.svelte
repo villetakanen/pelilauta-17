@@ -9,12 +9,13 @@ interface Props {
   reply: Reply;
 }
 const { reply }: Props = $props();
-const dialogId = `edit-reply-dialog-${reply.key}`;
 let replyContent = $state<string>(reply.markdownContent || '');
 let files = $state<File[]>([]);
 let changed = $state(false);
 let saving = $state(false);
 let error = $state<string | null>(null);
+let isOpen = $state(false);
+let textareaRef = $state<HTMLTextAreaElement | null>(null);
 
 const previews = $derived.by(() => {
   return files.map((file) => ({
@@ -24,28 +25,29 @@ const previews = $derived.by(() => {
 });
 
 export function showDialog() {
-  const dialog = document.getElementById(dialogId) as HTMLDialogElement;
   // Reset content to current reply content when opening
   replyContent = reply.markdownContent || '';
   files = [];
   error = null;
-  dialog.showModal();
+  isOpen = true;
 }
 
 function handleClose() {
-  const dialog = document.getElementById(dialogId) as HTMLDialogElement;
-  dialog.close();
+  isOpen = false;
   changed = false;
   saving = false;
   error = null;
 }
 
-async function onsubmit(e: Event) {
-  e.preventDefault();
-
+async function handleSave() {
   // Don't close dialog yet - keep it open during save
   saving = true;
   error = null;
+
+  // Update replyContent from DOM if possible (fix for binding issues)
+  if (textareaRef) {
+    replyContent = textareaRef.value;
+  }
 
   try {
     await updateReply(reply.threadKey, reply.key, replyContent, files);
@@ -73,43 +75,43 @@ async function onsubmit(e: Event) {
 }
 </script>
 
-<dialog id={dialogId}>
-    <div class="header">
-        <button type="button" onclick={handleClose} aria-label="Close dialog">
-            <cn-icon noun="close"></cn-icon>
-        </button>
-        <h3>{t("actions:edit")}</h3>
-    </div>
+{#if isOpen}
+    <cn-reply-dialog open={isOpen} onclose={handleClose}>
+        <span slot="header">{t("actions:edit")}</span>
 
-    <form {onsubmit}>
-        {#if error}
-            <div
-                class="error-message"
-                style="background: var(--cn-color-error-bg, #fee); color: var(--cn-color-error, #c00); padding: var(--cn-gap-xs); border-radius: var(--cn-radius); margin-bottom: var(--cn-gap);"
-            >
-                <cn-icon noun="info"></cn-icon>
-                <span>{error}</span>
-            </div>
-        {/if}
+        <div class="reply-content">
+            {#if error}
+                <div
+                    class="error-message"
+                    style="background: var(--cn-color-error-bg, #fee); color: var(--cn-color-error, #c00); padding: var(--cn-gap-xs); border-radius: var(--cn-radius); margin-bottom: var(--cn-gap);"
+                >
+                    <cn-icon noun="info"></cn-icon>
+                    <span>{error}</span>
+                </div>
+            {/if}
 
-        {#if files.length > 0}
-            <section
-                style="container: images / inline-size; width: min(420px,90vw); margin: 0 auto; margin-bottom: var(--cn-gap)"
-            >
-                <cn-lightbox images={previews}></cn-lightbox>
-            </section>
-        {/if}
+            {#if files.length > 0}
+                <section class="images-preview">
+                    <cn-lightbox images={previews}></cn-lightbox>
+                </section>
+            {/if}
 
-        <textarea
-            placeholder={t("entries:reply.placeholders.markdownContent")}
-            rows="5"
-            name="reply"
-            required
-            class="reply-textarea"
-            bind:value={replyContent}
-        ></textarea>
+            <textarea
+                placeholder={t("entries:reply.placeholders.markdownContent")}
+                rows="5"
+                name="reply"
+                required
+                class="reply-textarea"
+                bind:this={textareaRef}
+                bind:value={replyContent}
+                oninput={(e) =>
+                    (replyContent = (e.currentTarget as HTMLTextAreaElement)
+                        .value)}
+                autofocus
+            ></textarea>
+        </div>
 
-        <div class="toolbar">
+        <div slot="actions" class="toolbar">
             <AddFilesButton
                 accept="image/*"
                 multiple={true}
@@ -128,7 +130,12 @@ async function onsubmit(e: Event) {
             >
                 {t("actions:cancel")}
             </button>
-            <button type="submit" class="call-to-action" disabled={saving}>
+            <button
+                type="button"
+                class="call-to-action"
+                disabled={saving}
+                onclick={handleSave}
+            >
                 {#if saving}
                     <cn-icon noun="clock"></cn-icon>
                     <span>{t("actions:saving") || "Saving..."}</span>
@@ -137,16 +144,19 @@ async function onsubmit(e: Event) {
                 {/if}
             </button>
         </div>
-    </form>
-</dialog>
+    </cn-reply-dialog>
+{/if}
 
 <style>
     .reply-textarea {
-        min-width: 85dvw;
+        width: 100%;
+        box-sizing: border-box;
+        resize: vertical;
     }
-    @media screen and (min-width: 621px) {
-        .reply-textarea {
-            min-width: 620px;
-        }
+
+    .images-preview {
+        container: images / inline-size;
+        width: 100%;
+        margin-bottom: var(--cn-gap);
     }
 </style>
