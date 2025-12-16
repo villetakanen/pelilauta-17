@@ -1,8 +1,7 @@
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { expect, test } from '@playwright/test';
-import { authenticate } from './authenticate-e2e';
-import { waitForAuthState } from './wait-for-auth';
+import { authenticateAsExistingUser } from './programmatic-auth';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,11 +28,11 @@ test.describe('Site Asset Upload', () => {
   });
 
   test('can upload an image asset to a site', async ({ page }) => {
-    await authenticate(page);
+    await authenticateAsExistingUser(page);
 
     // Navigate directly to assets page
     await page.goto('http://localhost:4321/sites/e2e-test-site/assets');
-    await waitForAuthState(page, 15000);
+    // await waitForAuthState(page, 15000);
 
     // Look for the upload button/FAB
     const uploadButton = page
@@ -64,7 +63,7 @@ test.describe('Site Asset Upload', () => {
 
     // Wait longer for upload to complete and Firestore update
     // Increased timeout when running in test suite with other uploads
-    await page.waitForTimeout(12000);
+    await page.waitForTimeout(20000);
 
     // Find the specific uploaded asset by filename
     // Note: Image will be converted to WebP, so look for test-image with either extension
@@ -79,10 +78,10 @@ test.describe('Site Asset Upload', () => {
   });
 
   test('can upload a PDF asset to a site', async ({ page }) => {
-    await authenticate(page);
+    await authenticateAsExistingUser(page);
 
     await page.goto('http://localhost:4321/sites/e2e-test-site/assets');
-    await waitForAuthState(page, 15000);
+    // await waitForAuthState(page, 15000);
 
     const uploadButton = page
       .locator('button:has(cn-icon[noun="assets"])')
@@ -106,7 +105,7 @@ test.describe('Site Asset Upload', () => {
     await fileInput.setInputFiles(testPdfPath);
 
     // Wait longer for PDF upload - PDFs may take more time than images
-    await page.waitForTimeout(12000);
+    await page.waitForTimeout(20000);
 
     // Verify PDF asset appears - find specific asset by filename
     const pdfAsset = page
@@ -119,10 +118,10 @@ test.describe('Site Asset Upload', () => {
   });
 
   test('validates file size limit (10MB)', async ({ page }) => {
-    await authenticate(page);
+    await authenticateAsExistingUser(page);
 
     await page.goto('http://localhost:4321/sites/e2e-test-site/assets');
-    await waitForAuthState(page, 15000);
+    // await waitForAuthState(page, 15000);
 
     // Listen for error messages
     const errorMessages: string[] = [];
@@ -153,10 +152,10 @@ test.describe('Site Asset Upload', () => {
   });
 
   test('validates file type restrictions', async ({ page }) => {
-    await authenticate(page);
+    await authenticateAsExistingUser(page);
 
     await page.goto('http://localhost:4321/sites/e2e-test-site/assets');
-    await waitForAuthState(page, 15000);
+    // await waitForAuthState(page, 15000);
 
     const fileInput = page.locator('input[type="file"]').first();
 
@@ -174,11 +173,11 @@ test.describe('Site Asset Upload', () => {
   });
 
   test('can delete an uploaded asset', async ({ page }) => {
-    await authenticate(page);
+    await authenticateAsExistingUser(page);
 
     // First upload an asset
     await page.goto('http://localhost:4321/sites/e2e-test-site/assets');
-    await waitForAuthState(page, 15000);
+    // await waitForAuthState(page, 15000);
 
     const uploadButton = page
       .locator('button:has(cn-icon[noun="assets"])')
@@ -256,9 +255,9 @@ test.describe('Site Asset Upload', () => {
     // For now, we verify that the upload button is only visible to owners
     // as tested in the 'requires authentication' test
 
-    await authenticate(page);
+    await authenticateAsExistingUser(page);
     await page.goto('http://localhost:4321/sites/e2e-test-site/assets');
-    await waitForAuthState(page, 15000);
+    // await waitForAuthState(page, 15000);
 
     // As an owner (existing user is owner), button should be visible
     const uploadButton = page
@@ -271,10 +270,10 @@ test.describe('Site Asset Upload', () => {
   });
 
   test('asset metadata includes upload tracking', async ({ page }) => {
-    await authenticate(page);
+    await authenticateAsExistingUser(page);
 
     await page.goto('http://localhost:4321/sites/e2e-test-site/assets');
-    await waitForAuthState(page, 15000);
+    // await waitForAuthState(page, 15000);
 
     const uploadButton = page
       .locator('button:has(cn-icon[noun="assets"])')
@@ -297,9 +296,8 @@ test.describe('Site Asset Upload', () => {
     const fileInput = page.locator('input[type="file"]').first();
 
     await fileInput.setInputFiles(testImagePath);
-
     // Wait longer for upload and Firestore update to propagate
-    await page.waitForTimeout(8000);
+    await page.waitForTimeout(30000);
 
     // Find the specific uploaded asset by filename
     // Note: Image will be converted to WebP, so look for test-metadata with either extension
@@ -334,11 +332,11 @@ test.describe('Site Asset Upload', () => {
   });
 
   test('can use uploaded asset in site theme', async ({ page }) => {
-    await authenticate(page);
+    await authenticateAsExistingUser(page);
 
     // First upload an asset
     await page.goto('http://localhost:4321/sites/e2e-test-site/assets');
-    await waitForAuthState(page, 15000);
+    // await waitForAuthState(page, 15000);
 
     const uploadButton = page
       .locator('button:has(cn-icon[noun="assets"])')
@@ -374,7 +372,7 @@ test.describe('Site Asset Upload', () => {
 
     // Navigate to site settings
     await page.goto('http://localhost:4321/sites/e2e-test-site/settings');
-    await waitForAuthState(page, 15000);
+    // await waitForAuthState(page, 15000);
 
     // Verify theme settings page loaded
     // The h2 should contain "Ulkoasu" (Finnish for "Appearance/Theme")
@@ -441,10 +439,10 @@ test.describe('Site Asset Upload', () => {
   });
 
   test('resizes large images before upload', async ({ page }) => {
-    await authenticate(page);
+    await authenticateAsExistingUser(page);
 
     await page.goto('http://localhost:4321/sites/e2e-test-site/assets');
-    await waitForAuthState(page, 15000);
+    // await waitForAuthState(page, 15000);
 
     const uploadButton = page
       .locator('button:has(cn-icon[noun="assets"])')

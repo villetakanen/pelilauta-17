@@ -1,11 +1,12 @@
 import { expect, test } from '@playwright/test';
-import { authenticate } from './authenticate-e2e';
 
-test.setTimeout(120000); // Increase timeout for authentication and navigation
+const BASE_URL = process.env.BASE_URL || 'http://localhost:4321';
+
+test.setTimeout(90000); // Reduced timeout
 
 test('Can create a new page with Beta category', async ({ page }) => {
-  await authenticate(page); // Use default existing user
-  await page.goto('http://localhost:4321/sites/e2e-test-site/create/page');
+  // Use default existing user
+  await page.goto(`${BASE_URL}/sites/e2e-test-site/create/page`);
 
   // Expect the user to be authenticated
   await expect(page.getByTestId('setting-navigation-button')).toBeVisible();
@@ -38,8 +39,8 @@ test('Can create a new page with Beta category', async ({ page }) => {
 });
 
 test('Page creation requires page name', async ({ page }) => {
-  await authenticate(page); // Use default existing user
-  await page.goto('http://localhost:4321/sites/e2e-test-site/create/page');
+  // Use default existing user
+  await page.goto(`${BASE_URL}/sites/e2e-test-site/create/page`);
 
   // The submit button should be visible
   await expect(page.getByTestId('create-page-button')).toBeVisible();

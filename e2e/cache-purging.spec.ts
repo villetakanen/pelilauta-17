@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
-import { authenticate } from './authenticate-e2e';
+
+const BASE_URL = process.env.BASE_URL || 'http://localhost:4321';
 
 /**
  * E2E test for cache purging API routes.
@@ -12,7 +13,8 @@ test.describe('Cache Purging APIs', () => {
     page,
   }) => {
     // Authenticate the user first
-    await authenticate(page);
+    // await authenticate(page);
+    await page.goto(`${BASE_URL}/`);
 
     // We don't need to navigate to a specific site page for API testing
     // Just test the API endpoints directly
@@ -71,7 +73,8 @@ test.describe('Cache Purging APIs', () => {
 
   test('cache purging API should reject invalid requests', async ({ page }) => {
     // Authenticate first to establish proper page context
-    await authenticate(page);
+    // await authenticate(page);
+    await page.goto(`${BASE_URL}/`);
 
     // Test with invalid authentication token
     const invalidAuth = await page.evaluate(async () => {

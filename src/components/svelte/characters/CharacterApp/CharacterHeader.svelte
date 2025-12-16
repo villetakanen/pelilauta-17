@@ -14,7 +14,8 @@ import { t } from '@utils/i18n';
 import CharacterSettingsSection from './CharacterSettingsSection.svelte';
 
 const canEdit = $derived.by(() => {
-  return $character?.owners?.includes($uid);
+  const isOwner = $character?.owners?.includes($uid);
+  return isOwner;
 });
 </script>
 
@@ -26,15 +27,16 @@ const canEdit = $derived.by(() => {
         <cn-loader inline></cn-loader>
       {/if}
       <cn-toggle-button
-        label={t('characters:sheets.mode.edit')}
+        label={t("characters:sheets.mode.edit")}
         pressed={$isEditing}
-        onchange={(e: Event) => isEditing.set((e.target as CnToggleButton).pressed)}
+        onchange={(e: Event) =>
+          isEditing.set((e.target as CnToggleButton).pressed)}
       ></cn-toggle-button>
     {/if}
     <button
       type="button"
-      onclick={() => $showSettingsPanel = true}
-      aria-label={t('actions:settings')}
+      onclick={() => ($showSettingsPanel = true)}
+      aria-label={t("actions:settings")}
     >
       <cn-icon noun="tools"></cn-icon>
     </button>

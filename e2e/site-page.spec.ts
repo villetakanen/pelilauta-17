@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
-import { authenticate } from './authenticate-e2e';
 import { updateSiteInFirestore } from './firebase-admin-helper';
+import { authenticateAsExistingUser } from './programmatic-auth';
 
 test.setTimeout(120000); // Increase timeout for authentication and navigation
 
@@ -85,6 +85,11 @@ test.describe('Site Page Loading and Performance', () => {
   test('Site page works for anonymous users without real-time subscriptions', async ({
     page,
   }) => {
+    // Clear authentication state to simulate anonymous user
+    await page.goto('http://localhost:4321/'); // Navigate to app first to access localStorage
+    await page.evaluate(() => localStorage.clear());
+    await page.context().clearCookies();
+
     // Navigate without authentication
     await page.goto('http://localhost:4321/sites/e2e-test-site');
 
@@ -106,7 +111,7 @@ test.describe('Site Page Loading and Performance', () => {
   test('Site page enables real-time updates for authenticated users', async ({
     page,
   }) => {
-    await authenticate(page); // Use default existing user
+    await authenticateAsExistingUser(page); // Use default existing user
     await page.goto('http://localhost:4321/sites/e2e-test-site');
 
     // Verify authenticated user sees additional functionality
@@ -192,7 +197,7 @@ test.describe('Site Page Loading and Performance', () => {
   });
 
   test('Site navigation preserves store state', async ({ page }) => {
-    await authenticate(page);
+    await authenticateAsExistingUser(page);
 
     // Start at the site home page
     await page.goto('http://localhost:4321/sites/e2e-test-site');
@@ -230,7 +235,7 @@ test.describe('Site Page Loading and Performance', () => {
     });
 
     // Authenticate and navigate to the test site
-    await authenticate(page);
+    await authenticateAsExistingUser(page);
     await page.goto('http://localhost:4321/sites/e2e-test-site');
 
     // Verify initial page load
@@ -255,7 +260,8 @@ test.describe('Site Page Loading and Performance', () => {
     // or by evaluating that the store has been updated
     // Verify that the update triggered the onSnapshot callback and updated the UI
     // We updated the name to 'The E2E Test Site (Updated)'
-    await expect(page.getByRole('heading', { level: 1 })).toContainText(
+    await expect(page.locator('cn-app-bar')).toHaveAttribute(
+      'title',
       'The E2E Test Site (Updated)',
       { timeout: 10000 },
     );

@@ -98,7 +98,7 @@ async function globalSetup(_config: FullConfig) {
     // Step 2: Construct Firebase localStorage structure
     // This must match exactly what Firebase Auth SDK expects
     const firebaseAuthKey = `firebase:authUser:${API_KEY}:[DEFAULT]`;
-    const expirationTime = Date.now() + parseInt(authData.expiresIn) * 1000;
+    const expirationTime = Date.now() + parseInt(authData.expiresIn, 10) * 1000;
 
     const firebaseAuthValue = {
       uid: authData.localId,
@@ -160,9 +160,6 @@ async function globalSetup(_config: FullConfig) {
       fs.mkdirSync(storageStateDir, { recursive: true });
     }
 
-    await context.storageState({ path: storageStatePath });
-    console.log(`✅ Storage state saved to: ${storageStatePath}`);
-
     // Step 5: Verify the auth state works
     console.log('🔍 Verifying authentication...');
     await page.reload();
@@ -187,6 +184,10 @@ async function globalSetup(_config: FullConfig) {
         error instanceof Error ? error.message : 'Unknown error',
       );
     }
+
+    // Capture the storage state (including cookies set during verification)
+    await context.storageState({ path: storageStatePath });
+    console.log(`✅ Storage state saved to: ${storageStatePath}`);
 
     await browser.close();
 

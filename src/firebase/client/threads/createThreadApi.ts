@@ -31,6 +31,8 @@ export async function createThreadApi(
       userUid: auth.currentUser?.uid,
     });
 
+    await auth.authStateReady();
+
     if (!auth.currentUser) {
       throw new Error('User not authenticated');
     }

@@ -106,7 +106,7 @@ test('can create a thread successfully', async ({ page }) => {
 
   try {
     // Look for the delete button in thread actions
-    const deleteButton = page.locator('a[href*="confirmDelete"]');
+    const deleteButton = page.locator('a[href*="confirmDelete"]').first();
     await expect(deleteButton).toBeVisible({ timeout: 10000 });
 
     console.log('Delete button found, clicking...');
@@ -152,7 +152,7 @@ test('can create a thread successfully', async ({ page }) => {
       }
     });
 
-    await confirmButton.click();
+    await confirmButton.click({ force: true });
 
     // Wait for deletion to complete and redirect
     console.log('Waiting for deletion to complete...');
@@ -231,7 +231,7 @@ test('can create a thread successfully', async ({ page }) => {
     // This allows us to see creation works while isolating deletion issues
     console.warn(
       'Thread deletion failed, but creation test passed:',
-      deletionError.message,
+      (deletionError as Error).message,
     );
   }
 });

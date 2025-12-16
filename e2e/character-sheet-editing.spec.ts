@@ -1,75 +1,27 @@
 import { expect, test } from '@playwright/test';
-import { authenticate } from './authenticate-e2e';
-import { waitForAuthState } from './wait-for-auth';
+import { authenticateAsExistingUser } from './programmatic-auth';
 
-let characterPageUrl = '';
-
-test.beforeAll(async ({ browser }) => {
-  const page = await browser.newPage();
-  await page.context().clearCookies();
-  await page.goto('http://localhost:4321');
-  await page.evaluate(() => window.localStorage.clear());
-  await authenticate(page);
-  await page.goto('http://localhost:4321/create/character');
-  await waitForAuthState(page, 15000);
-
-  // Use a unique name for the character
-  const uniqueCharacterName = `E2E Edit Test Character ${Date.now()}`;
-
-  // Go to step 2
-  await page.getByTestId('character-wizard-next-button').click();
-
-  // Select the sheet
-  await page.waitForTimeout(2000);
-  await page.getByText('E2E Test Sheet').click();
-
-  // Go to final step
-  await page.getByTestId('character-wizard-next-button').click();
-  await page.getByTestId('character-wizard-next-button').click();
-
-  // Fill in character name
-  await page.getByTestId('character-name-input').fill(uniqueCharacterName);
-  await page.getByTestId('character-wizard-create-button').click();
-
-  // Wait for navigation to the character library
-  await page.waitForURL(/\/library\/characters$/);
-
-  // Find the character in the library and navigate to its page
-  await page.reload();
-  await page.getByText(uniqueCharacterName).click();
-  await page.waitForURL(/\/characters\//);
-  characterPageUrl = page.url();
-  await page.close();
-});
-
-test.afterAll(async () => {
-  const { initializeTestFirebase } = await import('../test/api/setup');
-  const { serverDB } = initializeTestFirebase();
-  const query = serverDB
-    .collection('characters')
-    .where('name', '>=', 'E2E Edit Test Character');
-  const snapshot = await query.get();
-  const batch = serverDB.batch();
-  snapshot.forEach((doc) => {
-    batch.delete(doc.ref);
-  });
-  await batch.commit();
-});
+const characterPageUrl =
+  'http://localhost:4321/characters/e2e-keeper-test-character';
 
 // TODO: Known issue with character sheet editing - needs investigation
 // This test is disabled until the underlying issue is fixed
-test.skip('can edit character stats', async ({ page }) => {
-  await authenticate(page);
+test('can edit character stats', async ({ page }) => {
+  page.on('console', (msg) => console.log('BROWSER LOG:', msg.text()));
+  await authenticateAsExistingUser(page);
   await page.goto(characterPageUrl);
-  await waitForAuthState(page);
 
-  // Click edit button
-  await page.getByRole('button', { name: 'Edit' }).click();
+  // Wait for character to load
+  await expect(
+    page.getByRole('heading', { level: 1, name: 'E2E Keeper Test Character' }),
+  ).toBeVisible({ timeout: 15000 });
 
-  // Wait for edit mode to activate - the button text should change to "Done"
-  await expect(page.getByRole('button', { name: 'Done' })).toBeVisible({
-    timeout: 10000,
-  });
+  // Click edit toggle
+  const editToggle = page.locator('cn-toggle-button');
+  await editToggle.click();
+
+  // Wait for edit mode to activate - the toggle should be pressed
+  await expect(editToggle).toHaveAttribute('pressed');
 
   // Check if character sheet editing is fully functional or still experimental
   // Try to find editable input fields (not readonly) in the character sheet area
@@ -94,8 +46,8 @@ test.skip('can edit character stats', async ({ page }) => {
     );
 
     // Just verify we can toggle back to view mode
-    await page.getByRole('button', { name: 'Done' }).click();
-    await expect(page.getByRole('button', { name: 'Edit' })).toBeVisible();
+    await editToggle.click();
+    await expect(editToggle).not.toHaveAttribute('pressed');
 
     // Mark test as passing since the basic edit/view toggle works
     console.log('Basic edit mode toggle functionality verified');
@@ -131,8 +83,8 @@ test.skip('can edit character stats', async ({ page }) => {
   // Wait for auto-save
   await page.waitForTimeout(1000);
 
-  // Click done button
-  await page.getByRole('button', { name: 'Done' }).click();
+  // Toggle edit mode off (Done)
+  await editToggle.click();
 
   // Verify new values are displayed (only check for stats that were actually edited)
   if (hasEditableText && originalText) {
@@ -140,9 +92,19 @@ test.skip('can edit character stats', async ({ page }) => {
   }
 
   if (hasEditableNumber && originalNumber) {
+    const newVal = String(Number(originalNumber) + 1);
     await expect(
-      page.getByText(String(Number(originalNumber) + 1)),
-    ).toBeVisible();
+      page
+        .locator('cn-stat-block')
+        .filter({ hasText: 'number_stat' })
+        .getByRole('spinbutton')
+        .or(
+          page
+            .locator('cn-stat-block')
+            .filter({ hasText: 'number_stat' })
+            .locator('input[type="number"]'),
+        ),
+    ).toHaveValue(newVal);
   }
 
   if (hasEditableCheckbox) {

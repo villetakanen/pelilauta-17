@@ -32,13 +32,16 @@ async function purgeSession() {
       try {
         const cookies = await cookieStore.getAll();
         for (const cookie of cookies) {
-          await cookieStore.delete(cookie.name);
-          addLog(`Deleted cookie: ${cookie.name}`);
+          if (cookie.name) {
+            await cookieStore.delete(cookie.name);
+            addLog(`Deleted cookie: ${cookie.name}`);
+          }
         }
       } catch (e) {
         addLog('Error using Cookie Store API, falling back to legacy method');
         // Fallback to legacy method
         document.cookie.split(';').forEach((c) => {
+          // biome-ignore lint/suspicious/noDocumentCookie: Legacy fallback for browsers without CookieStore
           document.cookie = c
             .replace(/^ +/, '')
             .replace(/=.*/, `=;expires=${new Date().toUTCString()};path=/`);
@@ -47,6 +50,7 @@ async function purgeSession() {
     } else {
       // Fallback for browsers without Cookie Store API
       document.cookie.split(';').forEach((c) => {
+        // biome-ignore lint/suspicious/noDocumentCookie: Legacy fallback for browsers without CookieStore
         document.cookie = c
           .replace(/^ +/, '')
           .replace(/=.*/, `=;expires=${new Date().toUTCString()};path=/`);
@@ -91,7 +95,6 @@ async function purgeSession() {
       // However, for this PBI, we will try to use the API and catch errors.
 
       try {
-        // @ts-expect-error - databases() might not be in the TS definition for all environments
         const dbs = await window.indexedDB.databases();
         if (dbs) {
           for (const db of dbs) {

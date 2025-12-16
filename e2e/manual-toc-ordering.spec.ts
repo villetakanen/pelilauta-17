@@ -1,14 +1,15 @@
 import { expect, test } from '@playwright/test';
-import { authenticate } from './authenticate-e2e';
 import {
   getSiteFromFirestore,
   updateSiteInFirestore,
 } from './firebase-admin-helper';
 
+const BASE_URL = process.env.BASE_URL || 'http://localhost:4321';
+
 test.describe('Manual TOC Ordering', () => {
   test('Owner can enable manual sort and reorder pages', async ({ page }) => {
     // 1. Setup: Login as site owner
-    await authenticate(page);
+    // User already authenticated via global setup
 
     // Seed the site with pages to reorder
     await updateSiteInFirestore('e2e-test-site', {
@@ -47,7 +48,7 @@ test.describe('Manual TOC Ordering', () => {
 
     // Navigate to the site TOC settings page
     // Assuming 'e2e-test-site' is the site we are testing with
-    await page.goto('http://localhost:4321/sites/e2e-test-site/toc/settings');
+    await page.goto(`${BASE_URL}/sites/e2e-test-site/toc/settings`);
 
     // 2. Enable Manual Sorting
     // Wait for the sort order dropdown to be visible
@@ -116,7 +117,7 @@ test.describe('Manual TOC Ordering', () => {
     await expect(newItems.nth(0)).toContainText('Page 3');
 
     // 5. Verify Public TOC
-    await page.goto('http://localhost:4321/sites/e2e-test-site/toc');
+    await page.goto(`${BASE_URL}/sites/e2e-test-site/toc`);
 
     // Verify the order on the public page
     // This depends on the structure of the public TOC.

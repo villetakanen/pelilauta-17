@@ -215,14 +215,18 @@ test.describe('Reply Submission UX Improvements', () => {
 
     // Upload the test image - set file directly on the hidden input
     // Note: With cn-reply-dialog, the input is slotted and might not be a direct descendant of the role="dialog" element in the accessibility tree
-    await page.locator('cn-reply-dialog input[type="file"]').setInputFiles({
-      name: 'test-image.png',
-      mimeType: 'image/png',
-      buffer: testImageBuffer,
-    });
+    await page
+      .locator('cn-reply-dialog input[data-testid="file-input"]')
+      .setInputFiles({
+        name: 'test-image.png',
+        mimeType: 'image/png',
+        buffer: testImageBuffer,
+      });
 
     // Verify file is shown in the dialog (preview should appear)
-    await expect(page.getByRole('dialog').locator('cn-lightbox')).toBeVisible();
+    // Wait for the container first
+    await expect(page.locator('cn-reply-dialog .images-preview')).toBeVisible();
+    await expect(page.locator('cn-reply-dialog cn-lightbox')).toBeVisible();
 
     // Start timing the reply submission with file
     const startTime = Date.now();

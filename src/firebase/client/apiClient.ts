@@ -17,6 +17,7 @@ export async function authedFetch(
   input: RequestInfo | URL,
   options?: RequestInit,
 ): Promise<Response> {
+  await auth.authStateReady();
   const currentUser: User | null = auth.currentUser;
 
   // 1. Check if user is logged in client-side

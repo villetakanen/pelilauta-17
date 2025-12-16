@@ -282,7 +282,11 @@ const keeperTestCharacter = {
   name: 'E2E Keeper Test Character',
   siteKey: keeperTestSite.key,
   sheetKey: 'e2e-test-sheet',
-  owners: ['e2e-test-owner', 'H3evfU7BDmec9KkotRiTV41YECg1'],
+  owners: [
+    'e2e-test-owner',
+    'H3evfU7BDmec9KkotRiTV41YECg1',
+    'vN8RyOYratXr80130A7LqVCLmLn1',
+  ],
 };
 await serverDB
   .collection('characters')

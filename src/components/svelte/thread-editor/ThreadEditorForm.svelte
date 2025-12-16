@@ -6,7 +6,7 @@ import { extractTags } from 'src/utils/contentHelpers';
 import { t } from 'src/utils/i18n';
 import { logDebug, logError } from 'src/utils/logHelpers';
 import { onMount } from 'svelte';
-import { uid } from '../../../stores/session';
+import { authUser, uid } from '../../../stores/session';
 import AddFilesButton from '../app/AddFilesButton.svelte';
 import CodeMirrorEditor from '../CodeMirrorEditor/CodeMirrorEditor.svelte';
 import ChannelSelect from './ChannelSelect.svelte';
@@ -14,11 +14,11 @@ import { submitThreadUpdate } from './submitThreadUpdate';
 
 interface Props {
   thread?: Thread;
-  channelKey: string;
+  channelKey?: string;
   channels: Channel[];
 }
 
-const { thread, channelKey, channels }: Props = $props();
+const { thread, channelKey = '', channels }: Props = $props();
 
 // Component level state
 let saving = $state(false);
@@ -104,27 +104,23 @@ function onAddFiles(newFiles: File[]) {
 }
 </script>
 
-<form
-  id="thread-editor"
-  class="content-editor"
-  onsubmit={handleSubmit}>
-
+<form id="thread-editor" class="content-editor" onsubmit={handleSubmit}>
   <!-- Toolbar for title, channel, and add files button -->
   <section class="toolbar">
     <label class="grow">
-    {t('entries:thread.title')}
+      {t("entries:thread.title")}
       <input
         type="text"
         name="title"
         disabled={saving}
-        placeholder={t('entries:thread.placeholders.title')}
+        placeholder={t("entries:thread.placeholders.title")}
         onchange={handleChange}
-        value={thread?.title || ''}
+        value={thread?.title || ""}
       />
     </label>
-    <ChannelSelect 
-      channels={channels}
-      channelKey={channelKey}
+    <ChannelSelect
+      {channels}
+      {channelKey}
       disabled={saving}
       onchange={onChannelChange}
     />
@@ -138,19 +134,20 @@ function onAddFiles(newFiles: File[]) {
 
   <!-- Lightbox for attachments like images -->
   {#if files.length > 0}
-    <section style="container: images / inline-size; width: min(420px,90vw); margin: 0 auto; margin-bottom: var(--cn-gap)">
+    <section
+      style="container: images / inline-size; width: min(420px,90vw); margin: 0 auto; margin-bottom: var(--cn-gap)"
+    >
       <cn-lightbox images={previews}></cn-lightbox>
     </section>
   {/if}
 
-    <CodeMirrorEditor
-      bind:value={markdownContent}
-      name="markdownContent"
-      disabled={saving}
-      oninput={handleContentChange}
-      placeholder={t('entries:thread.placeholders.content')}
-    />
-
+  <CodeMirrorEditor
+    bind:value={markdownContent}
+    name="markdownContent"
+    disabled={saving}
+    oninput={handleContentChange}
+    placeholder={t("entries:thread.placeholders.content")}
+  />
 
   {#if tags.length > 0}
     <section class="flex elevation-1 p-1">
@@ -163,21 +160,27 @@ function onAddFiles(newFiles: File[]) {
   <section class="toolbar">
     {#if thread?.key}
       <button type="button" disabled={saving} class="text">
-        {t('actions:delete')}
+        {t("actions:delete")}
       </button>
     {/if}
     <button type="button" disabled={saving} class="text">
-      {t('actions:cancel')}
+      {t("actions:cancel")}
     </button>
     <div class="grow"></div>
-    <button type="submit" disabled={saving || !changed} data-testid="send-thread-button">
+    <button
+      type="submit"
+      disabled={saving || !changed || !$authUser}
+      data-testid="send-thread-button"
+    >
       {#if saving}
-        <cn-loader noun="send" style="display:inline-block;vertical-align: middle"></cn-loader>
+        <cn-loader
+          noun="send"
+          style="display:inline-block;vertical-align: middle"
+        ></cn-loader>
       {:else}
         <cn-icon noun="send"></cn-icon>
       {/if}
-      <span>{t('actions:send')}</span>
+      <span>{t("actions:send")}</span>
     </button>
   </section>
 </form>
-

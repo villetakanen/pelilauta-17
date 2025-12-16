@@ -1,13 +1,12 @@
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { expect, test } from '@playwright/test';
-import { authenticate } from './authenticate-e2e';
-import { waitForAuthState } from './wait-for-auth';
+import { authenticateAsExistingUser } from './programmatic-auth';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-test.setTimeout(120000); // Increase timeout for file uploads
+test.setTimeout(90000); // Increase timeout for file uploads
 
 test.describe('Thread Asset Upload', () => {
   test.beforeEach(async ({ page }) => {
@@ -34,9 +33,9 @@ test.describe('Thread Asset Upload', () => {
   });
 
   test('can upload an image when creating a new thread', async ({ page }) => {
-    await authenticate(page);
+    await authenticateAsExistingUser(page);
     await page.goto('http://localhost:4321/create/thread');
-    await waitForAuthState(page, 15000);
+    // await waitForAuthState(page, 15000); -- Not needed with programmatic auth
 
     // Create a unique thread title
     const uniqueThreadTitle = `E2E Thread with Image ${Date.now()}`;
@@ -133,11 +132,11 @@ test.describe('Thread Asset Upload', () => {
   });
 
   test('can add image to existing thread via reply', async ({ page }) => {
-    await authenticate(page);
+    await authenticateAsExistingUser(page);
 
     // Create a test thread first
     await page.goto('http://localhost:4321/create/thread');
-    await waitForAuthState(page, 15000);
+    // await waitForAuthState(page, 15000);
 
     const uniqueThreadTitle = `E2E Thread for Image Reply ${Date.now()}`;
     await page.fill('input[name="title"]', uniqueThreadTitle);
@@ -153,12 +152,14 @@ test.describe('Thread Asset Upload', () => {
 
     // Now add a reply with an image
     // First, open the reply dialog
-    const replyButton = page.locator('button:has(cn-icon[noun="send"])');
+    // width: 32px is the reply button for mobile/desktop. It is an icon button.
+    const replyButton = page.getByRole('button', { name: 'Vastaa' });
     await expect(replyButton).toBeVisible({ timeout: 5000 });
     await replyButton.click();
 
     // Wait for dialog to be visible
-    await page.waitForSelector('dialog[open]', { timeout: 5000 });
+    const replyDialog = page.getByRole('dialog');
+    await expect(replyDialog).toBeVisible({ timeout: 5000 });
 
     // Fill in the reply content in the textarea
     const replyTextarea = page.locator('textarea[name="reply"]');
@@ -190,7 +191,7 @@ test.describe('Thread Asset Upload', () => {
     }
 
     // Submit the reply
-    const submitButton = page.locator('dialog[open] button[type="submit"]');
+    const submitButton = page.getByRole('button', { name: 'Lähetä' });
     await expect(submitButton).toBeVisible();
     await submitButton.click();
     await page.waitForTimeout(5000);
@@ -222,9 +223,9 @@ test.describe('Thread Asset Upload', () => {
   test('validates image file type for threads (images only)', async ({
     page,
   }) => {
-    await authenticate(page);
+    await authenticateAsExistingUser(page);
     await page.goto('http://localhost:4321/create/thread');
-    await waitForAuthState(page, 15000);
+    // await waitForAuthState(page, 15000);
 
     // Look for file input
     const fileInput = page.locator('input[type="file"]').first();
@@ -250,9 +251,9 @@ test.describe('Thread Asset Upload', () => {
   });
 
   test('validates file size for thread images', async ({ page }) => {
-    await authenticate(page);
+    await authenticateAsExistingUser(page);
     await page.goto('http://localhost:4321/create/thread');
-    await waitForAuthState(page, 15000);
+    // await waitForAuthState(page, 15000);
 
     // Fill in required fields
     await page.fill('input[name="title"]', 'Test Size Validation');
@@ -303,9 +304,9 @@ test.describe('Thread Asset Upload', () => {
   test('image upload preserves markdown content in editor', async ({
     page,
   }) => {
-    await authenticate(page);
+    await authenticateAsExistingUser(page);
     await page.goto('http://localhost:4321/create/thread');
-    await waitForAuthState(page, 15000);
+    // await waitForAuthState(page, 15000);
 
     const uniqueThreadTitle = `E2E Thread Content Preservation ${Date.now()}`;
     await page.fill('input[name="title"]', uniqueThreadTitle);
@@ -359,9 +360,9 @@ test.describe('Thread Asset Upload', () => {
   });
 
   test('displays uploaded image in thread content', async ({ page }) => {
-    await authenticate(page);
+    await authenticateAsExistingUser(page);
     await page.goto('http://localhost:4321/create/thread');
-    await waitForAuthState(page, 15000);
+    // await waitForAuthState(page, 15000);
 
     const uniqueThreadTitle = `E2E Thread Image Display ${Date.now()}`;
     await page.fill('input[name="title"]', uniqueThreadTitle);
@@ -434,14 +435,15 @@ test.describe('Thread Asset Upload', () => {
   });
 
   test('handles upload errors gracefully', async ({ page }) => {
-    await authenticate(page);
+    await authenticateAsExistingUser(page);
     await page.goto('http://localhost:4321/create/thread');
-    await waitForAuthState(page, 15000);
+    // await waitForAuthState(page, 15000);
 
     // Monitor for error messages
     const errorMessages: string[] = [];
     page.on('console', (msg) => {
-      if (msg.type() === 'error' || msg.type() === 'warn') {
+      // @ts-expect-error - 'warn' is valid in some contexts but Playwright types might be strict
+      if (msg.type() === 'error' || msg.type() === 'warning') {
         errorMessages.push(msg.text());
       }
     });

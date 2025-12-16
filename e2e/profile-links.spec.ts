@@ -1,10 +1,9 @@
 import { expect, test } from '@playwright/test';
-import { authenticate } from './authenticate-e2e';
 
 test.describe('Profile Public Links', () => {
   test('User can manage public links', async ({ page }) => {
     // 1. Authenticate
-    await authenticate(page);
+    // await authenticate(page);
 
     // 2. Navigate to Settings
     const BASE_URL = process.env.BASE_URL || 'http://localhost:4321';

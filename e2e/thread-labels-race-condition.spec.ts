@@ -1,8 +1,7 @@
 import { expect, test } from '@playwright/test';
-import { authenticateAdmin } from './authenticate-admin';
-import { waitForAuthState } from './wait-for-auth';
+import { authenticateAsExistingUser } from './programmatic-auth';
 
-test.setTimeout(120000);
+test.setTimeout(60000);
 
 test.describe('Thread Labels - Tag Index Race Condition Fix (PBI-042)', () => {
   let threadUrl: string;
@@ -13,9 +12,9 @@ test.describe('Thread Labels - Tag Index Race Condition Fix (PBI-042)', () => {
     // Create a test thread first
     const page = await browser.newPage();
 
-    await authenticateAdmin(page);
+    await authenticateAsExistingUser(page);
     await page.goto('http://localhost:4321/create/thread');
-    await waitForAuthState(page, 15000);
+    // await waitForAuthState(page, 15000);
 
     // Fill in the thread title
     await page.fill('input[name="title"]', uniqueThreadTitle);
@@ -53,9 +52,9 @@ test.describe('Thread Labels - Tag Index Race Condition Fix (PBI-042)', () => {
   test('tag index is updated synchronously before API returns', async ({
     page,
   }) => {
-    await authenticateAdmin(page);
+    await authenticateAsExistingUser(page);
     await page.goto(threadUrl);
-    await waitForAuthState(page, 15000);
+    // await waitForAuthState(page, 15000);
 
     const uniqueLabel = `sync-${Date.now()}`;
     console.log(`Testing synchronous update with label: ${uniqueLabel}`);
@@ -116,9 +115,9 @@ test.describe('Thread Labels - Tag Index Race Condition Fix (PBI-042)', () => {
   test('multiple rapid label additions all complete synchronously', async ({
     page,
   }) => {
-    await authenticateAdmin(page);
+    await authenticateAsExistingUser(page);
     await page.goto(threadUrl);
-    await waitForAuthState(page, 15000);
+    // await waitForAuthState(page, 15000);
 
     const labels = [
       `rapid1-${Date.now()}`,
@@ -176,9 +175,9 @@ test.describe('Thread Labels - Tag Index Race Condition Fix (PBI-042)', () => {
   test('tag index update completes within acceptable time (< 500ms)', async ({
     page,
   }) => {
-    await authenticateAdmin(page);
+    await authenticateAsExistingUser(page);
     await page.goto(threadUrl);
-    await waitForAuthState(page, 15000);
+    // await waitForAuthState(page, 15000);
 
     const perfLabel = `perf-${Date.now()}`;
     console.log(`Testing performance with label: ${perfLabel}`);
@@ -220,9 +219,9 @@ test.describe('Thread Labels - Tag Index Race Condition Fix (PBI-042)', () => {
   test('label removal also updates tag index synchronously', async ({
     page,
   }) => {
-    await authenticateAdmin(page);
+    await authenticateAsExistingUser(page);
     await page.goto(threadUrl);
-    await waitForAuthState(page, 15000);
+    // await waitForAuthState(page, 15000);
 
     const removeLabel = `remove-sync-${Date.now()}`;
 
@@ -322,9 +321,9 @@ test.describe('Thread Labels - Tag Index Race Condition Fix (PBI-042)', () => {
     page,
   }) => {
     // This tests the getValidFlowTime() fallback functionality
-    await authenticateAdmin(page);
+    await authenticateAsExistingUser(page);
     await page.goto(threadUrl);
-    await waitForAuthState(page, 15000);
+    // await waitForAuthState(page, 15000);
 
     const fallbackLabel = `fallback-${Date.now()}`;
 
@@ -371,9 +370,9 @@ test.describe('Thread Labels - Tag Index Race Condition Fix (PBI-042)', () => {
 
     const page = await browser.newPage();
     try {
-      await authenticateAdmin(page);
+      await authenticateAsExistingUser(page);
       await page.goto(threadUrl);
-      await waitForAuthState(page, 15000);
+      // await waitForAuthState(page, 15000);
 
       const deleteButton = page.locator('a[href*="confirmDelete"]');
       if (await deleteButton.isVisible().catch(() => false)) {

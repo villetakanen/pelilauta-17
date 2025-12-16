@@ -47,6 +47,10 @@ interface UserCredentials {
   password: string;
 }
 
+interface AuthOptions {
+  waitForSelector?: string;
+}
+
 /**
  * Authenticates a user programmatically by injecting Firebase auth state into localStorage
  *
@@ -56,6 +60,7 @@ interface UserCredentials {
 export async function authenticateProgrammatically(
   page: Page,
   credentials: UserCredentials = existingUser,
+  options?: AuthOptions,
 ): Promise<void> {
   if (!API_KEY) {
     throw new Error(
@@ -93,7 +98,7 @@ export async function authenticateProgrammatically(
 
   // Step 3: Construct and inject Firebase localStorage structure
   const firebaseAuthKey = `firebase:authUser:${API_KEY}:[DEFAULT]`;
-  const expirationTime = Date.now() + parseInt(authData.expiresIn) * 1000;
+  const expirationTime = Date.now() + parseInt(authData.expiresIn, 10) * 1000;
 
   const firebaseAuthValue = {
     uid: authData.localId,
@@ -135,8 +140,18 @@ export async function authenticateProgrammatically(
   await page.reload();
   await page.waitForLoadState('domcontentloaded');
 
-  // Wait for auth state to be processed
-  await page.waitForTimeout(1000);
+  // Wait for auth state to be processed and UI to reflect it
+  // This ensures the session cookie has likely been set by the client-side logic
+  const selector =
+    options?.waitForSelector ?? '[data-testid="setting-navigation-button"]';
+  try {
+    await page.waitForSelector(selector, {
+      state: 'visible',
+      timeout: 45000,
+    });
+  } catch (_e) {
+    console.warn('⚠️ Auth UI not visible after programmatic login (timeout)');
+  }
 
   console.log('✅ Programmatic authentication complete');
 }
@@ -152,7 +167,9 @@ export async function authenticateAsExistingUser(page: Page): Promise<void> {
  * Authenticates with the new user account (for onboarding tests)
  */
 export async function authenticateAsNewUser(page: Page): Promise<void> {
-  return authenticateProgrammatically(page, newUser);
+  return authenticateProgrammatically(page, newUser, {
+    waitForSelector: 'body', // New users might not see the settings button
+  });
 }
 
 /**

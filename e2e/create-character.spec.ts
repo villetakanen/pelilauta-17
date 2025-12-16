@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
-import { authenticate } from './authenticate-e2e';
-import { waitForAuthState } from './wait-for-auth';
 
-test.setTimeout(120000); // Increase timeout for authentication and navigation
+const BASE_URL = process.env.BASE_URL || 'http://localhost:4321';
+
+test.setTimeout(90000); // Reduced timeout
 
 test('can create a character through the wizard successfully', async ({
   page,
@@ -34,11 +34,10 @@ test('can create a character through the wizard successfully', async ({
     }
   });
 
-  await authenticate(page);
-  await page.goto('http://localhost:4321/create/character');
+  await page.goto(`${BASE_URL}/create/character`);
 
   // Use the robust auth state waiting mechanism
-  await waitForAuthState(page, 15000);
+  // await waitForAuthState(page, 15000);
 
   // Verify we're on the character creation wizard page
   await expect(page.locator('cn-card')).toBeVisible();
@@ -143,11 +142,10 @@ test('can create a character through the wizard successfully', async ({
 });
 
 test('character wizard requires name to create character', async ({ page }) => {
-  await authenticate(page);
-  await page.goto('http://localhost:4321/create/character');
+  await page.goto(`${BASE_URL}/create/character`);
 
   // Use the robust auth state waiting mechanism
-  await waitForAuthState(page, 15000);
+  // await waitForAuthState(page, 15000);
 
   // Navigate through all steps to the final step
   await page.getByTestId('character-wizard-next-button').click(); // Step 1 -> 2
@@ -190,10 +188,9 @@ test('character wizard requires name to create character', async ({ page }) => {
 test('can navigate between wizard steps using previous/next buttons', async ({
   page,
 }) => {
-  await authenticate(page);
-  await page.goto('http://localhost:4321/create/character');
+  await page.goto(`${BASE_URL}/create/character`);
 
-  await waitForAuthState(page, 15000);
+  // await waitForAuthState(page, 15000);
 
   // Start on Step 1 (System Selection)
   await expect(page.getByTestId('character-wizard-system-step')).toBeVisible();
@@ -245,10 +242,9 @@ test('can navigate between wizard steps using previous/next buttons', async ({
 test('character wizard preserves form data when navigating between steps', async ({
   page,
 }) => {
-  await authenticate(page);
-  await page.goto('http://localhost:4321/create/character');
+  await page.goto(`${BASE_URL}/create/character`);
 
-  await waitForAuthState(page, 15000);
+  // await waitForAuthState(page, 15000);
 
   // Navigate to the final step
   await page.getByTestId('character-wizard-next-button').click(); // Step 1 -> 2

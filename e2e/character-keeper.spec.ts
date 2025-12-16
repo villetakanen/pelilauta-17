@@ -1,14 +1,12 @@
 import { expect, test } from '@playwright/test';
-import { authenticate } from './authenticate-e2e';
-import { waitForAuthState } from './wait-for-auth';
+
+const BASE_URL = process.env.BASE_URL || 'http://localhost:4321';
 
 test.describe('Character Keeper', () => {
   const siteKey = 'e2e-keeper-test-site';
 
   test('can view character in keeper', async ({ page }) => {
-    await authenticate(page);
-    await page.goto(`http://localhost:4321/sites/${siteKey}/keeper`);
-    await waitForAuthState(page);
+    await page.goto(`${BASE_URL}/sites/${siteKey}/keeper`);
 
     // Debug: Let's see what's actually on the page
     console.log('Page URL:', page.url());

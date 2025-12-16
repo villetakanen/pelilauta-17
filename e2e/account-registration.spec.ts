@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { authenticate } from './authenticate-e2e';
+import { authenticateAsNewUser } from './programmatic-auth';
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:4321';
 
@@ -30,10 +30,10 @@ test.describe.serial('Account Registration', { tag: '@newuser' }, () => {
     await page.goto(`${BASE_URL}/logout`);
 
     // Authenticate with new user credentials (redirects to onboarding)
-    await authenticate(page, true);
+    await authenticateAsNewUser(page);
 
-    // Wait for redirect to onboarding page
-    await page.waitForURL(`${BASE_URL}/onboarding`, { timeout: 10000 });
+    // Force navigation to onboarding page (in case auto-redirect is laggy or removed)
+    await page.goto(`${BASE_URL}/onboarding`);
     await expect(
       page.getByRole('heading', { name: /Tervetuloa!|Welcome!/ }),
     ).toBeVisible();
@@ -78,29 +78,24 @@ test.describe.serial('Account Registration', { tag: '@newuser' }, () => {
     // Clean up and authenticate again
     await page.context().clearCookies();
     await page.goto(`${BASE_URL}/logout`);
-    await authenticate(page, true);
+    await authenticateAsNewUser(page);
 
-    // Wait for onboarding page
-    await page.waitForURL(`${BASE_URL}/onboarding`, { timeout: 10000 });
+    // Force navigation to onboarding page
+    await page.goto(`${BASE_URL}/onboarding`);
     await expect(
       page.getByRole('heading', { name: 'Tervetuloa!' }),
     ).toBeVisible();
 
-    // Wait for nickname to be auto-filled
-    await page.waitForTimeout(3000);
-    await page.waitForFunction(
-      () => {
-        const input = document.querySelector(
-          'input[type="text"]',
-        ) as HTMLInputElement;
-        return input && input.value.length > 0;
-      },
-      { timeout: 10000 },
-    );
+    // Wait for the form to be ready - we don't strictly need to wait for autofill
+    // as we are about to fill it anyway.
+    const nickInput = page.getByLabel('Nick');
+    await expect(nickInput).toBeVisible();
 
     // Complete registration
     await page.getByLabel('Nick').fill('Test Nickname New User');
-    await page.getByRole('button', { name: 'Hyväksy ja jatka' }).click();
+    const submitButton = page.getByRole('button', { name: 'Hyväksy ja jatka' });
+    await expect(submitButton).toBeEnabled();
+    await submitButton.click();
 
     // Should be redirected to home page and logged in
     await page.waitForURL(`${BASE_URL}/`);

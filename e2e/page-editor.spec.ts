@@ -4,12 +4,12 @@ import { fileURLToPath } from 'node:url';
 import { expect, test } from '@playwright/test';
 import { cert, initializeApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
-import { authenticate } from './authenticate-e2e';
+import { authenticateAsExistingUser } from './programmatic-auth';
 
-test.setTimeout(120000); // Increase timeout for authentication and navigation
+test.setTimeout(60000);
 
 test('Page name can be changed', async ({ page }) => {
-  await authenticate(page); // Use default existing user
+  await authenticateAsExistingUser(page);
   await page.goto('http://localhost:4321/sites/e2e-test-site/front-page/edit');
 
   // Expect the user to be authenticated
@@ -25,6 +25,9 @@ test('Page name can be changed', async ({ page }) => {
   const nameInput = page.getByTestId('page-name');
   await nameInput.click();
   await nameInput.fill('New Front Page');
+  // Type a character to ensure input event is triggered for Svelte binding
+  await nameInput.press('Space');
+  await nameInput.press('Backspace');
   await nameInput.blur();
 
   // Verify the input value is actually updated
@@ -35,8 +38,10 @@ test('Page name can be changed', async ({ page }) => {
     node.dispatchEvent(new Event('input', { bubbles: true })),
   );
 
-  // Expect the submit button to be enabled, as there are changes
-  await expect(page.getByTestId('save-button')).toBeEnabled({ timeout: 10000 });
+  // Expect the submit button to be enabled and click it
+  const saveButton = page.getByTestId('save-button');
+  await saveButton.click({ trial: true }); // Wait for it to be actionable without clicking
+  await expect(saveButton).toBeEnabled();
 
   // Expect the page to have a category selector
   await expect(page.getByTestId('page-category')).toBeVisible();
@@ -49,7 +54,7 @@ test('Page name can be changed', async ({ page }) => {
 });
 
 test('Page update sets author to current user', async ({ page }) => {
-  await authenticate(page); // Use default existing user (sator@iki.fi)
+  await authenticateAsExistingUser(page);
 
   // Navigate to the test page editor
   await page.goto('http://localhost:4321/sites/e2e-test-site/test-page/edit');

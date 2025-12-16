@@ -45,22 +45,21 @@ function getNoun(slug: string | undefined): string {
   return channel ? channel.icon : 'fox';
 }
 ---
+
 <section>
-{hasError && (
-  <div class="error">
-    {t('app:errors.fetchingThreads')}
-  </div>
-)}
+  {hasError && <div class="error">{t("app:errors.fetchingThreads")}</div>}
 
-  <h2>{t('profile:threadList.title')}</h2>
+  <h2>{t("profile:threadList.title")}</h2>
 
-  { threads.length > 0 ? (
-    <div class="flex flex-col">
-      {threads.map((thread) => (
-       <ThreadCard {thread} noun={getNoun(thread.channel)}/>
-      ))}
-    </div>
+  {
+    threads.length > 0 ? (
+      <div class="flex flex-col">
+        {threads.map((thread) => (
+          <ThreadCard {thread} noun={getNoun(thread.channel)} />
+        ))}
+      </div>
     ) : (
-        <p>{t('profile:threadList.empty')}</p>
-    )}
-</sectoon>
+      <p>{t("profile:threadList.empty")}</p>
+    )
+  }
+</section>

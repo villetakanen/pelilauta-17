@@ -31,5 +31,14 @@ onMount(() => {
   isPreSeeded.set(true);
 });
 
+$effect(() => {
+  if ($site?.name) {
+    const appBar = document.querySelector('cn-app-bar');
+    if (appBar) {
+      appBar.setAttribute('title', $site.name);
+    }
+  }
+});
+
 // This component renders nothing to the DOM.
 </script>

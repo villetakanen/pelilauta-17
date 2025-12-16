@@ -1,14 +1,12 @@
 import { expect, test } from '@playwright/test';
-import { authenticate } from './authenticate-e2e';
-import { waitForAuthState } from './wait-for-auth';
+import { authenticateAsExistingUser } from './programmatic-auth';
 
-test.setTimeout(120000);
+test.setTimeout(60000);
 
 test('can create and edit a reply', async ({ page }) => {
   // --- Setup: Create a thread ---
-  await authenticate(page);
+  await authenticateAsExistingUser(page);
   await page.goto('http://localhost:4321/create/thread');
-  await waitForAuthState(page, 15000);
 
   const uniqueThreadTitle = `E2E Reply Edit Test ${Date.now()}`;
   await page.fill('input[name="title"]', uniqueThreadTitle);
@@ -23,7 +21,6 @@ test('can create and edit a reply', async ({ page }) => {
 
   await page.getByTestId('send-thread-button').click();
   await page.waitForURL(/\/threads\/[^/]+$/, { timeout: 15000 });
-  await waitForAuthState(page, 15000);
 
   // --- Test: Add a reply ---
   const replyContent = `Original reply content ${Date.now()}`;
@@ -43,25 +40,21 @@ test('can create and edit a reply', async ({ page }) => {
 
   // Click reply button to open dialog
   // Try a more specific selector if getByRole fails
-  const replyButton = page.locator('button:has(cn-icon[noun="send"])').first();
-  if (await replyButton.isVisible()) {
-    await replyButton.click();
-  } else {
-    console.log('Reply button not found with icon selector. Dumping buttons:');
-    const buttons = await page.locator('button').allInnerTexts();
-    console.log(buttons);
-    throw new Error('Reply button not found');
-  }
+  // Click reply button to open dialog
+  const replyButton = page.getByRole('button', { name: 'Vastaa' });
+  await replyButton.click();
 
   // Wait for dialog
-  const replyDialog = page.locator('dialog[open]');
+  // Wait for dialog
+  const replyDialog = page.getByRole('dialog');
   await expect(replyDialog).toBeVisible();
 
   // Fill reply content
-  await replyDialog.locator('textarea[name="reply"]').fill(replyContent);
+  await page.getByPlaceholder('Kirjoita viesti...').fill(replyContent);
 
   // Submit reply
-  await replyDialog.locator('button[type="submit"]').click();
+  // Submit reply
+  await page.getByRole('button', { name: 'Lähetä' }).click();
 
   // Wait for reply to appear
   await expect(
@@ -101,19 +94,20 @@ test('can create and edit a reply', async ({ page }) => {
     .evaluate((node) => (node as HTMLElement).click());
 
   // Wait for edit dialog
-  const editDialog = page.locator('dialog[open]');
+  const editDialog = page.getByRole('dialog');
   await expect(editDialog).toBeVisible();
 
   // Check pre-filled content
-  await expect(editDialog.locator('textarea[name="reply"]')).toHaveValue(
-    replyContent,
-  );
+  // OR just check if visible and has value, simplified:
+  const textarea = page.locator('textarea[name="reply"]:visible');
+  await expect(textarea).toBeVisible();
+  await expect(textarea).toHaveValue(replyContent);
 
   // Update content
-  await editDialog.locator('textarea[name="reply"]').fill(updatedContent);
+  await textarea.fill(updatedContent);
 
-  // Save
-  await editDialog.locator('button[type="submit"]').click();
+  // Save - use the button inside the edit dialog
+  await page.locator('cn-reply-dialog button.call-to-action').click();
 
   // Verify updated content in UI
   await expect(
@@ -124,7 +118,24 @@ test('can create and edit a reply', async ({ page }) => {
   ).not.toBeVisible();
 
   // --- Cleanup: Delete thread ---
-  await page.locator('a[href*="confirmDelete"]').first().click();
+  const deleteLink = page.locator('a[href*="confirmDelete"]').first();
+  await expect(deleteLink).toBeVisible();
+  await deleteLink.click();
+
   await page.waitForURL(/\/threads\/[^/]+\/confirmDelete$/);
-  await page.locator('button[type="submit"]').click(); // Adjust name if needed
+
+  // Check for forbidden state
+  if (await page.getByText(/forbidden|pääsy evätty/i).isVisible()) {
+    throw new Error('Deletion failed: User forbidden');
+  }
+
+  const confirmButton = page.locator('button[type="submit"]');
+  try {
+    await expect(confirmButton).toBeVisible();
+    await expect(confirmButton).toBeEnabled();
+    await confirmButton.click({ force: true });
+  } catch (e) {
+    console.log('Confirmation page content:', await page.content());
+    throw e;
+  }
 });

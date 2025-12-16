@@ -1,4 +1,5 @@
 <script lang="ts">
+import { authUser } from '@stores/session';
 import { profile } from '@stores/session/profile';
 import { t } from '@utils/i18n';
 import { logDebug, logError } from '@utils/logHelpers';
@@ -17,23 +18,18 @@ let avatarURL = $state('');
 const hasProfile = $derived.by(() => !!$profile?.nick);
 
 const valid = $derived.by(() => {
-  return !!nick && !nickExists;
+  return !!nick && !nickExists && !!$authUser;
 });
 
 // Get user's avatar from Firebase Auth
 $effect(() => {
-  getUserInfo();
+  if ($authUser) getUserInfo();
 });
 
-async function getUserInfo() {
-  try {
-    const { auth } = await import('../../../firebase/client');
-    const user = auth.currentUser;
-    if (user?.photoURL) {
-      avatarURL = user.photoURL;
-    }
-  } catch (error) {
-    logError('EulaForm', 'Error getting user info', error);
+function getUserInfo() {
+  const user = $authUser;
+  if (user?.photoURL) {
+    avatarURL = user.photoURL;
   }
 }
 
@@ -100,7 +96,7 @@ async function handleCancel(event: Event) {
 
 <div class="content-columns">
   <div class="surface column-l">
-    <h1>{t('login:eula.title')}</h1>
+    <h1>{t("login:eula.title")}</h1>
     <form onsubmit={handleSubmit} class="surface radius-m p-4">
       <article class="prose">
         {#if children}
@@ -116,17 +112,17 @@ async function handleCancel(event: Event) {
         {:else}
           <p>{nick}</p>
           <p class="p-4">
-            {t('login:eula.updateNotice.description')}
+            {t("login:eula.updateNotice.description")}
           </p>
         {/if}
       </div>
 
       <div class="flex justify-end gap-2 pt-4 border-t mt-4">
         <button type="button" class="cyan-button text" onclick={handleCancel}>
-          {t('login:eula.decline')}
+          {t("login:eula.decline")}
         </button>
         <button type="submit" class="cyan-button primary" disabled={!valid}>
-          {t('login:eula.accept')}
+          {t("login:eula.accept")}
         </button>
       </div>
     </form>
