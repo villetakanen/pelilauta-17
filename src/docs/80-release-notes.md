@@ -6,6 +6,7 @@ noun: 'monsters'
 ## Version 18
 
 ## 18.12.x (ongoing)
+* fix: share button now uses SSR url directly for better reliability
 * fix(threads): Thread reply dialogs use the new cn-reply-dialog web component
 
 ## 18.12.0 (5.12.2025)
