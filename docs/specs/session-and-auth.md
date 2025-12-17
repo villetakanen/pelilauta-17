@@ -23,11 +23,24 @@ The authentication system bridges the client-side Firebase Auth SDK with the ser
 3.  **Token Exchange:**
     - Client retrieves ID Token: `user.getIdToken()`.
     - Client POSTs token to `/api/auth/session`.
-4.  **Session Creation:**
+4.  **Session Creation (For SSR Pages):**
     - Server verifies ID Token using `serverAuth.verifyIdToken`.
     - Server creates a Session Cookie using `serverAuth.createSessionCookie`.
     - Cookie properties: `httpOnly: true`, `secure: true`, `path: '/'`, `maxAge: 5 days`, `sameSite: 'Lax'`.
 5.  **State Sync:** Client updates `sessionState` to `active` and initiates data subscriptions.
+
+#### 1.2.3 Authorization Architecture
+The application uses two distinct authentication mechanisms depending on the context:
+
+- **SSR Pages & Middleware (`/`, `/library`, etc.):**
+    - Rely on the **Session Cookie**.
+    - Middleware verifies the cookie and enforces claims (`eula_accepted`, `account_created`).
+    - Used for initial page load and server-side rendering.
+
+- **API Routes (`/api/*`):**
+    - Rely on the **Authorization Header** (`Bearer <firebase_id_token>`).
+    - API endpoints verify the token signature directly via `serverAuth.verifyIdToken`.
+    - The Status of the Session Cookie is **irrelevant** for API calls.
 
 #### 1.2.3 Authorization & Gating
 - **Role/Status Checks:** Custom Claims on the Firebase token are used for access control.
@@ -39,13 +52,14 @@ The authentication system bridges the client-side Firebase Auth SDK with the ser
 - **Server-Side Enforcement (Middleware):** Astro Middleware MUST inspect the session cookie for claims on protected routes.
     - If a user attempts to access a protected route without valid claims (`eula_accepted`, `account_created`), the server must redirect to `/onboarding` *before* rendering.
 
-#### 1.2.4 Session Repair Strategy ("Split-Brain" Recovery)
-- **Problem:** Client-side Firebase Auth believes user is logged in, but Server-side Session Cookie is invalid/expired (returns 401).
+#### 1.2.5 Token Repair Strategy (API 401 Recovery)
+- **Problem:** Client sends a request with an expired or invalid Firebase ID Token, causing the API to return `401 Unauthorized`.
 - **Solution:**
-    1.  Intercept `401 Unauthorized` responses on protected resources.
-    2.  Check if `authUser` is present on client.
-    3.  **Attempt Repair:** Call `user.getIdToken(true)` fallback to force refresh.
-    4.  **Re-Session:** POST new token to `/api/auth/session`.
+    1.  Intercept `401 Unauthorized` responses in `authedFetch`.
+    2.  Check if `auth.currentUser` is present.
+    3.  **Attempt Repair:** Call `user.getIdToken(true)` to force a refresh with Firebase.
+    4.  **Retry:** Retry the original request with the new token.
+    5.  **Fail-safe:** If repair fails, trigger `logout()` to clean up the invalid state.
     5.  **Retry:** Retry the original failed request.
     6.  **Fail-safe:** If repair fails, trigger `logout()` to sync client state with server.
 
@@ -105,14 +119,13 @@ And sends a DELETE request to "/api/auth/session"
 And the server deletes the "session" cookie
 ```
 
-### 3.4 Scenario: Split-Brain Recovery
+### 3.4 Scenario: Token Repair (API)
 ```gherkin
 Given the client believes the user is logged in
-But the server session cookie has expired
-When the client makes a request to a protected endpoint
-And receives a 401 Unauthorized response
-Then the client attempts to force refresh the Firebase token
-And attempts to re-establish the server session via "/api/auth/session"
-And if successful, retries the original request
+But the API returns a 401 Unauthorized for a request
+When the client intercepts the 401 response
+Then it attempts to force refresh the Firebase ID Token
+And retries the original request with the new token
+And if successful, returns the data
 Or if unsuccessful, forces a client-side logout
 ```
