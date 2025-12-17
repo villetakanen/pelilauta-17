@@ -17,6 +17,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       secure: true,
       path: '/',
       maxAge: 60 * 60 * 24 * 5,
+      sameSite: 'lax',
     });
 
     return new Response('OK', { status: 200 });
