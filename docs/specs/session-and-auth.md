@@ -1,5 +1,8 @@
 # Session Management and Authentication Specification
 
+> **Status:** Live
+
+
 ## 1. Blueprint
 
 ### 1.1 Context
