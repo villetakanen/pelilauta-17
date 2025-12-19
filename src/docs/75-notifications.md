@@ -18,3 +18,7 @@ Pelilauta.social supports the following notification types:
 - `site.loved`: A site has been loved.
 - `page.loved`: A page has been loved.
 - `handout.update`: A handout with the user as a recipient has been created or updated.
+
+## Content Tracking
+
+For details on how the system tracks unread content and read states (formerly "Unread Notifications"), please refer to the [Content Tracking Spec](../../plans/content-tracking/spec.md).
