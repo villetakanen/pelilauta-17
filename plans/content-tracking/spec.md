@@ -1,6 +1,6 @@
 # Feature: Content Tracking
 
-> **Status:** Draft
+> **Status:** Live
 > **Layer:** CSR Only
 
 ## Blueprint
@@ -42,10 +42,10 @@ The feature relies on comparing the `flowTime` (last updated timestamp) of an en
 ## Contract
 
 ### Definition of Done
-- [ ] Spec is committed to `plans/content-tracking/spec.md`.
-- [ ] Feature is correctly named "Content Tracking" in documentation to distinguish from Notifications.
-- [ ] Logic correctly handles `allSeenAt` for bulk read status.
-- [ ] Logic correctly falls back to `seenEntities` for individual threads.
+- [x] Spec is committed to `plans/content-tracking/spec.md`.
+- [x] Feature is correctly named "Content Tracking" in documentation to distinguish from Notifications.
+- [x] Logic correctly handles `allSeenAt` for bulk read status.
+- [x] Logic correctly falls back to `seenEntities` for individual threads.
 
 ### Regression Guardrails
 - **Offline Support:** The `$subscriber` store is persistent (`nanostores/persistent`), ensuring read states are available immediately on reload.

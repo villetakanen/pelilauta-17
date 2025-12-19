@@ -49,29 +49,29 @@ const channelSlug = channel.toLowerCase().replace(/\s+/g, '-');
 ---
 
 <div style="flex-basis: auto; width: 100%">
-  <cn-card 
-    href={`/threads/${thread.key}`} 
-    title={thread.title} 
+  <cn-card
+    href={`/threads/${thread.key}`}
+    title={thread.title}
     cover={poster}
     srcset={posterSrcset}
     sizes="(max-width: 768px) 100vw, 450px"
-    elevation="1" 
+    elevation="1"
     {noun}
-    id={`thread-card-${thread.key}`} 
+    id={`thread-card-${thread.key}`}
   >
     <p class="text-caption pb-1 mb-1 border-b">
-      {t('threads:card.inChannel')}
+      {t("threads:card.inChannel")}
       <a href={`/channels/${channelSlug}`} class="no-decoration">
         {channel}
       </a>
     </p>
     <Fragment set:html={snippet} />
-    <CardSubscription thread={thread} client:only="svelte"/>
+    <CardSubscription thread={thread} client:only="svelte" />
 
     <div slot="actions" class="toolbar">
       <div class="grow">
         <p class="m-0 px-1 text-small">
-          <ProfileLink uid={thread.owners?.[0] || ''} client:only="svelte" /> 
+          <ProfileLink uid={thread.owners?.[0] || ""} client:only="svelte" />
           <br />
           {toDisplayString(thread.flowTime)}
         </p>
@@ -81,14 +81,17 @@ const channelSlug = channel.toLowerCase().replace(/\s+/g, '-');
         key={thread.key}
         title={thread.title}
         target="thread"
-        client:only="svelte" />
+        client:only="svelte"
+      />
 
       <!-- Link to discussion -->
-      <a href={`/threads/${thread.key}#discussion`} class="px-1 no-decoration flex">
-        <cn-icon noun="discussion" small />
+      <a
+        href={`/threads/${thread.key}?jumpTo=unread#discussion`}
+        class="px-1 no-decoration flex"
+      >
+        <cn-icon noun="discussion" small></cn-icon>
         <span class="text-caption">{thread.replyCount || 0}</span>
       </a>
-
     </div>
   </cn-card>
 </div>

@@ -5,13 +5,15 @@ noun: 'monsters'
 ---
 ## Version 18
 
-## 18.12.x (ongoing)
+## 18.13.0 (19.12.2025)
+* feat(content-tracking): Thread discussion links now automatically scroll to the first unread reply (Progressive Enhancement, PBI-059)
 * feat(reply): Reply bubbles now support deep linking to specific replies features
 * feat(reply): Reply bubbles display "Edited" timestamp with relative time (SSR compatible)
 * fix(a11y): Reply bubbles now have proper aria-labels and semantic structure
 * fix: various cookie and auth corner case fixes
 * fix: share button now uses SSR url directly for better reliability
 * fix(threads): Thread reply dialogs use the new cn-reply-dialog web component
+* fix(content-tracking): Prevented unread indicators from flashing while loading and ensured strict safety for anonymous users (PBI-060)
 
 ## 18.12.0 (5.12.2025)
 * feat(threads): Thread reply edit dialog restored
