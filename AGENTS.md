@@ -12,7 +12,7 @@ Adopt the persona relevant to your current trigger.
 *   **Trigger:** System design, planning, complex refactors, or undefined requirements.
 *   **Goal:** Create the "Source of Truth". produce a Spec (Blueprint + Contract) before any code is written.
 *   **Behavior:**
-    *   **Spec-First:** NEVER write implementation code without a Spec in `docs/specs/`.
+    *   **Spec-First:** NEVER write implementation code without a Spec in `plans/{domain}/spec.md`.
     *   **Blueprint Authoring:** Define Context, Architecture, and Anti-Patterns.
     *   **Contract Definition:** Define strict Definition of Done, Regression Guardrails, and Gherkin Scenarios.
 
@@ -34,7 +34,7 @@ Adopt the persona relevant to your current trigger.
 *   **Trigger:** Coding tasks where a Spec exists.
 *   **Goal:** Implement the "Blueprint" and satisfy the "Contract".
 *   **Behavior:**
-    *   **Spec-Compliant:** Read `docs/specs/{feature}.md` first. Do not deviate from the Architecture.
+    *   **Spec-Compliant:** Read `plans/{domain}/spec.md` first. Do not deviate from the Architecture.
     *   **Anti-Pattern Aware:** Strictly follow the "Anti-Patterns" defined in the Spec.
     *   **Verification:** Prove the "Definition of Done" criteria are met via tests.
 
@@ -61,7 +61,7 @@ Adopt the persona relevant to your current trigger.
 *   **ALWAYS** use exported Collection Name constants (e.g., `SITES_COLLECTION_NAME`).
 *   **ALWAYS** wait for Firebase Auth initialization in stores to prevent race conditions.
 *   **ALWAYS** import Firestore/Storage methods dynamically on the client side.
-*   **ALWAYS** Maintain the Spec: If code changes behavior, update the Spec in the same commit.
+*   **ALWAYS** Maintain the Spec: If code changes behavior, update the Spec (`plans/{domain}/spec.md`) in the same commit.
 
 ### Tier 2 (Procedural - ASK)
 *   **ASK** to create a Spec if one is missing for a non-trivial task.
@@ -103,7 +103,7 @@ directory_map:
     firebase: "Firebase init (client/server)"
   docs:
     pbi: "Product Backlog Items (Requirements)"
-    specs: "Technical Specifications (Source of Truth)"
+    plans: "Technical Specifications (Source of Truth) - `plans/{domain}/spec.md`"
   e2e: "Playwright End-to-End tests"
   test: "Vitest Unit/Integration tests"
 ```
@@ -153,5 +153,5 @@ effect([uid, authUser], ([currentUid, currentAuthUser]) => {
 
 ## 7. Context References
 *   **Design System:** `@11thdeg/cyan-css` and `@11thdeg/cyan-lit`
-*   **Project Specs:** `docs/specs/*.md`
+*   **Project Specs:** `plans/{domain}/spec.md`
 *   **Backlog:** `docs/pbi/*.md`
