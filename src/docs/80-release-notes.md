@@ -6,6 +6,10 @@ noun: 'monsters'
 ## Version 18
 
 ## 18.12.x (ongoing)
+* feat(reply): Reply bubbles now support deep linking to specific replies features
+* feat(reply): Reply bubbles display "Edited" timestamp with relative time (SSR compatible)
+* fix(a11y): Reply bubbles now have proper aria-labels and semantic structure
+* fix: various cookie and auth corner case fixes
 * fix: share button now uses SSR url directly for better reliability
 * fix(threads): Thread reply dialogs use the new cn-reply-dialog web component
 
