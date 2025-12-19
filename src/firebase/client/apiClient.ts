@@ -48,17 +48,51 @@ export async function authedFetch(
 
   // 4. Call the original fetch with the modified options
   try {
-    const response = await fetch(input, {
+    let response = await fetch(input, {
       ...options, // Spread existing options (method, body, etc.)
       headers: headers, // Use the modified headers object
     });
 
-    // Optional: Add generic error handling for non-ok responses
-    // if (!response.ok) {
-    //     const errorData = await response.text(); // or response.json() if your API returns JSON errors
-    //     console.error(`authedFetch: HTTP error! Status: ${response.status}`, errorData);
-    //     throw new Error(`HTTP error! Status: ${response.status}`);
-    // }
+    // 5. Token Repair Strategy (PBI-056)
+    if (response.status === 401) {
+      console.warn('authedFetch: 401 Unauthorized. Attempting token repair...');
+
+      try {
+        const currentUser = auth.currentUser;
+        if (!currentUser) throw new Error('No user to refresh token for');
+
+        // Force refresh the token
+        const newToken = await currentUser.getIdToken(true);
+        console.log(
+          'authedFetch: Token refreshed successfully. Retrying request...',
+        );
+
+        // Update Authorization header with new token
+        headers.set('Authorization', `Bearer ${newToken}`);
+
+        // Retry the request
+        response = await fetch(input, {
+          ...options,
+          headers: headers,
+        });
+
+        // Fail-safe: If retry also fails with 401, trigger logout
+        if (response.status === 401) {
+          console.error('authedFetch: Retry failed with 401. Logging out...');
+          await auth.signOut();
+          window.location.href = '/login';
+          return response;
+        }
+      } catch (refreshError) {
+        console.error('authedFetch: Token repair failed:', refreshError);
+        console.warn(
+          'authedFetch: Logging out due to unrecoverable auth state.',
+        );
+        await auth.signOut();
+        window.location.href = '/login';
+        throw refreshError;
+      }
+    }
 
     return response;
   } catch (error) {

@@ -10,15 +10,18 @@ interface Props {
 const { thread }: Props = $props();
 
 $effect(() => {
+  const element = document.getElementById(
+    `thread-card-${thread.key}`,
+  ) as CnCard;
+  if (!element) return;
+
   // This efffect should only run if we have an active user session
   if (!$uid) {
+    element.notify = false;
     return;
   }
 
   // As we have an UID, we can check if the thread has been seen
-  const element = document.getElementById(
-    `thread-card-${thread.key}`,
-  ) as CnCard;
   if ($hasSeen(thread.key, thread.flowTime)) {
     element.notify = false;
     return;

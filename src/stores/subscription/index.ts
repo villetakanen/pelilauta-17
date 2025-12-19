@@ -222,7 +222,9 @@ export async function setSeen(entityKey: string) {
 
 export const hasSeen = computed(subscription, (sub) => {
   if (!sub) {
-    return () => false;
+    // If no subscription data, default to "Seen" to prevent "Flash of Unread"
+    // Progressively enhanced features should only show notifications when data is confirmed.
+    return () => true;
   }
   return (entityKey: string, flowTime: number) => {
     // If allSeenAt exists and flowTime is at or before it, item is considered seen

@@ -1,6 +1,27 @@
-export function toDisplayString(date: Date | number | undefined): string {
+export function toDisplayString(
+  date: Date | number | undefined,
+  relative = false,
+  locale = 'fi',
+): string {
   if (!date) return 'N/A';
-  return new Date(date).toISOString().substring(0, 10);
+  const d = new Date(date);
+  if (relative) {
+    const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
+    const now = new Date();
+    const diffInSeconds = (d.getTime() - now.getTime()) / 1000;
+    const diffInMinutes = diffInSeconds / 60;
+    const diffInHours = diffInMinutes / 60;
+    const diffInDays = diffInHours / 24;
+
+    if (Math.abs(diffInSeconds) < 60)
+      return rtf.format(Math.round(diffInSeconds), 'second');
+    if (Math.abs(diffInMinutes) < 60)
+      return rtf.format(Math.round(diffInMinutes), 'minute');
+    if (Math.abs(diffInHours) < 24)
+      return rtf.format(Math.round(diffInHours), 'hour');
+    return rtf.format(Math.round(diffInDays), 'day');
+  }
+  return d.toISOString().substring(0, 10);
 }
 export function toTimeString(date: Date | number | undefined): string {
   if (!date) return 'N/A';

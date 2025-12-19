@@ -16,37 +16,38 @@ const { thread }: Props = $props();
 <article class="cols-2 surface" id={`thread-${thread.key}`}>
   <div>
     <h4 class="downscaled m-0">
-            <a href={`/threads/${thread.key}`} class="no-decoration">
-                {thread.title}
-            </a>
+      <a href={`/threads/${thread.key}`} class="no-decoration">
+        {thread.title}
+      </a>
     </h4>
     <div class="my-2">
-      {#await createRichSnippet(thread.markdownContent || '', {paragraphClasses: ['text-small']})}
+      {#await createRichSnippet( thread.markdownContent || "", { paragraphClasses: ["text-small"] }, )}
         ...
       {:then snippet}
         {@html snippet}
       {/await}
     </div>
-        <p class="text-caption m-0">
-            <ProfileLink uid={thread.author} />
-            {#if thread.tags}
-                {#each thread.tags as tag}
-                    <span class="pill">
-                        {tag}
-                    </span>
-                {/each}
-            {/if}
-        </p>
-        
+    <p class="text-caption m-0">
+      <ProfileLink uid={thread.author} />
+      {#if thread.tags}
+        {#each thread.tags as tag}
+          <span class="pill">
+            {tag}
+          </span>
+        {/each}
+      {/if}
+    </p>
   </div>
 
-    <!-- Grid col 2 -->
-    <div class="border-l pl-2">
-        <a href={`/threads/${thread.key}#discussion`}>
-            {t('threads:info.flowTime', { time: toDisplayString(thread.flowTime) })}<br>
-            {t('threads:info.replies', { count: thread.replyCount || 0 })}
-        </a>
-    </div>
+  <!-- Grid col 2 -->
+  <div class="border-l pl-2">
+    <a href={`/threads/${thread.key}?jumpTo=unread#discussion`}>
+      {t("threads:info.flowTime", {
+        time: toDisplayString(thread.flowTime),
+      })}<br />
+      {t("threads:info.replies", { count: thread.replyCount || 0 })}
+    </a>
+  </div>
   <!-- new items highlight injection -->
   <ThreadSubscriber {thread} />
 </article>

@@ -10,7 +10,7 @@ import { fixImageData } from 'src/utils/fixImageData';
 import { t } from 'src/utils/i18n';
 import { onMount } from 'svelte';
 import { authUser, sessionState, uid } from '../../../stores/session';
-import { hasSeen, setSeen } from '../../../stores/subscription';
+import { hasSeen, setSeen, subscription } from '../../../stores/subscription';
 import ReplyArticle from './ReplyArticle.svelte';
 import ReplyDialog from './ReplyDialog.svelte';
 
@@ -28,9 +28,26 @@ const isLoading = $derived(
 const isAuthenticated = $derived($authUser && $sessionState === 'active');
 
 onMount(async () => {
-  if (!$hasSeen(thread.key, thread.flowTime)) {
+  const lastSeen = $subscription?.seenEntities?.[thread.key] || 0;
+
+  if ($uid && !$hasSeen(thread.key, thread.flowTime)) {
     // We haven't seen this thread or it's latest comments yet, so we mark it as seen
     setSeen(thread.key);
+  }
+
+  // Scroll to unread logic
+  const urlParams = new URLSearchParams(window.location.search);
+  if ($uid && urlParams.get('jumpTo') === 'unread' && lastSeen > 0) {
+    const firstUnread = discussion.find((r) => (r.flowTime || 0) > lastSeen);
+    const targetReply = firstUnread || discussion[discussion.length - 1];
+    if (targetReply) {
+      setTimeout(() => {
+        const element = document.getElementById(targetReply.key);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 300); // Give it a moment to render
+    }
   }
 
   const { getFirestore, query, collection, orderBy, onSnapshot } = await import(

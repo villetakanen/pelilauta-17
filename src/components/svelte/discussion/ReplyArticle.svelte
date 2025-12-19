@@ -1,7 +1,9 @@
 <script lang="ts">
 import { marked } from 'marked';
 import type { Reply } from 'src/schemas/ReplySchema';
+import { toDisplayString } from 'src/utils/contentHelpers';
 import { t } from 'src/utils/i18n';
+import { onMount } from 'svelte';
 import { uid } from '../../../stores/session';
 import AvatarLink from '../app/AvatarLink.svelte';
 import ProfileLink from '../app/ProfileLink.svelte';
@@ -25,17 +27,24 @@ const images = $derived.by(() => {
   );
 });
 
+let displayTime = $state(toDisplayString(reply.updatedAt));
+
+onMount(() => {
+  // Client-Side enhancement: update to relative time
+  displayTime = toDisplayString(reply.updatedAt, true);
+});
+
 let editDialog = $state<ReturnType<typeof EditReplyDialog>>();
 </script>
 
-<article class="flex {fromUser ? 'flex-row-reverse' : ''}">
+<article class="flex {fromUser ? 'flex-row-reverse' : ''}" id={reply.key} aria-labelledby={`reply-author-${reply.key}`}>
   <div class="sm-hidden flex-none" style="flex: 0 0 auto">
     <AvatarLink uid={reply.owners[0]} />
   </div>
   <cn-bubble reply={fromUser || undefined} class="grow">
     <div class="toolbar downscaled">
       <p class="grow">
-        <ProfileLink uid={reply.owners[0]} />
+        <ProfileLink uid={reply.owners[0]} id={`reply-author-${reply.key}`} />
       </p>
       <ReactionButton target="reply" small key={reply.key}></ReactionButton>
       <cn-menu inline>
@@ -71,6 +80,13 @@ let editDialog = $state<ReturnType<typeof EditReplyDialog>>();
       {/if}
       {@html marked(reply.markdownContent || "")}
     </div>
+    {#if reply.updatedAt}
+      <div class="flex justify-end">
+        <span class="text-small text-low">
+          {displayTime}
+        </span>
+      </div>
+    {/if}
   </cn-bubble>
 </article>
 
