@@ -29,6 +29,9 @@ The feature relies on comparing the `flowTime` (last updated timestamp) of an en
 - **API Contracts:**
     - Firestore Sync: The client subscribes to `subscriptions/{uid}`.
     - Updates: Client writes to `subscriptions/{uid}` to update `seenEntities` when opening a thread.
+    - **Routing:** "Scroll to Unread" is triggered via a URL Query Parameter (`?jumpTo=unread`).
+        - Main Link (Card Title) -> Opens Thread (Top).
+        - Discussion Link (Reply Count) -> Opens Thread with `?jumpTo=unread`.
     - **Note:** To implement "Scroll to Unread", the client must capture the *current* `seenEntities` timestamp on mount, use it to find the target element, and *then* update the timestamp to `Now`.
 
 ### Anti-Patterns
@@ -70,10 +73,11 @@ The feature relies on comparing the `flowTime` (last updated timestamp) of an en
 
 **Scenario: Scroll to First Unread**
 - Given a thread has new replies since the user last visited
-- When the user opens the thread
-- Then the client retrieves the `lastSeen` timestamp *before* updating it
-- And the client identifies the first reply with `createdAt > lastSeen`
-- And the page scrolls that reply into view
+- And the user navigates via the "Discussion/Reply Count" link (`?jumpTo=unread`)
+- When the page loads
+- Then the client retrieves the `lastSeen` timestamp
+- And identifies the first reply with `createdAt > lastSeen`
+- And scrolls that reply into view
 
 **Scenario: Anonymous User**
 - Given a user is not logged in (anonymous)
