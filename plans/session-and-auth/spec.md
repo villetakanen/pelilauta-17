@@ -46,14 +46,19 @@ The application uses two distinct authentication mechanisms depending on the con
     - The Status of the Session Cookie is **irrelevant** for API calls.
 
 #### 1.2.3 Authorization & Gating
+
+> **Note:** Server-side middleware enforcement is **TEMPORARILY DISABLED** (2025-12-21) due to login cycle issues.
+> See `src/middleware.ts.disabled` and `docs/pbi/054-auth-middleware-gating.md` for details.
+
 - **Role/Status Checks:** Custom Claims on the Firebase token are used for access control.
     - `eula_accepted`: User has accepted the EULA.
     - `account_created`: User has completed profile setup.
 - **Client-Side Enforcement:** `src/components/svelte/AuthManager.svelte` checks claims on mount for UX.
     - If claims are missing, it attempts to fetch `/api/auth/status` to check for updates (handling stale tokens).
     - If checks fail, user is redirected to `/onboarding`.
-- **Server-Side Enforcement (Middleware):** Astro Middleware MUST inspect the session cookie for claims on protected routes.
-    - If a user attempts to access a protected route without valid claims (`eula_accepted`, `account_created`), the server must redirect to `/onboarding` *before* rendering.
+- **Server-Side Enforcement (Middleware):** ~~Astro Middleware MUST inspect the session cookie for claims on protected routes.~~
+    - ~~If a user attempts to access a protected route without valid claims (`eula_accepted`, `account_created`), the server must redirect to `/onboarding` *before* rendering.~~
+    - **CURRENTLY DISABLED:** The middleware at `src/middleware.ts.disabled` was breaking the login cycle and has been temporarily disabled.
 
 #### 1.2.5 Token Repair Strategy (API 401 Recovery)
 - **Problem:** Client sends a request with an expired or invalid Firebase ID Token, causing the API to return `401 Unauthorized`.
