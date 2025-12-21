@@ -1,5 +1,12 @@
 # PBI-054: Implement Server-Side Gating Middleware
 
+> **Status:** TEMPORARILY DISABLED (2025-12-21)
+> 
+> The middleware implementation in `src/middleware.ts` was breaking the login cycle.
+> It has been disabled by renaming to `src/middleware.ts.disabled` until the issue can be resolved.
+> 
+> The middleware is a safety guardrail and not critical for core functionality.
+
 ## Background
 Currently, access control for protected routes (requiring EULA acceptance or completed profile) relies partially on client-side checks in `AuthManager.svelte`. To adhere to the "Zero-Trust" security model defined in `docs/specs/session-and-auth.md`, we must enforce these checks on the server side using Astro Middleware.
 

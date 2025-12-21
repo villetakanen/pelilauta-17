@@ -1,9 +1,21 @@
-import { defineMiddleware } from 'astro:middleware';
-import { serverAuth } from './firebase/server';
+/**
+ * TEMPORARILY DISABLED (2025-12-21)
+ *
+ * This middleware was breaking the login cycle and has been disabled by renaming
+ * the file from middleware.ts to middleware.ts.disabled.
+ *
+ * To re-enable: Rename this file back to middleware.ts
+ *
+ * Related PBI: docs/pbi/054-auth-middleware-gating.md
+ * Related Spec: plans/session-and-auth/spec.md
+ */
 
-const PUBLIC_ROUTES = ['/login', '/onboarding'];
+import { defineMiddleware } from "astro:middleware";
+import { serverAuth } from "./firebase/server";
 
-const PUBLIC_API_PREFIX = '/api/auth/';
+const PUBLIC_ROUTES = ["/login", "/onboarding"];
+
+const PUBLIC_API_PREFIX = "/api/auth/";
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const { pathname } = context.url;
@@ -17,7 +29,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
 
   // 2. Retrieve session cookie
-  const sessionCookie = context.cookies.get('session')?.value;
+  const sessionCookie = context.cookies.get("session")?.value;
 
   if (!sessionCookie) {
     // No session found, allow access (assumed guest or public route)
@@ -37,14 +49,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
     if (!eula_accepted || !account_created) {
       // Valid session, but incomplete onboarding
-      return context.redirect('/onboarding');
+      return context.redirect("/onboarding");
     }
 
     // Optional: Attach user to locals if we want to use it downstream
     // context.locals.user = decodedToken;
   } catch (_error) {
     // Session verification failed (expired, invalid, etc.)
-    return context.redirect('/login');
+    return context.redirect("/login");
   }
 
   return next();
