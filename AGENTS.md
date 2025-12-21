@@ -151,7 +151,73 @@ effect([uid, authUser], ([currentUid, currentAuthUser]) => {
 *   **API Routes:** Use `tokenToUid(request)`.
 *   **Client:** Use `$uid` from `@stores/session`.
 
-## 7. Context References
+## 7. Security Architecture (SSR/CSR Model)
+
+This section defines the security boundaries of the application. **Understanding this is critical before implementing any authentication or authorization logic.**
+
+### 7.1 Core Principle: Write Operations Are the Security Boundary
+
+The application serves two types of content:
+
+| Type | Rendering | Operations | Security Enforcement |
+|------|-----------|------------|---------------------|
+| **SSR Pages** | Server-side | **READ-ONLY** | None required - inherently safe |
+| **CSR Functionality** | Client-side | **CRUD** | Firebase Auth token (client) or API Bearer token (server) |
+
+### 7.2 SSR Pages (Read-Only, Public-Safe)
+
+- SSR pages access Firestore **directly** (via `firebase-admin`) or via **API routes**
+- All SSR operations are **READ-ONLY** - they cannot modify data
+- SSR pages are designed for **good SEO** and open access
+- **No middleware gating is required** for SSR pages because they pose no security risk
+
+### 7.3 CSR Functionality (Write Operations, Token-Protected)
+
+- CSR components use Firebase client SDK with **user's auth token**
+- API routes require **Bearer token** in Authorization header
+- Write operations are **impossible** without a valid Firebase session
+- This is the **true security boundary** - enforced by Firebase itself
+
+### 7.4 Cookie-Gated Pages (Cosmetic Protection Only)
+
+Some pages are hidden from anonymous users via session cookies. However:
+
+- These pages are **impotent** if accidentally exposed to anonymous users
+- Without a valid CSR Firebase session, users **cannot write** anything
+- Cookie gating is purely **cosmetic/UX** - not a security control
+- The real protection comes from Firebase Auth tokens on write operations
+
+### 7.5 Anti-Patterns
+
+- **NEVER** implement middleware that blocks SSR read operations thinking it's "security"
+- **NEVER** assume cookie-gated pages need protection - they're already safe (read-only or token-protected writes)
+- **NEVER** conflate "hiding pages from anonymous users" with "security" - these are UX concerns, not security
+
+### 7.6 Data Flow Summary
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        SECURITY MODEL                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  SSR (Server-Side Rendering)           CSR (Client-Side)        │
+│  ┌─────────────────────────┐          ┌─────────────────────┐  │
+│  │ • READ-ONLY             │          │ • READ + WRITE      │  │
+│  │ • No auth required      │          │ • Firebase token    │  │
+│  │ • SEO-friendly          │          │   required for      │  │
+│  │ • Direct Firestore or   │          │   writes            │  │
+│  │   API access            │          │ • API Bearer token  │  │
+│  │                         │          │   for API writes    │  │
+│  │ ✅ SAFE BY DESIGN       │          │ ✅ SAFE BY TOKEN    │  │
+│  └─────────────────────────┘          └─────────────────────┘  │
+│                                                                 │
+│  Cookie Gating = UX only (cosmetic hiding, not security)        │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## 8. Context References
 *   **Design System:** `@11thdeg/cyan-css` and `@11thdeg/cyan-lit`
 *   **Project Specs:** `plans/{domain}/spec.md`
 *   **Backlog:** `docs/pbi/*.md`
+*   **Architecture:** `docs/architecture.md`

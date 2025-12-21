@@ -2,6 +2,40 @@
 
 > **Status:** Live
 
+## 0. Security Model Context
+
+> **IMPORTANT:** Read this section before implementing any authentication or authorization logic.
+> See also: `docs/architecture.md` and `AGENTS.md` Section 7.
+
+### 0.1 Core Principle: Write Operations Are the Security Boundary
+
+This specification covers session management and authentication, but it's critical to understand **where security is actually enforced** in the application:
+
+| Layer | Operations | Security Enforcement |
+|-------|------------|---------------------|
+| **SSR Pages** | READ-ONLY | None required - inherently safe |
+| **CSR (Client)** | READ + WRITE | Firebase Auth token required for writes |
+| **API Routes** | READ + WRITE | Bearer token verification via `tokenToUid()` |
+
+### 0.2 What This Means for Session/Cookie Management
+
+- **Session cookies** enable cosmetic page gating (hiding pages from anonymous users)
+- **Session cookies do NOT protect write operations** - Firebase tokens do that
+- **Middleware blocking SSR pages is unnecessary** - SSR is read-only and safe
+- **Cookie-gated pages are impotent without Firebase session** - even if exposed, users can't write
+
+### 0.3 The Three Sub-Solutions
+
+1. **SSR Read-Only Content:** Public, SEO-friendly, accesses Firestore via `firebase-admin` or API. No auth required.
+2. **CSR Interactive Features:** Requires Firebase Auth token for writes. Direct Firestore or API access.
+3. **Cookie-Gated Pages:** Cosmetic hiding only. Not a security control.
+
+### 0.4 Security Anti-Pattern This Spec Previously Encouraged
+
+The middleware implementation (now disabled) incorrectly treated SSR page access as a security concern. This broke the login cycle because:
+- It blocked pages that were inherently safe (read-only)
+- It conflated "hiding from anonymous users" with "security"
+- The real security (Firebase tokens for writes) was already in place
 
 ## 1. Blueprint
 
@@ -72,22 +106,29 @@ The application uses two distinct authentication mechanisms depending on the con
     6.  **Fail-safe:** If repair fails, trigger `logout()` to sync client state with server.
 
 ### 1.3 Anti-Patterns
+
+#### Security Model Anti-Patterns (Critical)
+- **No Middleware Blocking SSR:** SSR pages are read-only. Blocking them adds no security and breaks functionality. See Section 0.4.
+- **No Conflating UX with Security:** Cookie gating hides pages cosmetically. It is NOT a security control. Real security is Firebase tokens on writes.
+- **No Blocking "Incomplete" Users from Reading:** Users without `eula_accepted` can safely view read-only SSR content. Only write operations need claim enforcement.
+
+#### Implementation Anti-Patterns
 - **No Client-Side Cookie Access:** The `session` cookie must NEVER be accessible to client-side JS (enforced via `httpOnly`).
-- **No Implicit Trust:** Server-side routes must verify the session cookie using `verifySession`, not just rely on client-side state.
-- **No Client-Only Security:** Do not rely solely on `AuthManager` for gating. Middleware must enforce claim requirements to prevent direct URL access.
+- **No Implicit Trust for Writes:** Write operations (API routes, CSR Firestore writes) must verify Firebase tokens, not rely on cookie presence.
 - **No Redundant Logins:** `sessionState` logic prevents login loops by checking `initial` or `loading` states.
 - **No Infinite Repair Loops:** The "Session Repair" logic must have a strict retry limit (e.g., 1 attempt) before giving up and logging out.
 
 ## 2. Contract
 
 ### 2.1 Definition of Done
-- [ ] Session cookie is correctly set with `Secure`, `HttpOnly`, and `SameSite` flags.
-- [ ] Session duration is exactly 5 days.
-- [ ] `AuthManager` correctly redirects users without `eula_accepted` or `account_created` claims.
-- [ ] Astro Middleware enforces claim checks (`eula_accepted`, `account_created`) on protected routes.
-- [ ] `sessionState` transitions correctly: `initial` -> `loading` -> `active`.
-- [ ] User logout clears both Client (Firebase) and Server (Cookie) sessions.
-- [ ] Session repair mechanism handles 401s by refreshing token and cookie, or logging out.
+- [x] Session cookie is correctly set with `Secure`, `HttpOnly`, and `SameSite` flags.
+- [x] Session duration is exactly 5 days.
+- [x] `AuthManager` correctly redirects users without `eula_accepted` or `account_created` claims (UX enforcement).
+- [x] `sessionState` transitions correctly: `initial` -> `loading` -> `active`.
+- [x] User logout clears both Client (Firebase) and Server (Cookie) sessions.
+- [x] Session repair mechanism handles 401s by refreshing token and cookie, or logging out.
+- [x] API routes verify Bearer tokens via `tokenToUid()` for write operations.
+- [ ] ~~Astro Middleware enforces claim checks on protected routes.~~ **REMOVED:** Middleware was blocking safe read-only SSR pages. See Section 0.4.
 
 ### 2.2 Regression Guardrails
 - **Cookie Security:** Ensure `httpOnly` and `secure` actributes are never removed from the session cookie configuration in `src/pages/api/auth/session.ts`.

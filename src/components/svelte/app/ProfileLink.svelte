@@ -27,7 +27,7 @@ const isLoading = $derived.by(() => {
 {#if isLoading}
   <cn-loader inline></cn-loader>
 {:else if profile}
-  <a href="/profiles/{profile.key}">{profile.nick}</a>
+  <a class="cn-nick" href="/profiles/{profile.key}">{profile.nick}</a>
 {:else}
-  <span>{t('app.anonymous.nick')}</span>
+  <span>{t("app.anonymous.nick")}</span>
 {/if}

@@ -5,6 +5,11 @@ noun: 'monsters'
 ---
 ## Version 18
 
+## 18.13.0 (ongoing)
+* fix(ux): added an override for `nav#rail.sm-hidden` as CDS 4.0 `.sm-hidden` specificity was not enough to override `nav#rail` styles
+* fix(ux): updated cyan with `.cn-nick` and scrollbars update
+* fix: removed middleware as unnecessary complexity for now, see PBI-061 for details
+
 ## 18.13.0 (19.12.2025)
 * feat(content-tracking): Thread discussion links now automatically scroll to the first unread reply (Progressive Enhancement, PBI-059)
 * feat(reply): Reply bubbles now support deep linking to specific replies features

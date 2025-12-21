@@ -28,12 +28,12 @@ const { title, shortTitle, description, image } = Astro.props;
     <AppBar title={title} shortTitle={shortTitle} modal noSharing={true}>
       <slot name="app-bar" />
     </AppBar>
-    <AppRail />
-	  <main>
+    <AppRail hideOnMobile />
+    <main>
       <slot />
     </main>
     <nav id="fab-tray">
-      <slot name="fab-tray"></slot>
+      <slot name="fab-tray" />
     </nav>
     <BaseTail />
   </body>
