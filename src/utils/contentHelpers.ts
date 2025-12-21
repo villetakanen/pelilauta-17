@@ -13,6 +13,12 @@ export function toDisplayString(
     const diffInHours = diffInMinutes / 60;
     const diffInDays = diffInHours / 24;
 
+    // Only show relative time for the last 72 hours (3 days)
+    if (Math.abs(diffInHours) > 72) {
+      // Recursively call this (toDisplayString) with relative = false
+      return toDisplayString(date, false, locale);
+    }
+
     if (Math.abs(diffInSeconds) < 60)
       return rtf.format(Math.round(diffInSeconds), 'second');
     if (Math.abs(diffInMinutes) < 60)

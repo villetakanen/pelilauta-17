@@ -172,3 +172,8 @@ main > footer h4 {
     url("../node_modules/lato-font/fonts/lato-black-italic/lato-black-italic.woff")
     format("woff");
 }
+@media (max-width: 620px) {
+  nav#rail.sm-hidden {
+    display: none;
+  }
+}
