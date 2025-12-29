@@ -121,27 +121,44 @@ async function handleFirebaseAuthChange(user: User | null) {
 
   // User is authenticated
   if (uid.get() === user.uid && sessionState.get() === 'active') {
-    logDebug(
-      'sessionStore',
-      'handleFirebaseAuthChange',
-      'User already logged in and session is active, checking if subscriptions need refresh',
-    );
-
-    // Even if session is active, we should ensure subscriptions are active
-    // This handles cases where session state was restored from localStorage
-    // but subscriptions were not re-established
+    // Verify server session integrity before trusting client state
+    let serverSessionValid = false;
     try {
-      await subscribeToAccount(user.uid);
-      subscribeToProfile(user.uid);
+      const response = await fetch('/api/auth/session');
+      serverSessionValid = response.ok;
+    } catch (error) {
+      logWarn('sessionStore', 'Failed to check server session:', error);
+    }
+
+    if (serverSessionValid) {
       logDebug(
         'sessionStore',
         'handleFirebaseAuthChange',
-        'Refreshed subscriptions for active session',
+        'User already logged in and session is active, checking if subscriptions need refresh',
       );
-    } catch (error) {
-      logError('sessionStore', 'Failed to refresh subscriptions:', error);
+
+      // Even if session is active, we should ensure subscriptions are active
+      // This handles cases where session state was restored from localStorage
+      // but subscriptions were not re-established
+      try {
+        await subscribeToAccount(user.uid);
+        subscribeToProfile(user.uid);
+        logDebug(
+          'sessionStore',
+          'handleFirebaseAuthChange',
+          'Refreshed subscriptions for active session',
+        );
+      } catch (error) {
+        logError('sessionStore', 'Failed to refresh subscriptions:', error);
+      }
+      return;
+    } else {
+      logDebug(
+        'sessionStore',
+        'handleFirebaseAuthChange',
+        'Client session active but server session missing/invalid. Re-authenticating.',
+      );
     }
-    return;
   }
 
   try {
