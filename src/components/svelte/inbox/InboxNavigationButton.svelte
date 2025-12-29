@@ -1,10 +1,10 @@
 <script lang="ts">
 import { t } from 'src/utils/i18n';
 import { newCount } from '../../../stores/inbox';
-import { uid } from '../../../stores/session';
+import { isActive } from '../../../stores/session/computed';
 
 const count = $derived.by(() => {
-  if ($uid) {
+  if ($isActive) {
     if ($newCount > 9) {
       return '9+';
     }
@@ -19,8 +19,16 @@ const count = $derived.by(() => {
 });
 </script>
 
-{#if $uid}
-  <a href="/inbox" style="display:block; position:relative" aria-label={t('navigation:inbox')} >
-    <cn-navigation-icon noun="send" label={t('navigation:inbox')} notification={count}></cn-navigation-icon>
+{#if $isActive}
+  <a
+    href="/inbox"
+    style="display:block; position:relative"
+    aria-label={t("navigation:inbox")}
+  >
+    <cn-navigation-icon
+      noun="send"
+      label={t("navigation:inbox")}
+      notification={count}
+    ></cn-navigation-icon>
   </a>
 {/if}

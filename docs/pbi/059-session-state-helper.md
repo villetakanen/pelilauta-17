@@ -60,6 +60,12 @@ Refactor navigation components to use the new helper instead of ad-hoc authentic
 - Components checking `if ($uid)` will render as authenticated immediately
 - The new helper ensures components wait for actual session verification (`isActive`)
 
+**Circular Dependency Avoidance**:
+- The computed helpers are in `src/stores/session/computed.ts`
+- They are NOT exported from `src/stores/session/index.ts` to avoid circular dependencies
+- Components MUST import directly: `import { isActive } from 'src/stores/session/computed'`
+- Do NOT import from the index: `import { isActive } from '@stores/session'` (will cause runtime errors)
+
 ## Related Specifications
 - **Primary**: `plans/session-store/spec.md` (Section 7: Technical Debt & Future Improvements)
 - **Context**: `plans/session-and-auth/spec.md` (Full security model and authentication architecture)

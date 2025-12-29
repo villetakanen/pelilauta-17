@@ -245,3 +245,5 @@ export async function logout() {
 
 export * from './account';
 export * from './subscriber';
+// NOTE: Do NOT export from './computed' here to avoid circular dependency
+// Import computed helpers directly: import { isActive, isRehydrating, isAnonymous } from 'src/stores/session/computed';

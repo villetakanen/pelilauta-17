@@ -135,41 +135,65 @@ Because `uid` and `profile` are persisted in `localStorage` via `persistentAtom`
 
 ### Best Practices
 
-#### 1. Validating "Active" Session
-Components that trigger actions or require a valid token **MUST** check that the session is truly active, not just that a UID exists.
+#### 1. Using the Session State Helpers
+Components should use the standardized session state helpers from `src/stores/session/computed.ts` instead of ad-hoc checks:
+
+**IMPORTANT**: Import the computed helpers directly from `computed.ts` to avoid circular dependencies. Do NOT import them from `stores/session/index.ts`.
 
 ```typescript
-// ✅ Good: Checks if the session is fully verified
-const isAuthenticated = $derived($sessionState === 'active');
+// ✅ Correct: Import from computed.ts directly
+import { isActive, isRehydrating, isAnonymous } from 'src/stores/session/computed';
 
-// ❌ Bad: Relies on potentially stale localStorage data
-const isAuthenticated = $derived(!!$uid);
+// ✅ Good: Use the standardized helper
+{#if $isActive}
+  <AuthenticatedContent />
+{/if}
+
+// ❌ Bad: Ad-hoc logic that may be incorrect
+{#if $uid && $sessionState === 'active'}
+  <AuthenticatedContent />
+{/if}
 ```
+
+**Available Helpers:**
+- `isAnonymous`: Returns `true` when no session exists (no UID, state is `initial`)
+- `isRehydrating`: Returns `true` when UID exists but state is `initial` or `loading` (persisted state pending verification)
+- `isActive`: Returns `true` when UID exists AND state is `active` (token verified)
 
 #### 2. Handling the "Loading/Rehydrating" State
-Components should account for the state where a `uid` exists but verification is pending (`initial` or `loading`).
+Components should show a loading state during rehydration using the `isRehydrating` helper:
 
 ```typescript
-const isRehydrating = $derived(
-  ($sessionState === 'initial' || $sessionState === 'loading') && 
-  $uid !== ''
-);
+import { isRehydrating, isActive } from 'src/stores/session/computed';
+
+{#if $isRehydrating}
+  <Loader />
+{:else if $isActive}
+  <AuthenticatedContent />
+{:else}
+  <AnonymousContent />
+{/if}
 ```
 
-*   **Recommendation**: Show a loader or a skeleton state during `isRehydrating`.
-*   **Alternative (Optimistic)**: You *may* show the user's avatar/nick based on `$profile` (persisted) during this phase to reduce layout shift, but ensure interactions are disabled or queued until `$sessionState === 'active'`.
-
-#### 3. Inbox & Notifications
-Exceptions can be made for read-only indicators (like "9+ messages") based on persisted data (`$uid`), as long as clicking them handles the potential need to wait for full hydration.
+*   **Recommendation**: Show a loader or a skeleton state during `$isRehydrating`.
+*   **Alternative (Optimistic)**: You *may* show the user's avatar/nick based on `$profile` (persisted) during this phase to reduce layout shift, but ensure interactions are disabled or queued until `$isActive` is `true`.
 
 ## 7. Technical Debt & Future Improvements
 
-### Missing Standardized Helper
-**Issue**: Components currently implement ad-hoc logic to check for authentication, often conflating "Persisted UID" with "Active Session". There is no single, robust primitive to cleanly switch UI based on the *actual* state.
+### ~~Missing Standardized Helper~~ ✅ RESOLVED (PBI-059)
+**Status**: ✅ **RESOLVED** - Implemented in PBI-059
 
-**Requirement**: A helper (e.g., `useSession` or `$sessionStatus`) should be introduced to expose:
-1.  `isAnonymous`: Truly no session (no UID, state is initial).
-2.  `isRehydrating`: UID exists but state is `initial` or `loading`.
-3.  `isActive`: UID exists AND state is `active` (Token verified).
+**Original Issue**: Components implemented ad-hoc logic to check for authentication, often conflating "Persisted UID" with "Active Session". There was no single, robust primitive to cleanly switch UI based on the *actual* state.
 
-**Remediation**: Implement this helper in `src/stores/session/computed.ts` and refactor critical components (`SettingNavigationButton`, `InboxNavigationButton`) to use it.
+**Solution Implemented**:
+- Created `src/stores/session/computed.ts` with three standardized helpers:
+  - `isAnonymous`: Returns `true` when no session exists (no UID, state is `initial`)
+  - `isRehydrating`: Returns `true` when UID exists but state is `initial` or `loading` (persisted state pending verification)
+  - `isActive`: Returns `true` when UID exists AND state is `active` (token verified)
+- Comprehensive unit tests in `test/stores/session-helper.test.ts` covering all state transitions and edge cases
+- Refactored navigation components to use the new helpers:
+  - `SettingNavigationButton`: Now uses `isRehydrating` and `isActive`
+  - `InboxNavigationButton`: Now uses `isActive` instead of direct `$uid` checks
+  - `AdminNavigationButton`: Already using `showAdminTools` (no changes needed)
+
+**Documentation**: See "UI Implementation Guidelines" section above for usage examples.

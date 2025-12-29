@@ -1,22 +1,15 @@
 <script lang="ts">
-import { authUser, sessionState, uid } from '@stores/session';
+import { isActive, isRehydrating } from 'src/stores/session/computed';
 import { profile } from 'src/stores/session/profile';
 import { t } from 'src/utils/i18n';
-
-const isLoading = $derived(
-  $sessionState === 'loading' || ($sessionState === 'initial' && $uid !== ''),
-);
-const isAuthenticated = $derived($authUser && $sessionState === 'active');
 </script>
 
-{#if isLoading}
+{#if $isRehydrating}
   <div class="p-1">
     <cn-loader small></cn-loader>
   </div>
-{:else if isAuthenticated}
-  <!-- We are now using authUser, which points to firebase auth user login state. This is a bit faster
-       than using uid, which requires an additional lookup. Using authUser enables the ux to look cleaner,
-       even if there is a slight possibility for $profile to be loading while already logged in-->
+{:else if $isActive}
+  <!-- Using isActive ensures we only show the authenticated UI when the session is fully verified -->
   <a
     href="/settings"
     aria-label={$profile?.nick}
