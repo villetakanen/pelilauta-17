@@ -6,6 +6,8 @@ noun: 'monsters'
 ## Version 18
 
 ## 18.13.0 (ongoing)
+* fix: The session store now handles situations where the firebase session is valid, but the ssr cookie has expired. This prevents unnecessary redirects to login for logged-in users.
+* fix: Added some session store helpers to DRY the svelte comps
 * fix(ux): added an override for `nav#rail.sm-hidden` as CDS 4.0 `.sm-hidden` specificity was not enough to override `nav#rail` styles
 * fix(ux): updated cyan with `.cn-nick` and scrollbars update
 * fix: removed middleware as unnecessary complexity for now, see PBI-061 for details
