@@ -323,3 +323,36 @@ try {
   });
   console.log('Admin user created:', adminUid);
 }
+
+// Create/update profile document for admin user (required for E2E tests with programmatic auth)
+// Note: This is a DIFFERENT user than H3evfU7BDmec9KkotRiTV41YECg1 which is used for
+// account creation tests and intentionally has no profile
+const adminProfile = {
+  uid: adminUid,
+  nick: 'TestAdmin',
+  email: adminEmail,
+  createdAt: FieldValue.serverTimestamp(),
+  updatedAt: FieldValue.serverTimestamp(),
+  avatarURL: '',
+  bio: 'E2E Test Admin User',
+};
+await serverDB
+  .collection('profiles')
+  .doc(adminUid)
+  .set(adminProfile, { merge: true });
+console.log('Admin profile document created/updated:', adminUid);
+
+// Create account document for admin user
+const adminAccount = {
+  uid: adminUid,
+  email: adminEmail,
+  createdAt: FieldValue.serverTimestamp(),
+  updatedAt: FieldValue.serverTimestamp(),
+};
+await serverDB
+  .collection('accounts')
+  .doc(adminUid)
+  .set(adminAccount, { merge: true });
+console.log('Admin account document created/updated:', adminUid);
+
+console.log('✅ Test database initialization complete!');
