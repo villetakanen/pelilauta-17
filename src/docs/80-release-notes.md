@@ -5,7 +5,13 @@ noun: 'monsters'
 ---
 ## Version 18
 
-## 18.13.0 (ongoing)
+## 18.13.x (ongoing)
+* fix(notifications): Reply reaction notifications now show content snippet instead of raw document key (PBI-064)
+* fix(notifications): Reply notifications now correctly skip all thread owners, not just the first one (PBI-065)
+* fix(inbox): Inbox notifications now display relative timestamps (e.g., "2 hours ago") for recent items (PBI-066)
+* fix(e2e): Added programmatic Firebase authentication for faster E2E tests (5-10x speed improvement for client-side routes)
+* fix(e2e): Test database initialization now creates profile documents for admin test user
+* fix(e2e): Implemented hybrid authentication strategy (programmatic for client routes, UI-based for SSR routes)
 * fix: The session store now handles situations where the firebase session is valid, but the ssr cookie has expired. This prevents unnecessary redirects to login for logged-in users.
 * fix: Added some session store helpers to DRY the svelte comps
 * fix(ux): added an override for `nav#rail.sm-hidden` as CDS 4.0 `.sm-hidden` specificity was not enough to override `nav#rail` styles

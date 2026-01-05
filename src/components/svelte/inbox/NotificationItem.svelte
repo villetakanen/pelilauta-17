@@ -4,6 +4,7 @@ import { markRead } from 'src/firebase/client/inbox/markRead';
 import type { Notification } from 'src/schemas/NotificationSchema';
 import { toDisplayString } from 'src/utils/contentHelpers';
 import { t } from 'src/utils/i18n';
+import { onMount } from 'svelte';
 import ProfileLink from '../app/ProfileLink.svelte';
 
 /**
@@ -13,6 +14,12 @@ interface Props {
   notification: Notification;
 }
 const { notification }: Props = $props();
+
+let displayTime = $state(toDisplayString(notification.createdAt));
+
+onMount(() => {
+  displayTime = toDisplayString(notification.createdAt, true);
+});
 
 const noun = $derived.by(() => {
   if (notification.targetType.endsWith('.loved')) return 'love';
@@ -58,8 +65,7 @@ async function remove() {
       <a {href}>{notification.targetTitle}</a>
     </p>
     <p class="m-0 text-caption">
-      {toDisplayString(notification.createdAt)}
-      {notification.targetType}
+      {displayTime}
     </p>
   </div>
 
