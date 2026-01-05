@@ -37,7 +37,11 @@ onMount(() => {
 let editDialog = $state<ReturnType<typeof EditReplyDialog>>();
 </script>
 
-<article class="flex {fromUser ? 'flex-row-reverse' : ''}" id={reply.key} aria-labelledby={`reply-author-${reply.key}`}>
+<article
+  class="flex {fromUser ? 'flex-row-reverse' : ''}"
+  id={reply.key}
+  aria-labelledby={`reply-author-${reply.key}`}
+>
   <div class="sm-hidden flex-none" style="flex: 0 0 auto">
     <AvatarLink uid={reply.owners[0]} />
   </div>
@@ -46,7 +50,12 @@ let editDialog = $state<ReturnType<typeof EditReplyDialog>>();
       <p class="grow">
         <ProfileLink uid={reply.owners[0]} id={`reply-author-${reply.key}`} />
       </p>
-      <ReactionButton target="reply" small key={reply.key}></ReactionButton>
+      <ReactionButton
+        target="reply"
+        small
+        key={reply.key}
+        title={reply.markdownContent?.substring(0, 50)}
+      ></ReactionButton>
       <cn-menu inline>
         <ul>
           <li>

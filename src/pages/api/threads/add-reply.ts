@@ -111,7 +111,7 @@ function executeBackgroundTasks(
       logDebug('addReply:background', 'Created reactions document');
 
       // Task 3: Send notification to thread owner (if different from reply author)
-      if (thread.owners[0] !== author) {
+      if (!thread.owners.includes(author)) {
         const targetTitle =
           markdownContent.length > 50
             ? `${markdownContent.substring(0, 50)}...`
