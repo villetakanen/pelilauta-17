@@ -31,40 +31,38 @@ async function onsubmit(e: Event) {
 </script>
 
 {#if $sheet}
-  <form  {onsubmit}>
-    <div class="toolbar">
-    <label class="grow">
-      <span class="label">{t('characters:sheets.fields.name')}</span>
-      <input
-        type="text"
-        value="{name}"
-        oninput={(e) => {
-          name = (e.target as HTMLInputElement).value;
-          const updated = { ...$sheet, name };
+  <form {onsubmit}>
+    <div class="toolbar p-0 mb-2">
+      <label class="grow">
+        <span class="label">{t("characters:sheets.fields.name")}</span>
+        <input
+          type="text"
+          value={name}
+          oninput={(e) => {
+            name = (e.target as HTMLInputElement).value;
+            const updated = { ...$sheet, name };
+            sheet.set(updated);
+          }}
+          placeholder={t("characters:sheets.placeholders.name")}
+          required
+        />
+      </label>
+
+      <button type="submit" class="button primary" disabled={!$dirty}>
+        <cn-icon noun="save"></cn-icon>
+        <span>Save Sheet</span>
+      </button>
+    </div>
+
+    <div class="toolbar p-0">
+      <SystemSelect
+        {system}
+        setSystem={(newSystem) => {
+          system = newSystem;
+          const updated = { ...$sheet, system };
           sheet.set(updated);
         }}
-        placeholder={t('characters:sheets.placeholders.name')}
-        required />
-    </label>
-
-    
-      
-  <button type="submit" class="button primary" disabled={!$dirty}>
-    <cn-icon noun="save"></cn-icon>
-    <span>Save Sheet</span>
-  </button>
-  </div>
-
-  <div class="toolbar mb-2">
-    <SystemSelect {system} setSystem={(newSystem) => {
-      system = newSystem;
-      const updated = { ...$sheet, system };
-      sheet.set(updated);
-    }} />
-  </div>
-
+      />
+    </div>
   </form>
 {/if}
-
-
-

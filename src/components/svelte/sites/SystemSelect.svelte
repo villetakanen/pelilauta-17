@@ -13,26 +13,24 @@ const noun = $derived.by(() => {
 });
 </script>
 
-<div class="toolbar px-0">
-  <label class="grow">
-    {t('entries:site.system')}
+<div class="flex flex-row items-center">
+  <label>
+    {t("entries:site.system")}
     <select
       style="width:100%"
       value={system}
-      onchange={(event:Event) => setSystem((event.target as HTMLSelectElement).value)}>
-      
+      onchange={(event: Event) =>
+        setSystem((event.target as HTMLSelectElement).value)}
+    >
       {#each Object.keys(systemToNounMapping) as system}
         <option value={system}>{t(`meta:systems.${system}`)}</option>
       {/each}
-
     </select>
   </label>
   <cn-icon {noun}></cn-icon>
 </div>
 
-
-
-    <!--cn-icon noun={noun()} />
+<!--cn-icon noun={noun()} />
     <label class="grow">
       {t('entries:site.system')}
       <select

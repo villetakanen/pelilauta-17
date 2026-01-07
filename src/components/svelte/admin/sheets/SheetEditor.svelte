@@ -100,18 +100,18 @@ $effect(() => {
 </script>
 
 <WithAuth {allow}>
-  <div class="content-sheet border p-1">
-    <header class="pb-2">
-      <SheetInfoForm />
-      <br>
-    </header>
+  <div class="content-columns">
+    <!-- The primary sheet containing area -->
+    <article class="column-l">
+      <header class="pb-2 mb-2 border-b">
+        <SheetInfoForm />
+      </header>
 
-    <section class="blocks">
-      {#each $sheet?.statGroups || [] as group }
+      {#each $sheet?.statGroups || [] as group}
         <div class="p-1 surface">
           <div class="toolbar pt-0 mt-0">
             <h4 class="text-h5">{group.key}</h4>
-            <select 
+            <select
               bind:value={group.layout}
               onchange={() => updateGroupLayout(group.key, group.layout)}
             >
@@ -131,22 +131,19 @@ $effect(() => {
           </div>
           <StatsSection group={group.key} layout={group.layout} />
           <div class="toolbar items-center">
-                <button
-                  type="button"
-                  class="text"
-                  onclick={() => addStat(group.key)}
-                >
-                  <cn-icon noun="add"></cn-icon>
-                  <span>New Stat</span>
-                </button>
+            <button
+              type="button"
+              class="text"
+              onclick={() => addStat(group.key)}
+            >
+              <cn-icon noun="add"></cn-icon>
+              <span>New Stat</span>
+            </button>
           </div>
         </div>
       {/each}
-
-      <div>
-        <NewGroupCard />
-      </div>
-    </section>
+      <br />
+      <NewGroupCard />
+    </article>
   </div>
 </WithAuth>
-
