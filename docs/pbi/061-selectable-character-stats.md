@@ -1,23 +1,44 @@
-# PBI-061: Feature: Selectable Character Stats (SelectStat)
+# PBI-061: Add Choice Stat Type to Character Sheet Engine
 
-**Epic:** [L&L Character Creation Support](../epics/lnl-character-creation.md)
+**Epic:** [L&L Character Creation Support](../epics/lnl-character-creation.md)  
 **Spec Reference:** [Character Sheet System Spec](../../plans/character-sheets/spec.md)
 
-## User Story
-To support complex RPG rules where players must choose from a list (e.g., Species, Class, Skills), the Character Sheet engine needs a new `SelectStat` type.
+## Directive
+Extend `CharacterStatSchema` with a new `choice` type and implement `ChoiceStat.svelte` to render dropdown selections in character sheets.
+
+**Scope:**
+- `src/schemas/CharacterSheetSchema.ts` — Add `ChoiceStatSchema`
+- `src/components/svelte/characters/CharacterApp/ChoiceStat.svelte` — New component
+- `src/components/svelte/characters/CharacterApp/Stat.svelte` — Add choice branch
+- `src/schemas/CharacterSheetSchema.test.ts` — New test file
+- `e2e/character-sheets.spec.ts` — New or extend E2E tests
+
+**Do NOT touch:**
+- Existing stat type implementations
+- Admin sheet editor (PBI-063 handles data seeding)
+
+## Dependencies
+- Blocked by: None
+- Must merge before: PBI-063 (L&L data seeding uses `choice` stats)
 
 ## Context
-Currently, the engine only supports simple primitives (`number`, `text`, `boolean`). We need to extend this to support "Choice" stats, where the valid values are constrained to a specific set of options, either static or dynamic.
+Read: `plans/character-sheets/spec.md`
+- Section 3: Supported Stat Types (extend table)
+- Section 6: Known Gaps (this PBI addresses gap #1)
 
-## Acceptance Criteria
-1.  **Schema Update**: `CharacterStatSchema` supports a new type `select`.
-    -   Field `options`: Array of `{ label: string, value: string }`.
-    -   Field `ref`: Optional string (Firestore collection path) for dynamic options.
-2.  **UI Component**:
-    -   `Stat.svelte` renders a `<select>` (or `<SelectStat>`) when `type === 'select'`.
-    -   If `ref` is present, the component fetches the options from Firestore (e.g., `systems/ll/species`) on mount.
-3.  **Validation**: Validates that the selected value is one of the available options.
+Read: `docs/epics/lnl-character-creation.md`
+- Section 4.1.A: SelectStat requirements (now `choice`)
 
-## Technical Notes
--   Use `SelectStat.svelte` component to encapsulate the logic.
--   Ensure backward compatibility with existing sheets.
+## Verification
+- [ ] Schema: `ChoiceStatSchema` parses with static `options` array
+- [ ] Schema: `ChoiceStatSchema` parses with `ref` path string
+- [ ] Schema: Rejects when neither `options` nor `ref` provided
+- [ ] UI: `Stat.svelte` renders `<ChoiceStat>` for `type === 'choice'`
+- [ ] UI: Dropdown shows options from static array
+- [ ] UI: Read-only display when `canEdit === false`
+- [ ] Unit tests: All schema validation cases pass (`pnpm test`)
+- [ ] E2E: Character with choice stat displays dropdown (`pnpm exec playwright test`)
+
+## Refinement Protocol
+If implementation requires changes to `plans/character-sheets/spec.md`, update Section 3 (Supported Stat Types) in the same PR with a changelog entry.
+
