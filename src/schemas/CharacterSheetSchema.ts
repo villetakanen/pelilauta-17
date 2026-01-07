@@ -113,6 +113,39 @@ const TextStatSchema = StatBaseSchema.extend({
 });
 
 /**
+ * Schema for a choice option used in ChoiceStatSchema.
+ */
+const ChoiceOptionSchema = z.object({
+  label: z.string().min(1, 'Choice label cannot be empty'),
+  value: z.string().min(1, 'Choice value cannot be empty'),
+});
+
+export type ChoiceOption = z.infer<typeof ChoiceOptionSchema>;
+
+/**
+ * Schema for a stat that allows selection from a list of options.
+ * Either static `options` array or dynamic `ref` (Firestore path) must be provided.
+ */
+const ChoiceStatSchema = StatBaseSchema.extend({
+  type: z.literal('choice'),
+  options: z
+    .array(ChoiceOptionSchema)
+    .optional()
+    .describe('Static list of options to choose from.'),
+  ref: z
+    .string()
+    .optional()
+    .describe(
+      'Firestore collection path for dynamic options, e.g., "systems/ll/species".',
+    ),
+  value: z.string().default('').describe('The selected option value.'),
+}).refine((data) => data.options !== undefined || data.ref !== undefined, {
+  message: 'Choice stat must have either options or ref defined',
+});
+
+export type ChoiceStat = z.infer<typeof ChoiceStatSchema>;
+
+/**
  * A discriminated union of all possible stat types.
  * This allows for flexible and type-safe handling of different kinds of stats.
  */
@@ -122,6 +155,7 @@ export const CharacterStatSchema = z.discriminatedUnion('type', [
   DerivedStatSchema,
   D20AbilityScoreSchema,
   TextStatSchema,
+  ChoiceStatSchema,
 ]);
 
 /**

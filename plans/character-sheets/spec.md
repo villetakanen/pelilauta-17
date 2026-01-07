@@ -52,6 +52,30 @@ The system supports specific primitives defined in `CharacterStatSchema`.
 | `toggled` | `boolean` | `<input type="checkbox">` | Boolean switch (e.g., "Inspiration"). |
 | `d20_ability` | `number` | `<cn-d20-ability-score>` | D&D style score (10) + modifier (+0). Stored as base value. |
 | `derived` | `any` | *Read Only* | Defined with a `formula`, but currently behaves as static/placeholder in UI. |
+| `choice` | `string` | `<ChoiceStat>` | Dropdown selection from predefined options. |
+
+### 3.1 Choice Stat Architecture
+
+The `choice` stat type allows constrained selection from a list of options (e.g., Species, Class, Background).
+
+**Schema Definition:**
+```typescript
+{
+  type: 'choice',
+  key: 'species',
+  options: [
+    { label: 'Elf', value: 'elf' },
+    { label: 'Dwarf', value: 'dwarf' }
+  ],
+  ref?: string  // Optional: admin-time hint for option source
+}
+```
+
+**Key Architectural Decision:**
+- The `options` array is stored **inline in the CharacterSheet template**, not fetched at runtime
+- The `ref` field (e.g., `"systems/ll/species"`) is an **admin-time hint** — when creating/editing sheets, the admin UI can use `ref` to import options from an external collection
+- The resolved options are saved to the sheet document, ensuring `ChoiceStat.svelte` remains a **pure presentational component** with no data-fetching responsibilities
+- This separation keeps the UI layer simple and testable
 
 ## 4. Derived Stats (Current Limitation)
 While `DerivedStatSchema` exists with a `formula` field (e.g., `@strength_modifier + 2`), the **Logic Engine** to evaluate these formulas is **currently unimplemented**.
@@ -65,9 +89,13 @@ The `CharacterApp` component orchestrates the view:
 2.  Loads `CharacterSheet` doc (based on `sheetKey`).
 3.  Iterates `sheet.statGroups`.
 4.  For each group, filters `sheet.stats` belonging to it.
-5.  Renders the appropriate component (`NumberStat`, etc.) binding to `character.stats[key]`.
+5.  Renders the appropriate component (`NumberStat`, `ChoiceStat`, etc.) binding to `character.stats[key]`.
 
 ## 6. Known Gaps for Advanced Systems (e.g. L&L)
-1.  **Selection Support**: No strict "Choice" type (select from list).
+1.  ~~**Selection Support**: No strict "Choice" type (select from list).~~ ✅ Implemented (PBI-061)
 2.  **Formula Engine**: Formulas are static strings; no calculation.
 3.  **Data Linking**: No built-in way to fetch options from an external collection (e.g., picking a stored "Spell").
+
+## Changelog
+- **2026-01-07**: Added `choice` stat type (PBI-061). Options stored inline in sheet template.
+

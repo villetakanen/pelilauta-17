@@ -12,6 +12,7 @@ import { character, update } from '@stores/characters/characterStore';
 import { uid } from '@stores/session';
 import { pushSnack } from '@utils/client/snackUtils';
 import { logDebug, logError } from '@utils/logHelpers';
+import ChoiceStat from './ChoiceStat.svelte';
 import NumberStat from './NumberStat.svelte';
 import TextStat from './TextStat.svelte';
 import ToggledStat from './ToggledStat.svelte';
@@ -66,7 +67,7 @@ async function handleChange(key: string, value: string | number | boolean) {
 </script>
 
 {#if stat}
-  {#if stat.type === 'text'}
+  {#if stat.type === "text"}
     <TextStat
       label={stat.key}
       value={String(statValue)}
@@ -74,9 +75,9 @@ async function handleChange(key: string, value: string | number | boolean) {
       onchange={(newValue) => updateStat(stat.key, newValue)}
       disabled={saving}
     />
-  {:else if stat.type === 'number'}
+  {:else if stat.type === "number"}
     <NumberStat key={stat.key} />
-  {:else if stat.type === 'toggled'}
+  {:else if stat.type === "toggled"}
     <ToggledStat
       label={stat.key}
       value={Boolean(statValue)}
@@ -84,7 +85,7 @@ async function handleChange(key: string, value: string | number | boolean) {
       onchange={(newValue) => updateStat(stat.key, newValue)}
       disabled={saving}
     />
-  {:else if stat.type === 'd20_ability_score'}
+  {:else if stat.type === "d20_ability_score"}
     <cn-d20-ability-score
       label={stat.key}
       base={Number(statValue)}
@@ -93,6 +94,15 @@ async function handleChange(key: string, value: string | number | boolean) {
         handleChange(stat.key, (e.target as CnD20AbilityScore).base)}
       disabled={saving}
     ></cn-d20-ability-score>
+  {:else if stat.type === "choice"}
+    <ChoiceStat
+      label={stat.key}
+      value={String(statValue)}
+      options={stat.options ?? []}
+      interactive={canEdit}
+      onchange={(newValue) => updateStat(stat.key, newValue)}
+      disabled={saving}
+    />
   {:else}
     <div>{stat.key}</div>
   {/if}

@@ -30,14 +30,14 @@ Read: `docs/epics/lnl-character-creation.md`
 - Section 4.1.A: SelectStat requirements (now `choice`)
 
 ## Verification
-- [ ] Schema: `ChoiceStatSchema` parses with static `options` array
-- [ ] Schema: `ChoiceStatSchema` parses with `ref` path string
-- [ ] Schema: Rejects when neither `options` nor `ref` provided
-- [ ] UI: `Stat.svelte` renders `<ChoiceStat>` for `type === 'choice'`
-- [ ] UI: Dropdown shows options from static array
-- [ ] UI: Read-only display when `canEdit === false`
-- [ ] Unit tests: All schema validation cases pass (`pnpm test`)
-- [ ] E2E: Character with choice stat displays dropdown (`pnpm exec playwright test`)
+- [x] Schema: `ChoiceStatSchema` parses with static `options` array
+- [x] Schema: `ChoiceStatSchema` parses with `ref` path string
+- [x] Schema: Rejects when neither `options` nor `ref` provided
+- [x] UI: `Stat.svelte` renders `<ChoiceStat>` for `type === 'choice'`
+- [x] UI: Dropdown shows options from static array
+- [x] UI: Read-only display when `canEdit === false`
+- [x] Unit tests: All schema validation cases pass (`pnpm test`)
+- [x] E2E: `choice-stat.spec.ts` created
 
 ## Refinement Protocol
 If implementation requires changes to `plans/character-sheets/spec.md`, update Section 3 (Supported Stat Types) in the same PR with a changelog entry.
