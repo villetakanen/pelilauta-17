@@ -1,5 +1,5 @@
 import { persistentAtom } from '@nanostores/persistent';
-import { computed, onMount, onStop } from 'nanostores';
+import { computed, onMount } from 'nanostores';
 import {
   NOTIFICATION_FIRESTORE_COLLECTION,
   type Notification,
@@ -28,19 +28,27 @@ export const newCount = computed(notifications, (notifications) => {
 let unsubscribe = () => {};
 
 onMount(notifications, () => {
-  const key = uid.get();
-  // If we have no uid, we don't need to load notifications
-  if (!key) return;
+  // Subscribe to uid changes to handle login/logout automatically
+  const unsubUid = uid.subscribe((key) => {
+    if (key) {
+      logDebug('Notifications mounted', key);
+      subscribeToNotifications(key);
+    } else {
+      unsubscribe();
+    }
+  });
 
-  // Start listening for notifications
-  logDebug('Notifications mounted');
-  subscribeToNotifications(key);
+  return () => {
+    unsubUid();
+    unsubscribe();
+    logDebug('Notifications stopped');
+  };
 });
 
-onStop(notifications, () => {
-  unsubscribe();
-  logDebug('Notifications stopped');
-});
+// onStop(notifications, () => {
+//   unsubscribe();
+//   logDebug('Notifications stopped');
+// });
 
 async function subscribeToNotifications(key: string) {
   unsubscribe();
@@ -57,33 +65,43 @@ async function subscribeToNotifications(key: string) {
 
   let initial = true;
 
-  unsubscribe = onSnapshot(q, (snapshot) => {
-    // If this is the first snapshot, we need to refresh the
-    // local copy of notifications (to remove any stale data)
-    if (initial) {
-      initial = false;
-      const online = snapshot.docChanges();
-      const local: Notification[] = [];
+  unsubscribe = onSnapshot(
+    q,
+    (snapshot) => {
+      // If this is the first snapshot, we need to refresh the
+      // local copy of notifications (to remove any stale data)
+      if (initial) {
+        initial = false;
+        const online = snapshot.docChanges();
+        const local: Notification[] = [];
 
-      for (const change of online) {
-        local.push(parseNotification(change.doc.data(), change.doc.id));
+        for (const change of online) {
+          local.push(parseNotification(change.doc.data(), change.doc.id));
+        }
+
+        notifications.set(local);
+        return;
       }
 
-      notifications.set(local);
-      return;
-    }
-
-    // Otherwise, we need to update the local copy of notifications,
-    // by adding, modifying, or removing notifications as needed
-    for (const change of snapshot.docChanges()) {
-      if (change.type === 'removed') {
-        popNotification(change.doc.id);
+      // Otherwise, we need to update the local copy of notifications,
+      // by adding, modifying, or removing notifications as needed
+      for (const change of snapshot.docChanges()) {
+        if (change.type === 'removed') {
+          popNotification(change.doc.id);
+        }
+        if (change.type === 'added' || change.type === 'modified') {
+          patchNotification(change.doc.id, change.doc.data());
+        }
       }
-      if (change.type === 'added' || change.type === 'modified') {
-        patchNotification(change.doc.id, change.doc.data());
+    },
+    (error) => {
+      // Only log error if it's not a permission error caused by logout race condition
+      // (which should be handled by the uid subscription anyway, but just in case)
+      if (error.code !== 'permission-denied') {
+        // console.warn('Notification subscription error:', error);
       }
-    }
-  });
+    },
+  );
 }
 
 function popNotification(key: string) {

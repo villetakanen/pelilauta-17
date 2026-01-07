@@ -10,7 +10,7 @@ import {
   reset as unsubscribeFromAccount,
 } from './account';
 import { subscribeToProfile, unsubscribeFromProfile } from './profile';
-import { initSubscriberStore } from './subscriber';
+// export * from './subscriber';
 
 // Firebase auth user - reactive store for the current Firebase user
 export const authUser = atom<User | null>(null);
@@ -214,7 +214,7 @@ async function login(newUid: string) {
   uid.set(newUid);
 
   // subscribe to user subscriptions data
-  initSubscriberStore(newUid);
+  // initSubscriberStore(newUid);
 }
 
 async function clear() {
@@ -222,6 +222,7 @@ async function clear() {
   uid.set('');
   unsubscribeFromAccount();
   unsubscribeFromProfile();
+  // resetSubscriberStore();
 }
 
 export async function logout() {
@@ -261,6 +262,6 @@ export async function logout() {
 }
 
 export * from './account';
-export * from './subscriber';
+// export * from './subscriber';
 // NOTE: Do NOT export from './computed' here to avoid circular dependency
 // Import computed helpers directly: import { isActive, isRehydrating, isAnonymous } from 'src/stores/session/computed';

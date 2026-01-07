@@ -14,7 +14,7 @@ The session store is composed of several specialized stores:
 -   **Core Session Store** (`src/stores/session/index.ts`): Manages the high-level session state (`initial`, `loading`, `active`, `error`) and the `uid`.
 -   **Account Store** (`src/stores/session/account.ts`): Manages private user data (settings, last login).
 -   **Profile Store** (`src/stores/session/profile.ts`): Manages public user data (nick, avatar).
--   **Subscriber Store** (`src/stores/session/subscriber.ts`): Manages content consumption state (read receipts).
+-   **Profile Store** (`src/stores/session/profile.ts`): Manages public user data (nick, avatar).
 
 ### Key Dependencies
 -   `nanostores`: Atomic state management.
@@ -47,7 +47,7 @@ Critical session data is persisted to `localStorage` to provide a seamless exper
 -   `session-uid` -> `uid`
 -   `session-account` -> `account`
 -   `session-profile` -> `profile`
--   `subscriberStore` -> `subscriber`
+-   `session-profile` -> `profile`
 
 ## Authentication Flows
 
@@ -97,13 +97,7 @@ The `logout()` function performs a complete cleanup:
     -   **Migration**: Attempt to autos-migrate legacy profile structures if parsing fails.
     -   Tracks `profileMissing` state if no profile document exists.
 
-### Subscriber Store
--   **Source**: `SUBSCRIPTIONS_FIRESTORE_PATH` (Firestore).
--   **Logic**:
-    -   Tracks `seenEntities` map (entity ID -> timestamp).
-    -   Provides `hasSeenEntry(key, timestamp)` check.
-    -   Updates Firestore explicitly on read (via `markEntrySeen`).
-    -   Auto-creates empty subscription doc if missing.
+
 
 ## Server-Side Integration
 The client-side store syncs with Astro's server-side session via API routes:

@@ -48,9 +48,13 @@ flowchart TB
 
 #### Store Behavior
 
+- **Reactivity:** The store listens to `$uid` changes (from session) to automatically finding proper user context.
+    - `onMount`: Subscribes to `$uid`. If `uid` exists, calls `subscribeToNotifications(uid)`.
+    - `uid` change: If `uid` clears (logout), calls `unsubscribe()`.
 - **Query:** `where('to', '==', uid)`, `orderBy('createdAt', 'desc')`, `limit(10)`
 - **Persistence:** Uses `@nanostores/persistent` for offline cache
 - **Computed:** `newCount` = count of notifications where `read === false`
+- **Error Handling:** Explicitly suppresses `permission-denied` errors during `onSnapshot` to handle race conditions during logout (where the listener might try to fire one last time before the `unsubscribe` completes).
 
 ### Current UX
 

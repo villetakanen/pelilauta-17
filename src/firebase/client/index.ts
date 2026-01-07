@@ -25,10 +25,25 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
+
+// Debug: Trace sign outs
+const originalSignOut = auth.signOut.bind(auth);
+auth.signOut = async () => {
+  console.log('🐞 auth.signOut called!');
+  console.trace('SignOut Trace');
+  return originalSignOut();
+};
 // export const storage = getStorage(app);
 
 // Force localStorage persistence for E2E tests (Playwright cannot capture IndexedDB easily)
-if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+// Only enable this when automation is detected (navigator.webdriver) to avoid race conditions
+// during normal development (which caused the "logout" issues).
+if (
+  typeof window !== 'undefined' &&
+  window.location.hostname === 'localhost' &&
+  navigator.webdriver
+) {
+  console.log('🤖 Automation detected: forcing localStorage persistence');
   setPersistence(auth, browserLocalPersistence).catch((error) => {
     console.warn('Failed to set auth persistence:', error);
   });

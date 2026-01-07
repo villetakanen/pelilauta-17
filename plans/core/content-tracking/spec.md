@@ -19,7 +19,7 @@ The feature relies on comparing the `flowTime` (last updated timestamp) of an en
         - `allSeenAt`: A global timestamp for "Mark All Read".
 
 - **Client Store:**
-    - `src/stores/session/subscriber.ts`: Manages the `$subscriber` store.
+    - `src/stores/subscription/index.ts`: Manages the `$subscription` store (decoupled from session).
         - `hasSeen(entityKey, flowTime)`: Computed function returning `true` if the user has seen the content.
 
 - **UI Components:**

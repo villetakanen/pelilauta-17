@@ -33,14 +33,14 @@ async function handleCreateCharacterSheet() {
 </script>
 
 <div class="fab-tray">
-  <button 
-    class="fab" 
-    onclick={handleCreateCharacterSheet} 
+  <button
+    class="fab extended"
+    onclick={handleCreateCharacterSheet}
     disabled={creating}
-    aria-label="Create new sheet" 
+    aria-label="Create new sheet"
     data-tooltip="Create new sheet"
   >
     <cn-icon noun="add"></cn-icon>
-    <span class="sr-only">Create new sheet</span>
+    <span class="label">Create new sheet</span>
   </button>
 </div>
