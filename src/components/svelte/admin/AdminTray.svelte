@@ -1,12 +1,13 @@
 <script lang="ts">
 import { authedPost } from 'src/firebase/client/apiClient';
 import { appMeta } from 'src/stores/metaStore/metaStore';
+import { isActive, isRehydrating } from 'src/stores/session/computed';
 import { logDebug } from 'src/utils/logHelpers';
 import { uid } from '../../../stores/session';
 import WithAuth from '../app/WithAuth.svelte';
 import SentryTestButton from './SentryTestButton.svelte';
 
-const visible = $derived.by(() => $appMeta.admins.includes($uid));
+const visible = $derived.by(() => $isActive && $appMeta.admins.includes($uid));
 
 async function testSSRAuth() {
   const response = await authedPost('/api/bsky/skeet', {
@@ -36,10 +37,11 @@ async function testSSRNoAuth() {
 }
 </script>
 
-<WithAuth allow={visible}>
+<WithAuth allow={visible} suspend={$isRehydrating}>
   <h3>Admin Tools</h3>
   <p class="text-caption pb-1 pt-1">
-    Administrative tools for managing forum channels, content, and system settings.
+    Administrative tools for managing forum channels, content, and system
+    settings.
   </p>
   <ul>
     <li>
@@ -87,4 +89,3 @@ async function testSSRNoAuth() {
     </li>
   </ul>
 </WithAuth>
-

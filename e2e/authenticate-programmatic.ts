@@ -76,7 +76,7 @@ export async function authenticateProgrammatic(
 
   // Step 2: Construct Firebase localStorage structure
   const localStorageKey = `firebase:authUser:${apiKey}:[DEFAULT]`;
-  const expirationTime = Date.now() + parseInt(authData.expiresIn) * 1000;
+  const expirationTime = Date.now() + parseInt(authData.expiresIn, 10) * 1000;
 
   const authUser = {
     uid: authData.localId,

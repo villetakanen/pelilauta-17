@@ -65,7 +65,7 @@ async function handleSubmit(event: Event) {
     avatarFile = null;
   }
 
-  const updates: Record<string, any> = {};
+  const updates: Record<string, string | ProfileLink[] | undefined> = {};
   if (bio !== $profile?.bio) updates.bio = bio;
   if (JSON.stringify(links) !== JSON.stringify($profile?.links || []))
     updates.links = links;

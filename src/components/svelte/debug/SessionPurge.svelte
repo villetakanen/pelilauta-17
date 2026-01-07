@@ -39,6 +39,7 @@ async function purgeSession() {
         addLog('Error using Cookie Store API, falling back to legacy method');
         // Fallback to legacy method
         document.cookie.split(';').forEach((c) => {
+          // biome-ignore lint/suspicious/noDocumentCookie: Legacy fallback required for browsers without Cookie Store API
           document.cookie = c
             .replace(/^ +/, '')
             .replace(/=.*/, `=;expires=${new Date().toUTCString()};path=/`);
@@ -47,6 +48,7 @@ async function purgeSession() {
     } else {
       // Fallback for browsers without Cookie Store API
       document.cookie.split(';').forEach((c) => {
+        // biome-ignore lint/suspicious/noDocumentCookie: Legacy fallback required for browsers without Cookie Store API
         document.cookie = c
           .replace(/^ +/, '')
           .replace(/=.*/, `=;expires=${new Date().toUTCString()};path=/`);

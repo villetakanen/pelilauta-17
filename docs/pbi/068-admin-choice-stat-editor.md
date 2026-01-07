@@ -26,9 +26,9 @@ Read: `plans/character-sheets/spec.md`
 - Section 3.1: Choice Stat Architecture (options stored inline)
 
 ## Verification
-- [ ] Type dropdown includes "Choice" option
-- [ ] Selecting "Choice" initializes stat with `{ type: 'choice', options: [], value: '' }`
-- [ ] Options editor allows adding/removing `{ label, value }` pairs
+- [x] Type dropdown includes "Choice" option
+- [x] Selecting "Choice" initializes stat with `{ type: 'choice', options: [], value: '' }`
+- [x] Options editor allows adding/removing `{ label, value }` pairs
 - [ ] Saving sheet persists choice stat with options to Firestore
 - [ ] Manual test: Create sheet with choice stat via admin UI
 
