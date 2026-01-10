@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "asdlc": {
+      "command": "npx",
+      "args": ["-y", "mcp-proxy", "https://asdlc.io/mcp"]
+    }
+  }
+}

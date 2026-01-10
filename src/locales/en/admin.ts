@@ -134,4 +134,7 @@ export const admin: Locale = {
       alreadyExists: 'Label "{label}" already exists',
     },
   },
+  sheetEditor: {
+    statGroups: 'Stat Groups',
+  },
 };

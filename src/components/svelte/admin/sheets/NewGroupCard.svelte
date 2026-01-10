@@ -1,25 +1,14 @@
 <script lang="ts">
-import { CharacterSheetSchema } from '@schemas/CharacterSheetSchema';
-import { characterSheet as sheet } from 'src/stores/characters/characterSheetStore';
+import { addGroup } from 'src/stores/admin/sheetEditorStore';
 
 // runes reactive local state
 let groupName = $state('');
 
-function addGroup() {
+function handleAddGroup() {
   const name = String(groupName).trim();
   if (!name) return;
 
-  const updated = { ...$sheet };
-  if (!updated) return;
-  if (!updated.statGroups) updated.statGroups = [];
-
-  if (updated.statGroups.some((g) => g.key === name)) return;
-
-  updated.statGroups = [
-    ...updated.statGroups,
-    { key: name, layout: 'rows' as const },
-  ];
-  sheet.set(CharacterSheetSchema.parse(updated));
+  addGroup(name, 'rows');
   groupName = '';
 }
 </script>
@@ -33,7 +22,12 @@ function addGroup() {
     <input type="text" bind:value={groupName} placeholder="e.g., Attributes" />
   </label>
   <div slot="actions" class="toolbar items-center">
-  <button type="button" class="text" onclick={() => addGroup()} disabled={!groupName.trim()}>
+    <button
+      type="button"
+      class="text"
+      onclick={() => handleAddGroup()}
+      disabled={!groupName.trim()}
+    >
       <cn-icon noun="add"></cn-icon>
       <span>New Group</span>
     </button>

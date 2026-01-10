@@ -8,33 +8,46 @@ The **Admin Character Sheet Editor** provides a web interface for administrators
 
 ## 2. Architecture
 
-### 2.1 Components
+### 2.1 Store Layer
+
+The editor uses a dedicated nanostore (`sheetEditorStore.ts`) that centralizes all state and transformations:
+
+```
+sheetEditorStore.ts
+├── Atoms: sheet, dirty, saving
+├── Derived: groupedStats, availableGroups  
+├── Actions: addStat, removeStat, updateStat, changeStatType
+├── Actions: addGroup, removeGroup, updateGroupLayout
+└── Persistence: loadSheet(), saveSheet()
+```
+
+### 2.2 Components
 
 | Component | Purpose |
 |-----------|---------|
 | `CharacterSheetList.svelte` | Lists all available sheets for selection |
-| `SheetEditor.svelte` | Main editor container |
+| `SheetEditor.svelte` | Main editor container, triggers `loadSheet()` |
 | `SheetInfoForm.svelte` | Edits sheet metadata (name, system, key) |
 | `SheetStatGroups.svelte` | Manages stat group definitions and layouts |
 | `SheetStats.svelte` | Manages individual stat definitions |
 | `StatsSection.svelte` | Renders a collapsible section of stats |
+| `NewGroupCard.svelte` | UI for adding new stat groups |
 
-### 2.2 Data Flow
+### 2.3 Data Flow
 
 ```
-SheetEditor
-  ├── SheetInfoForm → updates { name, system, key }
-  ├── SheetStatGroups → updates { statGroups[] }
-  └── SheetStats → updates { stats[] }
-                 ↓
-         characterSheetStore
-                 ↓
-         updateCharacterSheet() → Firestore
+Components (presentation only)
+       ↓ call actions
+sheetEditorStore
+       ↓ save()
+updateCharacterSheet() → Firestore
 ```
+
+Components subscribe to store atoms for reactive updates but delegate all mutations to store actions.
 
 ## 3. Stat Type Editor Support
 
-When a new stat type is added to `CharacterStatSchema`, the admin editor must be updated to allow creating/editing that type.
+When a new stat type is added to `CharacterStatSchema`, update `changeStatType()` in the store.
 
 ### 3.1 Current Support
 
@@ -44,50 +57,40 @@ When a new stat type is added to `CharacterStatSchema`, the admin editor must be
 | `toggled` | ✅ | – |
 | `derived` | ✅ | `formula` (text input) |
 | `d20_ability_score` | ✅ | `hasProficiency` (toggle) |
-| `choice` | ❌ **Gap** | `options[]` (label/value pairs) |
+| `choice` | ✅ | `options[]` (label/value pairs) |
 | `text` | ❌ **Gap** | – (simple, but not in dropdown) |
 
 ### 3.2 Adding New Stat Types
 
-To support a new stat type in the editor:
+To support a new stat type:
 
-1. **Update `handleTypeChange()`** in `SheetStats.svelte`:
+1. **Update `changeStatType()` in `sheetEditorStore.ts`**:
    ```typescript
-   } else if (type === 'choice') {
-     updateStat(statIndex, { type, options: [], value: '' });
-   }
+   case 'newtype':
+     updateStat(index, { type, /* type-specific defaults */ });
+     break;
    ```
 
-2. **Add to type dropdown** (lines ~197-201):
+2. **Add to type dropdown in `SheetStats.svelte`**:
    ```svelte
-   <option value="choice">Choice</option>
+   <option value="newtype">New Type</option>
    ```
 
-3. **Add conditional fields** for type-specific configuration:
-   ```svelte
-   {#if stat.type === 'choice'}
-     <!-- Options editor UI -->
-   {/if}
-   ```
+3. **Add conditional fields** for type-specific configuration in the template.
 
-## 4. Known Gaps
+## 4. State Management
 
-### 4.1 PBI-061: Choice Stat UI
-The `choice` stat type was added to the schema (PBI-061) but the admin editor does not yet support:
-- Selecting `choice` from the type dropdown
-- Editing the `options` array (label/value pairs)
-- Using `ref` to import options from Firestore
+- **Centralized store:** All sheet state lives in `sheetEditorStore.ts`
+- **Dirty detection:** Automatic via nanostores effect on sheet changes
+- **Derived state:** `groupedStats` and `availableGroups` computed from sheet
+- **Persistence:** `loadSheet(key)` and `saveSheet()` handle Firestore I/O
+- **UI-only state:** Collapse/expand state stays in components (not persisted)
 
-**Recommended PBI:** Create a dedicated PBI for "Admin UI for Choice Stats"
+## 5. Known Gaps
 
-### 4.2 Text Stat
+### 5.1 Text Stat
 The `text` stat type exists in the schema but is not in the type dropdown.
 
-## 5. State Management
-
-- **Local draft state:** Edits are held in component-local `$state()` until saved
-- **Dirty detection:** Compares local state to store state via `JSON.stringify()`
-- **Save action:** Calls `updateCharacterSheet()` which writes to Firestore
-
 ## Changelog
+- **2026-01-09**: Refactored to store-based architecture, choice stat now supported
 - **2026-01-07**: Initial spec created documenting current state and gaps

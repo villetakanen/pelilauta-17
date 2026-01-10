@@ -3,19 +3,31 @@ import { z } from 'zod';
 export const CHARACTER_SHEETS_COLLECTION_NAME = 'charsheets';
 
 /**
- * Schema for a stat group that defines how stats are visually organized.
- * Each group has a key (name) and a layout type for the cn-stat-block component.
+ * Schema for a stat block within a group.
+ * Each block is a visual card/section that contains stats.
  */
-const StatGroupSchema = z.object({
-  key: z.string().min(1, 'StatGroup key cannot be empty'),
-  layout: z.enum(['rows', 'grid-2', 'grid-3']).default('rows'),
+const StatBlockSchema = z.object({
+  key: z.string().min(1, 'StatBlock key cannot be empty'),
+  label: z.string().optional(),
 });
 
-export type StatGroup = z.infer<typeof StatGroupSchema>;
+export type StatBlock = z.infer<typeof StatBlockSchema>;
+
+/**
+ * Schema for a stat block group that defines the grid layout for blocks.
+ * Each group contains one or more blocks arranged in columns.
+ */
+const StatBlockGroupSchema = z.object({
+  key: z.string().min(1, 'StatBlockGroup key cannot be empty'),
+  layout: z.enum(['cols-1', 'cols-2', 'cols-3']).default('cols-1'),
+  blocks: z.array(StatBlockSchema).default([]),
+});
+
+export type StatBlockGroup = z.infer<typeof StatBlockGroupSchema>;
 
 /**
  * The base schema for any type of character stat.
- * It includes common properties like key, description, and group.
+ * It includes common properties like key, description, and block.
  */
 const StatBaseSchema = z.object({
   key: z
@@ -30,11 +42,11 @@ const StatBaseSchema = z.object({
     .describe(
       'Optional description for the stat, e.g., "Measures physical power".',
     ),
-  group: z
+  block: z
     .string()
     .optional()
     .describe(
-      'Optional group name for organizing stats in the UI, e.g., "Attributes".',
+      'Optional block key for organizing stats in the UI, e.g., "abilities".',
     ),
   value: z.any().optional().describe('The value of the stat.'),
 });
@@ -186,7 +198,7 @@ export const CharacterSheetSchema = z
       .describe(
         'The roleplaying game system this sheet is for, e.g., "dnd5e".',
       ),
-    statGroups: z.array(StatGroupSchema).default([]),
+    statBlockGroups: z.array(StatBlockGroupSchema).default([]),
     stats: z
       .array(CharacterStatSchema)
       .default([])
@@ -197,8 +209,8 @@ export const CharacterSheetSchema = z
 export type CharacterSheet = z.infer<typeof CharacterSheetSchema>;
 
 /**
- * Migration function to convert existing character sheets with string-based stat groups
- * to the new StatGroup object format with layout properties.
+ * Migration function to convert existing character sheets with old formats
+ * to the new StatBlockGroup structure.
  */
 export function migrateCharacterSheet(sheet: unknown): CharacterSheet {
   // Ensure sheet is an object
@@ -208,17 +220,62 @@ export function migrateCharacterSheet(sheet: unknown): CharacterSheet {
 
   const sheetData = sheet as Record<string, unknown>;
 
-  // Handle the migration of statGroups from string[] to StatGroup[]
-  if (Array.isArray(sheetData.statGroups) && sheetData.statGroups.length > 0) {
-    // Check if first element is string (old format)
-    if (typeof sheetData.statGroups[0] === 'string') {
-      sheetData.statGroups = (sheetData.statGroups as string[]).map(
-        (groupName: string) => ({
-          key: groupName,
-          layout: 'rows' as const,
-        }),
-      );
+  // Migration: Convert old statGroups to new statBlockGroups
+  if ('statGroups' in sheetData && Array.isArray(sheetData.statGroups)) {
+    const oldGroups = sheetData.statGroups;
+
+    // Check if it's the old format (string[] or {key, layout}[])
+    if (oldGroups.length > 0) {
+      const firstItem = oldGroups[0];
+
+      // Old format: string[]
+      if (typeof firstItem === 'string') {
+        sheetData.statBlockGroups = (oldGroups as string[]).map(
+          (groupName: string) => ({
+            key: groupName,
+            layout: 'cols-1' as const,
+            blocks: [{ key: groupName }],
+          }),
+        );
+      }
+      // Old format: {key, layout}[] (StatGroup format)
+      else if (
+        typeof firstItem === 'object' &&
+        firstItem !== null &&
+        'key' in firstItem
+      ) {
+        sheetData.statBlockGroups = (
+          oldGroups as Array<{ key: string; layout?: string }>
+        ).map((group) => {
+          // Map old layout to new layout
+          let layout: 'cols-1' | 'cols-2' | 'cols-3' = 'cols-1';
+          if (group.layout === 'grid-2') layout = 'cols-2';
+          if (group.layout === 'grid-3') layout = 'cols-3';
+
+          return {
+            key: group.key,
+            layout,
+            blocks: [{ key: group.key }],
+          };
+        });
+      }
     }
+
+    // Remove old statGroups field
+    delete sheetData.statGroups;
+  }
+
+  // Migration: Convert stats.group to stats.block
+  if (Array.isArray(sheetData.stats)) {
+    sheetData.stats = (sheetData.stats as Array<Record<string, unknown>>).map(
+      (stat) => {
+        if ('group' in stat && !('block' in stat)) {
+          const { group, ...rest } = stat;
+          return { ...rest, block: group };
+        }
+        return stat;
+      },
+    );
   }
 
   return CharacterSheetSchema.parse(sheetData);

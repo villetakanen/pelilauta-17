@@ -133,4 +133,7 @@ export const admin: Locale = {
       alreadyExists: 'Tunniste "{label}" on jo olemassa',
     },
   },
+  sheetEditor: {
+    statGroups: 'Stat-ryhmät',
+  },
 };

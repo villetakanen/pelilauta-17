@@ -1,106 +1,30 @@
 <script lang="ts">
 import type { CnToggleButton } from '@11thdeg/cyan-lit';
-import { updateCharacterSheet } from 'src/firebase/client/characterSheets/updateCharacterSheet';
+import type { CharacterStat } from 'src/schemas/CharacterSheetSchema';
 import {
-  type CharacterStat,
-  CharacterStatSchema,
-} from 'src/schemas/CharacterSheetSchema';
-import { characterSheet as sheet } from 'src/stores/characters/characterSheetStore';
+  addStat,
+  availableGroups as availableGroupsStore,
+  changeStatType,
+  dirty as dirtyStore,
+  groupedStats as groupedStatsStore,
+  removeStat,
+  saveSheet,
+  saving,
+  sheet,
+  updateStat,
+} from 'src/stores/admin/sheetEditorStore';
 import { logDebug, logError } from 'src/utils/logHelpers';
 
-let stats = $state<CharacterStat[]>([]);
+// UI-only state (not persisted)
 let expandedGroups = $state<Set<string>>(new Set());
 
-const dirty = $derived.by(() => {
-  return $sheet && JSON.stringify($sheet.stats) !== JSON.stringify(stats);
-});
-
-const availableGroups = $derived.by(() => {
-  return $sheet?.statGroups || [];
-});
-
-const groupedStats = $derived.by(() => {
-  const grouped: Record<string, CharacterStat[]> = {};
-  const unlisted: CharacterStat[] = [];
-
-  // Initialize groups
-  for (const group of availableGroups) {
-    grouped[group] = [];
-  }
-
-  // Sort stats into groups
-  for (const stat of stats) {
-    if (stat.group && availableGroups.includes(stat.group)) {
-      grouped[stat.group].push(stat);
-    } else {
-      unlisted.push(stat);
-    }
-  }
-
-  return { grouped, unlisted };
-});
-
-$effect(() => {
-  // On update of the sheet, override the local state
-  if ($sheet) {
-    stats = $sheet.stats || [];
-  }
-});
-
-async function saveSheet(e: Event) {
-  e.preventDefault();
-  try {
-    const key = $sheet?.key;
-    if (!key) throw new Error('Sheet key is required for update');
-
-    await updateCharacterSheet({ key, stats });
-    logDebug('StatsForm', 'Sheet saved successfully');
-  } catch (error) {
-    logError('StatsForm', 'Error saving sheet:', error);
-  }
-}
-
-function addStat(groupName: string) {
-  const newStat: CharacterStat = {
-    type: 'number',
-    key: '',
-    value: 0,
-    group: groupName,
-  };
-  stats = [...stats, newStat];
-
-  // Expand the group so the user can see the newly added stat
-  if (!expandedGroups.has(groupName)) {
-    expandedGroups.add(groupName);
-    expandedGroups = new Set(expandedGroups);
-  }
-}
-
-function updateStat(index: number, updates: Partial<CharacterStat>) {
-  const updatedStats = [...stats];
-  const stat = updatedStats[index];
-
-  const updated = CharacterStatSchema.parse({
-    ...stat,
-    ...updates,
-  });
-
-  updatedStats[index] = updated;
-  stats = updatedStats;
-}
-
-function removeStat(index: number) {
-  const updatedStats = [...stats];
-  updatedStats.splice(index, 1);
-  stats = updatedStats;
-}
-
-function moveStatToGroup(statIndex: number, newGroup: string) {
-  updateStat(statIndex, { group: newGroup });
-}
+// Derive from store
+const dirty = $derived($dirtyStore);
+const availableGroups = $derived($availableGroupsStore);
+const groupedStats = $derived($groupedStatsStore);
 
 function getStatIndex(stat: CharacterStat): number {
-  return stats.indexOf(stat);
+  return $sheet?.stats?.indexOf(stat) ?? -1;
 }
 
 function handleTypeChange(e: Event, statIndex: number) {
@@ -110,27 +34,7 @@ function handleTypeChange(e: Event, statIndex: number) {
     | 'derived'
     | 'd20_ability_score'
     | 'choice';
-
-  if (type === 'number') {
-    updateStat(statIndex, { type, value: 0 });
-  } else if (type === 'toggled') {
-    updateStat(statIndex, { type, value: false });
-  } else if (type === 'derived') {
-    updateStat(statIndex, { type, formula: '' });
-  } else if (type === 'd20_ability_score') {
-    updateStat(statIndex, {
-      type,
-      baseValue: 10,
-      value: 0,
-      hasProficiency: false,
-    });
-  } else if (type === 'choice') {
-    updateStat(statIndex, {
-      type,
-      options: [],
-      value: '',
-    });
-  }
+  changeStatType(statIndex, type);
 }
 
 function toggleGroup(groupName: string) {
@@ -145,9 +49,28 @@ function toggleGroup(groupName: string) {
 function isGroupExpanded(groupName: string): boolean {
   return expandedGroups.has(groupName);
 }
+
+function handleAddStat(groupName: string) {
+  addStat(groupName);
+  // Expand the group so the user can see the newly added stat
+  if (!expandedGroups.has(groupName)) {
+    expandedGroups.add(groupName);
+    expandedGroups = new Set(expandedGroups);
+  }
+}
+
+async function handleSave(e: Event) {
+  e.preventDefault();
+  try {
+    await saveSheet();
+    logDebug('SheetStats', 'Sheet saved successfully');
+  } catch (error) {
+    logError('SheetStats', 'Error saving sheet:', error);
+  }
+}
 </script>
 
-<form onsubmit={saveSheet} class="column-l">
+<form onsubmit={handleSave} class="column-l">
   <fieldset class="border-radius px-2 mt-2" class:elevation-1={dirty}>
     <legend>Stats</legend>
     <p class="text-low downscaled mb-2">
@@ -183,7 +106,7 @@ function isGroupExpanded(groupName: string): boolean {
             <button
               type="button"
               class="text"
-              onclick={() => addStat(groupName)}
+              onclick={() => handleAddStat(groupName)}
             >
               <cn-icon noun="add"></cn-icon>
               <span>Add</span>
@@ -353,10 +276,9 @@ function isGroupExpanded(groupName: string): boolean {
                   <select
                     value=""
                     onchange={(e) =>
-                      moveStatToGroup(
-                        statIndex,
-                        (e.target as HTMLSelectElement).value,
-                      )}
+                      updateStat(statIndex, {
+                        group: (e.target as HTMLSelectElement).value,
+                      })}
                     aria-label="Move to group"
                   >
                     <option value="" disabled>Move to group...</option>
@@ -373,9 +295,9 @@ function isGroupExpanded(groupName: string): boolean {
     {/if}
 
     <div class="toolbar justify-end mb-2">
-      <button type="submit" class="button primary" disabled={!dirty}>
+      <button type="submit" class="button primary" disabled={!dirty || $saving}>
         <cn-icon noun="save"></cn-icon>
-        <span> save </span>
+        <span>{$saving ? "Saving..." : "Save"}</span>
       </button>
     </div>
   </fieldset>

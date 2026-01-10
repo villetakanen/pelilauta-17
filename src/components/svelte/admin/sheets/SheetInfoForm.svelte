@@ -1,9 +1,5 @@
 <script lang="ts">
-import {
-  dirty,
-  save,
-  characterSheet as sheet,
-} from 'src/stores/characters/characterSheetStore';
+import { dirty, saveSheet, sheet } from 'src/stores/admin/sheetEditorStore';
 import { pushSnack } from 'src/utils/client/snackUtils';
 import { t } from 'src/utils/i18n';
 import SystemSelect from '../../sites/SystemSelect.svelte';
@@ -21,12 +17,26 @@ $effect(() => {
 
 async function onsubmit(e: Event) {
   e.preventDefault();
-  await save().catch((error) => {
+  await saveSheet().catch((error) => {
     pushSnack({
       message: `Failed to save sheet: ${error instanceof Error ? error.message : 'Unknown error'}`,
     });
   });
   pushSnack({ message: 'Sheet saved' });
+}
+
+function updateName(e: Event) {
+  name = (e.target as HTMLInputElement).value;
+  if ($sheet) {
+    sheet.set({ ...$sheet, name });
+  }
+}
+
+function updateSystem(newSystem: string) {
+  system = newSystem;
+  if ($sheet) {
+    sheet.set({ ...$sheet, system });
+  }
 }
 </script>
 
@@ -38,11 +48,7 @@ async function onsubmit(e: Event) {
         <input
           type="text"
           value={name}
-          oninput={(e) => {
-            name = (e.target as HTMLInputElement).value;
-            const updated = { ...$sheet, name };
-            sheet.set(updated);
-          }}
+          oninput={updateName}
           placeholder={t("characters:sheets.placeholders.name")}
           required
         />
@@ -55,14 +61,7 @@ async function onsubmit(e: Event) {
     </div>
 
     <div class="toolbar p-0">
-      <SystemSelect
-        {system}
-        setSystem={(newSystem) => {
-          system = newSystem;
-          const updated = { ...$sheet, system };
-          sheet.set(updated);
-        }}
-      />
+      <SystemSelect {system} setSystem={updateSystem} />
     </div>
   </form>
 {/if}
