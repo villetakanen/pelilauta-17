@@ -71,7 +71,14 @@ export const groupedStats = computed(_sheet, ($sheet) => {
   const grouped: Record<string, CharacterStat[]> = {};
   const unlisted: CharacterStat[] = [];
   const stats = $sheet?.stats ?? [];
-  const blocks = availableBlocks.get();
+
+  // Compute block keys inline for proper reactivity
+  const blocks: string[] = [];
+  for (const group of $sheet?.statBlockGroups ?? []) {
+    for (const block of group.blocks) {
+      blocks.push(block.key);
+    }
+  }
 
   // Initialize empty arrays for each block
   for (const blockKey of blocks) {
@@ -182,9 +189,17 @@ export function addStat(blockKey: string): void {
   const current = _sheet.get();
   if (!current) return;
 
+  // Generate a unique placeholder key
+  const existingKeys = new Set(current.stats?.map((s) => s.key) ?? []);
+  let placeholderKey = 'new_stat';
+  let counter = 1;
+  while (existingKeys.has(placeholderKey)) {
+    placeholderKey = `new_stat_${counter++}`;
+  }
+
   const newStat: CharacterStat = {
     type: 'number',
-    key: '',
+    key: placeholderKey,
     value: 0,
     block: blockKey,
   };
