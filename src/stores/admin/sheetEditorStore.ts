@@ -4,6 +4,9 @@
  * Centralized state management for the admin character sheet editor.
  * All sheet mutations go through this store's action functions.
  *
+ * The sheet is exposed as a read-only computed to ensure all mutations
+ * go through the store's actions, which properly handle the dirty flag.
+ *
  * @see plans/admin/sheet-editor/spec.md
  */
 import { toFirestoreEntry } from '@utils/client/toFirestoreEntry';
@@ -20,13 +23,23 @@ import {
 import { logDebug, logError } from 'src/utils/logHelpers';
 
 // ---------------------------------------------------------------------------
-// Atoms
+// Internal State (private)
 // ---------------------------------------------------------------------------
 
 /**
- * The current sheet being edited. Null when no sheet is loaded.
+ * Internal writable atom for the sheet. Not exported to prevent direct mutations.
  */
-export const sheet: WritableAtom<CharacterSheet | null> = atom(null);
+const _sheet: WritableAtom<CharacterSheet | null> = atom(null);
+
+// ---------------------------------------------------------------------------
+// Public Atoms & Derived State
+// ---------------------------------------------------------------------------
+
+/**
+ * The current sheet being edited (read-only).
+ * Use store actions to modify the sheet.
+ */
+export const sheet = computed(_sheet, ($s) => $s);
 
 /**
  * True when there are unsaved changes.
@@ -38,14 +51,10 @@ export const dirty: WritableAtom<boolean> = atom(false);
  */
 export const saving: WritableAtom<boolean> = atom(false);
 
-// ---------------------------------------------------------------------------
-// Derived State
-// ---------------------------------------------------------------------------
-
 /**
  * List of all block keys from the current sheet.
  */
-export const availableBlocks = computed(sheet, ($sheet) => {
+export const availableBlocks = computed(_sheet, ($sheet) => {
   const blocks: string[] = [];
   for (const group of $sheet?.statBlockGroups ?? []) {
     for (const block of group.blocks) {
@@ -58,7 +67,7 @@ export const availableBlocks = computed(sheet, ($sheet) => {
 /**
  * Stats organized by block, plus any unlisted stats.
  */
-export const groupedStats = computed(sheet, ($sheet) => {
+export const groupedStats = computed(_sheet, ($sheet) => {
   const grouped: Record<string, CharacterStat[]> = {};
   const unlisted: CharacterStat[] = [];
   const stats = $sheet?.stats ?? [];
@@ -82,6 +91,22 @@ export const groupedStats = computed(sheet, ($sheet) => {
 });
 
 // ---------------------------------------------------------------------------
+// Internal Helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Update the sheet with partial updates. Sets dirty flag.
+ */
+function updateSheet(updates: Partial<CharacterSheet>): void {
+  const current = _sheet.get();
+  if (!current) return;
+
+  const updated = CharacterSheetSchema.parse({ ...current, ...updates });
+  _sheet.set(updated);
+  dirty.set(true);
+}
+
+// ---------------------------------------------------------------------------
 // Persistence
 // ---------------------------------------------------------------------------
 
@@ -98,7 +123,7 @@ export async function loadSheet(key: string): Promise<void> {
   if (snapshot.exists()) {
     const data = snapshot.data();
     const loadedSheet = migrateCharacterSheet({ ...data, key });
-    sheet.set(loadedSheet);
+    _sheet.set(loadedSheet);
     dirty.set(false);
     logDebug('sheetEditorStore', 'Loaded sheet:', key);
   } else {
@@ -110,7 +135,7 @@ export async function loadSheet(key: string): Promise<void> {
  * Save the current sheet to Firestore.
  */
 export async function saveSheet(): Promise<void> {
-  const currentSheet = sheet.get();
+  const currentSheet = _sheet.get();
   if (!currentSheet?.key) {
     throw new Error('No sheet to save or sheet missing key');
   }
@@ -134,16 +159,16 @@ export async function saveSheet(): Promise<void> {
 }
 
 // ---------------------------------------------------------------------------
-// Internal Helpers
+// Sheet Info Actions
 // ---------------------------------------------------------------------------
 
-function updateSheet(updates: Partial<CharacterSheet>): void {
-  const current = sheet.get();
-  if (!current) return;
-
-  const updated = CharacterSheetSchema.parse({ ...current, ...updates });
-  sheet.set(updated);
-  dirty.set(true);
+/**
+ * Update sheet info (name, system).
+ */
+export function updateSheetInfo(
+  updates: Partial<Pick<CharacterSheet, 'name' | 'system'>>,
+): void {
+  updateSheet(updates);
 }
 
 // ---------------------------------------------------------------------------
@@ -154,7 +179,7 @@ function updateSheet(updates: Partial<CharacterSheet>): void {
  * Add a new stat to a block with default values.
  */
 export function addStat(blockKey: string): void {
-  const current = sheet.get();
+  const current = _sheet.get();
   if (!current) return;
 
   const newStat: CharacterStat = {
@@ -174,7 +199,7 @@ export function updateStat(
   index: number,
   updates: Partial<CharacterStat>,
 ): void {
-  const current = sheet.get();
+  const current = _sheet.get();
   if (!current?.stats) return;
 
   const stats = [...current.stats];
@@ -189,7 +214,7 @@ export function updateStat(
  * Remove a stat at the given index.
  */
 export function removeStat(index: number): void {
-  const current = sheet.get();
+  const current = _sheet.get();
   if (!current?.stats) return;
 
   const stats = [...current.stats];
@@ -239,7 +264,7 @@ export function addBlockGroup(
   key: string,
   layout: StatBlockGroup['layout'] = 'cols-1',
 ): void {
-  const current = sheet.get();
+  const current = _sheet.get();
   if (!current) return;
 
   // Don't add duplicate groups
@@ -255,7 +280,7 @@ export function addBlockGroup(
  * Remove a stat block group (only if empty).
  */
 export function removeBlockGroup(groupKey: string): void {
-  const current = sheet.get();
+  const current = _sheet.get();
   if (!current?.statBlockGroups) return;
 
   const group = current.statBlockGroups.find((g) => g.key === groupKey);
@@ -274,7 +299,7 @@ export function updateBlockGroupLayout(
   groupKey: string,
   layout: StatBlockGroup['layout'],
 ): void {
-  const current = sheet.get();
+  const current = _sheet.get();
   if (!current?.statBlockGroups) return;
 
   const statBlockGroups = current.statBlockGroups.map((g) =>
@@ -287,7 +312,7 @@ export function updateBlockGroupLayout(
  * Update a block group's key (name).
  */
 export function updateBlockGroupKey(oldKey: string, newKey: string): void {
-  const current = sheet.get();
+  const current = _sheet.get();
   if (!current?.statBlockGroups) return;
 
   const statBlockGroups = current.statBlockGroups.map((g) =>
@@ -300,7 +325,7 @@ export function updateBlockGroupKey(oldKey: string, newKey: string): void {
  * Move a block group up in the list.
  */
 export function moveBlockGroupUp(groupKey: string): void {
-  const current = sheet.get();
+  const current = _sheet.get();
   if (!current?.statBlockGroups) return;
 
   const index = current.statBlockGroups.findIndex((g) => g.key === groupKey);
@@ -318,7 +343,7 @@ export function moveBlockGroupUp(groupKey: string): void {
  * Move a block group down in the list.
  */
 export function moveBlockGroupDown(groupKey: string): void {
-  const current = sheet.get();
+  const current = _sheet.get();
   if (!current?.statBlockGroups) return;
 
   const index = current.statBlockGroups.findIndex((g) => g.key === groupKey);
@@ -340,7 +365,7 @@ export function moveBlockGroupDown(groupKey: string): void {
  * Add a new block to a group.
  */
 export function addBlock(groupKey: string, blockKey: string): void {
-  const current = sheet.get();
+  const current = _sheet.get();
   if (!current?.statBlockGroups) return;
 
   const statBlockGroups = current.statBlockGroups.map((g) => {
@@ -356,7 +381,7 @@ export function addBlock(groupKey: string, blockKey: string): void {
  * Remove a block from a group (only if it has no stats).
  */
 export function removeBlock(groupKey: string, blockKey: string): void {
-  const current = sheet.get();
+  const current = _sheet.get();
   if (!current?.statBlockGroups) return;
 
   // Check if block has stats
@@ -378,7 +403,7 @@ export function updateBlockKey(
   oldBlockKey: string,
   newBlockKey: string,
 ): void {
-  const current = sheet.get();
+  const current = _sheet.get();
   if (!current?.statBlockGroups) return;
 
   // Update the block key
@@ -404,6 +429,6 @@ export function updateBlockKey(
  * Check if a block has any stats.
  */
 export function blockHasStats(blockKey: string): boolean {
-  const current = sheet.get();
+  const current = _sheet.get();
   return current?.stats?.some((s) => s.block === blockKey) ?? false;
 }

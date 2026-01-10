@@ -1,5 +1,10 @@
 <script lang="ts">
-import { dirty, saveSheet, sheet } from 'src/stores/admin/sheetEditorStore';
+import {
+  dirty,
+  saveSheet,
+  sheet,
+  updateSheetInfo,
+} from 'src/stores/admin/sheetEditorStore';
 import { pushSnack } from 'src/utils/client/snackUtils';
 import { t } from 'src/utils/i18n';
 import SystemSelect from '../../sites/SystemSelect.svelte';
@@ -25,18 +30,14 @@ async function onsubmit(e: Event) {
   pushSnack({ message: 'Sheet saved' });
 }
 
-function updateName(e: Event) {
+function handleNameChange(e: Event) {
   name = (e.target as HTMLInputElement).value;
-  if ($sheet) {
-    sheet.set({ ...$sheet, name });
-  }
+  updateSheetInfo({ name });
 }
 
-function updateSystem(newSystem: string) {
+function handleSystemChange(newSystem: string) {
   system = newSystem;
-  if ($sheet) {
-    sheet.set({ ...$sheet, system });
-  }
+  updateSheetInfo({ system });
 }
 </script>
 
@@ -48,7 +49,7 @@ function updateSystem(newSystem: string) {
         <input
           type="text"
           value={name}
-          oninput={updateName}
+          oninput={handleNameChange}
           placeholder={t("characters:sheets.placeholders.name")}
           required
         />
@@ -61,7 +62,7 @@ function updateSystem(newSystem: string) {
     </div>
 
     <div class="toolbar p-0">
-      <SystemSelect {system} setSystem={updateSystem} />
+      <SystemSelect {system} setSystem={handleSystemChange} />
     </div>
   </form>
 {/if}
