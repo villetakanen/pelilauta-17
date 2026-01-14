@@ -9,9 +9,11 @@ It allows the application to support multiple game systems (D&D 5e, PBTA, etc.) 
 
 ### 2.1 Character Sheet (Template)
 Defined in `CharacterSheetSchema`. This is a "Class" or "Blueprint".
--   **Source**: Firestore collection `charsheets`.
+-   **Source**: Static JSON files in `src/data/character-sheets/` (see ADR-001)
 -   **Purpose**: Defines *what* stats a character has, how they are grouped, and their data types.
 -   **Immutable**: The definition does not change when a user edits a character.
+
+> **Note (2026-01-14):** Sheet definitions moved from Firestore `charsheets` collection to static JSON. See `docs/ADR-001-static-character-sheets.md`.
 
 ```typescript
 type CharacterSheet = {
@@ -86,8 +88,8 @@ While `DerivedStatSchema` exists with a `formula` field (e.g., `@strength_modifi
 ## 5. UI Rendering
 The `CharacterApp` component orchestrates the view:
 1.  Loads `Character` doc.
-2.  Loads `CharacterSheet` doc (based on `sheetKey`).
-3.  Iterates `sheet.statGroups`.
+2.  Loads `CharacterSheet` from static data (based on `sheetKey`).
+3.  Iterates `sheet.statBlockGroups`.
 4.  For each group, filters `sheet.stats` belonging to it.
 5.  Renders the appropriate component (`NumberStat`, `ChoiceStat`, etc.) binding to `character.stats[key]`.
 
@@ -97,5 +99,6 @@ The `CharacterApp` component orchestrates the view:
 3.  **Data Linking**: No built-in way to fetch options from an external collection (e.g., picking a stored "Spell").
 
 ## Changelog
+- **2026-01-14**: Sheet definitions moved to static JSON (ADR-001). Admin editor deprecated.
 - **2026-01-07**: Added `choice` stat type (PBI-061). Options stored inline in sheet template.
 

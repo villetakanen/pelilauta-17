@@ -1,10 +1,17 @@
 # Admin Character Sheet Editor Specification
 
+<!-- DEPRECATED: 2026-01-14 - This feature is deprecated per ADR-001-static-character-sheets.md -->
+<!-- Character sheet definitions will move to static JSON in src/data/character-sheets/ -->
+<!-- See: docs/ADR-001-static-character-sheets.md for migration plan -->
+
+> **DEPRECATION NOTICE:** This editor is deprecated. Character sheet definitions are moving to static JSON files for simpler architecture, better version control, and build-time type safety. See `docs/ADR-001-static-character-sheets.md`.
+
 ## 1. Overview
 The **Admin Character Sheet Editor** provides a web interface for administrators to create and modify character sheet templates. These templates define the structure of stats that characters use.
 
 **Location:** `/admin/sheets`  
 **Access:** Admin-only (requires elevated permissions)
+**Status:** DEPRECATED - Pending removal
 
 ## 2. Architecture
 
@@ -92,5 +99,6 @@ To support a new stat type:
 The `text` stat type exists in the schema but is not in the type dropdown.
 
 ## Changelog
+- **2026-01-14**: DEPRECATED - Editor to be replaced with static JSON (see ADR-001)
 - **2026-01-09**: Refactored to store-based architecture, choice stat now supported
 - **2026-01-07**: Initial spec created documenting current state and gaps
