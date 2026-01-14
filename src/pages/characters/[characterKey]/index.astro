@@ -1,10 +1,8 @@
 ---
 import BetaHeader from '@components/server/app/BetaHeader.astro';
 import { getCharacter } from '@firebase/server/characters/getCharacter';
-import { getCharacterSheet } from '@firebase/server/characters/getCharacterSheet';
 import { getSiteData } from '@firebase/server/sites';
 import type { Character } from '@schemas/CharacterSchema';
-import type { CharacterSheet } from '@schemas/CharacterSheetSchema';
 import { type Site } from '@schemas/SiteSchema';
 import { t } from '@utils/i18n';
 import { logError } from '@utils/logHelpers';
@@ -23,7 +21,6 @@ if (!hasSession) {
 }
 
 let character: Character | undefined;
-let sheet: CharacterSheet | undefined;
 let site: Site | undefined;
 
 // Fetch character data
@@ -35,17 +32,6 @@ try {
     return Astro.redirect('/404');
   } else {
     return Astro.redirect('/500');
-  }
-}
-
-// If character has a sheet, pre-fetch the sheet data
-if (character?.sheetKey) {
-  try {
-    sheet = await getCharacterSheet(character.sheetKey);
-  } catch (error) {
-    logError('CharacterIndex', 'Failed to fetch character sheet:', error);
-    // If sheet fetch fails, we can still render the character without sheet data
-    sheet = undefined;
   }
 }
 
@@ -67,24 +53,10 @@ const title = `${t('app:shortname')} – ${t('characters:character.title')}`;
 const shortTitle = t('characters:character.title');
 const description = t('characters:character.description');
 ---
-<Page
-  title={title}
-  shortTitle={shortTitle}
-  description={description}
-  >
 
+<Page title={title} shortTitle={shortTitle} description={description}>
   <BetaHeader />
 
-    {character && 
-      <CharacterApp
-        {character} 
-        {sheet}
-        {site} 
-        client:only="svelte"/>}
-    {poster && (
-      <BackgroundPoster
-        src={poster}
-        slot="app-background-poster"
-      />
-    )}
+  {character && <CharacterApp {character} {site} client:only="svelte" />}
+  {poster && <BackgroundPoster src={poster} slot="app-background-poster" />}
 </Page>

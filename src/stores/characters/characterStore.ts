@@ -4,16 +4,12 @@
  * Subscribes to set character data and provides methods to get and update character information.
  */
 
-import { authedFetch } from '@firebase/client/apiClient';
 import {
   CHARACTERS_COLLECTION_NAME,
   type Character,
   CharacterSchema,
 } from '@schemas/CharacterSchema';
-import {
-  type CharacterSheet,
-  CharacterSheetSchema,
-} from '@schemas/CharacterSheetSchema';
+import type { CharacterSheet } from '@schemas/CharacterSheetSchema';
 import { toClientEntry } from '@utils/client/entryUtils';
 import { pushSnack } from '@utils/client/snackUtils';
 import { logDebug } from '@utils/logHelpers';
@@ -85,13 +81,12 @@ export async function subscribe(key: string) {
 }
 
 /**
- * Load character sheet data from API, without real-time updates.
+ * Load character sheet data from static JSON.
  *
- * Note: the API is cached, so this should be fast, but will not reflect
- * real-time updates to sheets. Sheets are not expected to change often, so this
- * is acceptable.
+ * TODO: Implement static sheet loading from src/data/character-sheets/
+ * See: docs/ADR-001-static-character-sheets.md
  *
- * @param sheetKey the Firestore collection document key of the sheet data to load
+ * @param sheetKey the key of the sheet to load
  */
 async function loadSheet(sheetKey: string) {
   if (sheetLoading.get()) return; // Prevent concurrent loads
@@ -100,15 +95,13 @@ async function loadSheet(sheetKey: string) {
   sheetLoading.set(true);
 
   try {
-    const sheetResponse = await authedFetch(
-      `/api/character-sheets/${sheetKey}`,
+    // TODO: Load from static data when implemented
+    // For now, sheet functionality is disabled pending static data setup
+    logDebug(
+      'characterStore',
+      'Sheet loading not yet implemented for static data',
     );
-    if (!sheetResponse.ok) {
-      throw new Error(`Failed to load sheet: ${sheetResponse.statusText}`);
-    }
-    const sheetData = await sheetResponse.json();
-    const parsedSheet = CharacterSheetSchema.parse(sheetData);
-    sheet.set(parsedSheet);
+    sheet.set(null);
   } catch (error) {
     logDebug('characterStore', 'Error loading sheet:', error);
     pushSnack('app:error.generic');

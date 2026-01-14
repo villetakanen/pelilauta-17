@@ -6,9 +6,7 @@
 import StepsToolbar from '@components/svelte/app/StepsToolbar.svelte';
 import SystemSelect from '@components/svelte/sites/SystemSelect.svelte';
 import type { Character } from '@schemas/CharacterSchema';
-import type { CharacterSheet } from '@schemas/CharacterSheetSchema';
 import type { Site } from '@schemas/SiteSchema';
-import { sheets } from '@stores/characters/sheetsStore';
 import { pushSessionSnack, pushSnack } from '@utils/client/snackUtils';
 import { t } from '@utils/i18n';
 import { logError } from '@utils/logHelpers';
@@ -32,7 +30,8 @@ let characterDescription = $state('');
 let isCreating = $state(false);
 
 // Selected objects for API call
-let selectedSheet: CharacterSheet | null = $state(null);
+// TODO: Re-add sheet selection when static data is implemented
+// See: docs/ADR-001-static-character-sheets.md
 let selectedSite: Site | null = $state(null);
 
 const steps = ['system', 'sheet', 'site', 'meta'];
@@ -60,17 +59,8 @@ async function createCharacter() {
       stats: {},
     };
 
-    if (selectedSheet) {
-      data.sheetKey = selectedSheet.key;
-      if (selectedSheet.stats) {
-        for (const stat of selectedSheet.stats) {
-          if (stat.value !== undefined) {
-            if (!data.stats) data.stats = {};
-            data.stats[stat.key] = stat.value;
-          }
-        }
-      }
-    }
+    // TODO: Re-add sheet handling when static data is implemented
+    // See: docs/ADR-001-static-character-sheets.md
     if (selectedSite) {
       data.siteKey = selectedSite.key;
     }
@@ -100,72 +90,81 @@ async function createCharacter() {
 
 <div class="content-columns">
   <section class="column">
-    <StepsToolbar 
+    <StepsToolbar
       steps={i18nSteps}
-      progress={step} 
-      onStepClick={handleStepClick} />
-    <cn-card
-      title={t(`characters:create.steps.${steps[step]}.title`)}
-    >
-    <p class="text-small text-low mb-2">
-      {t(`characters:create.steps.${steps[step]}.description`)}
-    </p>
-    <div class="my-2 border-t py-2">
-    {#if step === 0}
-      <div data-testid="character-wizard-system-step">
-        <SystemSelect {system} setSystem={(s) => system = s}/>
-      </div>
-    {:else if step === 1}
-      <div data-testid="character-wizard-sheet-step">
-        <SheetSelect
-          system={system} 
-          selected={sheet ?? undefined} 
-          onSelect={(key, name) => {
-            sheet = key === '-' ? '' : key;
-            sheetName = name;
-            selectedSheet = key === '-' ? null : $sheets.find(s => s.key === key) || null;
-          }} />
-      </div>
-    {:else if step === 2}
-      <div data-testid="character-wizard-site-step">
-        <SiteSelect
-          selected={siteKey} 
-          setSelected={(key, site) => {
-            siteKey = key;
-            siteName = site?.name || '-';
-            selectedSite = site;
-          }} />
-      </div>
-    {:else if step === 3}
-      <div data-testid="character-wizard-meta-step">
-        <label>
-          {t('entries:character.name')}
-          <input 
-            type="text" 
-            placeholder={t('entries:character.placeholders.name')} 
-            value={characterName} 
-            data-testid="character-name-input"
-            oninput={(e) => characterName = (e.target as HTMLInputElement).value} 
-            required />
-        </label>
+      progress={step}
+      onStepClick={handleStepClick}
+    />
+    <cn-card title={t(`characters:create.steps.${steps[step]}.title`)}>
+      <p class="text-small text-low mb-2">
+        {t(`characters:create.steps.${steps[step]}.description`)}
+      </p>
+      <div class="my-2 border-t py-2">
+        {#if step === 0}
+          <div data-testid="character-wizard-system-step">
+            <SystemSelect {system} setSystem={(s) => (system = s)} />
+          </div>
+        {:else if step === 1}
+          <div data-testid="character-wizard-sheet-step">
+            <SheetSelect
+              {system}
+              selected={sheet ?? undefined}
+              onSelect={(key, name) => {
+                sheet = key === "-" ? "" : key;
+                sheetName = name;
+                // TODO: Set selectedSheet when static data is implemented
+              }}
+            />
+          </div>
+        {:else if step === 2}
+          <div data-testid="character-wizard-site-step">
+            <SiteSelect
+              selected={siteKey}
+              setSelected={(key, site) => {
+                siteKey = key;
+                siteName = site?.name || "-";
+                selectedSite = site;
+              }}
+            />
+          </div>
+        {:else if step === 3}
+          <div data-testid="character-wizard-meta-step">
+            <label>
+              {t("entries:character.name")}
+              <input
+                type="text"
+                placeholder={t("entries:character.placeholders.name")}
+                value={characterName}
+                data-testid="character-name-input"
+                oninput={(e) =>
+                  (characterName = (e.target as HTMLInputElement).value)}
+                required
+              />
+            </label>
 
-        <label>
-          {t('entries:character.description')}
-          <textarea 
-            placeholder={t('entries:character.placeholders.description')}
-            data-testid="character-description-input"
-            oninput={(e) => characterDescription = (e.target as HTMLTextAreaElement).value}>{characterDescription}</textarea>
-        </label>
+            <label>
+              {t("entries:character.description")}
+              <textarea
+                placeholder={t("entries:character.placeholders.description")}
+                data-testid="character-description-input"
+                oninput={(e) =>
+                  (characterDescription = (e.target as HTMLTextAreaElement)
+                    .value)}>{characterDescription}</textarea
+              >
+            </label>
 
-        <p class="text-small text-low border p-1 mt-2" data-testid="character-summary">
-          {t(`meta:systems.${system}`)}<br> 
-          {sheetName}<br>
-          {siteName}
-        </p>
-      </div>
-    {/if}
-      <!-- 
-        switch for the screens 
+            <p
+              class="text-small text-low border p-1 mt-2"
+              data-testid="character-summary"
+            >
+              {t(`meta:systems.${system}`)}<br />
+              {sheetName}<br />
+              {siteName}
+            </p>
+          </div>
+        {/if}
+        <!--
+        switch for the screens
         - Step 1: System Selection
         - Step 2: Sheet Selection (optional, default to md only)
         - Step 3: Site selection (optional, default to none)
@@ -175,30 +174,32 @@ async function createCharacter() {
 
       <div class="toolbar" slot="actions">
         <!-- buttons: previous and next/confirm - depending on step -->
-        <button 
-          disabled={step === 0} 
+        <button
+          disabled={step === 0}
           class="text"
           data-testid="character-wizard-previous-button"
-          onclick={() => step = Math.max(0, step - 1)}>
-          {t('actions:previous')}
+          onclick={() => (step = Math.max(0, step - 1))}
+        >
+          {t("actions:previous")}
         </button>
         {#if step < steps.length - 1}
-          <button 
+          <button
             data-testid="character-wizard-next-button"
-            onclick={() => step = Math.min(steps.length - 1, step + 1)}>
-            {t('actions:next')}
+            onclick={() => (step = Math.min(steps.length - 1, step + 1))}
+          >
+            {t("actions:next")}
           </button>
         {:else}
-          <button 
+          <button
             class="primary"
             disabled={!valid || isCreating}
             data-testid="character-wizard-create-button"
-            onclick={createCharacter}>
-            {isCreating ? t('actions:creating') : t('actions:create.character')}
+            onclick={createCharacter}
+          >
+            {isCreating ? t("actions:creating") : t("actions:create.character")}
           </button>
         {/if}
       </div>
-
     </cn-card>
   </section>
 </div>
