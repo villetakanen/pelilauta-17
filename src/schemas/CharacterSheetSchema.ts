@@ -36,6 +36,10 @@ const StatBaseSchema = z.object({
     .describe(
       'Unique identifier for the stat, e.g., "strength" or "hit_points".',
     ),
+  label: z
+    .string()
+    .optional()
+    .describe('Display label for the stat, e.g. "Strength".'),
   description: z
     .string()
     .optional()

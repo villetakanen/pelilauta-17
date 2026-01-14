@@ -1,96 +1,78 @@
 # Admin Character Sheet Editor Specification
 
 ## 1. Overview
-The **Admin Character Sheet Editor** provides a web interface for administrators to create and modify character sheet templates. These templates define the structure of stats that characters use.
+The **Admin Character Sheet Editor** provides a visual, interactive interface for administrators to create and modify character sheet templates. It prioritizes "What You See Is What You Get" (WYSIWYG) editing with a focus on usability and layout.
 
 **Location:** `/admin/sheets`  
-**Access:** Admin-only (requires elevated permissions)
+**Access:** Admin-only
 
-## 2. Architecture
+## 2. UX Architecture
 
-### 2.1 Store Layer
+The editor is divided into three main interaction areas:
 
-The editor uses a dedicated nanostore (`sheetEditorStore.ts`) that centralizes all state and transformations:
+### 2.1 The Visual Builder (Main Canvas)
+The central area renders the sheet structure as close to the final representation as possible.
+- **Visual Grid**: Renders `StatBlockGroups` using the actual CSS grid layouts (`cols-1`, `cols-2`, `cols-3`).
+- **Drag & Drop**: Blocks and Stats can be reordered visually using drag handles.
+- **Selection**: Clicking a Block or Stat puts it in a "Selected" state (highlighted border), populating the Property Drawer.
+
+### 2.2 The Property Drawer (Sidebar)
+A dedicated side panel for configuring the currently selected item. This keeps the main canvas clean.
+- **Contextual**: Changes content based on selection (Sheet, Group, Block, or Stat).
+- **Auto-Save**: Changes in the drawer apply immediately to the store.
+
+### 2.3 The Toolbar & Preview
+- **Add Buttons**: "Add Group", "Add Block", "Add Stat" buttons are contextually available.
+- **Preview Toggle**: Switch between "Edit Structure" (showing dashed borders, handles) and "Preview" (rendering valid dummy data).
+
+## 3. Data Model & Store
+
+The editor uses `sheetEditorStore.ts` for centralized state management.
+
+### 3.1 Store Architecture
+- **State**: `_sheet` (private), `dirty`, `saving`, `selection` (id of selected item).
+- **Computed**: `sheet` (read-only), `selectedItem`.
+- **Actions**: All mutations go through strictly typed actions.
+
+### 3.2 Automation
+- **Auto-Key**: When a user types a "Label" (e.g., "Hit Points"), the "Key" (`hit_points`) is auto-generated unless manually overridden.
+
+## 4. Component Hierarchy
 
 ```
-sheetEditorStore.ts
-├── Atoms: sheet, dirty, saving
-├── Derived: groupedStats, availableGroups  
-├── Actions: addStat, removeStat, updateStat, changeStatType
-├── Actions: addGroup, removeGroup, updateGroupLayout
-└── Persistence: loadSheet(), saveSheet()
+SheetEditor (Layout Container)
+├── EditorToolbar (Undo/Redo, Preview Toggle)
+├── VisualBuilder (Canvas)
+│   ├── StatBlockGroupRenderer (Grid Layout)
+│   │   └── StatBlockRenderer (Card)
+│   │       └── StatItemRenderer (Row)
+└── PropertyDrawer (Sidebar)
+    ├── SheetProperties (Name, System)
+    ├── GroupProperties (Layout, Key)
+    ├── BlockProperties (Key, Label)
+    └── StatProperties (Key, Type, Config)
+        ├── ChoiceEditor (Options List)
+        └── FormulaEditor (Derived Stats)
 ```
 
-### 2.2 Components
+## 5. Stat Type Support
 
-| Component | Purpose |
-|-----------|---------|
-| `CharacterSheetList.svelte` | Lists all available sheets for selection |
-| `SheetEditor.svelte` | Main editor container, triggers `loadSheet()` |
-| `SheetInfoForm.svelte` | Edits sheet metadata (name, system, key) |
-| `SheetStatGroups.svelte` | Manages stat group definitions and layouts |
-| `SheetStats.svelte` | Manages individual stat definitions |
-| `StatsSection.svelte` | Renders a collapsible section of stats |
-| `NewGroupCard.svelte` | UI for adding new stat groups |
+| Type | Config via Property Drawer |
+|------|----------------------------|
+| `number` | Min/Max (future), Default Value |
+| `text` | Default Value, Multiline option |
+| `toggled` | Default State |
+| `choice` | **Dynamic Option List** (Add/Remove/Reorder Label-Value pairs) |
+| `derived` | **Formula Input** with syntax hints |
+| `d20_ability_score` | Base Value, Proficiency Toggle |
 
-### 2.3 Data Flow
-
-```
-Components (presentation only)
-       ↓ call actions
-sheetEditorStore
-       ↓ save()
-updateCharacterSheet() → Firestore
-```
-
-Components subscribe to store atoms for reactive updates but delegate all mutations to store actions.
-
-## 3. Stat Type Editor Support
-
-When a new stat type is added to `CharacterStatSchema`, update `changeStatType()` in the store.
-
-### 3.1 Current Support
-
-| Stat Type | Supported | Additional Fields |
-|-----------|-----------|-------------------|
-| `number` | ✅ | – |
-| `toggled` | ✅ | – |
-| `derived` | ✅ | `formula` (text input) |
-| `d20_ability_score` | ✅ | `hasProficiency` (toggle) |
-| `choice` | ✅ | `options[]` (label/value pairs) |
-| `text` | ❌ **Gap** | – (simple, but not in dropdown) |
-
-### 3.2 Adding New Stat Types
-
-To support a new stat type:
-
-1. **Update `changeStatType()` in `sheetEditorStore.ts`**:
-   ```typescript
-   case 'newtype':
-     updateStat(index, { type, /* type-specific defaults */ });
-     break;
-   ```
-
-2. **Add to type dropdown in `SheetStats.svelte`**:
-   ```svelte
-   <option value="newtype">New Type</option>
-   ```
-
-3. **Add conditional fields** for type-specific configuration in the template.
-
-## 4. State Management
-
-- **Centralized store:** All sheet state lives in `sheetEditorStore.ts`
-- **Dirty detection:** Automatic via nanostores effect on sheet changes
-- **Derived state:** `groupedStats` and `availableGroups` computed from sheet
-- **Persistence:** `loadSheet(key)` and `saveSheet()` handle Firestore I/O
-- **UI-only state:** Collapse/expand state stays in components (not persisted)
-
-## 5. Known Gaps
-
-### 5.1 Text Stat
-The `text` stat type exists in the schema but is not in the type dropdown.
+## 6. Glossary
+- **Canvas**: The main editing area.
+- **Drawer**: The configuration sidebar.
+- **Block**: A visual card containing stats.
+- **Group**: A layout container (1-3 columns) holding blocks.
 
 ## Changelog
-- **2026-01-09**: Refactored to store-based architecture, choice stat now supported
-- **2026-01-07**: Initial spec created documenting current state and gaps
+- **2026-01-13**: Major spec overhaul. Introduced Visual Builder & Property Drawer architecture.
+- **2026-01-09**: Refactored to store-based architecture.
+

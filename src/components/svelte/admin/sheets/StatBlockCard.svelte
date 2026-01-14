@@ -6,9 +6,8 @@ import {
   groupedStats,
   removeBlock,
   removeStat,
+  selectItem,
   sheet,
-  updateBlockKey,
-  updateStat,
 } from 'src/stores/admin/sheetEditorStore';
 
 interface Props {
@@ -26,38 +25,11 @@ function getStatIndex(stat: CharacterStat): number {
   return $sheet?.stats?.indexOf(stat) ?? -1;
 }
 
-function handleBlockNameChange(e: Event) {
-  const newKey = (e.target as HTMLInputElement).value;
-  updateBlockKey(groupKey, blockKey, newKey);
-}
-
-function handleRemoveStat(stat: CharacterStat) {
+function handleRemoveStat(stat: CharacterStat, e: Event) {
+  e.stopPropagation();
   const index = getStatIndex(stat);
   if (index !== -1) {
     removeStat(index);
-  }
-}
-
-function handleKeyChange(stat: CharacterStat, newKey: string) {
-  const index = getStatIndex(stat);
-  if (index !== -1) {
-    updateStat(index, { key: newKey });
-  }
-}
-
-function handleTypeChange(stat: CharacterStat, newType: string) {
-  const index = getStatIndex(stat);
-  if (index !== -1) {
-    const type = newType as 'number' | 'text' | 'toggled' | 'd20_ability_score';
-    const value =
-      type === 'number'
-        ? 0
-        : type === 'toggled'
-          ? false
-          : type === 'd20_ability_score'
-            ? 10
-            : '';
-    updateStat(index, { type, value });
   }
 }
 
@@ -66,83 +38,83 @@ function canDelete(): boolean {
 }
 </script>
 
-<div class="stat-block surface elevation-1 p-2">
-    <div class="toolbar pt-0 mt-0 mb-1">
-        <input
-            type="text"
-            value={blockKey}
-            oninput={handleBlockNameChange}
-            class="grow text-h6"
-            placeholder="Block name"
-        />
-        <button
-            type="button"
-            class="text"
-            aria-label="Delete block"
-            onclick={() => removeBlock(groupKey, blockKey)}
-            disabled={!canDelete()}
-        >
-            <cn-icon noun="delete"></cn-icon>
-        </button>
+<div class="stat-block surface elevation-1 p-2 h-full">
+  <!-- Block Header -->
+  <header
+    class="toolbar pt-0 mt-0 mb-1 cursor-pointer hover:surface-2 -mx-2 -mt-2 p-2 rounded transition-colors"
+    onclick={() => selectItem("block", blockKey)}
+    role="button"
+    tabindex="0"
+    onkeydown={(e) => e.key === "Enter" && selectItem("block", blockKey)}
+  >
+    <div class="grow">
+      <h4 class="text-h6 m-0 leading-tight">{blockKey}</h4>
+      {#if blockLabel}
+        <span class="text-caption text-low">{blockLabel}</span>
+      {/if}
     </div>
 
-    <div class="stat-grid">
-        {#each stats as stat}
-            <input
-                type="text"
-                value={stat.key}
-                oninput={(e) =>
-                    handleKeyChange(stat, (e.target as HTMLInputElement).value)}
-                placeholder="stat key"
-            />
-            <select
-                onchange={(e) =>
-                    handleTypeChange(
-                        stat,
-                        (e.target as HTMLSelectElement).value,
-                    )}
-            >
-                <option value="number" selected={stat.type === "number"}
-                    >123</option
-                >
-                <option value="text" selected={stat.type === "text"}>ABC</option
-                >
-                <option value="toggled" selected={stat.type === "toggled"}
-                    >0/1</option
-                >
-                <option
-                    value="d20_ability_score"
-                    selected={stat.type === "d20_ability_score"}>D20</option
-                >
-                <option value="choice" selected={stat.type === "choice"}
-                    >Choice</option
-                >
-            </select>
-            <button
-                class="text"
-                aria-label="delete"
-                type="button"
-                onclick={() => handleRemoveStat(stat)}
-            >
-                <cn-icon noun="delete"></cn-icon>
-            </button>
-        {/each}
-    </div>
-
-    <button type="button" class="text mt-1" onclick={() => addStat(blockKey)}>
-        <cn-icon noun="add"></cn-icon>
-        <span>Add Stat</span>
+    <button
+      type="button"
+      class="text small"
+      aria-label="Delete block"
+      onclick={(e) => {
+        e.stopPropagation();
+        removeBlock(groupKey, blockKey);
+      }}
+      disabled={!canDelete()}
+    >
+      <cn-icon noun="delete"></cn-icon>
     </button>
+  </header>
+
+  <!-- Stats List -->
+  <div class="flex flex-col gap-1">
+    {#each stats as stat}
+      <div
+        class="stat-row flex items-center gap-2 p-1 rounded hover:surface-2 cursor-pointer border border-transparent hover:border-border"
+        onclick={() => selectItem("stat", stat.key)}
+        role="button"
+        tabindex="0"
+        onkeydown={(e) => e.key === "Enter" && selectItem("stat", stat.key)}
+      >
+        <div class="grow min-w-0">
+          <div class="flex items-baseline gap-2">
+            <span class="font-mono text-sm truncate">{stat.key || "..."}</span>
+            <span
+              class="text-caption px-1 rounded bg-surface-2 text-low text-xs"
+              >{stat.type}</span
+            >
+          </div>
+          {#if stat.description}
+            <p class="text-caption text-low truncate">{stat.description}</p>
+          {/if}
+        </div>
+
+        <button
+          class="text small"
+          aria-label="delete"
+          type="button"
+          onclick={(e) => handleRemoveStat(stat, e)}
+        >
+          <cn-icon noun="delete"></cn-icon>
+        </button>
+      </div>
+    {/each}
+  </div>
+
+  <button
+    type="button"
+    class="text mt-2 w-full justify-center"
+    onclick={() => addStat(blockKey)}
+  >
+    <cn-icon noun="add"></cn-icon>
+    <span>Add Stat</span>
+  </button>
 </div>
 
 <style>
-    .stat-block {
-        border-radius: var(--cn-border-radius);
-    }
-    .stat-grid {
-        display: grid;
-        grid-template-columns: 1fr auto auto;
-        gap: 0.5rem;
-        align-items: center;
-    }
+  .stat-block {
+    border-radius: var(--cn-border-radius);
+  }
 </style>

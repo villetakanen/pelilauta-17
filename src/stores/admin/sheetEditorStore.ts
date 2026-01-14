@@ -18,6 +18,7 @@ import {
   type CharacterStat,
   CharacterStatSchema,
   migrateCharacterSheet,
+  type StatBlock,
   type StatBlockGroup,
 } from 'src/schemas/CharacterSheetSchema';
 import { logDebug, logError } from 'src/utils/logHelpers';
@@ -50,6 +51,46 @@ export const dirty: WritableAtom<boolean> = atom(false);
  * True while a save operation is in progress.
  */
 export const saving: WritableAtom<boolean> = atom(false);
+
+// ---------------------------------------------------------------------------
+// Selection State
+// ---------------------------------------------------------------------------
+
+export type SelectionType = 'sheet' | 'group' | 'block' | 'stat';
+
+export interface Selection {
+  type: SelectionType;
+  id: string; // The "key" of the selected item
+}
+
+/**
+ * The current selection.
+ */
+export const selection: WritableAtom<Selection | null> = atom(null);
+
+/**
+ * The actual data object for the currently selected item.
+ */
+export const selectedItem = computed([_sheet, selection], ($sheet, $sel) => {
+  if (!$sheet || !$sel) return null;
+
+  switch ($sel.type) {
+    case 'sheet':
+      return $sheet;
+    case 'group':
+      return $sheet.statBlockGroups?.find((g) => g.key === $sel.id) ?? null;
+    case 'block':
+      for (const group of $sheet.statBlockGroups ?? []) {
+        const block = group.blocks.find((b) => b.key === $sel.id);
+        if (block) return block;
+      }
+      return null;
+    case 'stat':
+      return $sheet.stats?.find((s) => s.key === $sel.id) ?? null;
+    default:
+      return null;
+  }
+});
 
 /**
  * List of all block keys from the current sheet.
@@ -163,6 +204,18 @@ export async function saveSheet(): Promise<void> {
   } finally {
     saving.set(false);
   }
+}
+
+// ---------------------------------------------------------------------------
+// Selection Actions
+// ---------------------------------------------------------------------------
+
+export function selectItem(type: SelectionType, id: string): void {
+  selection.set({ type, id });
+}
+
+export function clearSelection(): void {
+  selection.set(null);
 }
 
 // ---------------------------------------------------------------------------
@@ -438,6 +491,30 @@ export function updateBlockKey(
   );
 
   updateSheet({ statBlockGroups, stats });
+}
+
+/**
+ * Update a block's properties (excluding key).
+ */
+export function updateBlock(
+  groupKey: string,
+  blockKey: string,
+  updates: Partial<Omit<StatBlock, 'key'>>,
+): void {
+  const current = _sheet.get();
+  if (!current?.statBlockGroups) return;
+
+  const statBlockGroups = current.statBlockGroups.map((g) => {
+    if (g.key !== groupKey) return g;
+    return {
+      ...g,
+      blocks: g.blocks.map((b) =>
+        b.key === blockKey ? { ...b, ...updates } : b,
+      ),
+    };
+  });
+
+  updateSheet({ statBlockGroups });
 }
 
 /**
