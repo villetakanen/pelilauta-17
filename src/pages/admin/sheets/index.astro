@@ -1,0 +1,20 @@
+---
+import AdminTray from '@components/svelte/admin/AdminTray.svelte';
+import PageWithTray from '@layouts/PageWithTray.astro';
+
+const showLocalTools =
+  import.meta.env.SECRET_FEATURE_FLAG_Admin_tools === 'true';
+---
+<PageWithTray title="Sheet Tools" description="Character sheet admin tools">
+  <AdminTray client:only="svelte" {showLocalTools} slot="app-tray"/>
+  <div class="content-columns">
+    <section class="column">
+      <h1>Sheet Tools</h1>
+      <nav>
+        <ul>
+          <li><a href="/admin/sheets/preview">Sheet Preview</a> - Preview character sheet templates</li>
+        </ul>
+      </nav>
+    </section>
+  </div>
+</PageWithTray>

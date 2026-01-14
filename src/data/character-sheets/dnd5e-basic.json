@@ -1,0 +1,84 @@
+{
+  "key": "dnd5e-basic",
+  "name": "D&D 5e Basic",
+  "system": "dnd5e",
+  "statBlockGroups": [
+    {
+      "key": "abilities",
+      "layout": "cols-3",
+      "blocks": [
+        { "key": "physical", "label": "Physical" },
+        { "key": "mental", "label": "Mental" }
+      ]
+    },
+    {
+      "key": "combat",
+      "layout": "cols-2",
+      "blocks": [
+        { "key": "offense", "label": "Offense" },
+        { "key": "defense", "label": "Defense" }
+      ]
+    },
+    {
+      "key": "info",
+      "layout": "cols-1",
+      "blocks": [{ "key": "details", "label": "Character Details" }]
+    }
+  ],
+  "stats": [
+    {
+      "type": "d20_ability_score",
+      "key": "strength",
+      "block": "physical",
+      "baseValue": 10
+    },
+    {
+      "type": "d20_ability_score",
+      "key": "dexterity",
+      "block": "physical",
+      "baseValue": 10
+    },
+    {
+      "type": "d20_ability_score",
+      "key": "constitution",
+      "block": "physical",
+      "baseValue": 10
+    },
+    {
+      "type": "d20_ability_score",
+      "key": "intelligence",
+      "block": "mental",
+      "baseValue": 10
+    },
+    {
+      "type": "d20_ability_score",
+      "key": "wisdom",
+      "block": "mental",
+      "baseValue": 10
+    },
+    {
+      "type": "d20_ability_score",
+      "key": "charisma",
+      "block": "mental",
+      "baseValue": 10
+    },
+    { "type": "number", "key": "hit_points", "block": "defense", "value": 10 },
+    { "type": "number", "key": "armor_class", "block": "defense", "value": 10 },
+    { "type": "number", "key": "speed", "block": "offense", "value": 30 },
+    {
+      "type": "number",
+      "key": "proficiency_bonus",
+      "block": "offense",
+      "value": 2
+    },
+    { "type": "text", "key": "race", "block": "details", "value": "" },
+    { "type": "text", "key": "class", "block": "details", "value": "" },
+    { "type": "number", "key": "level", "block": "details", "value": 1 },
+    {
+      "type": "toggled",
+      "key": "inspiration",
+      "block": "details",
+      "value": false
+    }
+  ]
+}

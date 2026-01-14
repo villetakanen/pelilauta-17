@@ -1,10 +1,8 @@
 <script lang="ts">
 /**
  * Sheet selection component for character creation.
- *
- * TODO: Implement static sheet loading from src/data/character-sheets/
- * See: docs/ADR-001-static-character-sheets.md
  */
+import { getSheetsBySystem } from '@data/character-sheets';
 
 interface Props {
   system: string;
@@ -12,19 +10,26 @@ interface Props {
   onSelect: (key: string, name: string) => void;
 }
 
-const { selected, onSelect }: Props = $props();
+const { system, selected, onSelect }: Props = $props();
 
-// TODO: Load sheets from static data when implemented
-// For now, only "Markdown only" option is available
+const filteredSheets = $derived(getSheetsBySystem(system));
 </script>
 
-<div class="sheet-select">
+<div class="sheet-select flex flex-wrap gap-1">
   <button
     class="border p-2"
-    class:selected={!selected}
+    class:selected={!selected || selected === "-"}
     onclick={() => onSelect("-", "Markdown only")}
   >
     Markdown only
   </button>
-  <!-- TODO: Add sheet options when static data is implemented -->
+  {#each filteredSheets as sheet}
+    <button
+      class="border p-2"
+      class:selected={selected === sheet.key}
+      onclick={() => onSelect(sheet.key, sheet.name)}
+    >
+      {sheet.name}
+    </button>
+  {/each}
 </div>

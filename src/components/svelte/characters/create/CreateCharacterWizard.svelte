@@ -5,7 +5,9 @@
 
 import StepsToolbar from '@components/svelte/app/StepsToolbar.svelte';
 import SystemSelect from '@components/svelte/sites/SystemSelect.svelte';
+import { getSheet } from '@data/character-sheets';
 import type { Character } from '@schemas/CharacterSchema';
+import type { CharacterSheet } from '@schemas/CharacterSheetSchema';
 import type { Site } from '@schemas/SiteSchema';
 import { pushSessionSnack, pushSnack } from '@utils/client/snackUtils';
 import { t } from '@utils/i18n';
@@ -30,8 +32,7 @@ let characterDescription = $state('');
 let isCreating = $state(false);
 
 // Selected objects for API call
-// TODO: Re-add sheet selection when static data is implemented
-// See: docs/ADR-001-static-character-sheets.md
+let selectedSheet: CharacterSheet | null = $state(null);
 let selectedSite: Site | null = $state(null);
 
 const steps = ['system', 'sheet', 'site', 'meta'];
@@ -59,8 +60,18 @@ async function createCharacter() {
       stats: {},
     };
 
-    // TODO: Re-add sheet handling when static data is implemented
-    // See: docs/ADR-001-static-character-sheets.md
+    if (selectedSheet) {
+      data.sheetKey = selectedSheet.key;
+      // Initialize stats with default values from sheet
+      if (selectedSheet.stats) {
+        for (const stat of selectedSheet.stats) {
+          if (stat.value !== undefined) {
+            if (!data.stats) data.stats = {};
+            data.stats[stat.key] = stat.value;
+          }
+        }
+      }
+    }
     if (selectedSite) {
       data.siteKey = selectedSite.key;
     }
@@ -112,7 +123,7 @@ async function createCharacter() {
               onSelect={(key, name) => {
                 sheet = key === "-" ? "" : key;
                 sheetName = name;
-                // TODO: Set selectedSheet when static data is implemented
+                selectedSheet = key === "-" ? null : (getSheet(key) ?? null);
               }}
             />
           </div>

@@ -83,9 +83,6 @@ export async function subscribe(key: string) {
 /**
  * Load character sheet data from static JSON.
  *
- * TODO: Implement static sheet loading from src/data/character-sheets/
- * See: docs/ADR-001-static-character-sheets.md
- *
  * @param sheetKey the key of the sheet to load
  */
 async function loadSheet(sheetKey: string) {
@@ -95,13 +92,16 @@ async function loadSheet(sheetKey: string) {
   sheetLoading.set(true);
 
   try {
-    // TODO: Load from static data when implemented
-    // For now, sheet functionality is disabled pending static data setup
-    logDebug(
-      'characterStore',
-      'Sheet loading not yet implemented for static data',
-    );
-    sheet.set(null);
+    // Dynamic import to avoid SSR issues
+    const { getSheet } = await import('@data/character-sheets');
+    const loadedSheet = getSheet(sheetKey);
+
+    if (loadedSheet) {
+      sheet.set(loadedSheet);
+    } else {
+      logDebug('characterStore', 'Sheet not found:', sheetKey);
+      sheet.set(null);
+    }
   } catch (error) {
     logDebug('characterStore', 'Error loading sheet:', error);
     pushSnack('app:error.generic');

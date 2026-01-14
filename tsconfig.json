@@ -13,7 +13,9 @@
       "@styles/*": ["src/styles/*"],
       "@locales/*": ["src/locales/*"],
       "@firebase/*": ["src/firebase/*"],
-      "@utils/*": ["src/utils/*"]
+      "@utils/*": ["src/utils/*"],
+      "@data/*": ["src/data/*"],
+      "@pelilauta/characters": ["packages/characters/src/index.ts"]
     },
     "jsx": "preserve",
     "jsxImportSource": "solid-js",

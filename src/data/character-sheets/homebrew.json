@@ -1,0 +1,25 @@
+{
+  "key": "homebrew",
+  "name": "Homebrew Basic",
+  "system": "homebrew",
+  "statBlockGroups": [
+    {
+      "key": "main",
+      "layout": "cols-2",
+      "blocks": [
+        { "key": "attributes", "label": "Attributes" },
+        { "key": "skills", "label": "Skills" }
+      ]
+    }
+  ],
+  "stats": [
+    { "type": "number", "key": "strength", "block": "attributes", "value": 10 },
+    { "type": "number", "key": "agility", "block": "attributes", "value": 10 },
+    { "type": "number", "key": "mind", "block": "attributes", "value": 10 },
+    { "type": "number", "key": "spirit", "block": "attributes", "value": 10 },
+    { "type": "number", "key": "combat", "block": "skills", "value": 0 },
+    { "type": "number", "key": "stealth", "block": "skills", "value": 0 },
+    { "type": "number", "key": "magic", "block": "skills", "value": 0 },
+    { "type": "number", "key": "social", "block": "skills", "value": 0 }
+  ]
+}
